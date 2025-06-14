@@ -1,12 +1,14 @@
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+	--primary: #ffffff;
+	--secondary: #f2f2f2e5;
+	--text: #1c1b1b;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
+		--primary: #1c1b1b;
+		--secondary: #0e0e0ee5;
+		--text: #ffffff;
 	}
 }
 
@@ -17,9 +19,9 @@ body {
 }
 
 body {
-	color: var(--foreground);
-	background: var(--background);
-	font-family: Arial, Helvetica, sans-serif;
+	color: var(--text);
+	background: var(--primary);
+	font-family: Noto Sans, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
