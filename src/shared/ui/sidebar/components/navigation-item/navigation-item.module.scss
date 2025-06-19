@@ -1,0 +1,27 @@
+.navigationItem {
+	background-color: transparent;
+	border: 1px solid #1c1b1b;
+	border-radius: 5px;
+
+	&:first-child {
+		margin-bottom: 30px;
+	}
+
+	& > button {
+		width: 100%;
+	}
+}
+
+.navigationItemLink {
+	padding: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 16px;
+	font-weight: 600;
+	transition: background-color 0.3s ease;
+
+	&:hover {
+		background-color: var(--primary);
+	}
+}

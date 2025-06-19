@@ -1,6 +1,6 @@
-import { NavigationItem } from '@/shared/types/navigation'
+import { NavItem } from '@/shared/types/navigation'
 
-export const navItems: NavigationItem[] = [
+export const navItems: NavItem[] = [
 	{
 		label: 'Hide',
 		iconSrc: './hide.svg',
