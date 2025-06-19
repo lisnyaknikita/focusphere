@@ -1,0 +1,10 @@
+.logoLink {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	> span {
+		text-transform: uppercase;
+		font-size: 36px;
+	}
+}
