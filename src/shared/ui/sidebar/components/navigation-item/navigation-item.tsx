@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { NavItem } from '@/shared/types/navigation'
 
+import clsx from 'clsx'
 import classes from './navigation-item.module.scss'
 
 type NavigationItemProps = {
@@ -16,8 +17,14 @@ export const NavigationItem = ({ item, isCollapsed, onHideClick }: NavigationIte
 
 	const content = (
 		<>
-			<Image src={item.isButton ? iconButtonSrc : item.iconSrc} alt={item.iconAlt} width={20} height={20} />
-			{!isCollapsed && <span>{item.label}</span>}
+			<Image
+				src={item.isButton ? iconButtonSrc : item.iconSrc}
+				alt={item.iconAlt}
+				width={20}
+				height={20}
+				className={clsx(item.isButton && classes.hideIcon)}
+			/>
+			<span className={clsx(classes.label, isCollapsed && 'hidden')}>{item.label}</span>
 		</>
 	)
 

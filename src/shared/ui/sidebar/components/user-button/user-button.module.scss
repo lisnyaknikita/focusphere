@@ -3,6 +3,7 @@
 	height: 60px;
 	background-color: var(--primary);
 	border-radius: 5px;
+	transition: all 0.3s ease;
 
 	&:global(.collapsed) {
 		width: 40px;

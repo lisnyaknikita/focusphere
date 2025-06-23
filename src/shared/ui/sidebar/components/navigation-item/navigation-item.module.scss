@@ -21,6 +21,23 @@
 	font-weight: 600;
 	transition: background-color 0.3s ease;
 
+	.label {
+		opacity: 1;
+		width: auto;
+		white-space: nowrap;
+		transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+
+		&:global(.hidden) {
+			opacity: 0;
+			width: 0;
+			overflow: hidden;
+		}
+	}
+
+	.hideIcon {
+		transition: transform 0.3s ease-in-out;
+	}
+
 	&:hover {
 		background-color: var(--primary);
 	}
