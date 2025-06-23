@@ -1,0 +1,28 @@
+.sidebar {
+	padding: 30px 11px 30px 11px;
+	background-color: var(--secondary);
+	border-radius: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	transition: all 0.3s ease;
+
+	&:global(.collapsed) {
+		& .navigation {
+			width: 40px;
+		}
+	}
+}
+
+.navigation {
+	width: 257px;
+	transition: width 0.3s ease;
+}
+
+.navigationList {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	width: 100%;
+}

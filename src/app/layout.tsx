@@ -1,3 +1,4 @@
+import { Sidebar } from '@/shared/ui/sidebar/sidebar'
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
 import './globals.scss'
@@ -19,7 +20,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${notoSans.variable}`}>{children}</body>
+			<body className={`${notoSans.variable}`}>
+				<div className='wrapper'>
+					<Sidebar />
+					{children}
+				</div>
+			</body>
 		</html>
 	)
 }
