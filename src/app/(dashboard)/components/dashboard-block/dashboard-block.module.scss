@@ -11,43 +11,13 @@
 		background-color: var(--secondary);
 		border-radius: 5px;
 		padding: 13px 30px;
-		overflow-y: auto;
+		// overflow-y: auto;
+		// scrollbar-width: thin;
 
 		> h2 {
 			font-size: 24px;
 			font-weight: 400;
 			margin-bottom: 20px;
-		}
-	}
-}
-
-.events {
-	grid-column: 1;
-	grid-row: 1;
-	max-height: 265px;
-}
-
-.eventsList {
-	display: flex;
-	flex-direction: column;
-	gap: 13px;
-}
-
-.eventItem {
-	font-size: 16px;
-	font-weight: 400;
-	background-color: transparent;
-	border: 1px solid #3b3a3a;
-	border-radius: 5px;
-
-	> a {
-		padding: 7px;
-		display: inline-block;
-		width: 100%;
-		transition: background-color 0.3s ease;
-
-		&:hover {
-			background-color: var(--primary);
 		}
 	}
 }

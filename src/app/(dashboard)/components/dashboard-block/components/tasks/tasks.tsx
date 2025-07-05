@@ -1,3 +1,4 @@
+import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
 import classes from './tasks.module.scss'
 
 export const TasksBlock = () => {
@@ -6,7 +7,7 @@ export const TasksBlock = () => {
 			<h2>Tasks for today:</h2>
 			<ul>
 				<li>
-					<input type='checkbox' defaultChecked />
+					<CheckboxCard />
 				</li>
 			</ul>
 		</section>
