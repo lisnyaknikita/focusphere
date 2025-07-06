@@ -1,0 +1,17 @@
+.tasksList {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+	max-height: 190px;
+	padding-right: 5px;
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--primary);
+		border-radius: 10px;
+	}
+}
