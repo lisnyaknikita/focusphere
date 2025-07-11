@@ -1,3 +1,9 @@
+.tasks {
+	grid-column: 1;
+	grid-row: 2;
+	max-height: 265px;
+}
+
 .tasksList {
 	display: flex;
 	flex-direction: column;
