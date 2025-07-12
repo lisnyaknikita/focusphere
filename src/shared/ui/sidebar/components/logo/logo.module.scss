@@ -11,5 +11,9 @@
 		&:global(.collapsed) {
 			margin-left: 0;
 		}
+
+		@media screen and (max-width: 1120px) {
+			font-size: 24px;
+		}
 	}
 }

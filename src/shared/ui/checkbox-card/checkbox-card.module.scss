@@ -1,0 +1,48 @@
+.card {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border: 1px solid #3b3a3a;
+	border-radius: 5px;
+	padding: 7px;
+	cursor: pointer;
+	position: relative;
+	transition: background-color 0.3s ease;
+
+	&:hover {
+		background-color: var(--primary);
+	}
+}
+
+.checkbox {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.customCheckbox {
+	width: 21px;
+	height: 20px;
+	background-color: #d9d9d9;
+	border-radius: 5px;
+	margin-right: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.checkbox:checked + &::after {
+		content: '';
+		width: 6px;
+		height: 10px;
+		border: solid #000;
+		border-width: 0 2px 2px 0;
+		transform: rotate(45deg) translateY(-2px) translateX(-1px);
+	}
+}
+
+.label {
+	font-size: 16px;
+	font-weight: 400;
+	color: #fff;
+	user-select: none;
+}

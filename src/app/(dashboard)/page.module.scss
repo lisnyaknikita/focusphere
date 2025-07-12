@@ -1,0 +1,11 @@
+.dashboard {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	padding: 23px 45px 20px 45px;
+	height: 100%;
+
+	@media screen and (max-width: 1120px) {
+		padding: 23px 15px 20px 15px;
+	}
+}
