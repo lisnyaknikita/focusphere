@@ -4,15 +4,8 @@ import { BeatLoader } from 'react-spinners'
 
 import classes from './quotes.module.scss'
 
+import { merriweather } from '@/shared/fonts/font-merriweather'
 import { useQuote } from '@/shared/hooks/quotes/useQuote'
-import { Merriweather } from 'next/font/google'
-
-export const merriweather = Merriweather({
-	subsets: ['latin'],
-	weight: ['400', '700'],
-	variable: '--font-merriweather',
-	display: 'swap',
-})
 
 export const QuotesBlock = () => {
 	const { quote, isLoading } = useQuote()
@@ -30,4 +23,3 @@ export const QuotesBlock = () => {
 		</section>
 	)
 }
-//TODO: change the approach of getting quote font, commit
