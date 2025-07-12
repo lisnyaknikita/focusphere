@@ -2,4 +2,13 @@
 	font-size: 40px;
 	font-weight: 400;
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 1120px) {
+		font-size: 32px;
+	}
+
+	@media screen and (max-width: 1024px) {
+		font-size: 26px;
+		margin-bottom: 30px;
+	}
 }

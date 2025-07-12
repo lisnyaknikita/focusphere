@@ -5,6 +5,10 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+
+	@media screen and (max-width: 1024px) {
+		order: 2;
+	}
 }
 
 .quoteContent {

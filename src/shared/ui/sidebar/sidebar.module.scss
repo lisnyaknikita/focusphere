@@ -18,6 +18,10 @@
 .navigation {
 	width: 257px;
 	transition: width 0.3s ease;
+
+	@media screen and (max-width: 1120px) {
+		width: 200px;
+	}
 }
 
 .navigationList {
