@@ -1,5 +1,8 @@
-import clsx from 'clsx'
+'use client'
 
+import { Modal } from '@/shared/ui/modal/modal'
+import clsx from 'clsx'
+import { useState } from 'react'
 import classes from './user-button.module.scss'
 
 interface UserButtonProps {
@@ -7,5 +10,17 @@ interface UserButtonProps {
 }
 
 export const UserButton = ({ isCollapsed }: UserButtonProps) => {
-	return <button className={clsx(classes.userButton, isCollapsed && 'collapsed')}>N</button>
+	const [isVisible, setIsVisible] = useState(false)
+
+	return (
+		<>
+			<button className={clsx(classes.userButton, isCollapsed && 'collapsed')} onClick={() => setIsVisible(true)}>
+				N
+			</button>
+
+			<Modal isVisible={isVisible} onClose={() => setIsVisible(false)}>
+				Modal
+			</Modal>
+		</>
+	)
 }
