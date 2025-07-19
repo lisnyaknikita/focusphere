@@ -1,0 +1,39 @@
+.wrapper {
+	display: flex;
+	align-items: center;
+}
+
+.usernameWrapper {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+
+	&:hover .icon {
+		opacity: 1;
+	}
+}
+
+.username {
+	font-size: 20px;
+	font-weight: 400;
+	color: var(--text);
+}
+
+.usernameInput {
+	max-width: 100px;
+	font-size: 20px;
+	font-weight: 400;
+	color: var(--text);
+	background: transparent;
+	border: none;
+	outline: none;
+}
+
+.icon {
+	width: 19px;
+	height: 23px;
+	color: #999;
+	opacity: 0;
+	transition: opacity 0.2s;
+}
