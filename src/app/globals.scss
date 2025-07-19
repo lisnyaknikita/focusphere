@@ -2,6 +2,7 @@
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
 	--text: #1c1b1b;
+	--logo-icon: #1c1b1b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,6 +10,7 @@
 		--primary: #1c1b1b;
 		--secondary: #0e0e0ee5;
 		--text: #ffffff;
+		--logo-icon: #ffffff;
 	}
 }
 
