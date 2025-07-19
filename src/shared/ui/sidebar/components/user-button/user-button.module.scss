@@ -10,3 +10,103 @@
 		height: 40px;
 	}
 }
+
+.modalInner {
+	width: 247px;
+	position: relative;
+}
+
+.modalTitle {
+	font-size: 22px;
+	font-weight: 400;
+	margin-bottom: 40px;
+}
+
+.themeSwitcher {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 40px;
+
+	> span {
+		font-size: 16px;
+		font-weight: 400;
+	}
+}
+
+.toggle {
+	width: 30px;
+	height: 16px;
+	background-color: #005fed;
+	border-radius: 10px;
+	position: relative;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&::before {
+		content: '';
+		position: absolute;
+		height: 14px;
+		width: 14px;
+		background-color: #fff;
+		border-radius: 50%;
+		top: 50%;
+		right: 14px;
+		transform: translateY(-50%);
+		transition: right 0.2s;
+	}
+
+	&.active::before {
+		right: 2px;
+	}
+}
+
+.userInfo {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 40px;
+}
+
+.userEmail {
+	display: block;
+	font-size: 20px;
+	font-weight: 400;
+	margin: 0 auto 40px auto;
+	text-align: center;
+}
+
+.saveButton {
+	font-size: 18px;
+	font-weight: 400;
+	color: #000;
+	padding: 4px;
+	background-color: #f2f2f2;
+	border-radius: 10px;
+	display: inline-block;
+	width: 100%;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #d0cccc;
+	}
+}
+
+.closeButton {
+	position: absolute;
+	right: -10px;
+	top: -10px;
+	width: 25px;
+	height: 25px;
+
+	> svg circle {
+		transition: all 0.2s;
+	}
+
+	&:hover {
+		> svg circle {
+			fill: var(--secondary);
+		}
+	}
+}

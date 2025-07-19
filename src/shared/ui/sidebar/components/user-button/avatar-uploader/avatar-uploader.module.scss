@@ -1,0 +1,28 @@
+.wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.avatar {
+	width: 60px;
+	height: 60px;
+	border-radius: 10px;
+	background-color: var(--text);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	margin-left: 10px;
+
+	> svg {
+		width: 18px;
+		height: 24px;
+	}
+
+	img {
+		object-fit: cover;
+	}
+}
