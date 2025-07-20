@@ -13,7 +13,7 @@ export const QuotesBlock = () => {
 	return (
 		<section className={`${classes.quotes} ${merriweather.className}`}>
 			{isLoading || !quote ? (
-				<BeatLoader color='#fff' size={10} className={classes.loader} />
+				<BeatLoader color='#aaa' size={10} className={classes.loader} />
 			) : (
 				<>
 					<blockquote className={classes.quoteContent}>{quote.content}</blockquote>
