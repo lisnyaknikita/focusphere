@@ -23,7 +23,7 @@
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background-color: var(--primary);
+		background-color: var(--hover);
 		border-radius: 10px;
 	}
 }
@@ -32,17 +32,18 @@
 	font-size: 16px;
 	font-weight: 400;
 	background-color: transparent;
-	border: 1px solid #3b3a3a;
-	border-radius: 5px;
 
 	> a {
+		color: var(--text);
 		padding: 7px;
 		display: inline-block;
 		width: 100%;
+		border: 1px solid #3b3a3a;
+		border-radius: 5px;
 		transition: background-color 0.3s ease;
 
 		&:hover {
-			background-color: var(--primary);
+			background-color: var(--hover);
 		}
 	}
 }

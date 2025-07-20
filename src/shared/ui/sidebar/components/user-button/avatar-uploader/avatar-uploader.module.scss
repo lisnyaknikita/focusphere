@@ -20,6 +20,10 @@
 	> svg {
 		width: 18px;
 		height: 24px;
+
+		> path {
+			fill: var(--checkbox-icon);
+		}
 	}
 
 	img {

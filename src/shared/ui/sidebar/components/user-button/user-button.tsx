@@ -2,7 +2,7 @@
 
 import { Modal } from '@/shared/ui/modal/modal'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AvatarUploader } from './avatar-uploader/avatar-uploader'
 import { EditableUsername } from './editable-username/editable-username'
 import classes from './user-button.module.scss'
@@ -13,7 +13,32 @@ interface UserButtonProps {
 
 export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isVisible, setIsVisible] = useState(false)
-	const [isToggled, setIsToggled] = useState(true)
+	const [isToggled, setIsToggled] = useState(false)
+
+	useEffect(() => {
+		const savedTheme = localStorage.getItem('theme')
+		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+		if (savedTheme) {
+			setIsToggled(savedTheme === 'dark')
+			document.documentElement.classList.toggle('dark', savedTheme === 'dark')
+			document.documentElement.classList.toggle('light', savedTheme === 'light')
+		} else {
+			setIsToggled(prefersDark)
+			document.documentElement.classList.toggle('dark', prefersDark)
+			document.documentElement.classList.toggle('light', !prefersDark)
+		}
+	}, [])
+
+	const handleToggle = () => {
+		setIsToggled(prev => {
+			const newTheme = !prev ? 'dark' : 'light'
+			localStorage.setItem('theme', newTheme)
+			document.documentElement.classList.toggle('dark', !prev)
+			document.documentElement.classList.toggle('light', prev)
+			return !prev
+		})
+	}
 
 	return (
 		<>
@@ -26,10 +51,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 					<h6 className={classes.modalTitle}>Settings</h6>
 					<div className={classes.themeSwitcher}>
 						<span>Dark mode</span>
-						<div
-							className={clsx(classes.toggle, isToggled && classes.active)}
-							onClick={() => setIsToggled(prev => !prev)}
-						></div>
+						<div className={clsx(classes.toggle, isToggled && classes.active)} onClick={handleToggle}></div>
 					</div>
 					<div className={classes.userInfo}>
 						<AvatarUploader />

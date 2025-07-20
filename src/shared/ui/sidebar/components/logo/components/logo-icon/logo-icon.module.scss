@@ -1,0 +1,6 @@
+.logoIcon {
+	> path {
+		fill: var(--logo-icon);
+		transition: all 0.2s;
+	}
+}

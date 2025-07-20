@@ -1,7 +1,8 @@
 .userButton {
 	width: 60px;
 	height: 60px;
-	background-color: var(--primary);
+	background-color: var(--hover);
+	color: var(--text);
 	border-radius: 5px;
 	transition: all 0.3s ease;
 
@@ -37,7 +38,7 @@
 .toggle {
 	width: 30px;
 	height: 16px;
-	background-color: #005fed;
+	background-color: var(--theme-toggler-bg);
 	border-radius: 10px;
 	position: relative;
 	cursor: pointer;
@@ -48,7 +49,7 @@
 		position: absolute;
 		height: 14px;
 		width: 14px;
-		background-color: #fff;
+		background-color: var(--theme-toggler-circle);
 		border-radius: 50%;
 		top: 50%;
 		right: 14px;
@@ -79,9 +80,9 @@
 .saveButton {
 	font-size: 18px;
 	font-weight: 400;
-	color: #000;
+	color: var(--save-button-text);
 	padding: 4px;
-	background-color: #f2f2f2;
+	background-color: var(--save-button-bg);
 	border-radius: 10px;
 	display: inline-block;
 	width: 100%;
@@ -89,7 +90,7 @@
 	transition: background-color 0.2s;
 
 	&:hover {
-		background-color: #d0cccc;
+		background-color: #aaa;
 	}
 }
 
@@ -101,12 +102,17 @@
 	height: 25px;
 
 	> svg circle {
+		fill: var(--close-button-bg);
 		transition: all 0.2s;
+	}
+
+	> svg path {
+		fill: var(--close-button-fill);
 	}
 
 	&:hover {
 		> svg circle {
-			fill: var(--secondary);
+			fill: var(--hover);
 		}
 	}
 }

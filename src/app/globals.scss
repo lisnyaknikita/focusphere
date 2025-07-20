@@ -2,6 +2,48 @@
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
 	--text: #1c1b1b;
+	--logo-icon: #1c1b1b;
+	--hover: #cecece;
+	--checkbox-bg: #101010;
+	--checkbox-icon: #ffffff;
+	--close-button-bg: #ebebeb;
+	--close-button-fill: rgba(28, 27, 27, 0.6);
+	--save-button-bg: #1c1b1b;
+	--save-button-text: #f2f2f2;
+	--theme-toggler-bg: #d9d9d9;
+	--theme-toggler-circle: #ffffff;
+}
+
+:root.light {
+	--primary: #ffffff;
+	--secondary: #f2f2f2e5;
+	--text: #1c1b1b;
+	--logo-icon: #1c1b1b;
+	--hover: #cecece;
+	--checkbox-bg: #101010;
+	--checkbox-icon: #ffffff;
+	--close-button-bg: #ebebeb;
+	--close-button-fill: rgba(28, 27, 27, 0.6);
+	--save-button-bg: #1c1b1b;
+	--save-button-text: #f2f2f2;
+	--theme-toggler-bg: #d9d9d9;
+	--theme-toggler-circle: #ffffff;
+}
+
+:root.dark {
+	--primary: #1c1b1b;
+	--secondary: #0e0e0ee5;
+	--text: #ffffff;
+	--logo-icon: #ffffff;
+	--hover: #1c1b1b;
+	--checkbox-bg: #d9d9d9;
+	--checkbox-icon: #000000;
+	--close-button-bg: #262525;
+	--close-button-fill: #ffffff;
+	--save-button-bg: #f2f2f2;
+	--save-button-text: #000;
+	--theme-toggler-bg: #005fed;
+	--theme-toggler-circle: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,6 +51,16 @@
 		--primary: #1c1b1b;
 		--secondary: #0e0e0ee5;
 		--text: #ffffff;
+		--logo-icon: #ffffff;
+		--hover: #1c1b1b;
+		--checkbox-bg: #d9d9d9;
+		--checkbox-icon: #000000;
+		--close-button-bg: #262525;
+		--close-button-fill: #ffffff;
+		--save-button-bg: #f2f2f2;
+		--save-button-text: #000;
+		--theme-toggler-bg: #005fed;
+		--theme-toggler-circle: #ffffff;
 	}
 }
 

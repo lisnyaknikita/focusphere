@@ -6,12 +6,10 @@ import classes from './page.module.scss'
 
 export default function Dashboard() {
 	return (
-		<>
-			<div className={classes.dashboard}>
-				<Title />
-				<DashboardBlock />
-				<QuickAccess />
-			</div>
-		</>
+		<div className={classes.dashboard}>
+			<Title />
+			<DashboardBlock />
+			<QuickAccess />
+		</div>
 	)
 }

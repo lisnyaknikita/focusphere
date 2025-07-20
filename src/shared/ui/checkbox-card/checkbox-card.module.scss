@@ -10,7 +10,7 @@
 	transition: background-color 0.3s ease;
 
 	&:hover {
-		background-color: var(--primary);
+		background-color: var(--hover);
 	}
 }
 
@@ -23,7 +23,7 @@
 .customCheckbox {
 	width: 21px;
 	height: 20px;
-	background-color: #d9d9d9;
+	background-color: var(--checkbox-bg);
 	border-radius: 5px;
 	margin-right: 6px;
 	display: flex;
@@ -34,7 +34,7 @@
 		content: '';
 		width: 6px;
 		height: 10px;
-		border: solid #000;
+		border: solid var(--checkbox-icon);
 		border-width: 0 2px 2px 0;
 		transform: rotate(45deg) translateY(-2px) translateX(-1px);
 	}
@@ -43,6 +43,6 @@
 .label {
 	font-size: 16px;
 	font-weight: 400;
-	color: #fff;
+	color: var(--text);
 	user-select: none;
 }
