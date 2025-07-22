@@ -1,5 +1,4 @@
 import { Sidebar } from '@/shared/ui/sidebar/sidebar'
-import { MantineProvider } from '@mantine/core'
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
 import './globals.scss'
@@ -22,12 +21,10 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={`${notoSans.variable}`}>
-				<MantineProvider>
-					<div className='wrapper'>
-						<Sidebar />
-						{children}
-					</div>
-				</MantineProvider>
+				<div className='wrapper'>
+					<Sidebar />
+					{children}
+				</div>
 			</body>
 		</html>
 	)
