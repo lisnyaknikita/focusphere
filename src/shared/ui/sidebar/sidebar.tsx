@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { Logo } from './components/logo/logo'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavigationItem } from './components/navigation-item/navigation-item'
 import { UserButton } from './components/user-button/user-button'
 import { navItems } from './navigation-items'
@@ -11,6 +11,17 @@ import classes from './sidebar.module.scss'
 
 export const Sidebar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false)
+
+	useEffect(() => {
+		const savedState = localStorage.getItem('sidebar-collapsed')
+		if (savedState !== null) {
+			setIsCollapsed(savedState === 'true')
+		}
+	}, [])
+
+	useEffect(() => {
+		localStorage.setItem('sidebar-collapsed', String(isCollapsed))
+	}, [isCollapsed])
 
 	const onHideClick = () => {
 		setIsCollapsed(prev => !prev)

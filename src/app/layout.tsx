@@ -1,6 +1,7 @@
-import { Sidebar } from '@/shared/ui/sidebar/sidebar'
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
+
+import { Sidebar } from '@/shared/ui/sidebar/sidebar'
 import './globals.scss'
 
 const notoSans = Noto_Sans({
