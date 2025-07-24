@@ -1,12 +1,23 @@
 'use client'
 
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import classes from './avatar-uploader.module.scss'
 
 export const AvatarUploader = () => {
 	const [avatar, setAvatar] = useState<string | null>(null)
+	const [isAvatarUploaderTooltipOpen, setIsAvatarUploaderTooltipOpen] = useState(false)
+
 	const inputRef = useRef<HTMLInputElement | null>(null)
+
+	const { refs: avatarUploaderRefs, floatingStyles: avatarUploaderFloatingStyles } = useFloating({
+		open: isAvatarUploaderTooltipOpen,
+		onOpenChange: setIsAvatarUploaderTooltipOpen,
+		middleware: [offset(5), flip(), shift()],
+		whileElementsMounted: autoUpdate,
+		placement: 'right',
+	})
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0]
@@ -24,7 +35,30 @@ export const AvatarUploader = () => {
 	}
 
 	return (
-		<div className={classes.wrapper}>
+		<div
+			className={classes.wrapper}
+			ref={avatarUploaderRefs.setReference}
+			onMouseEnter={() => setIsAvatarUploaderTooltipOpen(true)}
+			onMouseLeave={() => setIsAvatarUploaderTooltipOpen(false)}
+		>
+			{isAvatarUploaderTooltipOpen && (
+				<div
+					ref={avatarUploaderRefs.setFloating}
+					style={{
+						...avatarUploaderFloatingStyles,
+						background: 'var(--save-button-bg)',
+						color: 'var(--save-button-text)',
+						padding: '4px 8px',
+						borderRadius: '5px',
+						fontSize: '14px',
+						fontWeight: 700,
+						zIndex: 1000,
+					}}
+					role='tooltip'
+				>
+					Edit
+				</div>
+			)}
 			<div className={classes.avatar} onClick={triggerFileInput}>
 				{avatar ? (
 					<Image src={avatar} alt='Avatar' fill />

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.13",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.6",
     "next": "15.3.3",

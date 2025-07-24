@@ -4,6 +4,7 @@
 	background-color: var(--hover);
 	color: var(--text);
 	border-radius: 5px;
+	font-family: inherit;
 	transition: all 0.3s ease;
 
 	&:global(.collapsed) {
@@ -94,7 +95,7 @@
 	}
 }
 
-.closeButton {
+.signOutButton {
 	position: absolute;
 	right: -10px;
 	top: -10px;

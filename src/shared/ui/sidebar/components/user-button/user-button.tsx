@@ -1,6 +1,7 @@
 'use client'
 
 import { Modal } from '@/shared/ui/modal/modal'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { AvatarUploader } from './avatar-uploader/avatar-uploader'
@@ -14,6 +15,24 @@ interface UserButtonProps {
 export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [isToggled, setIsToggled] = useState(false)
+	const [isSettingsTooltipOpen, setIsSettingsTooltipOpen] = useState(false)
+	const [isSignOutTooltipOpen, setIsSignOutTooltipOpen] = useState(false)
+
+	const { refs: settingsRefs, floatingStyles: settingsFloatingStyles } = useFloating({
+		open: isSettingsTooltipOpen,
+		onOpenChange: setIsSettingsTooltipOpen,
+		middleware: [offset(10), flip(), shift()],
+		whileElementsMounted: autoUpdate,
+		placement: 'right',
+	})
+
+	const { refs: signOutRefs, floatingStyles: signOutFloatingStyles } = useFloating({
+		open: isSignOutTooltipOpen,
+		onOpenChange: setIsSignOutTooltipOpen,
+		middleware: [offset(10), flip(), shift()],
+		whileElementsMounted: autoUpdate,
+		placement: 'right',
+	})
 
 	useEffect(() => {
 		const savedTheme = localStorage.getItem('theme')
@@ -42,8 +61,32 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 
 	return (
 		<>
-			<button className={clsx(classes.userButton, isCollapsed && 'collapsed')} onClick={() => setIsVisible(true)}>
+			<button
+				className={clsx(classes.userButton, isCollapsed && 'collapsed')}
+				onClick={() => setIsVisible(true)}
+				ref={settingsRefs.setReference}
+				onMouseEnter={() => isCollapsed && setIsSettingsTooltipOpen(true)}
+				onMouseLeave={() => setIsSettingsTooltipOpen(false)}
+			>
 				N
+				{isSettingsTooltipOpen && isCollapsed && (
+					<div
+						ref={settingsRefs.setFloating}
+						style={{
+							...settingsFloatingStyles,
+							background: 'var(--save-button-bg)',
+							color: 'var(--save-button-text)',
+							padding: '4px 8px',
+							borderRadius: '5px',
+							fontSize: '14px',
+							fontWeight: 700,
+							zIndex: 1000,
+						}}
+						role='tooltip'
+					>
+						Settings
+					</div>
+				)}
 			</button>
 
 			<Modal isVisible={isVisible} onClose={() => setIsVisible(false)}>
@@ -61,7 +104,12 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						example@gmail.com
 					</a>
 					<button className={classes.saveButton}>Save</button>
-					<button className={classes.closeButton}>
+					<button
+						className={classes.signOutButton}
+						ref={signOutRefs.setReference}
+						onMouseEnter={() => isCollapsed && setIsSignOutTooltipOpen(true)}
+						onMouseLeave={() => setIsSignOutTooltipOpen(false)}
+					>
 						<svg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
 							<circle cx='10' cy='10' r='10' fill='#262525' />
 							<path
@@ -75,6 +123,25 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								fillOpacity='.82'
 							/>
 						</svg>
+						{isSignOutTooltipOpen && isCollapsed && (
+							<div
+								ref={signOutRefs.setFloating}
+								style={{
+									...signOutFloatingStyles,
+									background: 'var(--save-button-bg)',
+									color: 'var(--save-button-text)',
+									padding: '4px 8px',
+									borderRadius: '5px',
+									fontSize: '14px',
+									fontWeight: 700,
+									whiteSpace: 'nowrap',
+									zIndex: 1000,
+								}}
+								role='tooltip'
+							>
+								Sign Out
+							</div>
+						)}
 					</button>
 				</div>
 			</Modal>
