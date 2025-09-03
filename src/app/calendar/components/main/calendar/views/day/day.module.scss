@@ -1,0 +1,60 @@
+.dayView {
+	display: grid;
+	grid-template-columns: auto auto 1fr;
+}
+
+.dayColumn {
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	padding-left: 10px;
+
+	> .dayName {
+		text-transform: uppercase;
+		font-size: 16px;
+	}
+
+	> .dayNumber {
+		font-size: 18px;
+	}
+}
+
+.scrollArea {
+	height: 90%;
+	overflow: hidden;
+}
+
+.scrollGrid {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	overflow-y: scroll;
+	height: 100%;
+}
+
+.hours {
+	display: flex;
+	flex-direction: column;
+	gap: 19px;
+	padding-right: 10px;
+	border-right: 0.3px solid var(--line);
+}
+
+.hourColumn {
+	font-size: 14px;
+}
+
+.dayBoxColumn {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.hourBox {
+	border-bottom: 0.3px solid var(--line);
+	width: 100%;
+	cursor: pointer;
+	height: 18px;
+}
