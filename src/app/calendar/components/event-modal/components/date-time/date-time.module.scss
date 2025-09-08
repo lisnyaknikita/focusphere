@@ -1,0 +1,38 @@
+.dateTime {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 25px;
+}
+
+.icon {
+	> svg path {
+		fill: var(--text);
+	}
+}
+
+.date {
+	color: var(--text);
+}
+
+.date {
+	font-size: 16px;
+	font-family: inherit;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.timePicker {
+	font-size: 14px;
+	font-family: inherit;
+
+	> div {
+		border: none !important;
+	}
+
+	> div div {
+		min-width: auto !important;
+	}
+}

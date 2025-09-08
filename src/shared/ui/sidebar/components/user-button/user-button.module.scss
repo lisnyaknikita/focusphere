@@ -4,7 +4,8 @@
 	background-color: var(--hover);
 	color: var(--text);
 	border-radius: 5px;
-	transition: all 0.3s ease;
+	font-family: inherit;
+	transition: all 0.2s ease;
 
 	&:global(.collapsed) {
 		width: 40px;
@@ -15,12 +16,21 @@
 .modalInner {
 	width: 247px;
 	position: relative;
+
+	@media screen and (max-width: 768px) {
+		width: 200px;
+	}
 }
 
 .modalTitle {
 	font-size: 22px;
 	font-weight: 400;
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 768px) {
+		font-size: 20px;
+		margin-bottom: 30px;
+	}
 }
 
 .themeSwitcher {
@@ -32,6 +42,10 @@
 	> span {
 		font-size: 16px;
 		font-weight: 400;
+	}
+
+	@media screen and (max-width: 768px) {
+		margin-bottom: 20px;
 	}
 }
 
@@ -67,6 +81,10 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 768px) {
+		margin-bottom: 20px;
+	}
 }
 
 .userEmail {
@@ -75,6 +93,10 @@
 	font-weight: 400;
 	margin: 0 auto 40px auto;
 	text-align: center;
+
+	@media screen and (max-width: 768px) {
+		font-size: 16px;
+	}
 }
 
 .saveButton {
@@ -92,9 +114,13 @@
 	&:hover {
 		background-color: #aaa;
 	}
+
+	@media screen and (max-width: 768px) {
+		font-size: 16px;
+	}
 }
 
-.closeButton {
+.signOutButton {
 	position: absolute;
 	right: -10px;
 	top: -10px;
@@ -114,5 +140,12 @@
 		> svg circle {
 			fill: var(--hover);
 		}
+	}
+
+	@media screen and (max-width: 768px) {
+		width: 20px;
+		height: 20px;
+		right: -5px;
+		top: -5px;
 	}
 }

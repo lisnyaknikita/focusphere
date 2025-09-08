@@ -1,0 +1,84 @@
+.weekView {
+	// height: 100%;
+	display: grid;
+	grid-template-columns: auto 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+	place-items: center;
+}
+
+.headerRow {
+	// display: grid;
+	// grid-template-columns: repeat(7, 1fr);
+	// margin-left: 30px;
+	// margin-bottom: 10px;
+}
+
+.dayColumn {
+	display: flex;
+	gap: 5px;
+	flex-direction: column;
+	align-items: center;
+	// border-right: 0.3px solid var(--line);
+	width: 100%;
+
+	> .dayName {
+		text-transform: uppercase;
+		font-size: 16px;
+	}
+
+	> .dayNumber {
+		font-size: 18px;
+	}
+}
+
+.scrollArea {
+	height: 90%;
+}
+
+.scrollGrid {
+	display: grid;
+	grid-template-columns: auto 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.hours {
+	border-right: 0.3px solid var(--line);
+}
+
+.dayBoxColumn {
+	border-right: 0.3px solid var(--line);
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.hourBox {
+	border-bottom: 0.3px solid var(--line);
+	width: 100%;
+	cursor: pointer;
+	height: 18px;
+}
+
+.hours {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-right: 10px;
+}
+
+.hourColumn {
+	font-size: 14px;
+}
+
+.body {
+	// display: grid;
+	// grid-template-columns: 60px repeat(7, 1fr);
+	// position: relative;
+	// height: 100%;
+}
+
+.timeColumn {
+	// display: flex;
+	// flex-direction: column;
+	// gap: 4px;
+	// font-size: 14px;
+}

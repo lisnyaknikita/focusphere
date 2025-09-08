@@ -1,0 +1,41 @@
+.colorPicker {
+	position: relative;
+	margin-bottom: 40px;
+}
+
+.triggerButton {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	padding: 8px;
+	background-color: var(--secondary);
+	border-radius: 5px;
+}
+
+.selectedColorCircle {
+	border-radius: 50%;
+	width: 18px;
+	height: 18px;
+}
+
+.arrow {
+	margin-bottom: 2px;
+}
+
+.dropdown {
+	position: absolute;
+	top: 35px;
+	left: 0;
+	background-color: var(--secondaryFull);
+	padding: 8px;
+	border-radius: 5px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
+}
+
+.colorOption {
+	border-radius: 50%;
+	width: 18px;
+	height: 18px;
+}

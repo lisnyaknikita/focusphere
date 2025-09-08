@@ -1,6 +1,7 @@
 :root {
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
+	--secondaryFull: #f2f2f2;
 	--text: #1c1b1b;
 	--logo-icon: #1c1b1b;
 	--hover: #cecece;
@@ -12,11 +13,15 @@
 	--save-button-text: #f2f2f2;
 	--theme-toggler-bg: #d9d9d9;
 	--theme-toggler-circle: #ffffff;
+	--tab-bg: #8c8c8c;
+	--tab-bg-active: #636262;
+	--line: #c7c7c7;
 }
 
 :root.light {
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
+	--secondaryFull: #f2f2f2;
 	--text: #1c1b1b;
 	--logo-icon: #1c1b1b;
 	--hover: #cecece;
@@ -28,11 +33,15 @@
 	--save-button-text: #f2f2f2;
 	--theme-toggler-bg: #d9d9d9;
 	--theme-toggler-circle: #ffffff;
+	--tab-bg: #8c8c8c;
+	--tab-bg-active: #636262;
+	--line: #c7c7c7;
 }
 
 :root.dark {
 	--primary: #1c1b1b;
 	--secondary: #0e0e0ee5;
+	--secondaryFull: #0e0e0e;
 	--text: #ffffff;
 	--logo-icon: #ffffff;
 	--hover: #1c1b1b;
@@ -44,12 +53,17 @@
 	--save-button-text: #000;
 	--theme-toggler-bg: #005fed;
 	--theme-toggler-circle: #ffffff;
+	--tab-bg: #474747;
+	--tab-bg-active: #686868;
+	--btn-border: #3b3a3a;
+	--line: #c7c7c7;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
 		--primary: #1c1b1b;
 		--secondary: #0e0e0ee5;
+		--secondaryFull: #0e0e0e;
 		--text: #ffffff;
 		--logo-icon: #ffffff;
 		--hover: #1c1b1b;
@@ -61,6 +75,10 @@
 		--save-button-text: #000;
 		--theme-toggler-bg: #005fed;
 		--theme-toggler-circle: #ffffff;
+		--tab-bg: #474747;
+		--tab-bg-active: #686868;
+		--btn-border: #3b3a3a;
+		--line: #c7c7c7;
 	}
 }
 
@@ -104,6 +122,10 @@ ul {
 	display: flex;
 	padding: 9px 32px;
 	height: 100%;
+}
+
+.react-time-picker__wrapper {
+	border: none;
 }
 
 @media (prefers-color-scheme: dark) {

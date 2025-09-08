@@ -3,7 +3,8 @@
 import clsx from 'clsx'
 import { Logo } from './components/logo/logo'
 
-import { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { NavigationItem } from './components/navigation-item/navigation-item'
 import { UserButton } from './components/user-button/user-button'
 import { navItems } from './navigation-items'
@@ -11,6 +12,19 @@ import classes from './sidebar.module.scss'
 
 export const Sidebar = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false)
+
+	const pathname = usePathname()
+
+	useEffect(() => {
+		const savedState = localStorage.getItem('sidebar-collapsed')
+		if (savedState !== null) {
+			setIsCollapsed(savedState === 'true')
+		}
+	}, [])
+
+	useEffect(() => {
+		localStorage.setItem('sidebar-collapsed', String(isCollapsed))
+	}, [isCollapsed])
 
 	const onHideClick = () => {
 		setIsCollapsed(prev => !prev)
@@ -22,7 +36,13 @@ export const Sidebar = () => {
 			<nav className={classes.navigation}>
 				<ul className={classes.navigationList}>
 					{navItems.map(item => (
-						<NavigationItem key={item.label} item={item} isCollapsed={isCollapsed} onHideClick={onHideClick} />
+						<NavigationItem
+							key={item.label}
+							item={item}
+							isCollapsed={isCollapsed}
+							isActive={!item.isButton && item.href === pathname}
+							onHideClick={onHideClick}
+						/>
 					))}
 				</ul>
 			</nav>
