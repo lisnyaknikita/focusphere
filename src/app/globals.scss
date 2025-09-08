@@ -120,6 +120,10 @@ ul {
 	height: 100%;
 }
 
+.react-time-picker__wrapper {
+	border: none;
+}
+
 @media (prefers-color-scheme: dark) {
 	html {
 		color-scheme: dark;
