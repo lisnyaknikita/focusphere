@@ -1,6 +1,7 @@
 :root {
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
+	--secondaryFull: #f2f2f2;
 	--text: #1c1b1b;
 	--logo-icon: #1c1b1b;
 	--hover: #cecece;
@@ -20,6 +21,7 @@
 :root.light {
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
+	--secondaryFull: #f2f2f2;
 	--text: #1c1b1b;
 	--logo-icon: #1c1b1b;
 	--hover: #cecece;
@@ -39,6 +41,7 @@
 :root.dark {
 	--primary: #1c1b1b;
 	--secondary: #0e0e0ee5;
+	--secondaryFull: #0e0e0e;
 	--text: #ffffff;
 	--logo-icon: #ffffff;
 	--hover: #1c1b1b;
@@ -60,6 +63,7 @@
 	:root {
 		--primary: #1c1b1b;
 		--secondary: #0e0e0ee5;
+		--secondaryFull: #0e0e0e;
 		--text: #ffffff;
 		--logo-icon: #ffffff;
 		--hover: #1c1b1b;

@@ -5,6 +5,16 @@
 	margin-bottom: 25px;
 }
 
+.icon {
+	> svg path {
+		fill: var(--text);
+	}
+}
+
+.date {
+	color: var(--text);
+}
+
 .date {
 	font-size: 16px;
 	font-family: inherit;
