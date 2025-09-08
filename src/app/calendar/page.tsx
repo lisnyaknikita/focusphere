@@ -19,7 +19,7 @@ export default function Calendar() {
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as CalendarView | null
-		if (saved) setView(saved || 'week')
+		setView(saved ?? 'week')
 	}, [])
 
 	useEffect(() => {
