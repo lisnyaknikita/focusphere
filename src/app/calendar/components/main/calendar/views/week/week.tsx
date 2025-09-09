@@ -1,18 +1,37 @@
+import clsx from 'clsx'
 import classes from './week.module.scss'
 
 const hours = Array.from({ length: 24 }, (_, i) => i)
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-export const WeekView = () => {
+interface WeekViewProps {
+	isInPlanner: boolean
+	setIsDailyTasksModalVisible?: (status: boolean) => void
+}
+
+export const WeekView = ({ isInPlanner, setIsDailyTasksModalVisible }: WeekViewProps) => {
 	return (
 		<>
 			<div className={classes.weekView}>
 				<div style={{ width: 46 }}></div>
 				{days.map((day, i) => {
-					return (
-						<div key={day} className={classes.dayColumn}>
+					const content = (
+						<>
 							<span className={classes.dayName}>{day}</span>
 							<span className={classes.dayNumber}>{i + 1}</span>
+						</>
+					)
+					return isInPlanner ? (
+						<button
+							key={day}
+							className={clsx(classes.dayColumn, 'button')}
+							onClick={() => setIsDailyTasksModalVisible?.(true)}
+						>
+							{content}
+						</button>
+					) : (
+						<div key={day} className={classes.dayColumn}>
+							{content}
 						</div>
 					)
 				})}
