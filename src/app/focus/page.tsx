@@ -1,4 +1,5 @@
 import { BackgroundSoundsDropdown } from './header/background-sounds-dropdown/background-sounds-dropdown'
+import { Timer } from './main/timer/timer'
 import classes from './page.module.scss'
 
 export default function Focus() {
@@ -20,7 +21,9 @@ export default function Focus() {
 						</svg>
 					</button>
 				</header>
-				<main className={classes.timer}></main>
+				<main className={classes.timer}>
+					<Timer />
+				</main>
 			</div>
 		</>
 	)
