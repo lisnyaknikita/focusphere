@@ -1,0 +1,58 @@
+.weeklyGoals {
+	position: relative;
+
+	&:global(.opened) {
+		> .trigger svg {
+			transform: rotate(180deg);
+		}
+
+		> .dropdown {
+			width: 380px;
+			border: 1px solid var(--btn-border);
+			border-radius: 5px;
+			background-color: var(--secondaryFull);
+			padding: 5px;
+			display: flex;
+			flex-direction: column;
+			gap: 5px;
+			position: absolute;
+			top: 34px;
+			opacity: 1;
+			visibility: visible;
+			pointer-events: all;
+			transform: translateY(0);
+		}
+	}
+}
+
+.trigger {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+
+	> svg {
+		transition: transform 0.2s;
+	}
+}
+
+.dropdown {
+	position: absolute;
+	width: 380px;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transform: translateY(-10px);
+	transition: all 0.2s;
+}

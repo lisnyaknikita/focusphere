@@ -14,6 +14,6 @@ export const CalendarInner = ({ view }: CalendarInnerProps) => {
 		case 'day':
 			return <DayView />
 		default:
-			return <WeekView />
+			return <WeekView isInPlanner={false} />
 	}
 }

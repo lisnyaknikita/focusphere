@@ -1,0 +1,67 @@
+.modalInner {
+	width: 255px;
+	position: relative;
+	padding: 10px 20px 0 20px;
+}
+
+.eventForm {
+	display: flex;
+	flex-direction: column;
+}
+
+.eventTitle {
+	width: 100%;
+	background-color: transparent;
+	border: none;
+	outline: none;
+	border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+	font-size: 18px;
+	font-family: inherit;
+	color: var(--text);
+	padding: 2px 7px;
+	margin-bottom: 20px;
+
+	&::placeholder {
+		color: color-mix(in srgb, var(--line) 40%, transparent);
+	}
+}
+
+.saveButton {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 4px;
+	background-color: var(--save-button-bg);
+	border-radius: 10px;
+	display: inline-block;
+	width: 100%;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
+
+.closeButton {
+	position: absolute;
+	right: -10px;
+	top: -10px;
+	width: 25px;
+	height: 25px;
+
+	> svg circle {
+		fill: var(--close-button-bg);
+		transition: all 0.2s;
+	}
+
+	> svg path {
+		fill: var(--close-button-fill);
+	}
+
+	&:hover {
+		> svg circle {
+			fill: var(--hover);
+		}
+	}
+}
