@@ -132,7 +132,7 @@ export const navItems: NavItem[] = [
 	},
 	{
 		label: 'Focus and timer',
-		href: '/timer',
+		href: '/focus',
 		iconSvg: TimerIcon,
 		iconAlt: 'timer',
 	},
