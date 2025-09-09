@@ -10,19 +10,19 @@ export const TasksBlock = () => {
 			<h2>Tasks for today:</h2>
 			<ul className={classes.tasksList}>
 				<li>
-					<CheckboxCard label='Task 1' checked={false} onCheck={() => {}} />
+					<CheckboxCard label='Task 1' checked={false} onCheck={() => {}} withBorder={true} />
 				</li>
 				<li>
-					<CheckboxCard label='Task 2' checked={true} onCheck={() => {}} />
+					<CheckboxCard label='Task 2' checked={true} onCheck={() => {}} withBorder={true} />
 				</li>
 				<li>
-					<CheckboxCard label='Task 3' checked={true} onCheck={() => {}} />
+					<CheckboxCard label='Task 3' checked={true} onCheck={() => {}} withBorder={true} />
 				</li>
 				<li>
-					<CheckboxCard label='Task 4' checked={true} onCheck={() => {}} />
+					<CheckboxCard label='Task 4' checked={true} onCheck={() => {}} withBorder={true} />
 				</li>
 				<li>
-					<CheckboxCard label='Task 5' checked={true} onCheck={() => {}} />
+					<CheckboxCard label='Task 5' checked={true} onCheck={() => {}} withBorder={true} />
 				</li>
 			</ul>
 		</section>
