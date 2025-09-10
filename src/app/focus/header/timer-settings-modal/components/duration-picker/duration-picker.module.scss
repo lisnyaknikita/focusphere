@@ -12,6 +12,10 @@
 		justify-content: center;
 		border-top: 1px solid var(--btn-border);
 		border-bottom: 1px solid var(--btn-border);
+
+		&:hover {
+			background-color: var(--secondary);
+		}
 	}
 }
 
