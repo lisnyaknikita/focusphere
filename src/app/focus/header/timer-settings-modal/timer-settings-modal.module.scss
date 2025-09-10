@@ -1,0 +1,32 @@
+.modalInner {
+	width: 200px;
+	position: relative;
+}
+
+.title {
+	font-size: 20px;
+	font-weight: 400;
+	font-family: inherit;
+	color: var(--text);
+}
+
+.subtitle {
+	font-size: 14px;
+	font-weight: 400;
+	font-family: inherit;
+	color: var(--textSecondary);
+	margin-bottom: 25px;
+}
+
+.formItem {
+	display: inline-block;
+	margin-bottom: 10px;
+}
+
+.label {
+	font-size: 14px;
+	font-weight: 400;
+	font-family: inherit;
+	display: inline-block;
+	margin-bottom: 5px;
+}

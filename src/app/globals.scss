@@ -3,6 +3,7 @@
 	--secondary: #f2f2f2e5;
 	--secondaryFull: #f2f2f2;
 	--text: #1c1b1b;
+	--textSecondary: #1c1b1ba7;
 	--logo-icon: #1c1b1b;
 	--hover: #cecece;
 	--checkbox-bg: #101010;
@@ -24,6 +25,7 @@
 	--secondary: #f2f2f2e5;
 	--secondaryFull: #f2f2f2;
 	--text: #1c1b1b;
+	--textSecondary: #1c1b1ba7;
 	--logo-icon: #1c1b1b;
 	--hover: #cecece;
 	--checkbox-bg: #101010;
@@ -45,6 +47,7 @@
 	--secondary: #0e0e0ee5;
 	--secondaryFull: #0e0e0e;
 	--text: #ffffff;
+	--textSecondary: #ffffffa1;
 	--logo-icon: #ffffff;
 	--hover: #1c1b1b;
 	--checkbox-bg: #d9d9d9;
@@ -67,6 +70,7 @@
 		--secondary: #0e0e0ee5;
 		--secondaryFull: #0e0e0e;
 		--text: #ffffff;
+		--textSecondary: #ffffffa1;
 		--logo-icon: #ffffff;
 		--hover: #1c1b1b;
 		--checkbox-bg: #d9d9d9;
@@ -122,7 +126,7 @@ ul {
 
 .wrapper {
 	display: flex;
-	padding: 9px 32px;
+	padding: 9px 20px;
 	height: 100%;
 }
 

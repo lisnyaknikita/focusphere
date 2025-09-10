@@ -1,0 +1,39 @@
+.timerInner {
+	width: 850px;
+	height: 460px;
+	background-color: var(--secondary);
+	border-radius: 5px;
+	padding: 40px 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.timerLabel {
+	font-size: 40px;
+	font-weight: 400;
+	font-family: inherit;
+	margin-bottom: 30px;
+}
+
+.time {
+	font-size: 112px;
+	font-weight: 400;
+	font-family: inherit;
+	margin-bottom: 10px;
+}
+
+.circles {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 40px;
+}
+
+.circle {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	background-color: var(--text);
+}
