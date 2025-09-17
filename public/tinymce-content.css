@@ -18,7 +18,6 @@
 	--tab-bg-active: #636262;
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
-	--date-bg: #b5b5b5;
 }
 
 :root.light {
@@ -41,7 +40,6 @@
 	--tab-bg-active: #636262;
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
-	--date-bg: #b5b5b5;
 }
 
 :root.dark {
@@ -64,7 +62,6 @@
 	--tab-bg-active: #686868;
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
-	--date-bg: #474747;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -88,123 +85,21 @@
 		--tab-bg-active: #686868;
 		--btn-border: #3b3a3a;
 		--line: #c7c7c7;
-		--date-bg: #474747;
 	}
 }
 
-html,
 body {
-	max-width: 100vw;
-	overflow-x: hidden;
-}
-
-body {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1;
 	color: var(--text);
-	background: var(--primary);
-	font-family: Noto Sans, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	height: 100vh;
+	background-color: var(--primary);
+	padding: 0rem;
 }
 
-* {
-	box-sizing: border-box;
-	padding: 0;
-	margin: 0;
-}
-
-a {
-	color: inherit;
-	text-decoration: none;
-}
-
-button {
-	cursor: pointer;
-	border: none;
-	background-color: transparent;
-}
-
-ul {
-	list-style: none;
-}
-
-.wrapper {
-	display: flex;
-	padding: 9px 20px;
-	height: 100%;
-}
-
-.react-time-picker__wrapper {
-	border: none;
-}
-
-.tox-tinymce {
-	border: none !important;
-	border-radius: 0 !important;
-	flex: 1 !important;
-}
-
-.tox-editor-header {
-	background-color: var(--primary) !important;
-	border-bottom: 1px solid var(--btn-border) !important;
-}
-
-.tox-toolbar__primary {
-	background-color: var(--primary) !important;
-}
-
-.tox-toolbar__group button {
-	background-color: transparent !important;
-	border: 1px solid var(--btn-border) !important;
-	cursor: pointer !important;
-
-	> span {
-		color: var(--text) !important;
-	}
-
-	> span > svg path {
-		fill: var(--text) !important;
-	}
-
-	> div > svg path {
-		fill: var(--text) !important;
-	}
-
-	&.tox-tbtn--disabled {
-		cursor: not-allowed !important;
-		opacity: 0.5 !important;
-	}
-}
-
-.tox .tox-split-button__chevron {
-	> svg path {
-		fill: var(--text) !important;
-	}
-}
-
-.tox .tox-menu {
-	background-color: var(--secondaryFull) !important;
-	color: var(--text) !important;
-}
-
-.tox .tox-collection--list .tox-collection__item {
-	cursor: pointer !important;
-}
-
-.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
-	background-color: var(--secondaryFull) !important;
-	color: var(--text) !important;
-}
-
-.tox .tox-toolbar,
-.tox .tox-toolbar__overflow,
-.tox .tox-toolbar__primary {
-	background-color: var(--primary) !important;
-	border: none !important;
-}
-
-@media (prefers-color-scheme: dark) {
-	html {
-		color-scheme: dark;
-	}
+h1,
+h2,
+h3,
+h4 {
+	margin-top: 1.4em;
 }

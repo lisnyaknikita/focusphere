@@ -2,11 +2,16 @@
 
 import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import { CreateButton } from './header/components/create-button/create-button'
 import { NewEntryModal } from './header/components/new-entry-modal/new-entry-modal'
 import { TemplatesDropdown } from './header/components/templates-dropdown/templates-dropdown'
 import classes from './page.module.scss'
+
+const JournalEditor = dynamic(() => import('./main/journal-editor/journal-editor').then(m => m.JournalEditor), {
+	ssr: false,
+})
 
 export default function Journal() {
 	const [isNewEntryModalOpened, setIsNewEntryModalOpened] = useState(false)
@@ -20,6 +25,7 @@ export default function Journal() {
 				</header>
 				<main className={classes.journal}>
 					<NotesList />
+					<JournalEditor />
 				</main>
 			</div>
 			<Modal isVisible={isNewEntryModalOpened} onClose={() => setIsNewEntryModalOpened(false)}>
