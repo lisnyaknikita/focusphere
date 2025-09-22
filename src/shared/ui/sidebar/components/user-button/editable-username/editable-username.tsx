@@ -5,7 +5,7 @@ import classes from './editable-username.module.scss'
 
 export const EditableUsername = () => {
 	const [isEditing, setIsEditing] = useState(false)
-	const [username, setUsername] = useState('Ivan')
+	const [username, setUsername] = useState('Nikita')
 	const inputRef = useRef<HTMLInputElement | null>(null)
 
 	useEffect(() => {

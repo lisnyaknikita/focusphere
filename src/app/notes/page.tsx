@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import { CreateButton } from './components/header/create-button/create-button'
 import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
+import { TagsSidebar } from './components/tags-sidebar/tags-sidebar'
 import classes from './page.module.scss'
 
 const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
@@ -14,6 +15,7 @@ const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor
 
 export default function Notes() {
 	const [isNewNoteModalOpened, setIsNewNoteModalOpened] = useState(false)
+	const [isTagsModalVisible, setIsTagsModalVisible] = useState(false)
 
 	return (
 		<>
@@ -24,9 +26,13 @@ export default function Notes() {
 				<main className={classes.notes}>
 					<NotesList />
 					<TextEditor />
+					<TagsSidebar setIsTagsModalVisible={setIsTagsModalVisible} />
 				</main>
 			</div>
 			<Modal isVisible={isNewNoteModalOpened} onClose={() => setIsNewNoteModalOpened(false)}>
+				<NewNoteModal />
+			</Modal>
+			<Modal isVisible={isTagsModalVisible} onClose={() => setIsTagsModalVisible(false)}>
 				<NewNoteModal />
 			</Modal>
 		</>
