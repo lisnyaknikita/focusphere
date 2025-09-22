@@ -4,8 +4,8 @@ import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
-import { CreateButton } from './header/create-button/create-button'
-import { NewNoteModal } from './header/new-note-modal/new-note-modal'
+import { CreateButton } from './components/header/create-button/create-button'
+import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
 import classes from './page.module.scss'
 
 const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
