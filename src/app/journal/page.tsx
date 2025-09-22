@@ -9,7 +9,7 @@ import { NewEntryModal } from './header/components/new-entry-modal/new-entry-mod
 import { TemplatesDropdown } from './header/components/templates-dropdown/templates-dropdown'
 import classes from './page.module.scss'
 
-const JournalEditor = dynamic(() => import('./main/journal-editor/journal-editor').then(m => m.JournalEditor), {
+const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
 	ssr: false,
 })
 
@@ -25,7 +25,7 @@ export default function Journal() {
 				</header>
 				<main className={classes.journal}>
 					<NotesList />
-					<JournalEditor />
+					<TextEditor />
 				</main>
 			</div>
 			<Modal isVisible={isNewEntryModalOpened} onClose={() => setIsNewEntryModalOpened(false)}>

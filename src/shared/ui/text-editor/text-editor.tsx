@@ -7,7 +7,7 @@ const Editor = dynamic(() => import('@tinymce/tinymce-react').then(m => m.Editor
 	ssr: false,
 })
 
-export const JournalEditor = () => {
+export const TextEditor = () => {
 	const { contentStyle, editorKey } = useTinyMCEStyles()
 
 	return (
@@ -49,7 +49,7 @@ export const JournalEditor = () => {
 					toolbar_mode: 'sliding',
 					content_style: contentStyle,
 				}}
-				initialValue='Start writing your journal entry...'
+				initialValue='Start writing'
 			/>
 		</>
 	)
