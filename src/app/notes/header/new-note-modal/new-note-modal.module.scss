@@ -1,22 +1,24 @@
 .modalInner {
 	width: 300px;
 	position: relative;
+	padding: 10px 20px 0 20px;
 }
 
-.title {
-	font-size: 20px;
-	font-weight: 400;
+.eventTitle {
+	width: 100%;
+	background-color: transparent;
+	border: none;
+	outline: none;
+	border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+	font-size: 18px;
 	font-family: inherit;
 	color: var(--text);
-	margin-bottom: 10px;
-}
+	padding: 2px 7px;
+	margin-bottom: 20px;
 
-.subtitle {
-	font-size: 14px;
-	font-weight: 400;
-	font-family: inherit;
-	color: var(--textSecondary);
-	margin-bottom: 30px;
+	&::placeholder {
+		color: color-mix(in srgb, var(--line) 40%, transparent);
+	}
 }
 
 .buttons {

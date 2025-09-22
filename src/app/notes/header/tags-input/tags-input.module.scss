@@ -1,0 +1,59 @@
+.tagsInputWrapper {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 6px;
+	padding: 3px 6px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	margin-bottom: 25px;
+	overflow: hidden;
+	min-height: 40px;
+}
+
+.tagsScroller {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding-right: 6px;
+}
+
+.tags {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 6px;
+}
+
+.tag {
+	display: inline-flex;
+	align-items: center;
+	background-color: var(--secondary);
+	color: var(--text);
+	padding: 4px 8px;
+	border-radius: 5px;
+	font-size: 12px;
+	white-space: nowrap;
+
+	button {
+		background-color: none;
+		border: none;
+		margin-left: 6px;
+		font-size: 14px;
+		font-family: inherit;
+		color: var(--textSecondary);
+		cursor: pointer;
+	}
+}
+
+.tagInput {
+	border: none;
+	font-size: 14px;
+	background-color: transparent;
+	color: var(--text);
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	width: 73px;
+	padding: 1px 5px;
+	cursor: pointer;
+}
