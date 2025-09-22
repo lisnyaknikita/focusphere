@@ -1,0 +1,60 @@
+.modalInner {
+	width: 300px;
+	position: relative;
+}
+
+.title {
+	font-size: 20px;
+	font-weight: 400;
+	font-family: inherit;
+	color: var(--text);
+	margin-bottom: 10px;
+}
+
+.subtitle {
+	font-size: 14px;
+	font-weight: 400;
+	font-family: inherit;
+	color: var(--textSecondary);
+	margin-bottom: 30px;
+}
+
+.buttons {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.confirmButton {
+	flex-basis: 50%;
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 4px;
+	background-color: var(--save-button-bg);
+	border-radius: 5px;
+	display: inline-block;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
+
+.cancelButton {
+	flex-basis: 50%;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
