@@ -4,9 +4,9 @@ import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
-import { CreateButton } from './header/components/create-button/create-button'
-import { NewEntryModal } from './header/components/new-entry-modal/new-entry-modal'
-import { TemplatesDropdown } from './header/components/templates-dropdown/templates-dropdown'
+import { CreateButton } from './components/header/components/create-button/create-button'
+import { NewEntryModal } from './components/header/components/new-entry-modal/new-entry-modal'
+import { TemplatesDropdown } from './components/header/components/templates-dropdown/templates-dropdown'
 import classes from './page.module.scss'
 
 const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {

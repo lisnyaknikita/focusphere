@@ -2,9 +2,9 @@
 
 import { Modal } from '@/shared/ui/modal/modal'
 import { useState } from 'react'
-import { BackgroundSoundsDropdown } from './header/background-sounds-dropdown/background-sounds-dropdown'
-import { TimerSettingsModal } from './header/timer-settings-modal/timer-settings-modal'
-import { Timer } from './main/timer/timer'
+import { BackgroundSoundsDropdown } from './components/header/background-sounds-dropdown/background-sounds-dropdown'
+import { TimerSettingsModal } from './components/header/timer-settings-modal/timer-settings-modal'
+import { Timer } from './components/main/timer/timer'
 import classes from './page.module.scss'
 
 export default function Focus() {

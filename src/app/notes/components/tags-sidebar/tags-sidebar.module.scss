@@ -1,0 +1,29 @@
+.tagsSidebar {
+	width: 10%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.title {
+	padding: 11px;
+	font-size: 18px;
+	font-weight: 400;
+	border-bottom: 1px solid var(--btn-border);
+}
+
+.tagsList {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.tag {
+	color: color-mix(in srgb, var(--text) 80%, transparent);
+	background-color: var(--tab-bg);
+	border-radius: 5px;
+	padding: 3px 5px;
+	font-size: 14px;
+	width: fit-content;
+}
