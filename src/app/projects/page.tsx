@@ -1,25 +1,24 @@
 'use client'
 
+import { Tabs } from '@/shared/tabs/tabs'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
-import { Tabs } from '../../shared/tabs/tabs'
-import { EventModal } from './components/event-modal/event-modal'
 import { CreateButton } from './components/header/create-button/create-button'
-import { CalendarInner } from './components/main/calendar/calendar'
+import { Search } from './components/header/search/search'
 import classes from './page.module.scss'
 
-export type CalendarView = 'month' | 'week' | 'day'
+type ProjectsView = 'solo' | 'team'
 
-const VIEW_KEY = 'calendarView'
+const VIEW_KEY = 'projectsView'
 
-export default function Calendar() {
-	const [view, setView] = useState<CalendarView | null>(null)
+export default function Projects() {
+	const [view, setView] = useState<ProjectsView | null>(null)
 	const [isModalVisible, setIsModalVisible] = useState(false)
 
 	useEffect(() => {
-		const saved = localStorage.getItem(VIEW_KEY) as CalendarView | null
-		setView(saved ?? 'week')
+		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
+		setView(saved ?? 'team')
 	}, [])
 
 	useEffect(() => {
@@ -28,23 +27,23 @@ export default function Calendar() {
 
 	return (
 		<>
-			<div className={classes.calendarPage}>
+			<div className={classes.projectsPage}>
 				{!view ? (
 					<BeatLoader color='#aaa' size={10} className={classes.loader} />
 				) : (
 					<>
 						<header className={classes.header}>
-							<Tabs tabs={['month', 'week', 'day']} activeTab={view} onChange={setView} />
+							<Tabs tabs={['solo', 'team']} activeTab={view} onChange={setView} />
+							<Search />
 							<CreateButton setIsModalVisible={setIsModalVisible} />
 						</header>
-						<main className={classes.calendar}>
-							<CalendarInner view={view} />
-						</main>
+						<main className={classes.projects}></main>
+						<footer className={classes.pagination}></footer>
 					</>
 				)}
 			</div>
 			<Modal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)}>
-				<EventModal onClose={() => setIsModalVisible(false)} />
+				modal
 			</Modal>
 		</>
 	)
