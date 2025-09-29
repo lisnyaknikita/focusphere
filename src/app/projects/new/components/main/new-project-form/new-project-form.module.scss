@@ -1,0 +1,82 @@
+.newProjectForm {
+	background-color: var(--secondary);
+	padding: 30px;
+	width: 400px;
+	border-radius: 5px;
+}
+
+.formTitle {
+	font-size: 28px;
+	font-weight: 700;
+	color: var(--text);
+	margin-bottom: 5px;
+}
+
+.formSubtitle {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--text);
+	margin-bottom: 40px;
+}
+
+.titleLabel {
+	margin-bottom: 40px;
+	display: flex;
+	flex-direction: column;
+
+	> span {
+		font-size: 18px;
+		font-weight: 400;
+		color: var(--text);
+		margin-bottom: 5px;
+	}
+
+	> input {
+		font-size: 18px;
+		font-weight: 400;
+		color: var(--text);
+		padding: 10px 15px;
+		border-radius: 5px;
+		border: 1px solid var(--btn-border);
+		background-color: transparent;
+		font-family: inherit;
+	}
+}
+
+.projectTypeLabel {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	margin-bottom: 40px;
+
+	> span {
+		font-size: 18px;
+		font-weight: 400;
+		color: var(--text);
+	}
+
+	> .radioButtons {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
+}
+
+.createButton {
+	width: 70%;
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 4px;
+	background-color: var(--save-button-bg);
+	border-radius: 5px;
+	display: inline-block;
+	font-family: inherit;
+	transition: background-color 0.2s;
+	margin: 0 auto;
+	display: block;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
