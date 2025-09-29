@@ -1,0 +1,74 @@
+.projectCard {
+	background-color: var(--secondary);
+	border-radius: 5px;
+}
+
+.logo {
+	padding: 35px 20px;
+	text-align: center;
+	font-size: 20px;
+	font-weight: 700;
+	color: color-mix(in srgb, var(--text) 60%, transparent);
+	border-bottom: 1px solid var(--btn-border);
+}
+
+.projectInfo {
+	padding: 10px;
+	border-bottom: 1px solid var(--btn-border);
+}
+
+.title {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+
+	> h6 {
+		font-size: 18px;
+		font-weight: 700;
+		color: var(--text);
+	}
+}
+
+.description {
+	font-size: 12px;
+	font-weight: 400;
+	color: color-mix(in srgb, var(--text) 80%, transparent);
+	margin-bottom: 10px;
+}
+
+.moreInfo {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	> .updateDate {
+		font-size: 12px;
+		font-weight: 400;
+		color: color-mix(in srgb, var(--text) 80%, transparent);
+	}
+}
+
+.progress {
+	padding: 15px 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.completedTasks {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+
+	> span {
+		font-size: 12px;
+		font-weight: 400;
+		color: color-mix(in srgb, var(--text) 80%, transparent);
+	}
+}
+
+.settings {
+	display: flex;
+	align-items: center;
+}

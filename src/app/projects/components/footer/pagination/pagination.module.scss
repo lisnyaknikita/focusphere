@@ -1,0 +1,24 @@
+.paginationButtons {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.button {
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 12px;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--tab-bg);
+	}
+
+	&:global(.active) {
+		background-color: var(--tab-bg);
+	}
+}
