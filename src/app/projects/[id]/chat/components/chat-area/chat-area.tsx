@@ -1,7 +1,9 @@
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import classes from './chat-area.module.scss'
-import { Editor } from './components/editor/editor'
 import { Header } from './components/header/header'
+
+const Editor = dynamic(() => import('./components/editor/editor'))
 
 export const ChatArea = () => {
 	return (

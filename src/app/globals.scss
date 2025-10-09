@@ -203,6 +203,47 @@ ul {
 	border: none !important;
 }
 
+.ql-toolbar {
+	border: none !important;
+	border-bottom: 1px solid var(--btn-border) !important;
+	font-family: inherit !important;
+}
+
+.ql-toolbar .ql-formats:not(:last-child) {
+	border-right: 1px solid var(--btn-border) !important;
+	padding-right: 12px !important;
+}
+
+.ql-container {
+	border: none !important;
+	height: unset !important;
+	font-family: inherit !important;
+}
+
+.ql-editor {
+	line-height: 22px !important;
+	padding: 8px 12px !important;
+	color: var(--text) !important;
+	font-size: 14px !important;
+	font-weight: 400 !important;
+	font-family: inherit !important;
+
+	&::before {
+		left: 12px !important;
+		color: var(--btn-border) !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
+		font-family: inherit !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.ql-renderer {
+	padding: 0 !important;
+}
+
 @media (prefers-color-scheme: dark) {
 	html {
 		color-scheme: dark;
