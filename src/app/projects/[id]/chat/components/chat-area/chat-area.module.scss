@@ -1,0 +1,96 @@
+.chatArea {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.chatInfo {
+	padding-left: 15px;
+	padding-bottom: 20px;
+}
+
+.title {
+	font-size: 28px;
+	font-weight: 700;
+	color: var(--text);
+	margin-bottom: 10px;
+}
+
+.subtitle {
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--text);
+}
+
+.divider {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	margin-bottom: 20px;
+
+	> span {
+		display: inline-block;
+		font-size: 14px;
+		font-weight: 400;
+		color: var(--text);
+		padding: 3px 10px;
+		border: 0.3px solid var(--line);
+		border-radius: 5px;
+		position: relative;
+		background-color: var(--secondaryFull);
+	}
+
+	> hr {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		border: none;
+		height: 0.3px;
+		background-color: var(--line);
+	}
+}
+
+.messages {
+	padding: 0 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.message {
+	display: flex;
+	gap: 10px;
+	align-items: normal;
+}
+
+.messageContent {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.messageHeader {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	> time {
+		font-size: 14px;
+		font-weight: 400;
+		color: color-mix(in srgb, var(--text) 60%, transparent);
+	}
+}
+
+.name {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--text);
+}
+
+.messageText {
+	font-size: 16px;
+	font-weight: 400;
+	color: color-mix(in srgb, var(--text) 80%, transparent);
+}

@@ -1,0 +1,14 @@
+.editor {
+	display: flex;
+	flex-direction: column;
+	padding: 10px 15px;
+}
+
+.editorInner {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	width: 100%;
+	overflow: hidden;
+}

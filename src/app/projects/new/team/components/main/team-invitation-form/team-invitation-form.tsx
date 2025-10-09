@@ -73,10 +73,10 @@ export const TeamInvitationForm = () => {
 				</div>
 			</div>
 			<div className={classes.buttons}>
-				<button className={classes.skipButton} onClick={() => router.push('/project/123')}>
+				<button className={classes.skipButton} onClick={() => router.push('/projects/123/board')}>
 					Skip
 				</button>
-				<button className={classes.continueButton} onClick={() => router.push('/project/123')}>
+				<button className={classes.continueButton} onClick={() => router.push('/projects/123/board')}>
 					Invite and continue
 				</button>
 			</div>

@@ -18,7 +18,7 @@ export const NewProjectForm = () => {
 		if (projectType === 'team') {
 			router.push(`/projects/new/team?projectId=${projectId}`)
 		} else {
-			router.push(`/projects/${projectId}`)
+			router.push(`/projects/${projectId}/board`)
 		}
 	}
 
