@@ -14,9 +14,8 @@
 	font-family: inherit;
 	transition: background-color 0.2s;
 
-	&:nth-child(2) {
+	&:not(:last-child) {
 		border-right: 0.3px solid #fff;
-		border-left: 0.3px solid #fff;
 	}
 
 	&.active {

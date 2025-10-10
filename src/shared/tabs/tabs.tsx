@@ -1,14 +1,12 @@
-import { CalendarView } from '@/app/calendar/page'
 import classes from './tabs.module.scss'
 
-const tabs: CalendarView[] = ['month', 'week', 'day']
-
-interface TabsProps {
-	activeTab: CalendarView
-	onChange: (tab: CalendarView) => void
+interface TabsProps<T extends string> {
+	tabs: T[]
+	activeTab: T
+	onChange: (tab: T) => void
 }
 
-export const Tabs = ({ activeTab, onChange }: TabsProps) => {
+export function Tabs<T extends string>({ tabs, activeTab, onChange }: TabsProps<T>) {
 	return (
 		<div className={classes.tabs}>
 			{tabs.map(tab => (

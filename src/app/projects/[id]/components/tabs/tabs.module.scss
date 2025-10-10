@@ -1,0 +1,28 @@
+.tabs {
+	display: flex;
+	align-items: center;
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.tab {
+	color: #fff;
+	background-color: var(--tab-bg);
+	font-size: 15px;
+	text-transform: capitalize;
+	padding: 5px 14px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:not(:last-child) {
+		border-right: 0.3px solid #fff;
+	}
+
+	&.active {
+		background: var(--tab-bg-active);
+	}
+
+	&:hover {
+		background: var(--tab-bg-active);
+	}
+}

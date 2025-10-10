@@ -1,0 +1,133 @@
+.teamInvitationForm {
+	background-color: var(--secondary);
+	padding: 30px;
+	width: 600px;
+	border-radius: 5px;
+}
+
+.formTitle {
+	font-size: 28px;
+	font-weight: 700;
+	color: var(--text);
+	margin-bottom: 10px;
+}
+
+.formSubtitle {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--text);
+	margin-bottom: 40px;
+}
+
+.titleLabel {
+	// margin-bottom: 40px;
+	display: flex;
+	flex-direction: column;
+
+	> span {
+		font-size: 18px;
+		font-weight: 400;
+		color: var(--text);
+		margin-bottom: 5px;
+	}
+}
+
+.inputWrapper {
+	width: 100%;
+
+	> input {
+		width: 100%;
+		font-size: 18px;
+		font-weight: 400;
+		color: var(--text);
+		padding: 10px 15px;
+		border-radius: 5px;
+		border: 1px solid var(--btn-border);
+		background-color: transparent;
+		font-family: inherit;
+		margin-bottom: 10px;
+	}
+}
+
+.membersList {
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	max-height: 222px;
+	overflow-y: auto;
+	margin-bottom: 50px;
+}
+
+.membersItem {
+	padding: 2px 5px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	width: fit-content;
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.removeBtn {
+	font-size: 14px;
+	font-family: inherit;
+	color: var(--text);
+}
+
+.suggestion {
+	height: 32px;
+	background-color: var(--primary);
+	border-radius: 5px;
+	padding: 5px 10px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	margin-bottom: 10px;
+}
+
+.emailBlock {
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+	font-family: inherit;
+}
+
+.buttons {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+
+	> button {
+		padding: 5px 10px;
+		border-radius: 5px;
+		font-size: 16px;
+		transition: all 0.2s;
+	}
+}
+
+.skipButton {
+	border: 1px solid var(--btn-border);
+	background-color: transparent;
+	color: var(--text);
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.continueButton {
+	color: var(--save-button-text);
+	background-color: var(--save-button-bg);
+
+	&:hover {
+		background-color: #aaa;
+	}
+}

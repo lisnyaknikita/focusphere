@@ -1,0 +1,67 @@
+.card {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	width: 100%;
+	border-radius: 5px;
+	padding: 10px 14px;
+	cursor: pointer;
+	position: relative;
+	transition: background-color 0.2s ease, border 0.2s ease;
+	border: 1px solid var(--btn-border);
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.radio {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.customRadio {
+	width: 22px;
+	height: 22px;
+	border: 1px solid var(--btn-border);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: border-color 0.2s ease;
+
+	.radio:checked + &::after {
+		content: '';
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		background-color: var(--tab-bg);
+	}
+}
+
+.info {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.infoText {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.label {
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+	font-family: inherit;
+}
+
+.description {
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--text);
+	font-family: inherit;
+}

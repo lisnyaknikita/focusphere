@@ -3,9 +3,9 @@
 import { Modal } from '@/shared/ui/modal/modal'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
+import { Tabs } from '../../shared/tabs/tabs'
 import { EventModal } from './components/event-modal/event-modal'
 import { CreateButton } from './components/header/create-button/create-button'
-import { Tabs } from './components/header/tabs/tabs'
 import { CalendarInner } from './components/main/calendar/calendar'
 import classes from './page.module.scss'
 
@@ -34,7 +34,7 @@ export default function Calendar() {
 				) : (
 					<>
 						<header className={classes.header}>
-							<Tabs activeTab={view} onChange={setView} />
+							<Tabs tabs={['month', 'week', 'day']} activeTab={view} onChange={setView} />
 							<CreateButton setIsModalVisible={setIsModalVisible} />
 						</header>
 						<main className={classes.calendar}>
