@@ -2,8 +2,8 @@ import clsx from 'clsx'
 import classes from './notes-list.module.scss'
 
 interface NotesListProps {
-	withTitle: boolean
-	withTags: boolean
+	withTitle?: boolean
+	withTags?: boolean
 }
 
 export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
