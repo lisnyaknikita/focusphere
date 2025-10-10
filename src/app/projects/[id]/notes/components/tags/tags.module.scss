@@ -1,0 +1,29 @@
+.tagsWrapper {
+	width: 15%;
+	height: 100%;
+}
+
+.title {
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--text);
+	padding: 10px 20px;
+	border-bottom: 1px solid var(--btn-border);
+}
+
+.tagsList {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.tag {
+	font-size: 14px;
+	font-weight: 400;
+	color: color-mix(in srgb, var(--text) 60%, transparent);
+	padding: 2px 7px;
+	border-radius: 5px;
+	background-color: var(--tab-bg);
+	width: fit-content;
+}
