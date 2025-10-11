@@ -40,7 +40,7 @@ export const Sidebar = () => {
 							key={item.label}
 							item={item}
 							isCollapsed={isCollapsed}
-							isActive={!item.isButton && item.href === pathname}
+							isActive={(!item.isButton && item.href === pathname) || pathname.startsWith(`${item.href}/`)}
 							onHideClick={onHideClick}
 						/>
 					))}
