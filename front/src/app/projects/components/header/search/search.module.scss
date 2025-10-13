@@ -1,4 +1,5 @@
 .search {
+	cursor: pointer;
 	margin-left: auto;
 	margin-right: 10px;
 	display: flex;
@@ -30,7 +31,7 @@
 	transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
 
 	&:global(.active) {
-		border: 1px solid var(--btn-border);
+		outline: none;
 		opacity: 1;
 		visibility: visible;
 		padding: 0 5px;
