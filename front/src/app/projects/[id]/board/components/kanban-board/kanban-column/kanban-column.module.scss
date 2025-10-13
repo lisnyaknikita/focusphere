@@ -4,7 +4,8 @@
 	border-radius: 5px;
 	background-color: var(--secondary);
 	padding: 15px;
-	max-height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .columnHeader {
@@ -41,6 +42,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	height: 95%;
 	overflow-y: auto;
+	flex: 1;
 }
