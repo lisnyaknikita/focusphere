@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/front/node_modules
 /back/.venv
 /.pnp
 .pnp.*
@@ -15,11 +16,11 @@
 /coverage
 
 # next.js
-/.next/
-/out/
+/front/.next/
+/front/out/
 
 # production
-/build
+/front/build
 
 # misc
 .DS_Store
@@ -34,13 +35,15 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+/front/.env
+/back/.env
 
 # vercel
 .vercel
 
 # typescript
-*.tsbuildinfo
-next-env.d.ts
+/front/*.tsbuildinfo
+/front/next-env.d.ts
 
 # backend
 /back/.ruff_cache
