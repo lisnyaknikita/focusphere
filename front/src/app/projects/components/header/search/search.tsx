@@ -6,7 +6,7 @@ export const Search = () => {
 	const [isSearchActive, setIsSearchActive] = useState(false)
 
 	return (
-		<button className={classes.search} onClick={() => setIsSearchActive(prev => !prev)}>
+		<div className={classes.search} onClick={() => setIsSearchActive(prev => !prev)}>
 			<input
 				className={clsx(classes.searchInput, isSearchActive && 'active')}
 				type='text'
@@ -19,6 +19,6 @@ export const Search = () => {
 					fill='var(--text)'
 				/>
 			</svg>
-		</button>
+		</div>
 	)
 }

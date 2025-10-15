@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
 
+import { ClientLayout } from '@/shared/client-layout/client-layout'
 import { Sidebar } from '@/shared/ui/sidebar/sidebar'
 import './globals.scss'
 
@@ -22,10 +23,10 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={`${notoSans.variable}`}>
-				<div className='wrapper'>
+				<ClientLayout>
 					<Sidebar />
 					{children}
-				</div>
+				</ClientLayout>
 			</body>
 		</html>
 	)
