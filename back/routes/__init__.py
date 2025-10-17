@@ -1,7 +1,7 @@
-__all__ = ()
+__all__ = ("user_router",)
 
 from fastapi import APIRouter
 
-from . import *
+from .user import user_router
 
-all_routers: list[APIRouter] = []
+all_routers: list[APIRouter] = [user_router]
