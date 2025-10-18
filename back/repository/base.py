@@ -38,7 +38,7 @@ class BaseRepository(ABC, Generic[model_type]):
     async def get_all(self) -> list[model_type]:
         return list(await self.session.scalars(select(self.model)))
 
-    async def update(self, id: int, **fields) -> None:
+    async def update(self, id: int, fields) -> model_type:
         stmt = (
             update(self.model)
             .where(self.model.id == id)
@@ -48,6 +48,7 @@ class BaseRepository(ABC, Generic[model_type]):
 
         await self.session.execute(stmt)
         await self.session.commit()
+        return await self.session.get(self.model, id) # type: ignore
 
     async def delete(self, model: model_type) -> None:
         await self.session.delete(model)

@@ -24,6 +24,13 @@ class UserCreateSchema(BaseModelFromAttributes):
     avatar: Optional[UploadFile] = None
 
 
+class UserUpdateSchema(BaseModelFromAttributes):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    avatar: Optional[UploadFile] = None
+    password: Optional[str] = None
+
+
 class UserSchema(BaseModelFromAttributes):
     id: int
     username: str
