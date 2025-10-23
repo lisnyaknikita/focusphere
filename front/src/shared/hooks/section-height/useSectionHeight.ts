@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export const useSectionHeight = (ratio: number = 0.75) => {
-	const sectionRef = useRef<HTMLElement | null>(null)
+	const sectionRef = useRef<HTMLDivElement | null>(null)
 	const [listHeight, setListHeight] = useState(0)
 
 	useEffect(() => {
