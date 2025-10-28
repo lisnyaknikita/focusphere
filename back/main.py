@@ -5,8 +5,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from db import create_tables
 from routes import all_routers
+from schemas import BaseResponse
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan, title='Focusphere API', version='0.1.0')
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,15 +25,9 @@ app.add_middleware(
 )
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await create_tables()
-    yield
-
-
-@app.get('/', name='Test endpoint')
-async def test() -> dict[str, str]:
-    return {'msg': 'hello from backend!'}
+@app.get('/', name='Test endpoint', description="You can use this endpoint to check if all works fine.")
+async def test() -> BaseResponse:
+    return BaseResponse(msg='Hello from backend!')
 
 
 for router in all_routers:
@@ -35,4 +37,4 @@ for router in all_routers:
 if __name__ == '__main__':
     import uvicorn
 
-    uvicorn.run('main:app', host='0.0.0.0', port=8000, reload=True)
+    uvicorn.run('main:app', host='127.0.0.1', port=8000, reload=True)

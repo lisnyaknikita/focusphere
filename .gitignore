@@ -46,7 +46,11 @@ yarn-error.log*
 /front/next-env.d.ts
 
 # backend
-/back/.ruff_cache
-*/__pycache__
+__pycache__
 *.py~
 *.pyc
+*.db
+coverage.*
+back/.ruff_cache
+back/.pytest_cache
+back/.coverage
