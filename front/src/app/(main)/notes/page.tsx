@@ -9,7 +9,7 @@ import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
 import { TagsSidebar } from './components/tags-sidebar/tags-sidebar'
 import classes from './page.module.scss'
 
-const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
+const TextEditor = dynamic(() => import('../../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
 	ssr: false,
 })
 

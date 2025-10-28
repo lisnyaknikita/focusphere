@@ -9,7 +9,7 @@ import { NewEntryModal } from './components/header/components/new-entry-modal/ne
 import { TemplatesDropdown } from './components/header/components/templates-dropdown/templates-dropdown'
 import classes from './page.module.scss'
 
-const TextEditor = dynamic(() => import('../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
+const TextEditor = dynamic(() => import('../../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
 	ssr: false,
 })
 

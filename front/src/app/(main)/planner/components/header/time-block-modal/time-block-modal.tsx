@@ -1,5 +1,5 @@
-import { ColorPicker } from '@/app/calendar/components/event-modal/components/color-picker/color-picker'
-import { DateTime } from '@/app/calendar/components/event-modal/components/date-time/date-time'
+import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/components/color-picker/color-picker'
+import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
 import classes from './time-block-modal.module.scss'
 
 interface TimeBlockModalProps {
