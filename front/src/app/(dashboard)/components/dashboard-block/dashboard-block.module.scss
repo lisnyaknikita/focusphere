@@ -5,7 +5,7 @@
 	gap: 10px;
 	color: var(--text);
 	height: 100%;
-	margin-bottom: 36px;
+	margin-bottom: 20px;
 
 	> section {
 		background-color: var(--secondary);
@@ -26,11 +26,5 @@
 	@media (max-width: 1024px) {
 		display: flex;
 		flex-direction: column;
-
-		// > section {
-		// 	grid-column: auto;
-		// 	grid-row: auto;
-		// 	max-height: unset;
-		// }
 	}
 }

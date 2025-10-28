@@ -6,6 +6,11 @@
 	padding: 15px;
 	display: flex;
 	flex-direction: column;
+	overflow: visible;
+}
+
+.scrollWrapper {
+	overflow-y: auto;
 }
 
 .columnHeader {
@@ -39,9 +44,9 @@
 }
 
 .tasksList {
+	list-style: none;
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	overflow-y: auto;
-	flex: 1;
+	overflow-y: visible;
 }
