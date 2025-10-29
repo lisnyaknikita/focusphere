@@ -11,7 +11,7 @@ const audioWide = Audiowide({
 })
 
 type LogoProps = {
-	isCollapsed: boolean
+	isCollapsed?: boolean
 }
 
 export const Logo = ({ isCollapsed }: LogoProps) => {

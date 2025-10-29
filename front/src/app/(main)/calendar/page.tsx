@@ -3,7 +3,7 @@
 import { Modal } from '@/shared/ui/modal/modal'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
-import { Tabs } from '../../shared/tabs/tabs'
+import { Tabs } from '../../../shared/tabs/tabs'
 import { EventModal } from './components/event-modal/event-modal'
 import { CreateButton } from './components/header/create-button/create-button'
 import { CalendarInner } from './components/main/calendar/calendar'
