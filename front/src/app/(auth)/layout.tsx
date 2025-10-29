@@ -12,9 +12,5 @@ export default function AuthLayout({
 }: Readonly<{
 	children: React.ReactNode
 }>) {
-	return (
-		<html lang='en'>
-			<body className={`${notoSans.variable}`}>{children}</body>
-		</html>
-	)
+	return <div className={`${notoSans.variable}`}>{children}</div>
 }
