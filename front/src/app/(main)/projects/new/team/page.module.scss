@@ -13,3 +13,16 @@
 	align-items: center;
 	justify-content: center;
 }
+
+.backButton {
+	border-radius: 5px;
+	padding: 5px 7px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
