@@ -10,7 +10,7 @@ export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
 	return (
 		<div className={clsx(classes.listWrapper, withTags && 'withTags')}>
 			{withTitle && <h3 className={classes.title}>Website redesign</h3>}
-			<ul className={classes.notesList}>
+			<ul className={clsx(classes.notesList, withTitle && 'withTitle')}>
 				<li className={classes.notesItem}>
 					<a href='#' className={classes.notesItemLink}>
 						<div className={classes.date}>
