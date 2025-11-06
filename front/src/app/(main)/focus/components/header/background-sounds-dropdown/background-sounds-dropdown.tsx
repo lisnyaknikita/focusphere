@@ -1,6 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import classes from './background-sounds-dropdown.module.scss'
 
@@ -20,13 +21,23 @@ export const BackgroundSoundsDropdown = () => {
 					/>
 				</svg>
 			</button>
-			<div className={classes.dropdown}>
-				{backgroundSounds.map((sound, i) => (
-					<button className={classes.soundItem} key={i}>
-						{sound}
-					</button>
-				))}
-			</div>
+			<AnimatePresence>
+				{open && (
+					<motion.div
+						className={classes.dropdown}
+						initial={{ opacity: 0, scale: 0.95, y: -6 }}
+						animate={{ opacity: 1, scale: 1, y: 0 }}
+						exit={{ opacity: 0, scale: 0.97, y: -4 }}
+						transition={{ duration: 0.18, ease: 'easeOut' }}
+					>
+						{backgroundSounds.map((sound, i) => (
+							<button className={classes.soundItem} key={i}>
+								{sound}
+							</button>
+						))}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	)
 }

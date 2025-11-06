@@ -5,23 +5,6 @@
 		> .trigger svg {
 			transform: rotate(180deg);
 		}
-
-		> .dropdown {
-			width: 380px;
-			border: 1px solid var(--btn-border);
-			border-radius: 5px;
-			background-color: var(--secondaryFull);
-			padding: 5px;
-			display: flex;
-			flex-direction: column;
-			gap: 5px;
-			position: absolute;
-			top: 34px;
-			opacity: 1;
-			visibility: visible;
-			pointer-events: all;
-			transform: translateY(0);
-		}
 	}
 }
 
@@ -49,10 +32,14 @@
 
 .dropdown {
 	position: absolute;
+	top: 34px;
 	width: 380px;
-	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
-	transform: translateY(-10px);
-	transition: all 0.2s;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	background-color: var(--secondaryFull);
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	z-index: 10;
 }

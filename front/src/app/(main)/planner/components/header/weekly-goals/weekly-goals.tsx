@@ -2,6 +2,7 @@
 
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
 import clsx from 'clsx'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import classes from './weekly-goals.module.scss'
 
@@ -21,11 +22,21 @@ export const WeeklyGoals = () => {
 					/>
 				</svg>
 			</button>
-			<div className={classes.dropdown}>
-				{goals.map((goal, i) => (
-					<CheckboxCard key={i} withBorder={false} label={goal} checked={false} onCheck={() => {}} />
-				))}
-			</div>
+			<AnimatePresence>
+				{open && (
+					<motion.div
+						className={classes.dropdown}
+						initial={{ opacity: 0, scale: 0.95, y: -6 }}
+						animate={{ opacity: 1, scale: 1, y: 0 }}
+						exit={{ opacity: 0, scale: 0.97, y: -4 }}
+						transition={{ duration: 0.18, ease: 'easeOut' }}
+					>
+						{goals.map((goal, i) => (
+							<CheckboxCard key={i} withBorder={false} label={goal} checked={false} onCheck={() => {}} />
+						))}
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	)
 }
