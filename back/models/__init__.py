@@ -1,3 +1,3 @@
 __all__ = ('UserModel',)
 
-from .user import UserModel
+from .userModel import UserModel
