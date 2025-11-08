@@ -3,5 +3,5 @@ __all__ = (
     'BaseRepository',
 )
 
-from .base import BaseRepository
-from .user import UserRepository
+from .baseRepo import BaseRepository
+from .userRepo import UserRepository
