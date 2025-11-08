@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Any, Generic, Literal, Optional, TypeVar
 
-from fastapi import UploadFile
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from fastapi import HTTPException, UploadFile
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 T = TypeVar('T')
 
@@ -11,10 +11,22 @@ class BaseModelFromAttributes(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class BaseResponse(BaseModel, Generic[T]):
+class BaseResponse(BaseModelFromAttributes, Generic[T]):
     success: bool = True
     msg: str = 'Success'
     data: Optional[T] | Any = None
+
+
+class UserLoginSchema(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: str
+
+    @model_validator(mode='after')
+    def check_one_of(self):
+        if not self.username and not self.email:
+            raise HTTPException(status_code=422, detail='Either email or password must be provided')
+        return self
 
 
 class UserCreateSchema(BaseModelFromAttributes):

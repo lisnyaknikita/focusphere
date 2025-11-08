@@ -1,5 +1,6 @@
-from back.models.userModel import UserModel
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from models.userModel import UserModel
 
 from .baseRepo import BaseRepository
 

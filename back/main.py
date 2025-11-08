@@ -9,7 +9,7 @@ from schemas import BaseResponse
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(*args, **kwargs):
     await create_tables()
     yield
 
@@ -25,9 +25,11 @@ app.add_middleware(
 )
 
 
-@app.get('/', name='Test endpoint', description="You can use this endpoint to check if all works fine.")
+@app.get(
+    '/', name='Test endpoint', description='You can use this endpoint to check if all works fine.'
+)
 async def test() -> BaseResponse:
-    return BaseResponse(msg='Hello from backend!')
+    return BaseResponse[None](msg='Hello from backend!')
 
 
 for router in all_routers:
