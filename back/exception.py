@@ -19,3 +19,7 @@ class UserNotFoundException(NotFoundException):
 
 class ProjectNotFoundException(NotFoundException):
     detail: str = 'Project not found'
+
+
+class AvatarDeleteException(NotFoundException):
+    detail: str = 'Avatar is empty or already deleted'

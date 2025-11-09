@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Generic, Literal, Optional, TypeVar
 
-from fastapi import HTTPException, UploadFile
+from fastapi import File, HTTPException, UploadFile
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 T = TypeVar('T')
@@ -33,7 +33,6 @@ class UserCreateSchema(BaseModelFromAttributes):
     username: str
     email: EmailStr
     password: str
-    avatar: Optional[UploadFile] = None
 
 
 class UserUpdateSchema(BaseModelFromAttributes):

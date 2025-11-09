@@ -1,11 +1,9 @@
-from typing import Annotated
+from fastapi import APIRouter, HTTPException, UploadFile, status
 
-from fastapi import APIRouter, Form, HTTPException, status
-
-from deps import user_repo_deps
-from exception import BaseException, UserAlreadyExistsException, UserNotFoundException
+from deps import user_deps, user_repo_deps
+from exception import AvatarDeleteException, BaseException, UserNotFoundException
 from models import UserModel
-from schemas import UserCreateSchema, UserSchema, UserUpdateSchema
+from schemas import BaseResponse, UserSchema, UserUpdateSchema
 
 user_router = APIRouter(
     prefix='/users',
@@ -13,17 +11,25 @@ user_router = APIRouter(
 )
 
 
-@user_router.post(
-    '/',
-    response_model=UserSchema,
-    status_code=status.HTTP_201_CREATED,
-    responses={status.HTTP_400_BAD_REQUEST: {'model': UserAlreadyExistsException}},
+@user_router.post('/avatar')
+async def set_avatar(
+    repo: user_repo_deps, avatar: UploadFile, user: user_deps
+) -> BaseResponse[None]:
+    await repo.update(user.id, {'avatar': await avatar.read()})
+    return BaseResponse()
+
+
+@user_router.delete(
+    '/avatar',
+    responses={status.HTTP_404_NOT_FOUND: {'model': AvatarDeleteException}},
 )
-async def create_user(repo: user_repo_deps, data: Annotated[UserCreateSchema, Form()]) -> UserModel:
-    user_db = await repo.get_by(username=data.username)
-    if user_db:
-        raise HTTPException(status_code=400, detail='User this username already exists')
-    return await repo.add(UserModel(**data.model_dump()))
+async def delete_avatar(repo: user_repo_deps, user: user_deps) -> BaseResponse[None]:
+    if user.avatar is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail='Avatar is empty or already deleted'
+        )
+    await repo.update(user.id, {'avatar': None})
+    return BaseResponse()
 
 
 @user_router.get(
@@ -46,9 +52,7 @@ async def get_user(repo: user_repo_deps, user_id: int) -> UserModel:
         status.HTTP_404_NOT_FOUND: {'model': UserNotFoundException},
     },
 )
-async def patch_user(
-    repo: user_repo_deps, user_id: int, data: UserUpdateSchema
-) -> UserModel:
+async def patch_user(repo: user_repo_deps, user_id: int, data: UserUpdateSchema) -> UserModel:
     if not any(data.model_dump().values()):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail='At least one field is required'

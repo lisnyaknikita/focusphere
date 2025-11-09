@@ -31,10 +31,9 @@ async def set_auth_cookies(response, user: UserModel):
     )
 
 
-# FIXME avatar impossible upload
 @auth_router.post('/register', status_code=201)
 async def register(
-    repo: user_repo_deps, response: Response, data: Annotated[UserCreateSchema, Form()]
+    repo: user_repo_deps, response: Response, data: UserCreateSchema = Form()
 ) -> BaseResponse[UserSchema]:
     user = UserModel(**data.model_dump())
 

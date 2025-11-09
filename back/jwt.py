@@ -8,6 +8,7 @@ from fastapi.security import HTTPBearer
 from jose import JWTError, jwt
 
 from config import config
+from deps import user_repo_deps
 
 
 class JWTGenerator:
@@ -61,15 +62,18 @@ class JWTBearer(HTTPBearer):
             return cookie_auth
         return None
 
-    async def __call__(self, request: Request):  # pyright: ignore[reportIncompatibleMethodOverride]
+    async def __call__(self, request: Request, repo: user_repo_deps):  # pyright: ignore[reportIncompatibleMethodOverride]
         await super(JWTBearer, self).__call__(request)
         token = await self._get_token(request)
         if token:
             jwt_data = jwt_generator.decode_jwt(token)
             if not jwt_data:
-                raise HTTPException(status_code=401, detail='Invalid token or expired token.')
+                raise HTTPException(status_code=401, detail='Invalid token or expired token')
             username = request.cookies.get('username')
             if not username:
-                raise HTTPException(status_code=404, detail='Not authorized.')
+                raise HTTPException(status_code=404, detail='Not authorized')
+            if not (user := await repo.get_by(username=username)):
+                raise HTTPException(status_code=401, detail="User does'nt exist in the database")
+            request.state.user = user
         else:
-            raise HTTPException(status_code=401, detail='Not authenticated.')
+            raise HTTPException(status_code=401, detail='Not authenticated')

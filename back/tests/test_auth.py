@@ -13,7 +13,7 @@ class TestAuthRegister:
     @fixture(autouse=True)
     def setup(self):
         self.mock_repo = AsyncMock()
-        self.mock_user = AsyncMock()
+        self.mock_user = Mock()
         self.mock_user.configure_mock(
             id=1,
             username='test123',
@@ -128,6 +128,26 @@ class TestAuthLogin:
         self.mock_user.check_password.return_value = True
         app.dependency_overrides.clear()
         app.dependency_overrides[get_user_repository] = lambda: self.mock_repo
+
+    # impossible in prod
+    def test_login_with_username_and_email_success(self):
+        response = client.post(
+            '/auth/login',
+            data={'username': 'test123', 'email': 'test@development.com', 'password': 'test'},
+        )
+
+        assert response.status_code == 200
+        assert response.json() == {
+            'success': True,
+            'msg': 'Success',
+            'data': {
+                'id': 1,
+                'username': 'test123',
+                'email': 'test@development.com',
+                'avatar_url': None,
+            },
+        }
+        self.mock_repo.get_by.assert_called_once_with(username='test123')
 
     def test_login_with_username_success(self):
         response = client.post(
