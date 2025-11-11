@@ -1,0 +1,63 @@
+.templates {
+	position: relative;
+
+	&:global(.opened) {
+		> .trigger svg {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.trigger {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+
+	> svg {
+		transition: transform 0.2s;
+	}
+}
+
+.dropdown {
+	z-index: 3;
+	width: 183px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	background-color: var(--secondaryFull);
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	position: absolute;
+	top: 34px;
+	left: -65px;
+}
+
+.templateItem {
+	font-family: inherit;
+	text-align: left;
+	width: 100%;
+	border-radius: 5px;
+	padding: 7px;
+	font-size: 16px;
+	font-weight: 400;
+	cursor: pointer;
+	color: var(--text);
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
