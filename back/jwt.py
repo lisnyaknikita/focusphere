@@ -28,7 +28,7 @@ class JWTGenerator:
             )
 
         to_encode = {'sub': subject, 'exp': expire} | (jwt_data or {})
-        return jwt.encode(to_encode, key=config.JWT_SECRET, algorithm=config.JWT_ALGORITHM)
+        return jwt.encode(to_encode, key=config.JWT_SECRET_KEY, algorithm=config.JWT_ALGORITHM)
 
     def generate_access_token(self, userid: int) -> str:
         return self._generate_jwt_token(
@@ -36,9 +36,19 @@ class JWTGenerator:
             expires_delta=datetime.timedelta(minutes=config.JWT_ACCESS_TOKEN_EXPIRATION_TIME),
         )
 
-    def decode_jwt(self, token: str) -> dict | None:
+    # В класс JWTGenerator добавим:
+    def generate_google_token(self, google_id: str, email: str) -> str:
+        return self._generate_jwt_token(
+            subject=google_id,
+            jwt_data={'email': email, 'auth_type': 'google'},
+            expires_delta=datetime.timedelta(minutes=config.JWT_ACCESS_TOKEN_EXPIRATION_TIME),
+        )
+
+    def _decode_jwt(self, token: str) -> dict | None:
         try:
-            decoded_token = jwt.decode(token, config.JWT_SECRET, algorithms=[config.JWT_ALGORITHM])
+            decoded_token = jwt.decode(
+                token, config.JWT_SECRET_KEY, algorithms=[config.JWT_ALGORITHM]
+            )
             return (
                 decoded_token
                 if decoded_token['exp'] >= datetime.datetime.now(datetime.timezone.utc).timestamp()
@@ -66,7 +76,7 @@ class JWTBearer(HTTPBearer):
         await super(JWTBearer, self).__call__(request)
         token = await self._get_token(request)
         if token:
-            jwt_data = jwt_generator.decode_jwt(token)
+            jwt_data = jwt_generator._decode_jwt(token)
             if not jwt_data:
                 raise HTTPException(status_code=401, detail='Invalid token or expired token')
             username = request.cookies.get('username')

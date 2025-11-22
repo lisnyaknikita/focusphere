@@ -3,9 +3,13 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Config(BaseSettings):
     DB_PATH: str
-    GOOGLE_OAUTH: str
 
-    JWT_SECRET: str
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+    SECRET_KEY: str
+    REDIRECT_URL: str
+
+    JWT_SECRET_KEY: str
     JWT_MIN: int
     JWT_HOUR: int
     JWT_DAY: int

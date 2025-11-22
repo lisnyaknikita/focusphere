@@ -1,13 +1,15 @@
-import { Logo } from '@/shared/ui/sidebar/components/logo/logo'
-import Link from 'next/link'
-import classes from './page.module.scss'
+'use client';
+
+import { Logo } from '@/shared/ui/sidebar/components/logo/logo';
+import Link from 'next/link';
+import classes from './page.module.scss';
 
 export default function LoginPage() {
 	return (
 		<div className={classes.loginPage}>
 			<div className={classes.loginBlock}>
 				<h1 className={classes.title}>Welcome back!</h1>
-				<button className={classes.googleButton}>
+				<button className={classes.googleButton} onClick={() => window.location.href = 'http://127.0.0.1:8000/auth/google/url'}>
 					<svg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<g clipPath='url(#clip0_2406_2176)'>
 							<path

@@ -1,7 +1,9 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Form, HTTPException, Response
+from authlib.integrations.starlette_client import OAuth
+from fastapi import APIRouter, Form, HTTPException, Request, Response
 
+from config import config
 from deps import user_repo_deps
 from jwt import jwt_generator
 from models import UserModel
@@ -10,6 +12,20 @@ from schemas import BaseResponse, UserCreateSchema, UserLoginSchema, UserSchema
 auth_router = APIRouter(
     prefix='/auth',
     tags=['auth'],
+)
+
+
+oauth = OAuth()
+oauth.register(
+    name='google',
+    client_id=config.GOOGLE_CLIENT_ID,
+    client_secret=config.GOOGLE_CLIENT_SECRET,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_state=config.SECRET_KEY,
+    redirect_uri=config.REDIRECT_URL,
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
+    client_kwargs={'scope': 'openid profile email'},
 )
 
 
@@ -61,6 +77,30 @@ async def login(
         raise HTTPException(status_code=400, detail='User not found')
     elif not user.check_password(data.password):
         raise HTTPException(status_code=400, detail='Not correct password')
+
+    await set_auth_cookies(response, user)
+    return BaseResponse(data=UserSchema.model_validate(user))
+
+
+@auth_router.get('/google/url')
+async def login_google(request: Request):
+    return await oauth.google.authorize_redirect(request, redirect_uri=config.REDIRECT_URL)
+
+
+@auth_router.get('/google/callback')
+async def auth_google_callback(request: Request, repo: user_repo_deps, response: Response):
+    try:
+        token = await oauth.google.authorize_access_token(request)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f'OAuth error: {str(e)}')
+
+    user_info = token.get('userinfo')
+    if not user_info:
+        raise HTTPException(status_code=400, detail='Failed to get user info')
+
+    user = await repo.get_by(email=user_info['email'])
+    if not user:
+        return Response(status_code=302, headers={'Location': '/'})
 
     await set_auth_cookies(response, user)
     return BaseResponse(data=UserSchema.model_validate(user))

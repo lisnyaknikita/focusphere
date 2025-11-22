@@ -2,7 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 
+from config import config
 from db import create_tables
 from routes import all_routers
 from schemas import BaseResponse
@@ -18,11 +20,13 @@ app = FastAPI(lifespan=lifespan, title='Focusphere API', version='0.1.0')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:5050'],
+    allow_origins=['*'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+app.add_middleware(SessionMiddleware, secret_key=config.SECRET_KEY)
 
 
 @app.get(
