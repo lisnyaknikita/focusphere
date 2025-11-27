@@ -98,7 +98,7 @@ export const ChatSidebar = () => {
 				<ul className={clsx(classes.list, isMessagesOpened && 'opened')}>
 					{TEAMMATES.map(mate => (
 						<li className={classes.listItem} key={mate}>
-							<Image src={'/avatar.png'} alt='avatar' width={20} height={19} />
+							<Image src={'/avatar.jpg'} alt='avatar' width={20} height={19} />
 							<span>{mate}</span>
 						</li>
 					))}

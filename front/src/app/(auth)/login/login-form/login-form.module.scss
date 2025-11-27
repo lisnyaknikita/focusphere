@@ -1,0 +1,71 @@
+.loginForm {
+	display: flex;
+	flex-direction: column;
+}
+
+.formLabel {
+	position: relative;
+
+	> span {
+		font-size: 14px;
+		font-weight: 400;
+		font-family: inherit;
+		color: var(--text);
+		display: inline-block;
+		margin-bottom: 5px;
+	}
+
+	> input {
+		width: 100%;
+		border: 1px solid var(--btn-border);
+		background-color: transparent;
+		color: var(--text);
+		border-radius: 5px;
+		padding: 10px 10px;
+		font-size: 15px;
+		font-weight: 400;
+		font-family: inherit;
+	}
+
+	> input[type='password'] {
+		padding-right: 150px;
+	}
+
+	&:first-child {
+		margin-bottom: 10px;
+	}
+
+	&:nth-child(2) {
+		margin-bottom: 30px;
+	}
+}
+
+.forgotButton {
+	position: absolute;
+	right: 2%;
+	top: 58%;
+	color: var(--textSecondary);
+	font-size: 14px;
+	font-weight: 400;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.submitButton {
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 10px 5px;
+	background-color: var(--save-button-bg);
+	border-radius: 10px;
+	display: inline-block;
+	width: 100%;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}

@@ -24,7 +24,7 @@ export const ChatArea = () => {
 				<div className={classes.messages}>
 					<div className={classes.message}>
 						<div className={classes.authorAvatar}>
-							<Image src={'/avatar.png'} alt='avatar' width={46} height={46} />
+							<Image src={'/avatar.jpg'} alt='avatar' width={46} height={46} />
 						</div>
 						<div className={classes.messageContent}>
 							<div className={classes.messageHeader}>
@@ -36,7 +36,7 @@ export const ChatArea = () => {
 					</div>
 					<div className={classes.message}>
 						<div className={classes.authorAvatar}>
-							<Image src={'/avatar.png'} alt='avatar' width={46} height={46} />
+							<Image src={'/avatar.jpg'} alt='avatar' width={46} height={46} />
 						</div>
 						<div className={classes.messageContent}>
 							<div className={classes.messageHeader}>

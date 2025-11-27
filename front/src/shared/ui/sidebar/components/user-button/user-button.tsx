@@ -1,9 +1,13 @@
 'use client'
 
+import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
+import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { Modal } from '@/shared/ui/modal/modal'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { useState } from 'react'
 import { AvatarUploader } from './avatar-uploader/avatar-uploader'
 import { EditableUsername } from './editable-username/editable-username'
 import classes from './user-button.module.scss'
@@ -14,9 +18,13 @@ interface UserButtonProps {
 
 export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isVisible, setIsVisible] = useState(false)
-	const [isToggled, setIsToggled] = useState(false)
 	const [isSettingsTooltipOpen, setIsSettingsTooltipOpen] = useState(false)
 	const [isSignOutTooltipOpen, setIsSignOutTooltipOpen] = useState(false)
+	const { user, logout, updateUserData } = useUser()
+
+	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
+
+	const { isDark, handleToggle } = useThemeToggle()
 
 	const { refs: settingsRefs, floatingStyles: settingsFloatingStyles } = useFloating({
 		open: isSettingsTooltipOpen,
@@ -34,29 +42,15 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 		placement: 'right',
 	})
 
-	useEffect(() => {
-		const savedTheme = localStorage.getItem('theme')
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+	const handleNameUpdate = (newName: string) => {
+		if (!user) return
 
-		if (savedTheme) {
-			setIsToggled(savedTheme === 'dark')
-			document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-			document.documentElement.classList.toggle('light', savedTheme === 'light')
-		} else {
-			setIsToggled(prefersDark)
-			document.documentElement.classList.toggle('dark', prefersDark)
-			document.documentElement.classList.toggle('light', !prefersDark)
-		}
-	}, [])
+		updateUserData({ name: newName })
+	}
 
-	const handleToggle = () => {
-		setIsToggled(prev => {
-			const newTheme = !prev ? 'dark' : 'light'
-			localStorage.setItem('theme', newTheme)
-			document.documentElement.classList.toggle('dark', !prev)
-			document.documentElement.classList.toggle('light', prev)
-			return !prev
-		})
+	const getDisplayName = () => {
+		if (!user) return 'Guest'
+		return user.name || user.email.split('@')[0]
 	}
 
 	return (
@@ -68,7 +62,19 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 				onMouseEnter={() => isCollapsed && setIsSettingsTooltipOpen(true)}
 				onMouseLeave={() => setIsSettingsTooltipOpen(false)}
 			>
-				N
+				{avatarUrl ? (
+					<Image src={avatarUrl} alt='Avatar' width={60} height={60} objectFit='cover' style={{ borderRadius: 5 }} />
+				) : (
+					<Image
+						src='/avatar.jpg'
+						alt='Default avatar'
+						width={60}
+						height={60}
+						objectFit='cover'
+						style={{ borderRadius: 5 }}
+					/>
+				)}
+
 				{isSettingsTooltipOpen && isCollapsed && (
 					<div
 						ref={settingsRefs.setFloating}
@@ -94,19 +100,22 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 					<h6 className={classes.modalTitle}>Settings</h6>
 					<div className={classes.themeSwitcher}>
 						<span>Dark mode</span>
-						<div className={clsx(classes.toggle, isToggled && classes.active)} onClick={handleToggle}></div>
+						<div className={clsx(classes.toggle, isDark && classes.active)} onClick={handleToggle}></div>
 					</div>
 					<div className={classes.userInfo}>
-						<AvatarUploader />
-						<EditableUsername />
+						<AvatarUploader avatarUrl={avatarUrl} onUploaded={setAvatarUrl} />
+						<EditableUsername displayName={getDisplayName()} onNameUpdated={handleNameUpdate} />
 					</div>
-					<a type='email' href='mailto:example@gmail.com' className={classes.userEmail}>
-						example@gmail.com
+					<a type='email' href={`mailto:${user?.email || 'null'}`} className={classes.userEmail}>
+						{user?.email || 'null'}
 					</a>
-					<button className={classes.saveButton}>Save</button>
+					<button className={classes.saveButton} onClick={() => setIsVisible(false)}>
+						Save
+					</button>
 					<button
 						className={classes.signOutButton}
 						ref={signOutRefs.setReference}
+						onClick={logout}
 						onMouseEnter={() => isCollapsed && setIsSignOutTooltipOpen(true)}
 						onMouseLeave={() => setIsSignOutTooltipOpen(false)}
 					>
