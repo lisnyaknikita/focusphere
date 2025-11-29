@@ -1,0 +1,16 @@
+.verifyPage {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.verifyBlock {
+	width: 400px;
+	border-radius: 5px;
+	padding: 20px 40px;
+	background-color: var(--secondary);
+	color: var(--text);
+}
