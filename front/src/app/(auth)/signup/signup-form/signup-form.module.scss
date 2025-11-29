@@ -1,0 +1,95 @@
+.signupForm {
+	display: flex;
+	flex-direction: column;
+}
+
+.formLabel {
+	> span {
+		font-size: 14px;
+		font-weight: 400;
+		font-family: inherit;
+		color: var(--text);
+		display: inline-block;
+		margin-bottom: 5px;
+	}
+
+	> input {
+		width: 100%;
+		border: 1px solid var(--btn-border);
+		background-color: transparent;
+		color: var(--text);
+		border-radius: 5px;
+		padding: 10px 10px;
+		font-size: 15px;
+		font-weight: 400;
+		font-family: inherit;
+	}
+
+	&:first-child {
+		margin-bottom: 10px;
+	}
+
+	&:nth-child(2) {
+		margin-bottom: 10px;
+	}
+
+	&:nth-child(3) {
+		margin-bottom: 30px;
+	}
+}
+
+.passwordContainer {
+	position: relative;
+
+	> input {
+		width: 100%;
+		border: 1px solid var(--btn-border);
+		background-color: transparent;
+		color: var(--text);
+		border-radius: 5px;
+		padding: 10px 10px;
+		font-size: 15px;
+		font-weight: 400;
+		font-family: inherit;
+	}
+
+	> input[type='password'] {
+		padding-right: 80px;
+	}
+}
+
+.showPasswordButton {
+	position: absolute;
+	right: 2%;
+	top: 33%;
+	color: var(--textSecondary);
+	font-size: 14px;
+	font-weight: 400;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.submitButton {
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 10px 5px;
+	background-color: var(--save-button-bg);
+	border-radius: 10px;
+	display: inline-block;
+	width: 100%;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
+
+.errorMessage {
+	font-size: 14px;
+	font-weight: 400;
+	color: #e85c5c;
+}

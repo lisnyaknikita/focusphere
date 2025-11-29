@@ -23,7 +23,7 @@ export const ProjectCard = () => {
 				<div className={classes.moreInfo}>
 					<ul className={classes.teamMembers}>
 						<li className={classes.avatar}>
-							<Image src={'/avatar.png'} alt='Team member' width={30} height={30} />
+							<Image src={'/avatar.jpg'} alt='Team member' width={30} height={30} />
 						</li>
 					</ul>
 					<div className={classes.updateDate}>Updated 2 days ago</div>

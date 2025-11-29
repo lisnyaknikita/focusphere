@@ -20,7 +20,7 @@ export const KanbanTaskCard = ({ task }: KanbanTaskCardProps) => {
 			<p className={classes.taskDescription}>{task.description}</p>
 			<footer className={classes.taskCardFooter}>
 				<div className={classes.taskAssignee}>
-					<Image src={'/avatar.png'} alt='assignee' width={23} height={23} />
+					<Image src={'/avatar.jpg'} alt='assignee' width={23} height={23} />
 					<span>{task.assignee}</span>
 				</div>
 				<div className={classes.taskDate}>{task.createdAt}</div>
