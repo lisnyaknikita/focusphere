@@ -3,16 +3,21 @@ import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import TimePicker from 'react-time-picker'
 
+import { EventForm } from '@/shared/types/event'
 import { Modal } from '@/shared/ui/modal/modal'
 import 'react-day-picker/style.css'
 import 'react-time-picker/dist/TimePicker.css'
 import classes from './date-time.module.scss'
 
-export const DateTime = () => {
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+interface DateTimeProps {
+	form: EventForm
+	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
+}
+
+export const DateTime = ({ form, setFormField }: DateTimeProps) => {
 	const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
-	const [startTime, setStartTime] = useState<string | null>('09:00')
-	const [endTime, setEndTime] = useState<string | null>('10:00')
+
+	const selectedDate = new Date(form.date)
 
 	return (
 		<div className={classes.dateTime}>
@@ -30,7 +35,7 @@ export const DateTime = () => {
 			</div>
 			<div className={classes.info}>
 				<button className={classes.date} onClick={() => setIsDatePickerOpen(prev => !prev)} type='button'>
-					{selectedDate ? format(selectedDate, 'EEEE, MMMM d') : 'Pick a date'}
+					{form.date ? format(new Date(form.date), 'EEEE, MMMM d') : 'Pick a date'}
 				</button>
 				{isDatePickerOpen && (
 					<Modal isVisible={isDatePickerOpen} onClose={() => setIsDatePickerOpen(false)}>
@@ -40,7 +45,7 @@ export const DateTime = () => {
 								selected={selectedDate}
 								onSelect={date => {
 									if (date) {
-										setSelectedDate(date)
+										setFormField('date', date.toISOString())
 										setIsDatePickerOpen(false)
 									}
 								}}
@@ -51,16 +56,16 @@ export const DateTime = () => {
 				<div className={classes.timePickers}>
 					<TimePicker
 						className={classes.timePicker}
-						onChange={setStartTime}
-						value={startTime}
+						onChange={value => value && setFormField('startTime', value)}
+						value={form.startTime}
 						disableClock={true}
 						clearIcon={null}
 					/>
 					<span>–</span>
 					<TimePicker
 						className={classes.timePicker}
-						onChange={setEndTime}
-						value={endTime}
+						onChange={value => value && setFormField('endTime', value)}
+						value={form.endTime}
 						disableClock={true}
 						clearIcon={null}
 					/>

@@ -1,16 +1,28 @@
+import { EventForm } from '@/shared/types/event'
 import { useState } from 'react'
 import classes from './color-picker.module.scss'
 
+interface ColorPickerProps {
+	form: EventForm
+	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
+}
+
 const COLORS = ['#D79716', '#D71616', '#17720F', '#1351AE', '#97107A', '#16ADD7']
 
-export const ColorPicker = () => {
-	const [selected, setSelected] = useState(COLORS[0])
+export const ColorPicker = ({ form, setFormField }: ColorPickerProps) => {
 	const [open, setOpen] = useState(false)
+
+	const selectedColor = form.color
+
+	const handleColorSelect = (color: string) => {
+		setFormField('color', color)
+		setOpen(false)
+	}
 
 	return (
 		<div className={classes.colorPicker}>
 			<button className={classes.triggerButton} onClick={() => setOpen(prev => !prev)} type='button'>
-				<span className={classes.selectedColorCircle} style={{ backgroundColor: selected }}></span>
+				<span className={classes.selectedColorCircle} style={{ backgroundColor: selectedColor }}></span>
 				<span className={classes.arrow}>
 					{open ? (
 						<svg width='11' height='7' viewBox='0 0 9 5' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -34,13 +46,11 @@ export const ColorPicker = () => {
 				<div className={classes.dropdown}>
 					{COLORS.map(color => (
 						<button
+							type='button'
 							key={color}
 							className={classes.colorOption}
 							style={{ backgroundColor: color }}
-							onClick={() => {
-								setSelected(color)
-								setOpen(false)
-							}}
+							onClick={() => handleColorSelect(color)}
 						/>
 					))}
 				</div>

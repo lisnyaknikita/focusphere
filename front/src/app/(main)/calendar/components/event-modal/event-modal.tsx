@@ -1,3 +1,6 @@
+import { createEvent } from '@/lib/events/events'
+import { EventForm } from '@/shared/types/event'
+import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { useState } from 'react'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
@@ -12,19 +15,56 @@ export const EventModal = ({ onClose }: EventModalProps) => {
 	const [form, setForm] = useState({
 		title: '',
 		description: '',
-		date: new Date(),
+		date: new Date().toISOString(),
 		startTime: '09:00',
 		endTime: '10:00',
 		color: '#3B82F6',
 	})
 
+	const setFormField = <K extends keyof EventForm>(key: K, value: EventForm[K]) => {
+		setForm(prev => ({ ...prev, [key]: value }))
+	}
+
+	const onSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+
+		const [sh, sm] = form.startTime.split(':').map(Number)
+		const [eh, em] = form.endTime.split(':').map(Number)
+
+		const startDate = new Date(form.date)
+		startDate.setHours(sh, sm)
+
+		const endDate = new Date(form.date)
+		endDate.setHours(eh, em)
+
+		const userId = await getCurrentUserId()
+
+		await createEvent({
+			title: form.title,
+			description: form.description,
+			startDate: startDate.toISOString(),
+			endDate: endDate.toISOString(),
+			color: form.color,
+			userId,
+		})
+
+		onClose()
+	}
+
 	return (
 		<div className={classes.modalInner}>
-			<form className={classes.eventForm}>
-				<input type='text' placeholder='Title...' className={classes.eventTitle} aria-label='Event title' />
-				<DateTime />
-				<Description />
-				<ColorPicker />
+			<form className={classes.eventForm} onSubmit={onSubmit}>
+				<input
+					type='text'
+					placeholder='Title...'
+					className={classes.eventTitle}
+					aria-label='Event title'
+					value={form.title}
+					onChange={e => setFormField('title', e.target.value)}
+				/>
+				<DateTime form={form} setFormField={setFormField} />
+				<Description form={form} setFormField={setFormField} />
+				<ColorPicker form={form} setFormField={setFormField} />
 				<button className={classes.saveButton}>Save</button>
 			</form>
 			<button className={classes.closeButton} onClick={() => onClose()}>

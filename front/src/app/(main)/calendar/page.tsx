@@ -12,6 +12,8 @@ import { EventModal } from './components/event-modal/event-modal'
 import { CreateButton } from './components/header/create-button/create-button'
 import { CalendarInner } from './components/main/calendar/calendar'
 
+import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import { Query } from 'appwrite'
 import classes from './page.module.scss'
 
 export type CalendarView = 'month' | 'week' | 'day'
@@ -37,10 +39,15 @@ export default function Calendar() {
 	}, [])
 
 	const getEvents = async () => {
+		const userId = await getCurrentUserId()
+
+		const filters = [Query.equal('userId', userId)]
+
 		try {
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
+				queries: filters,
 			})
 
 			const typedEvents = response.rows as unknown as CalendarEvent[]
@@ -51,6 +58,11 @@ export default function Calendar() {
 				console.error(error)
 			}
 		}
+	}
+
+	const handleEventCreated = () => {
+		setIsModalVisible(false)
+		getEvents()
 	}
 
 	return (
@@ -71,7 +83,7 @@ export default function Calendar() {
 				)}
 			</div>
 			<Modal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)}>
-				<EventModal onClose={() => setIsModalVisible(false)} />
+				<EventModal onClose={handleEventCreated} />
 			</Modal>
 		</>
 	)
