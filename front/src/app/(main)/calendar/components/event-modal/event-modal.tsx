@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
 import { Description } from './components/description/description'
@@ -8,6 +9,15 @@ interface EventModalProps {
 }
 
 export const EventModal = ({ onClose }: EventModalProps) => {
+	const [form, setForm] = useState({
+		title: '',
+		description: '',
+		date: new Date(),
+		startTime: '09:00',
+		endTime: '10:00',
+		color: '#3B82F6',
+	})
+
 	return (
 		<div className={classes.modalInner}>
 			<form className={classes.eventForm}>

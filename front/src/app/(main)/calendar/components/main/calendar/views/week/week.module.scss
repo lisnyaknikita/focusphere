@@ -53,6 +53,7 @@
 	border-right: 0.3px solid var(--line);
 	display: grid;
 	grid-template-rows: repeat(24, 1fr);
+	position: relative;
 }
 
 .hourBox {
