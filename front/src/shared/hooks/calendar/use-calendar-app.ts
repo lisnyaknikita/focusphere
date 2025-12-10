@@ -2,6 +2,7 @@ import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/page'
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
+import { createCurrentTimePlugin } from '@schedule-x/current-time'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { useState } from 'react'
@@ -18,9 +19,11 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 		views: [createViewMonthGrid(), createViewWeek(), createViewDay()],
 		defaultView: VIEW_TO_SX[defaultView],
 		events: [],
-		plugins: [eventsService, calendarControls],
+		plugins: [eventsService, calendarControls, createCurrentTimePlugin()],
 		callbacks: {},
 		calendars: CALENDARS_CONFIG,
+		//@ts-expect-error timezone type ignored
+		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 	})
 
 	const setView = (view: CalendarView) => {

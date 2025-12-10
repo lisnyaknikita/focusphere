@@ -23,5 +23,20 @@ export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
 		setView(view)
 	}, [view, setView])
 
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			const el = document.querySelector('.sx__current-time-indicator')
+
+			if (el) {
+				el.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center',
+				})
+			}
+		}, 50)
+
+		return () => clearTimeout(timeout)
+	}, [])
+
 	return <ScheduleXCalendar calendarApp={calendar} />
 }

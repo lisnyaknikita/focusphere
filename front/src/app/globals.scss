@@ -19,12 +19,10 @@
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
 	--date-bg: #b5b5b5;
-	--event-color-orange: #d79716;
-	--event-color-red: #d71616;
-	--event-color-green: #17720f;
-	--event-color-blue: #1351ae;
-	--event-color-purple: #97107a;
-	--event-color-cyan: #16add7;
+	--sx-color-background: #f2f2f2;
+	--sx-internal-color-text: #1c1b1b;
+	--sx-color-neutral: #1c1b1ba7;
+	--sx-border: 0.3px solid #c7c7c7;
 }
 
 :root.light {
@@ -48,12 +46,10 @@
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
 	--date-bg: #b5b5b5;
-	--event-color-orange: #d79716;
-	--event-color-red: #d71616;
-	--event-color-green: #17720f;
-	--event-color-blue: #1351ae;
-	--event-color-purple: #97107a;
-	--event-color-cyan: #16add7;
+	--sx-color-background: #f2f2f2;
+	--sx-internal-color-text: #1c1b1b;
+	--sx-color-neutral: #1c1b1ba7;
+	--sx-border: 0.3px solid #c7c7c7;
 }
 
 :root.dark {
@@ -77,12 +73,10 @@
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
 	--date-bg: #474747;
-	--event-color-orange: #d79716;
-	--event-color-red: #d71616;
-	--event-color-green: #17720f;
-	--event-color-blue: #1351ae;
-	--event-color-purple: #97107a;
-	--event-color-cyan: #16add7;
+	--sx-color-background: #0e0e0e;
+	--sx-internal-color-text: #ffffff;
+	--sx-color-neutral: #ffffffa1;
+	--sx-border: 0.3px solid #c7c7c7;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -107,12 +101,10 @@
 		--btn-border: #3b3a3a;
 		--line: #c7c7c7;
 		--date-bg: #474747;
-		--event-color-orange: #d79716;
-		--event-color-red: #d71616;
-		--event-color-green: #17720f;
-		--event-color-blue: #1351ae;
-		--event-color-purple: #97107a;
-		--event-color-cyan: #16add7;
+		--sx-color-background: #0e0e0e;
+		--sx-internal-color-text: #ffffff;
+		--sx-color-neutral: #ffffffa1;
+		--sx-border: 0.3px solid #c7c7c7;
 	}
 }
 
@@ -275,11 +267,13 @@ ul {
 	padding: 0 !important;
 }
 
+.sx__calendar {
+	border: none !important;
+}
+
 .sx-react-calendar-wrapper {
-	// width: 1200px;
-	max-width: 100vw;
-	height: 700px;
-	max-height: 100%;
+	max-width: 100%;
+	height: 100%;
 }
 
 .sx__view-selection {
@@ -295,6 +289,22 @@ ul {
 	height: 0;
 	pointer-events: none;
 }
+
+.sx__today-button:hover,
+.sx__today-button:focus {
+	background-color: var(--hover) !important;
+}
+
+.sx__chevron-wrapper:hover,
+.sx__chevron-wrapper:focus {
+	background-color: var(--hover) !important;
+}
+
+.sx__week-header-border {
+	border-left: none !important;
+}
+
+//TODO: header's border bottom
 
 @media (prefers-color-scheme: dark) {
 	html {
