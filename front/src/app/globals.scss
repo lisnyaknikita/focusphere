@@ -282,6 +282,20 @@ ul {
 	max-height: 100%;
 }
 
+.sx__view-selection {
+	display: none;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+}
+
+.sx__date-picker-wrapper {
+	display: none;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+}
+
 @media (prefers-color-scheme: dark) {
 	html {
 		color-scheme: dark;

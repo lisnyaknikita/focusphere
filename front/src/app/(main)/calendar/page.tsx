@@ -20,18 +20,29 @@ export type CalendarView = 'month' | 'week' | 'day'
 
 const VIEW_KEY = 'calendarView'
 
+export const VIEW_TO_SX: Record<CalendarView, string> = {
+	month: 'month-grid',
+	week: 'week',
+	day: 'day',
+}
+
 export default function Calendar() {
-	const [view, setView] = useState<CalendarView | null>('week')
+	const [view, setView] = useState<CalendarView>(() => {
+		if (typeof window !== 'undefined') {
+			return (localStorage.getItem(VIEW_KEY) as CalendarView) || 'week'
+		}
+		return 'week'
+	})
 	const [isModalVisible, setIsModalVisible] = useState(false)
 	const [events, setEvents] = useState<CalendarEvent[]>([])
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as CalendarView | null
-		setView(saved ?? 'week')
+		if (saved) setView(saved)
 	}, [])
 
 	useEffect(() => {
-		if (view) localStorage.setItem(VIEW_KEY, view)
+		localStorage.setItem(VIEW_KEY, view)
 	}, [view])
 
 	useEffect(() => {
@@ -77,7 +88,7 @@ export default function Calendar() {
 							<CreateButton setIsModalVisible={setIsModalVisible} />
 						</header>
 						<main className={classes.calendar}>
-							<CalendarInner events={events} />
+							<CalendarInner events={events} view={view} />
 						</main>
 					</>
 				)}

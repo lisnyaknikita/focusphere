@@ -5,17 +5,23 @@ import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
 
 import { useEffect } from 'react'
+import { CalendarView } from '../../../page'
 
 interface CalendarInnerProps {
 	events: CalendarEvent[]
+	view: CalendarView
 }
 
-export const CalendarInner = ({ events }: CalendarInnerProps) => {
-	const { calendar, eventsService } = useCalendarApp()
+export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
+	const { calendar, eventsService, setView } = useCalendarApp({ defaultView: view })
 
 	useEffect(() => {
 		eventsService.set(events.map(mapEventToScheduleX))
 	}, [events, eventsService])
+
+	useEffect(() => {
+		setView(view)
+	}, [view, setView])
 
 	return <ScheduleXCalendar calendarApp={calendar} />
 }
