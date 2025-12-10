@@ -45,7 +45,7 @@ export const DateTime = ({ form, setFormField }: DateTimeProps) => {
 								selected={selectedDate}
 								onSelect={date => {
 									if (date) {
-										setFormField('date', date.toISOString())
+										setFormField('date', format(date, 'yyyy-MM-dd'))
 										setIsDatePickerOpen(false)
 									}
 								}}

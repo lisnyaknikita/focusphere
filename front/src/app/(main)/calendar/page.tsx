@@ -77,7 +77,7 @@ export default function Calendar() {
 							<CreateButton setIsModalVisible={setIsModalVisible} />
 						</header>
 						<main className={classes.calendar}>
-							<CalendarInner currentView={view} events={events} onViewChange={setView} />
+							<CalendarInner events={events} />
 						</main>
 					</>
 				)}

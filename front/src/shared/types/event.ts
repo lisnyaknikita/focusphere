@@ -6,6 +6,7 @@ export interface CalendarEvent extends Models.Document {
 	startDate: string
 	endDate: string
 	color: string
+	calendarId: string
 	userId: string
 }
 
@@ -15,6 +16,7 @@ export interface CreateEventPayload {
 	startDate: string
 	endDate: string
 	color: string
+	calendarId: string
 	userId: string
 }
 
