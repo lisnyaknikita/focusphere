@@ -5,21 +5,18 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { useState } from 'react'
 
 const createISOStringFromForm = (dateString: string, timeString: string): string => {
-	if (!dateString) {
-		console.error('Date error')
-		return ''
+	if (!dateString || !timeString) {
+		throw new Error('Missing date or time')
 	}
 
 	const [hours, minutes] = timeString.split(':').map(Number)
 
-	const date = new Date(dateString + 'T00:00:00.000Z')
-
+	const date = new Date(dateString)
 	if (isNaN(date.getTime())) {
-		console.error('Error string:', dateString)
-		throw new Error('Incorrect date')
+		throw new Error('Invalid date: ' + dateString)
 	}
 
-	date.setUTCHours(hours, minutes, 0, 0)
+	date.setHours(hours, minutes, 0, 0)
 
 	return date.toISOString()
 }
