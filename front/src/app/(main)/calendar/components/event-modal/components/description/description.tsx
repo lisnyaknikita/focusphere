@@ -1,10 +1,15 @@
+import { EventForm } from '@/shared/types/event'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useState } from 'react'
 import classes from './description.module.scss'
 
-export const Description = () => {
+interface DescriptionProps {
+	form: EventForm
+	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
+}
+
+export const Description = ({ form, setFormField }: DescriptionProps) => {
 	const [isDescriptionOpen, setIsDescriptionOpen] = useState(false)
-	const [description, setDescription] = useState('')
 	const [isEditingDescription, setIsEditingDescription] = useState(false)
 
 	return (
@@ -29,7 +34,7 @@ export const Description = () => {
 					/>
 				</svg>
 			</div>
-			{!description ? (
+			{!form.description ? (
 				<button
 					className={classes.addButton}
 					onClick={() => {
@@ -58,8 +63,11 @@ export const Description = () => {
 							<textarea
 								className={classes.descriptionTextarea}
 								placeholder='Add a description'
-								value={description}
-								onChange={e => setDescription(e.target.value)}
+								value={form.description || ''}
+								onChange={e => {
+									const value = e.target.value.trim() === '' ? undefined : e.target.value
+									setFormField('description', value)
+								}}
 								autoFocus
 							/>
 							<button
@@ -75,7 +83,7 @@ export const Description = () => {
 						</form>
 					) : (
 						<div className={classes.descriptionContent} onClick={() => setIsEditingDescription(true)}>
-							<p>{description}</p>
+							<p>{form.description || ''}</p>
 						</div>
 					)}
 				</Modal>

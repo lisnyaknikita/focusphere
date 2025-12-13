@@ -1,3 +1,4 @@
+import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
 import { Description } from './components/description/description'
@@ -8,13 +9,22 @@ interface EventModalProps {
 }
 
 export const EventModal = ({ onClose }: EventModalProps) => {
+	const { form, setFormField, handleSubmit } = useEventForm(onClose)
+
 	return (
 		<div className={classes.modalInner}>
-			<form className={classes.eventForm}>
-				<input type='text' placeholder='Title...' className={classes.eventTitle} aria-label='Event title' />
-				<DateTime />
-				<Description />
-				<ColorPicker />
+			<form className={classes.eventForm} onSubmit={handleSubmit}>
+				<input
+					type='text'
+					placeholder='Title...'
+					className={classes.eventTitle}
+					aria-label='Event title'
+					value={form.title}
+					onChange={e => setFormField('title', e.target.value)}
+				/>
+				<DateTime form={form} setFormField={setFormField} />
+				<Description form={form} setFormField={setFormField} />
+				<ColorPicker form={form} setFormField={setFormField} />
 				<button className={classes.saveButton}>Save</button>
 			</form>
 			<button className={classes.closeButton} onClick={() => onClose()}>

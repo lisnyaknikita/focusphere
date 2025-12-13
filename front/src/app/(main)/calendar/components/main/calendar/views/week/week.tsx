@@ -1,4 +1,8 @@
+'use client'
+
+import '@schedule-x/theme-default/dist/index.css'
 import clsx from 'clsx'
+import 'temporal-polyfill/global'
 import classes from './week.module.scss'
 
 const hours = Array.from({ length: 24 }, (_, i) => i)
