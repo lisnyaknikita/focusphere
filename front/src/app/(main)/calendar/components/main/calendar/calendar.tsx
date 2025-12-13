@@ -1,10 +1,14 @@
 import { mapEventToScheduleX } from '@/lib/events/event-mapper'
 import { useCalendarApp } from '@/shared/hooks/calendar/use-calendar-app'
 import { CalendarEvent } from '@/shared/types/event'
+import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
+
 import '@schedule-x/theme-default/dist/index.css'
 
-import { useEffect } from 'react'
+import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
+import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
+import { useEffect, useMemo } from 'react'
 import { CalendarView } from '../../../page'
 
 interface CalendarInnerProps {
@@ -13,7 +17,18 @@ interface CalendarInnerProps {
 }
 
 export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
-	const { calendar, eventsService, setView } = useCalendarApp({ defaultView: view })
+	const { calendar, eventsService, setView, eventModal } = useCalendarApp({ defaultView: view })
+
+	const { handleDelete } = useEventDeletion({ eventsService, eventModal })
+
+	const customComponents = useMemo(
+		() => ({
+			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
+				<EventInfoModal event={calendarEvent} onConfirmDelete={handleDelete} />
+			),
+		}),
+		[handleDelete]
+	)
 
 	useEffect(() => {
 		eventsService.set(events.map(mapEventToScheduleX))
@@ -38,5 +53,5 @@ export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
 		return () => clearTimeout(timeout)
 	}, [])
 
-	return <ScheduleXCalendar calendarApp={calendar} />
+	return <ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
 }

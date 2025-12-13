@@ -7,8 +7,10 @@ export const mapEventToScheduleX = (event: CalendarEvent) => {
 	return {
 		id: event.$id,
 		title: event.title,
+		description: event.description,
 		start: toZDT(event.startDate),
 		end: toZDT(event.endDate),
+		color: event.color,
 		calendarId: getCalendarIdByColor(event.color),
 	}
 }
