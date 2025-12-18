@@ -46,6 +46,11 @@ export default function Planner() {
 		}
 	}
 
+	const handleTimeBlockCreated = () => {
+		setIsTimeBlockModalVisible(false)
+		getTimeBlocks()
+	}
+
 	return (
 		<>
 			<div className={classes.plannerPage}>
@@ -58,7 +63,7 @@ export default function Planner() {
 				</main>
 			</div>
 			<Modal isVisible={isTimeBlockModalVisible} onClose={() => setIsTimeBlockModalVisible(false)}>
-				<TimeBlockModal onClose={() => setIsTimeBlockModalVisible(false)} />
+				<TimeBlockModal onClose={handleTimeBlockCreated} />
 			</Modal>
 			<Modal isVisible={isDailyTasksModalVisible} onClose={() => setIsDailyTasksModalVisible(false)}>
 				<DailyTasksModal onClose={() => setIsDailyTasksModalVisible(false)} />
