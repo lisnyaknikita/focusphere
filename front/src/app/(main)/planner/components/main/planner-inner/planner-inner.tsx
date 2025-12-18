@@ -8,12 +8,14 @@ import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
 import { useEffect, useMemo } from 'react'
 import 'temporal-polyfill/global'
+import { WeekDayHeader } from './components/week-day-header/week-day-header'
 
 interface PlannerInnerProps {
 	timeBlocks: TimeBlock[]
+	onDailyTasksModalVisible: (status: boolean) => void
 }
 
-export const PlannerInner = ({ timeBlocks }: PlannerInnerProps) => {
+export const PlannerInner = ({ timeBlocks, onDailyTasksModalVisible }: PlannerInnerProps) => {
 	const { calendar, eventsService, eventModal } = useCalendarApp()
 
 	const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
@@ -23,8 +25,11 @@ export const PlannerInner = ({ timeBlocks }: PlannerInnerProps) => {
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
 				<EventInfoModal event={calendarEvent} onConfirmDelete={handleDelete} />
 			),
+			weekGridDate: ({ date }: { date: string }) => (
+				<WeekDayHeader date={date} onDailyTasksModalVisible={onDailyTasksModalVisible} />
+			),
 		}),
-		[handleDelete]
+		[handleDelete, onDailyTasksModalVisible]
 	)
 
 	useEffect(() => {

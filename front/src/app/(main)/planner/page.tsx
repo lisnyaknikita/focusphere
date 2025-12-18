@@ -54,7 +54,7 @@ export default function Planner() {
 					<AddTimeBlockButton setIsModalVisible={setIsTimeBlockModalVisible} />
 				</header>
 				<main className={classes.planner}>
-					<PlannerInner timeBlocks={timeBlocks} />
+					<PlannerInner timeBlocks={timeBlocks} onDailyTasksModalVisible={setIsDailyTasksModalVisible} />
 				</main>
 			</div>
 			<Modal isVisible={isTimeBlockModalVisible} onClose={() => setIsTimeBlockModalVisible(false)}>
