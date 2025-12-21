@@ -1,3 +1,4 @@
+import { CreateDailyTaskPayload } from '@/shared/types/daily-task'
 import { CreateEventPayload } from '@/shared/types/event'
 import { Client, ID, TablesDB } from 'appwrite'
 
@@ -30,5 +31,31 @@ export const deleteTimeBlock = async (eventId: string): Promise<void> => {
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
 		rowId: eventId,
+	})
+}
+
+export const createDailyTask = async (data: CreateDailyTaskPayload) => {
+	return tablesDB.createRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
+		rowId: ID.unique(),
+		data,
+	})
+}
+
+export const updateDailyTask = async (taskId: string, data: Partial<Omit<CreateDailyTaskPayload, 'userId'>>) => {
+	return tablesDB.updateRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
+		rowId: taskId,
+		data,
+	})
+}
+
+export const deleteDailyTask = async (taskId: string): Promise<void> => {
+	await tablesDB.deleteRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
+		rowId: taskId,
 	})
 }

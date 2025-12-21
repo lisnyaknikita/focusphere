@@ -19,6 +19,7 @@ export default function Planner() {
 	const [isTimeBlockModalVisible, setIsTimeBlockModalVisible] = useState(false)
 	const [isDailyTasksModalVisible, setIsDailyTasksModalVisible] = useState(false)
 	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([])
+	const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
 	useEffect(() => {
 		getTimeBlocks()
@@ -59,14 +60,20 @@ export default function Planner() {
 					<AddTimeBlockButton setIsModalVisible={setIsTimeBlockModalVisible} />
 				</header>
 				<main className={classes.planner}>
-					<PlannerInner timeBlocks={timeBlocks} onDailyTasksModalVisible={setIsDailyTasksModalVisible} />
+					<PlannerInner
+						timeBlocks={timeBlocks}
+						onDayClick={(date: string) => {
+							setSelectedDate(date)
+							setIsDailyTasksModalVisible(true)
+						}}
+					/>
 				</main>
 			</div>
 			<Modal isVisible={isTimeBlockModalVisible} onClose={() => setIsTimeBlockModalVisible(false)}>
 				<TimeBlockModal onClose={handleTimeBlockCreated} />
 			</Modal>
 			<Modal isVisible={isDailyTasksModalVisible} onClose={() => setIsDailyTasksModalVisible(false)}>
-				<DailyTasksModal onClose={() => setIsDailyTasksModalVisible(false)} />
+				{selectedDate && <DailyTasksModal date={selectedDate} onClose={() => setIsDailyTasksModalVisible(false)} />}
 			</Modal>
 		</>
 	)

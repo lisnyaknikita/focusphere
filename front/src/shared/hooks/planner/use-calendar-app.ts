@@ -11,12 +11,13 @@ export const useCalendarApp = () => {
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
 	const [eventModal] = useState(() => createEventModalPlugin())
+	const [currentTimePlugin] = useState(() => createCurrentTimePlugin())
 
 	const calendar = useNextCalendarApp({
 		views: [createViewWeek()],
 		defaultView: 'week',
 		events: [],
-		plugins: [eventsService, calendarControls, createCurrentTimePlugin(), eventModal],
+		plugins: [eventsService, calendarControls, currentTimePlugin, eventModal],
 		callbacks: {},
 		calendars: CALENDARS_CONFIG,
 		//@ts-expect-error timezone type ignored

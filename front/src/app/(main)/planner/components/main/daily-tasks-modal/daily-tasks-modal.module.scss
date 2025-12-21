@@ -14,7 +14,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
-	margin-bottom: 20px;
 	max-height: 295px;
 	overflow-y: auto;
 
@@ -37,7 +36,7 @@
 	font-size: 16px;
 	font-family: inherit;
 	transition: background-color 0.2s;
-	margin: 0 auto;
+	margin: 20px auto 0 auto;
 
 	&:hover {
 		background-color: var(--secondary);
@@ -65,4 +64,41 @@
 			fill: var(--hover);
 		}
 	}
+}
+
+.loader {
+	display: block;
+	text-align: center;
+	margin: 0 auto;
+}
+
+.emptyMessage {
+	font-size: 18px;
+	text-align: center;
+	color: var(--text);
+}
+
+.newTaskItem {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border-radius: 5px;
+	padding: 7px;
+	cursor: pointer;
+	position: relative;
+	border: 1px solid var(--btn-border);
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.inlineInput {
+	width: 100%;
+	border: none;
+	background-color: transparent;
+	outline: none;
+	font-size: 16px;
+	font-family: inherit;
 }

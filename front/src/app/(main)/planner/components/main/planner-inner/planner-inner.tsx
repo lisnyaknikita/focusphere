@@ -6,50 +6,62 @@ import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import 'temporal-polyfill/global'
 import { WeekDayHeader } from './components/week-day-header/week-day-header'
 
 interface PlannerInnerProps {
 	timeBlocks: TimeBlock[]
-	onDailyTasksModalVisible: (status: boolean) => void
+	onDayClick: (date: string) => void
 }
 
-export const PlannerInner = ({ timeBlocks, onDailyTasksModalVisible }: PlannerInnerProps) => {
+export const PlannerInner = ({ timeBlocks, onDayClick }: PlannerInnerProps) => {
 	const { calendar, eventsService, eventModal } = useCalendarApp()
 
 	const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
+
+	const isInitialScrollDone = useRef(false)
 
 	const customComponents = useMemo(
 		() => ({
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
 				<EventInfoModal event={calendarEvent} onConfirmDelete={handleDelete} />
 			),
-			weekGridDate: ({ date }: { date: string }) => (
-				<WeekDayHeader date={date} onDailyTasksModalVisible={onDailyTasksModalVisible} />
-			),
+			weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} onDayClick={onDayClick} />,
 		}),
-		[handleDelete, onDailyTasksModalVisible]
+		[handleDelete, onDayClick]
 	)
 
 	useEffect(() => {
+		if (!eventsService) return
 		eventsService.set(timeBlocks.map(mapTimeBlockToScheduleX))
 	}, [timeBlocks, eventsService])
 
 	useEffect(() => {
-		const timeout = setTimeout(() => {
-			const el = document.querySelector('.sx__current-time-indicator')
+		if (isInitialScrollDone.current || timeBlocks.length === 0) return
 
-			if (el) {
-				el.scrollIntoView({
+		const scrollToTime = () => {
+			const indicator = document.querySelector('.sx__current-time-indicator')
+
+			if (indicator) {
+				indicator.scrollIntoView({
 					behavior: 'smooth',
 					block: 'center',
 				})
+				isInitialScrollDone.current = true
 			}
-		}, 50)
+		}
+
+		const timeout = setTimeout(() => {
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					scrollToTime()
+				})
+			})
+		}, 100)
 
 		return () => clearTimeout(timeout)
-	}, [])
+	}, [timeBlocks])
 
 	return <ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
 }
