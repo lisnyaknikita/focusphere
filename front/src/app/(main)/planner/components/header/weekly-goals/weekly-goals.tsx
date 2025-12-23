@@ -1,15 +1,74 @@
 'use client'
 
+import { createWeeklyGoal, updateWeeklyGoal } from '@/lib/planner/planner'
+import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
+import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { EmptyGoalSlot } from './components/empty-goal-slot/empty-goal-slot'
 import classes from './weekly-goals.module.scss'
 
-const goals = ['Implement home page', 'Hiking', 'Finish the book']
+interface WeeklyGoalsProps {
+	goals: WeeklyGoal[]
+	onGoalsChange: () => void
+}
 
-export const WeeklyGoals = () => {
+export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 	const [open, setOpen] = useState(false)
+	const [editingGoalId, setEditingGoalId] = useState<string | null>(null)
+	const [editValue, setEditValue] = useState('')
+
+	const slots = useMemo(() => {
+		return Array.from({ length: 3 }, (_, index) => ({
+			index,
+			goal: goals.find(g => g.index === index) ?? null,
+		}))
+	}, [goals])
+
+	const handleCreate = async (title: string, index: number) => {
+		if (!title.trim()) return
+
+		const userId = await getCurrentUserId()
+
+		await createWeeklyGoal({
+			title: title.trim(),
+			index,
+			userId,
+			isCompleted: false,
+		})
+
+		onGoalsChange()
+	}
+
+	const handleUpdate = async (id: string, data: Partial<WeeklyGoal>) => {
+		await updateWeeklyGoal(id, data)
+		onGoalsChange()
+	}
+
+	const startEdit = (goal: WeeklyGoal) => {
+		setEditingGoalId(goal.$id)
+		setEditValue(goal.title)
+	}
+
+	const cancelEdit = () => {
+		setEditingGoalId(null)
+		setEditValue('')
+	}
+
+	const saveEdit = async () => {
+		if (!editingGoalId) return
+
+		const title = editValue.trim()
+		if (!title) {
+			cancelEdit()
+			return
+		}
+
+		await handleUpdate(editingGoalId, { title })
+		cancelEdit()
+	}
 
 	return (
 		<div className={clsx(classes.weeklyGoals, open && 'opened')}>
@@ -31,9 +90,47 @@ export const WeeklyGoals = () => {
 						exit={{ opacity: 0, scale: 0.97, y: -4 }}
 						transition={{ duration: 0.18, ease: 'easeOut' }}
 					>
-						{goals.map((goal, i) => (
-							<CheckboxCard key={i} withBorder={false} label={goal} checked={false} onCheck={() => {}} />
-						))}
+						{slots.map(({ goal, index }) => {
+							if (!goal) {
+								return (
+									<EmptyGoalSlot key={`empty-${index}`} index={index} onCreate={handleCreate} autoFocus={index === 0} />
+								)
+							}
+							const isEditing = editingGoalId === goal.$id
+
+							if (isEditing) {
+								return (
+									<input
+										key={goal.$id}
+										className={classes.inlineEditInput}
+										value={editValue}
+										autoFocus
+										onChange={e => setEditValue(e.target.value)}
+										onBlur={saveEdit}
+										onKeyDown={e => {
+											if (e.key === 'Enter') saveEdit()
+											if (e.key === 'Escape') cancelEdit()
+										}}
+									/>
+								)
+							}
+
+							return (
+								<CheckboxCard
+									key={goal.$id}
+									withBorder={false}
+									label={goal.title}
+									checked={goal.isCompleted}
+									onCheck={() =>
+										handleUpdate(goal.$id, {
+											isCompleted: !goal.isCompleted,
+										})
+									}
+									onEdit={() => startEdit(goal)}
+									withEditing
+								/>
+							)
+						})}
 					</motion.div>
 				)}
 			</AnimatePresence>

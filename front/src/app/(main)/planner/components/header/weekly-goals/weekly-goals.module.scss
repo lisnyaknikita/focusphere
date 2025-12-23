@@ -43,3 +43,13 @@
 	gap: 5px;
 	z-index: 10;
 }
+
+.inlineEditInput {
+	width: 100%;
+	border: 1px solid var(--btn-border);
+	background-color: transparent;
+	outline: none;
+	font-size: 16px;
+	font-family: inherit;
+	padding: 7px;
+}

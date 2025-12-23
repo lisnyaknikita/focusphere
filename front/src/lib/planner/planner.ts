@@ -1,5 +1,6 @@
 import { CreateDailyTaskPayload } from '@/shared/types/daily-task'
 import { CreateEventPayload } from '@/shared/types/event'
+import { WeeklyGoalPayload } from '@/shared/types/weekly-goal'
 import { Client, ID, TablesDB } from 'appwrite'
 
 const client = new Client()
@@ -57,5 +58,23 @@ export const deleteDailyTask = async (taskId: string): Promise<void> => {
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
 		rowId: taskId,
+	})
+}
+
+export const createWeeklyGoal = async (payload: WeeklyGoalPayload) => {
+	return tablesDB.createRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
+		rowId: ID.unique(),
+		data: payload,
+	})
+}
+
+export const updateWeeklyGoal = async (goalId: string, data: Partial<WeeklyGoalPayload>) => {
+	return tablesDB.updateRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
+		rowId: goalId,
+		data,
 	})
 }

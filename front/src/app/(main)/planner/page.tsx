@@ -13,6 +13,7 @@ import { WeeklyGoals } from './components/header/weekly-goals/weekly-goals'
 import { DailyTasksModal } from './components/main/daily-tasks-modal/daily-tasks-modal'
 import { PlannerInner } from './components/main/planner-inner/planner-inner'
 
+import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import classes from './page.module.scss'
 
 export default function Planner() {
@@ -20,9 +21,11 @@ export default function Planner() {
 	const [isDailyTasksModalVisible, setIsDailyTasksModalVisible] = useState(false)
 	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([])
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
+	const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([])
 
 	useEffect(() => {
 		getTimeBlocks()
+		getWeeklyGoals()
 	}, [])
 
 	const getTimeBlocks = async () => {
@@ -52,11 +55,33 @@ export default function Planner() {
 		getTimeBlocks()
 	}
 
+	const getWeeklyGoals = async () => {
+		const userId = await getCurrentUserId()
+
+		const queries = [Query.equal('userId', userId), Query.orderAsc('index')]
+
+		try {
+			const response = await db.listRows({
+				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+				tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
+				queries,
+			})
+
+			const typedWeeklyGoals = response.rows as unknown as WeeklyGoal[]
+
+			setWeeklyGoals(typedWeeklyGoals)
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error(error)
+			}
+		}
+	}
+
 	return (
 		<>
 			<div className={classes.plannerPage}>
 				<header className={classes.header}>
-					<WeeklyGoals />
+					<WeeklyGoals goals={weeklyGoals} onGoalsChange={getWeeklyGoals} />
 					<AddTimeBlockButton setIsModalVisible={setIsTimeBlockModalVisible} />
 				</header>
 				<main className={classes.planner}>

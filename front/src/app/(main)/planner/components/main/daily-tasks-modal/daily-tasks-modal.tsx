@@ -136,6 +136,7 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 									checked={task.isCompleted}
 									onCheck={checked => handleToggleTask(task.$id, checked)}
 									onDelete={() => handleDeleteTask(task.$id)}
+									withRemoval
 								/>
 							</li>
 						))}
