@@ -78,3 +78,11 @@ export const updateWeeklyGoal = async (goalId: string, data: Partial<WeeklyGoalP
 		data,
 	})
 }
+
+export const deleteWeeklyGoal = async (goalId: string): Promise<void> => {
+	await tablesDB.deleteRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
+		rowId: goalId,
+	})
+}

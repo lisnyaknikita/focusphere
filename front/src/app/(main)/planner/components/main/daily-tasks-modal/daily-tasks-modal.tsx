@@ -44,8 +44,6 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 		} finally {
 			setIsLoading(false)
 		}
-
-		console.log(date)
 	}
 
 	const formatModalDate = (dateString: string) => {

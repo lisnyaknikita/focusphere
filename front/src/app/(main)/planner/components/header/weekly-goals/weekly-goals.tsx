@@ -1,13 +1,15 @@
 'use client'
 
-import { createWeeklyGoal, updateWeeklyGoal } from '@/lib/planner/planner'
+import { createWeeklyGoal, deleteWeeklyGoal, updateWeeklyGoal } from '@/lib/planner/planner'
 import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
+import { Modal } from '@/shared/ui/modal/modal'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { EmptyGoalSlot } from './components/empty-goal-slot/empty-goal-slot'
+import { WeeklyResetModal } from './components/weekly-reset-modal/weekly-reset-modal'
 import classes from './weekly-goals.module.scss'
 
 interface WeeklyGoalsProps {
@@ -19,6 +21,9 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 	const [open, setOpen] = useState(false)
 	const [editingGoalId, setEditingGoalId] = useState<string | null>(null)
 	const [editValue, setEditValue] = useState('')
+	const [isResetModalOpen, setIsResetModalOpen] = useState(false)
+
+	const dropdownRef = useRef<HTMLDivElement | null>(null)
 
 	const slots = useMemo(() => {
 		return Array.from({ length: 3 }, (_, index) => ({
@@ -70,8 +75,43 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 		cancelEdit()
 	}
 
+	const resetWeek = async () => {
+		const completed = goals.filter(g => g.isCompleted)
+		const pending = goals.filter(g => !g.isCompleted)
+
+		await Promise.all(completed.map(goal => deleteWeeklyGoal(goal.$id)))
+
+		await Promise.all(
+			pending.map((goal, index) =>
+				updateWeeklyGoal(goal.$id, {
+					index,
+					isCompleted: false,
+				})
+			)
+		)
+
+		onGoalsChange()
+	}
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (!open) return
+
+			const target = event.target as Node
+
+			if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+				setOpen(false)
+			}
+		}
+
+		document.addEventListener('mousedown', handleClickOutside)
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [open])
+
 	return (
-		<div className={clsx(classes.weeklyGoals, open && 'opened')}>
+		<div ref={dropdownRef} className={clsx(classes.weeklyGoals, open && 'opened')}>
 			<button className={classes.trigger} onClick={() => setOpen(prev => !prev)}>
 				<span>Weekly goals</span>
 				<svg width='11' height='6' viewBox='0 0 11 6' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -131,6 +171,21 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 								/>
 							)
 						})}
+						{goals.length > 0 && (
+							<button type='button' className={classes.startNewWeekButton} onClick={() => setIsResetModalOpen(true)}>
+								Start new week
+							</button>
+						)}
+						<Modal isVisible={isResetModalOpen} onClose={() => setIsResetModalOpen(false)}>
+							<WeeklyResetModal
+								goals={goals}
+								onClose={() => setIsResetModalOpen(false)}
+								onConfirm={async () => {
+									await resetWeek()
+									setIsResetModalOpen(false)
+								}}
+							/>
+						</Modal>
 					</motion.div>
 				)}
 			</AnimatePresence>

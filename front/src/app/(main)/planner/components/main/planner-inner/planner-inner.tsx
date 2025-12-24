@@ -1,10 +1,10 @@
-import { mapTimeBlockToScheduleX } from '@/lib/events/event-mapper'
-import { useCalendarApp } from '@/shared/hooks/planner/use-calendar-app'
 import { useTimeBlockDeletion } from '@/shared/hooks/planner/use-timeblock-deletion'
 import { TimeBlock } from '@/shared/types/time-block'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
-import { ScheduleXCalendar } from '@schedule-x/react'
+import { createEventModalPlugin } from '@schedule-x/event-modal'
+import { createEventsServicePlugin } from '@schedule-x/events-service'
+import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
 import { useEffect, useMemo, useRef } from 'react'
 import 'temporal-polyfill/global'
@@ -12,12 +12,21 @@ import { WeekDayHeader } from './components/week-day-header/week-day-header'
 
 interface PlannerInnerProps {
 	timeBlocks: TimeBlock[]
+	dailyTasksCountByDate: Record<string, number>
+	calendar: ReturnType<typeof useNextCalendarApp>
+	eventsService: ReturnType<typeof createEventsServicePlugin>
+	eventModal: ReturnType<typeof createEventModalPlugin>
 	onDayClick: (date: string) => void
 }
 
-export const PlannerInner = ({ timeBlocks, onDayClick }: PlannerInnerProps) => {
-	const { calendar, eventsService, eventModal } = useCalendarApp()
-
+export const PlannerInner = ({
+	timeBlocks,
+	onDayClick,
+	dailyTasksCountByDate,
+	calendar,
+	eventsService,
+	eventModal,
+}: PlannerInnerProps) => {
 	const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
 
 	const isInitialScrollDone = useRef(false)
@@ -27,15 +36,12 @@ export const PlannerInner = ({ timeBlocks, onDayClick }: PlannerInnerProps) => {
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
 				<EventInfoModal event={calendarEvent} onConfirmDelete={handleDelete} />
 			),
-			weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} onDayClick={onDayClick} />,
+			weekGridDate: ({ date }: { date: string }) => (
+				<WeekDayHeader date={date} onDayClick={onDayClick} incompleteTasksCount={dailyTasksCountByDate[date] ?? 0} />
+			),
 		}),
-		[handleDelete, onDayClick]
+		[handleDelete, onDayClick, dailyTasksCountByDate]
 	)
-
-	useEffect(() => {
-		if (!eventsService) return
-		eventsService.set(timeBlocks.map(mapTimeBlockToScheduleX))
-	}, [timeBlocks, eventsService])
 
 	useEffect(() => {
 		if (isInitialScrollDone.current || timeBlocks.length === 0) return
@@ -58,10 +64,10 @@ export const PlannerInner = ({ timeBlocks, onDayClick }: PlannerInnerProps) => {
 					scrollToTime()
 				})
 			})
-		}, 100)
+		}, 300)
 
 		return () => clearTimeout(timeout)
-	}, [timeBlocks])
+	}, [timeBlocks.length])
 
 	return <ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
 }

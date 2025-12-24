@@ -6,15 +6,39 @@
 	text-align: center;
 	color: var(--sx-color-neutral);
 	cursor: pointer;
+	position: relative;
 
-	> span:first-child {
-		font-size: 12px;
-		font-weight: 400;
-		text-transform: uppercase;
-	}
+	&:global(.today) {
+		.weekdayText {
+			color: var(--sx-color-primary);
+		}
 
-	> span:last-child {
-		font-size: 20px;
-		font-weight: 400;
+		.day {
+			color: var(--text);
+			background-color: var(--sx-color-primary);
+			border-radius: 50%;
+		}
 	}
+}
+
+.weekdayText {
+	font-size: 12px;
+	font-weight: 400;
+	text-transform: uppercase;
+}
+
+.day {
+	font-size: 20px;
+	font-weight: 400;
+	padding: 5px 8px;
+}
+
+.counter {
+	position: absolute;
+	right: -20px;
+	top: -10px;
+	background-color: var(--primary);
+	padding: 3px 6px;
+	border-radius: 5px;
+	color: var(--text);
 }
