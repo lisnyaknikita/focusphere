@@ -1,3 +1,4 @@
+import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { useTimeBlockDeletion } from '@/shared/hooks/planner/use-timeblock-deletion'
 import { TimeBlock } from '@/shared/types/time-block'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
@@ -6,7 +7,7 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import 'temporal-polyfill/global'
 import { WeekDayHeader } from './components/week-day-header/week-day-header'
 
@@ -29,7 +30,7 @@ export const PlannerInner = ({
 }: PlannerInnerProps) => {
 	const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
 
-	const isInitialScrollDone = useRef(false)
+	useCalendarScroll([timeBlocks])
 
 	const customComponents = useMemo(
 		() => ({
@@ -42,32 +43,6 @@ export const PlannerInner = ({
 		}),
 		[handleDelete, onDayClick, dailyTasksCountByDate]
 	)
-
-	useEffect(() => {
-		if (isInitialScrollDone.current || timeBlocks.length === 0) return
-
-		const scrollToTime = () => {
-			const indicator = document.querySelector('.sx__current-time-indicator')
-
-			if (indicator) {
-				indicator.scrollIntoView({
-					behavior: 'smooth',
-					block: 'center',
-				})
-				isInitialScrollDone.current = true
-			}
-		}
-
-		const timeout = setTimeout(() => {
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					scrollToTime()
-				})
-			})
-		}, 300)
-
-		return () => clearTimeout(timeout)
-	}, [timeBlocks.length])
 
 	return <ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
 }
