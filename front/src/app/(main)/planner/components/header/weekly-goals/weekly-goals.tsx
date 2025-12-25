@@ -1,13 +1,13 @@
 'use client'
 
-import { createWeeklyGoal, deleteWeeklyGoal, updateWeeklyGoal } from '@/lib/planner/planner'
+import { useWeeklyGoalsMutations } from '@/shared/hooks/planner/use-weekly-goals-mutations'
+import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
 import { Modal } from '@/shared/ui/modal/modal'
-import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { EmptyGoalSlot } from './components/empty-goal-slot/empty-goal-slot'
 import { WeeklyResetModal } from './components/weekly-reset-modal/weekly-reset-modal'
 import classes from './weekly-goals.module.scss'
@@ -19,11 +19,21 @@ interface WeeklyGoalsProps {
 
 export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 	const [open, setOpen] = useState(false)
-	const [editingGoalId, setEditingGoalId] = useState<string | null>(null)
-	const [editValue, setEditValue] = useState('')
 	const [isResetModalOpen, setIsResetModalOpen] = useState(false)
 
-	const dropdownRef = useRef<HTMLDivElement | null>(null)
+	const {
+		editingGoalId,
+		editValue,
+		setEditValue,
+		startEdit,
+		cancelEdit,
+		saveEdit,
+		handleCreate,
+		handleToggle,
+		resetWeek,
+	} = useWeeklyGoalsMutations({ goals, onSuccess: onGoalsChange })
+
+	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
 
 	const slots = useMemo(() => {
 		return Array.from({ length: 3 }, (_, index) => ({
@@ -31,84 +41,6 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 			goal: goals.find(g => g.index === index) ?? null,
 		}))
 	}, [goals])
-
-	const handleCreate = async (title: string, index: number) => {
-		if (!title.trim()) return
-
-		const userId = await getCurrentUserId()
-
-		await createWeeklyGoal({
-			title: title.trim(),
-			index,
-			userId,
-			isCompleted: false,
-		})
-
-		onGoalsChange()
-	}
-
-	const handleUpdate = async (id: string, data: Partial<WeeklyGoal>) => {
-		await updateWeeklyGoal(id, data)
-		onGoalsChange()
-	}
-
-	const startEdit = (goal: WeeklyGoal) => {
-		setEditingGoalId(goal.$id)
-		setEditValue(goal.title)
-	}
-
-	const cancelEdit = () => {
-		setEditingGoalId(null)
-		setEditValue('')
-	}
-
-	const saveEdit = async () => {
-		if (!editingGoalId) return
-
-		const title = editValue.trim()
-		if (!title) {
-			cancelEdit()
-			return
-		}
-
-		await handleUpdate(editingGoalId, { title })
-		cancelEdit()
-	}
-
-	const resetWeek = async () => {
-		const completed = goals.filter(g => g.isCompleted)
-		const pending = goals.filter(g => !g.isCompleted)
-
-		await Promise.all(completed.map(goal => deleteWeeklyGoal(goal.$id)))
-
-		await Promise.all(
-			pending.map((goal, index) =>
-				updateWeeklyGoal(goal.$id, {
-					index,
-					isCompleted: false,
-				})
-			)
-		)
-
-		onGoalsChange()
-	}
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (!open) return
-
-			const target = event.target as Node
-
-			if (dropdownRef.current && !dropdownRef.current.contains(target)) {
-				setOpen(false)
-			}
-		}
-
-		document.addEventListener('mousedown', handleClickOutside)
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside)
-		}
-	}, [open])
 
 	return (
 		<div ref={dropdownRef} className={clsx(classes.weeklyGoals, open && 'opened')}>
@@ -161,11 +93,7 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 									withBorder={false}
 									label={goal.title}
 									checked={goal.isCompleted}
-									onCheck={() =>
-										handleUpdate(goal.$id, {
-											isCompleted: !goal.isCompleted,
-										})
-									}
+									onCheck={() => handleToggle(goal)}
 									onEdit={() => startEdit(goal)}
 									withEditing
 								/>
