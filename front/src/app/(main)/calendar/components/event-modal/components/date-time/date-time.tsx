@@ -4,17 +4,20 @@ import { DayPicker } from 'react-day-picker'
 import TimePicker from 'react-time-picker'
 
 import { EventForm } from '@/shared/types/event'
+import { TimeBlockForm } from '@/shared/types/time-block'
 import { Modal } from '@/shared/ui/modal/modal'
 import 'react-day-picker/style.css'
 import 'react-time-picker/dist/TimePicker.css'
 import classes from './date-time.module.scss'
 
-interface DateTimeProps {
-	form: EventForm
-	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
+type FormType = EventForm | TimeBlockForm
+
+interface DateTimeProps<T extends FormType> {
+	form: T
+	setFormField: <K extends keyof T>(key: K, value: T[K]) => void
 }
 
-export const DateTime = ({ form, setFormField }: DateTimeProps) => {
+export const DateTime = <T extends EventForm | TimeBlockForm>({ form, setFormField }: DateTimeProps<T>) => {
 	const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
 
 	const selectedDate = new Date(form.date)

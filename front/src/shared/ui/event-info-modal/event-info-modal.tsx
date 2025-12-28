@@ -4,14 +4,16 @@ import classes from './event-info-modal.module.scss'
 
 interface EventInfoModalProps {
 	event: SXEvent
-	onConfirmDelete: (eventId: string) => Promise<void> | void
+	onConfirmDelete?: (eventId: string) => Promise<void> | void
 }
 
 export const EventInfoModal = ({ event, onConfirmDelete }: EventInfoModalProps) => {
 	const formattedDate = formatDateRange(event.start, event.end)
 
 	const handleDelete = () => {
-		onConfirmDelete(String(event.id))
+		if (onConfirmDelete) {
+			onConfirmDelete(String(event.id))
+		}
 	}
 
 	return (

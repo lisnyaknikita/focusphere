@@ -1,0 +1,71 @@
+.modalInner {
+	width: 300px;
+	position: relative;
+	padding: 10px 20px 0 20px;
+
+	> h2 {
+		text-align: center;
+		font-size: 24px;
+		color: var(--text);
+		margin-bottom: 20px;
+	}
+}
+
+.innerTitle {
+	font-size: 18px;
+	color: var(--text);
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.goalsList {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	margin-bottom: 20px;
+
+	> li {
+		font-size: 16px;
+		color: var(--text);
+	}
+}
+
+.actionButtons {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.confirmButton {
+	flex-basis: 50%;
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 4px;
+	background-color: var(--save-button-bg);
+	border-radius: 5px;
+	display: inline-block;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
+
+.cancelButton {
+	flex-basis: 50%;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}

@@ -1,16 +1,19 @@
 import { CALENDAR_COLORS } from '@/lib/events/calendar-config'
 import { EventForm } from '@/shared/types/event'
+import { TimeBlockForm } from '@/shared/types/time-block'
 import { useState } from 'react'
 import classes from './color-picker.module.scss'
 
-interface ColorPickerProps {
-	form: EventForm
-	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
+type FormType = EventForm | TimeBlockForm
+
+interface ColorPickerProps<T extends FormType> {
+	form: T
+	setFormField: <K extends keyof T>(key: K, value: T[K]) => void
 }
 
 const COLORS = Object.values(CALENDAR_COLORS)
 
-export const ColorPicker = ({ form, setFormField }: ColorPickerProps) => {
+export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setFormField }: ColorPickerProps<T>) => {
 	const [open, setOpen] = useState(false)
 
 	const selectedColor = form.color

@@ -21,5 +21,12 @@
 	overflow: hidden;
 	border-radius: 5px;
 	background-color: var(--secondary);
-	padding: 10px 15px;
+	padding: 0 1px 0 0;
+}
+
+.loader {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 }
