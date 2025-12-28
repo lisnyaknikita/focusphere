@@ -22,7 +22,7 @@ export const WeekDayHeader = ({ date, onDayClick, incompleteTasksCount }: WeekDa
 
 	return (
 		<button type='button' className={clsx(classes.weekday, isToday && 'today')} onClick={() => onDayClick(date)}>
-			<span className={classes.counter}>{incompleteTasksCount > 0 && incompleteTasksCount}</span>
+			{incompleteTasksCount > 0 && <span className={classes.counter}>{incompleteTasksCount}</span>}
 			<span className={classes.weekdayText}>{weekday}</span>
 			<span className={classes.day}>{day}</span>
 		</button>

@@ -304,6 +304,14 @@ ul {
 	border-left: none !important;
 }
 
+.sx__week-grid__date {
+	> div {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+	}
+}
+
 //TODO: header's border bottom
 
 @media (prefers-color-scheme: dark) {
