@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { useMemo } from 'react'
 import classes from './week-day-header.module.scss'
 
 interface WeekDayHeaderProps {
@@ -8,20 +9,22 @@ interface WeekDayHeaderProps {
 }
 
 export const WeekDayHeader = ({ date, onDayClick, incompleteTasksCount }: WeekDayHeaderProps) => {
-	const plainDate = Temporal.PlainDate.from(date)
+	const { weekday, day, isToday } = useMemo(() => {
+		const plainDate = Temporal.PlainDate.from(date)
+		const today = Temporal.Now.plainDateISO()
 
-	const weekday = plainDate.toLocaleString('en-US', { weekday: 'short' })
-	const day = plainDate.day
-
-	const today = Temporal.Now.plainDateISO()
-
-	const isToday = plainDate.equals(today)
+		return {
+			weekday: plainDate.toLocaleString('en-US', { weekday: 'short' }),
+			day: plainDate.day,
+			isToday: plainDate.equals(today),
+		}
+	}, [date])
 
 	return (
-		<div className={clsx(classes.weekday, isToday && 'today')} onClick={() => onDayClick(date)}>
-			<span className={classes.counter}>{incompleteTasksCount}</span>
+		<button type='button' className={clsx(classes.weekday, isToday && 'today')} onClick={() => onDayClick(date)}>
+			<span className={classes.counter}>{incompleteTasksCount > 0 && incompleteTasksCount}</span>
 			<span className={classes.weekdayText}>{weekday}</span>
 			<span className={classes.day}>{day}</span>
-		</div>
+		</button>
 	)
 }
