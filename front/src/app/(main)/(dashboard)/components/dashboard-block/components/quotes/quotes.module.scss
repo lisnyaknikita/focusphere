@@ -17,14 +17,6 @@
 	color: var(--text);
 	position: relative;
 	margin-bottom: 20px;
-
-	&::before,
-	&::after {
-		content: '"';
-		font-size: 28px;
-		color: #aaa;
-		vertical-align: top;
-	}
 }
 
 .quoteAuthor {

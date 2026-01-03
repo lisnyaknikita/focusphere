@@ -14,7 +14,7 @@ export const useQuote = () => {
 		const randomIndex = Math.floor(Math.random() * quotes.length)
 		const q = quotes[randomIndex]
 
-		setQuote({ content: q.quote, author: q.author })
+		setQuote({ content: q.text, author: q.author })
 		setIsLoading(false)
 	}, [])
 

@@ -16,7 +16,7 @@ export const QuotesBlock = () => {
 				<BeatLoader color='#aaa' size={10} className={classes.loader} />
 			) : (
 				<>
-					<blockquote className={classes.quoteContent}>{quote.content}</blockquote>
+					<blockquote className={classes.quoteContent}>{`"${quote.content}"`}</blockquote>
 					<div className={classes.quoteAuthor}>{quote.author}</div>
 				</>
 			)}
