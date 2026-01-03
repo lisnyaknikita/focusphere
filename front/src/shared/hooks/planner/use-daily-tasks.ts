@@ -104,6 +104,12 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		}
 	}
 
+	useEffect(() => {
+		const handleRefresh = () => getDailyTasks()
+		window.addEventListener('refresh-daily-tasks', handleRefresh)
+		return () => window.removeEventListener('refresh-daily-tasks', handleRefresh)
+	}, [getDailyTasks])
+
 	return {
 		tasks,
 		isLoading,
