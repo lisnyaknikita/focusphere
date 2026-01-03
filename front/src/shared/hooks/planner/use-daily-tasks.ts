@@ -3,7 +3,7 @@ import { createDailyTask, deleteDailyTask, updateDailyTask } from '@/lib/planner
 import { DailyTask } from '@/shared/types/daily-task'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface UseDailyTasksProps {
 	date: string
@@ -104,6 +104,18 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		}
 	}
 
+	const sortedTasks = useMemo(() => {
+		if (!tasks) return []
+
+		return [...tasks].sort((a, b) => {
+			if (a.isCompleted !== b.isCompleted) {
+				return a.isCompleted ? 1 : -1
+			}
+
+			return a.order - b.order
+		})
+	}, [tasks])
+
 	useEffect(() => {
 		const handleRefresh = () => getDailyTasks()
 		window.addEventListener('refresh-daily-tasks', handleRefresh)
@@ -111,7 +123,7 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 	}, [getDailyTasks])
 
 	return {
-		tasks,
+		tasks: sortedTasks,
 		isLoading,
 		isCreating,
 		setIsCreating,
