@@ -312,6 +312,12 @@ ul {
 	}
 }
 
+.sx__week-grid__date-number {
+	width: fit-content !important;
+	min-height: 40px !important;
+	min-width: 40px !important;
+}
+
 //TODO: header's border bottom
 
 @media (prefers-color-scheme: dark) {
