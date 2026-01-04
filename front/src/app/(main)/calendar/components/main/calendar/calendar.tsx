@@ -9,7 +9,7 @@ import '@schedule-x/theme-default/dist/index.css'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { useEffect, useMemo } from 'react'
-import { CalendarView } from '../../../page'
+import { CalendarView } from '../../../constants/calendar.constants'
 
 interface CalendarInnerProps {
 	events: CalendarEvent[]
