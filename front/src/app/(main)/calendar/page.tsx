@@ -14,17 +14,10 @@ import { CalendarInner } from './components/main/calendar/calendar'
 
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
+import { CalendarView } from './constants/calendar.constants'
 import classes from './page.module.scss'
 
-export type CalendarView = 'month' | 'week' | 'day'
-
 const VIEW_KEY = 'calendarView'
-
-export const VIEW_TO_SX: Record<CalendarView, string> = {
-	month: 'month-grid',
-	week: 'week',
-	day: 'day',
-}
 
 export default function Calendar() {
 	const [view, setView] = useState<CalendarView>(() => {

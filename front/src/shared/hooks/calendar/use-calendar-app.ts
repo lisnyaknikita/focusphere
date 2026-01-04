@@ -1,4 +1,4 @@
-import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/page'
+import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/constants/calendar.constants'
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateEvent } from '@/lib/events/events'
 import { CalendarEvent, createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
