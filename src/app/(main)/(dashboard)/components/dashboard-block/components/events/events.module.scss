@@ -1,0 +1,68 @@
+.events {
+	grid-column: 1;
+	grid-row: 1;
+	// max-height: 265px;
+	max-height: 100%;
+	overflow-y: hidden;
+	position: relative;
+
+	@media screen and (max-width: 1024px) {
+		order: 0;
+	}
+}
+
+.eventsList {
+	display: flex;
+	flex-direction: column;
+	gap: 13px;
+	max-height: 190px;
+	padding-right: 5px;
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--hover);
+		border-radius: 10px;
+	}
+}
+
+.eventItem {
+	background-color: transparent;
+
+	> button {
+		text-align: left;
+		font-size: 16px;
+		font-weight: 400;
+		color: var(--text);
+		padding: 7px;
+		display: inline-block;
+		width: 100%;
+		border: 1px solid #3b3a3a;
+		border-radius: 5px;
+		transition: background-color 0.2s ease;
+		font-family: inherit;
+
+		&:hover {
+			background-color: var(--hover);
+		}
+	}
+}
+
+.loader {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.noEventsMessage {
+	font-size: 16px;
+	font-weight: 400;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
