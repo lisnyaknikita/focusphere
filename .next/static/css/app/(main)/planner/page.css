@@ -1,0 +1,2849 @@
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/modal/modal.module.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.modal_overlay__5mGqe {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.modal_modalPosition__jX_M9 {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  z-index: 11;
+}
+
+.modal_modalContainer___SA_q {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.modal_modal__Lv68T {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: var(--primary);
+}
+@media screen and (max-width: 768px) {
+  .modal_modal__Lv68T {
+    padding: 10px;
+  }
+}
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/header/create-button/create-button.module.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.create-button_addTimeBlockButton__9xilD {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.create-button_addTimeBlockButton__9xilD:hover {
+  background-color: var(--secondary);
+}
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/calendar/components/event-modal/components/color-picker/color-picker.module.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.color-picker_colorPicker__UqVV4 {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.color-picker_triggerButton__0gP0g {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px;
+  background-color: var(--secondary);
+  border-radius: 5px;
+}
+
+.color-picker_selectedColorCircle__ssMVv {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+}
+
+.color-picker_arrow___3A5h {
+  margin-bottom: 2px;
+}
+
+.color-picker_dropdown__t5fXf {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  background-color: var(--secondaryFull);
+  padding: 8px;
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 8px;
+  gap: 8px;
+}
+
+.color-picker_colorOption__NPSfG {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./node_modules/react-day-picker/src/style.css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************/
+/* Variables declaration */
+.rdp-root {
+  --rdp-accent-color: blue; /* The accent color used for selected days and UI elements. */
+  --rdp-accent-background-color: #f0f0ff; /* The accent background color used for selected days and UI elements. */
+
+  --rdp-day-height: 44px; /* The height of the day cells. */
+  --rdp-day-width: 44px; /* The width of the day cells. */
+
+  --rdp-day_button-border-radius: 100%; /* The border radius of the day cells. */
+  --rdp-day_button-border: 2px solid transparent; /* The border of the day cells. */
+  --rdp-day_button-height: 42px; /* The height of the day cells. */
+  --rdp-day_button-width: 42px; /* The width of the day cells. */
+
+  --rdp-selected-border: 2px solid var(--rdp-accent-color); /* The border of the selected days. */
+  --rdp-disabled-opacity: 0.5; /* The opacity of the disabled days. */
+  --rdp-outside-opacity: 0.75; /* The opacity of the days outside the current month. */
+  --rdp-today-color: var(--rdp-accent-color); /* The color of the today's date. */
+
+  --rdp-dropdown-gap: 0.5rem; /* The gap between the dropdowns used in the month captons. */
+
+  --rdp-months-gap: 2rem; /* The gap between the months in the multi-month view. */
+
+  --rdp-nav_button-disabled-opacity: 0.5; /* The opacity of the disabled navigation buttons. */
+  --rdp-nav_button-height: 2.25rem; /* The height of the navigation buttons. */
+  --rdp-nav_button-width: 2.25rem; /* The width of the navigation buttons. */
+  --rdp-nav-height: 2.75rem; /* The height of the navigation bar. */
+
+  --rdp-range_middle-background-color: var(--rdp-accent-background-color); /* The color of the background for days in the middle of a range. */
+  --rdp-range_middle-color: inherit; /* The color of the range text. */
+
+  --rdp-range_start-color: white; /* The color of the range text. */
+  --rdp-range_start-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    transparent 50%,
+    var(--rdp-range_middle-background-color) 50%
+  ); /* Used for the background of the start of the selected range. */
+  --rdp-range_start-date-background-color: var(--rdp-accent-color); /* The background color of the date when at the start of the selected range. */
+
+  --rdp-range_end-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    var(--rdp-range_middle-background-color) 50%,
+    transparent 50%
+  ); /* Used for the background of the end of the selected range. */
+  --rdp-range_end-color: white; /* The color of the range text. */
+  --rdp-range_end-date-background-color: var(--rdp-accent-color); /* The background color of the date when at the end of the selected range. */
+
+  --rdp-week_number-border-radius: 100%; /* The border radius of the week number. */
+  --rdp-week_number-border: 2px solid transparent; /* The border of the week number. */
+
+  --rdp-week_number-height: var(--rdp-day-height); /* The height of the week number cells. */
+  --rdp-week_number-opacity: 0.75; /* The opacity of the week number. */
+  --rdp-week_number-width: var(--rdp-day-width); /* The width of the week number cells. */
+  --rdp-weeknumber-text-align: center; /* The text alignment of the weekday cells. */
+
+  --rdp-weekday-opacity: 0.75; /* The opacity of the weekday. */
+  --rdp-weekday-padding: 0.5rem 0rem; /* The padding of the weekday. */
+  --rdp-weekday-text-align: center; /* The text alignment of the weekday cells. */
+
+  --rdp-gradient-direction: 90deg;
+
+  --rdp-animation_duration: 0.3s;
+  --rdp-animation_timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rdp-root[dir="rtl"] {
+  --rdp-gradient-direction: -90deg;
+}
+
+.rdp-root[data-broadcast-calendar="true"] {
+  --rdp-outside-opacity: unset;
+}
+
+/* Root of the component. */
+.rdp-root {
+  position: relative; /* Required to position the navigation toolbar. */
+  box-sizing: border-box;
+}
+
+.rdp-root * {
+  box-sizing: border-box;
+}
+
+.rdp-day {
+  width: var(--rdp-day-width);
+  height: var(--rdp-day-height);
+  text-align: center;
+}
+
+.rdp-day_button {
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  width: var(--rdp-day_button-width);
+  height: var(--rdp-day_button-height);
+  border: var(--rdp-day_button-border);
+  border-radius: var(--rdp-day_button-border-radius);
+}
+
+.rdp-day_button:disabled {
+  cursor: revert;
+}
+
+.rdp-caption_label {
+  z-index: 1;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  white-space: nowrap;
+  border: 0;
+}
+
+.rdp-dropdown:focus-visible ~ .rdp-caption_label {
+  outline: 5px auto Highlight;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: backward compatibility */
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.rdp-button_next,
+.rdp-button_previous {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  appearance: none;
+
+  width: var(--rdp-nav_button-width);
+  height: var(--rdp-nav_button-height);
+}
+
+.rdp-button_next:disabled,
+.rdp-button_next[aria-disabled="true"],
+.rdp-button_previous:disabled,
+.rdp-button_previous[aria-disabled="true"] {
+  cursor: revert;
+
+  opacity: var(--rdp-nav_button-disabled-opacity);
+}
+
+.rdp-chevron {
+  display: inline-block;
+  fill: var(--rdp-accent-color);
+}
+
+.rdp-root[dir="rtl"] .rdp-nav .rdp-chevron {
+  transform: rotate(180deg);
+  transform-origin: 50%;
+}
+
+.rdp-dropdowns {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rdp-dropdown-gap);
+}
+.rdp-dropdown {
+  z-index: 2;
+
+  /* Reset */
+  opacity: 0;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  position: absolute;
+  inset-block-start: 0;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: inherit;
+  border: none;
+  line-height: inherit;
+}
+
+.rdp-dropdown_root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rdp-dropdown_root[data-disabled="true"] .rdp-chevron {
+  opacity: var(--rdp-disabled-opacity);
+}
+
+.rdp-month_caption {
+  display: flex;
+  align-content: center;
+  height: var(--rdp-nav-height);
+  font-weight: bold;
+  font-size: large;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-month,
+.rdp-root[data-nav-layout="after"] .rdp-month {
+  position: relative;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-month_caption {
+  justify-content: center;
+  -webkit-margin-start: var(--rdp-nav_button-width);
+          margin-inline-start: var(--rdp-nav_button-width);
+  -webkit-margin-end: var(--rdp-nav_button-width);
+          margin-inline-end: var(--rdp-nav_button-width);
+  position: relative;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-button_previous {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  height: var(--rdp-nav-height);
+  display: inline-flex;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-button_next {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 0;
+  height: var(--rdp-nav-height);
+  display: inline-flex;
+  justify-content: center;
+}
+
+.rdp-months {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rdp-months-gap);
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+}
+
+.rdp-month_grid {
+  border-collapse: collapse;
+}
+
+.rdp-nav {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+
+  display: flex;
+  align-items: center;
+
+  height: var(--rdp-nav-height);
+}
+
+.rdp-weekday {
+  opacity: var(--rdp-weekday-opacity);
+  padding: var(--rdp-weekday-padding);
+  font-weight: 500;
+  font-size: smaller;
+  text-align: var(--rdp-weekday-text-align);
+  text-transform: var(--rdp-weekday-text-transform);
+}
+
+.rdp-week_number {
+  opacity: var(--rdp-week_number-opacity);
+  font-weight: 400;
+  font-size: small;
+  height: var(--rdp-week_number-height);
+  width: var(--rdp-week_number-width);
+  border: var(--rdp-week_number-border);
+  border-radius: var(--rdp-week_number-border-radius);
+  text-align: var(--rdp-weeknumber-text-align);
+}
+
+/* DAY MODIFIERS */
+.rdp-today:not(.rdp-outside) {
+  color: var(--rdp-today-color);
+}
+
+.rdp-selected {
+  font-weight: bold;
+  font-size: large;
+}
+
+.rdp-selected .rdp-day_button {
+  border: var(--rdp-selected-border);
+}
+
+.rdp-outside {
+  opacity: var(--rdp-outside-opacity);
+}
+
+.rdp-disabled {
+  opacity: var(--rdp-disabled-opacity);
+}
+
+.rdp-hidden {
+  visibility: hidden;
+  color: var(--rdp-range_start-color);
+}
+
+.rdp-range_start {
+  background: var(--rdp-range_start-background);
+}
+
+.rdp-range_start .rdp-day_button {
+  background-color: var(--rdp-range_start-date-background-color);
+  color: var(--rdp-range_start-color);
+}
+
+.rdp-range_middle {
+  background-color: var(--rdp-range_middle-background-color);
+}
+
+.rdp-range_middle .rdp-day_button {
+  border: unset;
+  border-radius: unset;
+  color: var(--rdp-range_middle-color);
+}
+
+.rdp-range_end {
+  background: var(--rdp-range_end-background);
+  color: var(--rdp-range_end-color);
+}
+
+.rdp-range_end .rdp-day_button {
+  color: var(--rdp-range_start-color);
+  background-color: var(--rdp-range_end-date-background-color);
+}
+
+.rdp-range_start.rdp-range_end {
+  background: revert;
+}
+
+.rdp-focusable {
+  cursor: pointer;
+}
+
+@keyframes rdp-slide_in_left {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rdp-slide_in_right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rdp-slide_out_left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes rdp-slide_out_right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.rdp-weeks_before_enter {
+  animation: rdp-slide_in_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-weeks_before_exit {
+  animation: rdp-slide_out_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-weeks_after_enter {
+  animation: rdp-slide_in_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-weeks_after_exit {
+  animation: rdp-slide_out_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_after_enter {
+  animation: rdp-slide_in_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_before_exit {
+  animation: rdp-slide_out_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_before_enter {
+  animation: rdp-slide_in_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_after_exit {
+  animation: rdp-slide_out_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+@keyframes rdp-fade_in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rdp-fade_out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.rdp-caption_after_enter {
+  animation: rdp-fade_in var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-caption_after_exit {
+  animation: rdp-fade_out var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-caption_before_enter {
+  animation: rdp-fade_in var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-caption_before_exit {
+  animation: rdp-fade_out var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+/*!************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./node_modules/react-time-picker/dist/TimePicker.css ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************/
+.react-time-picker {
+  display: inline-flex;
+  position: relative;
+}
+
+.react-time-picker,
+.react-time-picker *,
+.react-time-picker *:before,
+.react-time-picker *:after {
+  box-sizing: border-box;
+}
+
+.react-time-picker--disabled {
+  background-color: #f0f0f0;
+  color: #6d6d6d;
+}
+
+.react-time-picker__wrapper {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  border: thin solid gray;
+}
+
+.react-time-picker__inputGroup {
+  min-width: calc((4px * 3) + 0.54em * 6 + 0.217em * 2);
+  flex-grow: 1;
+  padding: 0 2px;
+  box-sizing: content-box;
+}
+
+.react-time-picker__inputGroup__divider {
+  padding: 1px 0;
+  white-space: pre;
+}
+
+.react-time-picker__inputGroup__divider,
+.react-time-picker__inputGroup__leadingZero {
+  display: inline-block;
+  font: inherit;
+}
+
+.react-time-picker__inputGroup__input {
+  min-width: 0.54em;
+  height: 100%;
+  position: relative;
+  padding: 0 1px;
+  border: 0;
+  background: none;
+  color: currentColor;
+  font: inherit;
+  box-sizing: content-box;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.react-time-picker__inputGroup__input::-webkit-outer-spin-button,
+.react-time-picker__inputGroup__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.react-time-picker__inputGroup__input:invalid {
+  background: rgba(255, 0, 0, 0.1);
+}
+
+.react-time-picker__inputGroup__input--hasLeadingZero {
+  margin-left: -0.54em;
+  padding-left: calc(1px + 0.54em);
+}
+
+.react-time-picker__inputGroup__amPm {
+  font: inherit;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+}
+
+.react-time-picker__button {
+  border: 0;
+  background: transparent;
+  padding: 4px 6px;
+}
+
+.react-time-picker__button:enabled {
+  cursor: pointer;
+}
+
+.react-time-picker__button:enabled:hover .react-time-picker__button__icon,
+.react-time-picker__button:enabled:focus .react-time-picker__button__icon {
+  stroke: #0078d7;
+}
+
+.react-time-picker__button:disabled .react-time-picker__button__icon {
+  stroke: #6d6d6d;
+}
+
+.react-time-picker__button svg {
+  display: inherit;
+}
+
+.react-time-picker__clock {
+  width: 200px;
+  height: 200px;
+  max-width: 100vw;
+  padding: 25px;
+  background-color: white;
+  border: thin solid #a0a096;
+  z-index: 1;
+}
+
+.react-time-picker__clock--closed {
+  display: none;
+}
+
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/calendar/components/event-modal/components/date-time/date-time.module.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.date-time_dateTime__le9YR {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.date-time_icon__RZKKq > svg path {
+  fill: var(--text);
+}
+
+.date-time_date__ss_te {
+  color: var(--text);
+}
+
+.date-time_date__ss_te {
+  font-size: 16px;
+  font-family: inherit;
+}
+.date-time_date__ss_te:hover {
+  text-decoration: underline;
+}
+
+.date-time_timePicker__kdaTe {
+  font-size: 14px;
+  font-family: inherit;
+}
+.date-time_timePicker__kdaTe > div {
+  border: none !important;
+}
+.date-time_timePicker__kdaTe > div div {
+  min-width: auto !important;
+}
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/header/time-block-modal/time-block-modal.module.scss ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.time-block-modal_modalInner__gaaxv {
+  width: 300px;
+  position: relative;
+  padding: 10px 20px 0 20px;
+}
+
+.time-block-modal_eventForm__kuyXM {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-block-modal_eventTitle___CvwB {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  font-size: 18px;
+  font-family: inherit;
+  color: var(--text);
+  padding: 2px 7px;
+  margin-bottom: 20px;
+}
+.time-block-modal_eventTitle___CvwB::placeholder {
+  color: color-mix(in srgb, var(--line) 60%, transparent);
+}
+
+.time-block-modal_saveButton__SiFht {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--save-button-text);
+  padding: 4px;
+  background-color: var(--save-button-bg);
+  border-radius: 10px;
+  display: inline-block;
+  width: 100%;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.time-block-modal_saveButton__SiFht:hover {
+  background-color: #aaa;
+}
+
+.time-block-modal_closeButton___jFJn {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 25px;
+  height: 25px;
+}
+.time-block-modal_closeButton___jFJn > svg circle {
+  fill: var(--close-button-bg);
+  transition: all 0.2s;
+}
+.time-block-modal_closeButton___jFJn > svg path {
+  fill: var(--close-button-fill);
+}
+.time-block-modal_closeButton___jFJn:hover > svg circle {
+  fill: var(--hover);
+}
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/checkbox-card/checkbox-card.module.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.checkbox-card_card__QXFNC {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+.checkbox-card_card__QXFNC:hover {
+  background-color: var(--hover);
+}
+.checkbox-card_card__QXFNC:hover > .checkbox-card_buttons__2tvY4 .checkbox-card_deleteButton__BaGDN {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+.checkbox-card_card__QXFNC:hover > .checkbox-card_buttons__2tvY4 .checkbox-card_editButton__2YGtq {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.checkbox-card_checkbox__eq3Um {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox-card_customCheckbox__QLQd1 {
+  width: 20px;
+  height: 20px;
+  background-color: var(--checkbox-bg);
+  border-radius: 5px;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkbox-card_checkbox__eq3Um:checked + .checkbox-card_customCheckbox__QLQd1::after {
+  content: "";
+  width: 6px;
+  height: 10px;
+  border: solid var(--checkbox-icon);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-2px) translateX(-1px);
+}
+
+.checkbox-card_label__Aecpg {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  max-width: 190px;
+}
+.checkbox-card_label__Aecpg.checked {
+  text-decoration: line-through;
+}
+
+.checkbox-card_buttons__2tvY4 {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-card_editButton__2YGtq {
+  position: relative;
+  width: 21px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.3px solid var(--text);
+  border-radius: 5px;
+  padding: 1px 2px;
+  transition: all 0.2s;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.checkbox-card_editButton__2YGtq > svg {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 16px;
+  height: 18px;
+  color: #fff;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+.checkbox-card_editButton__2YGtq > svg path {
+  transition: all 0.2s;
+}
+.checkbox-card_editButton__2YGtq:hover {
+  background-color: var(--line);
+}
+.checkbox-card_editButton__2YGtq:hover > svg path {
+  fill: var(--tab-bg);
+}
+
+.checkbox-card_deleteButton__BaGDN {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.3px solid #dc2a2a;
+  border-radius: 5px;
+  padding: 3px;
+  transition: all 0.2s;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.checkbox-card_deleteButton__BaGDN:hover {
+  background-color: #dc2a2a;
+}
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/header/weekly-goals/components/empty-goal-slot/empty-goal-slot.module.scss ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.empty-goal-slot_emptySlot__IAiLr {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--btn-border);
+  transition: background-color 0.2s ease;
+}
+.empty-goal-slot_emptySlot__IAiLr:hover {
+  background-color: var(--hover);
+}
+
+.empty-goal-slot_inlineInput__MUOOG {
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+}
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/header/weekly-goals/components/weekly-reset-modal/weekly-reset-modal.module.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.weekly-reset-modal_modalInner__Hbpo5 {
+  width: 300px;
+  position: relative;
+  padding: 10px 20px 0 20px;
+}
+.weekly-reset-modal_modalInner__Hbpo5 > h2 {
+  text-align: center;
+  font-size: 24px;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.weekly-reset-modal_innerTitle__IzQ8M {
+  font-size: 18px;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.weekly-reset-modal_goalsList__0jQnT {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 20px;
+}
+.weekly-reset-modal_goalsList__0jQnT > li {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.weekly-reset-modal_actionButtons__B8z3n {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weekly-reset-modal_confirmButton__CtlkX {
+  flex-basis: 50%;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--save-button-text);
+  padding: 4px;
+  background-color: var(--save-button-bg);
+  border-radius: 5px;
+  display: inline-block;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.weekly-reset-modal_confirmButton__CtlkX:hover {
+  background-color: #aaa;
+}
+
+.weekly-reset-modal_cancelButton__MPgx6 {
+  flex-basis: 50%;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 4px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.weekly-reset-modal_cancelButton__MPgx6:hover {
+  background-color: var(--secondary);
+}
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/header/weekly-goals/weekly-goals.module.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.weekly-goals_weeklyGoals__eaUZy {
+  position: relative;
+}
+.weekly-goals_weeklyGoals__eaUZy.opened > .weekly-goals_trigger__klogW svg {
+  transform: rotate(180deg);
+}
+
+.weekly-goals_trigger__klogW {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.weekly-goals_trigger__klogW:hover {
+  background-color: var(--secondary);
+}
+.weekly-goals_trigger__klogW > svg {
+  transition: transform 0.2s;
+}
+
+.weekly-goals_dropdown__Wd2d8 {
+  position: absolute;
+  top: 34px;
+  width: 380px;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  background-color: var(--secondaryFull);
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 10;
+}
+
+.weekly-goals_inlineEditInput__6uNeE {
+  width: 100%;
+  border: 1px solid var(--btn-border);
+  color: var(--text);
+  background-color: transparent;
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+  padding: 7px;
+}
+
+.weekly-goals_startNewWeekButton__nMwOf {
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.weekly-goals_startNewWeekButton__nMwOf:hover {
+  background-color: var(--hover);
+}
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/main/daily-tasks-modal/daily-tasks-modal.module.scss ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.daily-tasks-modal_modalInner__znC2U {
+  width: 255px;
+  position: relative;
+}
+
+.daily-tasks-modal_title__Vme4V {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.daily-tasks-modal_taskList__sa_XW {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 295px;
+  overflow-y: auto;
+}
+.daily-tasks-modal_taskList__sa_XW > li > label:hover {
+  background-color: var(--secondary);
+}
+
+.daily-tasks-modal_addTaskButton__x__rS {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+  margin: 20px auto 0 auto;
+}
+.daily-tasks-modal_addTaskButton__x__rS:hover {
+  background-color: var(--secondary);
+}
+
+.daily-tasks-modal_closeButton__l4adc {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 25px;
+  height: 25px;
+}
+.daily-tasks-modal_closeButton__l4adc > svg circle {
+  fill: var(--close-button-bg);
+  transition: all 0.2s;
+}
+.daily-tasks-modal_closeButton__l4adc > svg path {
+  fill: var(--close-button-fill);
+}
+.daily-tasks-modal_closeButton__l4adc:hover > svg circle {
+  fill: var(--hover);
+}
+
+.daily-tasks-modal_loader__NKYOH {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.daily-tasks-modal_emptyMessage___adjU {
+  font-size: 18px;
+  text-align: center;
+  color: var(--text);
+}
+
+.daily-tasks-modal_newTaskItem__wJhkP {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--btn-border);
+  transition: background-color 0.2s ease;
+}
+.daily-tasks-modal_newTaskItem__wJhkP:hover {
+  background-color: var(--hover);
+}
+
+.daily-tasks-modal_inlineInput__YRES4 {
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+}
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/event-info-modal/event-info-modal.module.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.event-info-modal_modalInner__LJHEG {
+  position: relative;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary);
+  border-radius: 5px;
+}
+
+.event-info-modal_modalButtons__zdgp_ {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.event-info-modal_editButton__vILQt > svg {
+  width: 21px;
+  height: 25px;
+  color: #fff;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.event-info-modal_title__rt1Nq {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.event-info-modal_title__rt1Nq > span {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+}
+.event-info-modal_title__rt1Nq > h6 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.event-info-modal_date__oWGgB {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.event-info-modal_date__oWGgB > p {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.event-info-modal_description__ZPjdl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./node_modules/@schedule-x/theme-default/dist/index.css ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************/
+.sx__calendar-wrapper ul,
+.sx__date-picker-wrapper ul,
+.sx__date-picker-popup ul {
+  list-style: none;
+  padding: 0;
+}
+.sx__calendar-wrapper input,
+.sx__calendar-wrapper button,
+.sx__date-picker-wrapper input,
+.sx__date-picker-wrapper button,
+.sx__date-picker-popup input,
+.sx__date-picker-popup button {
+  font-family: inherit;
+  outline: none;
+}
+
+.sx__button {
+  background-color: inherit;
+  outline: 0;
+  border: none;
+  cursor: pointer;
+}
+
+:root {
+  --sx-color-primary: #6750a4;
+  --sx-color-on-primary: #fff;
+  --sx-color-primary-container: #eaddff;
+  --sx-color-on-primary-container: #21005e;
+  --sx-color-secondary: #625b71;
+  --sx-color-on-secondary: #fff;
+  --sx-color-secondary-container: #e8def8;
+  --sx-color-on-secondary-container: #1e192b;
+  --sx-color-tertiary: #7d5260;
+  --sx-color-on-tertiary: #fff;
+  --sx-color-tertiary-container: #ffd8e4;
+  --sx-color-on-tertiary-container: #370b1e;
+  --sx-color-surface: #fef7ff;
+  --sx-color-surface-dim: #ded8e1;
+  --sx-color-surface-bright: #fef7ff;
+  --sx-color-on-surface: #1c1b1f;
+  --sx-color-surface-container: #f3edf7;
+  --sx-color-surface-container-low: #f7f2fa;
+  --sx-color-surface-container-high: #ece6f0;
+  --sx-color-background: #fff;
+  --sx-color-on-background: #1c1b1f;
+  --sx-color-outline: #79747e;
+  --sx-color-outline-variant: #c4c7c5;
+  --sx-color-shadow: #000;
+  --sx-color-surface-tint: #6750a4;
+  --sx-color-neutral: var(--sx-color-outline);
+  --sx-color-neutral-variant: var(--sx-color-outline-variant);
+  --sx-internal-color-gray-ripple-background: #e0e0e0;
+  --sx-internal-color-light-gray: #fafafa;
+  --sx-internal-color-text: #000;
+}
+
+.is-dark {
+  --sx-color-primary: #d0bcff;
+  --sx-color-on-primary: #371e73;
+  --sx-color-primary-container: #4f378b;
+  --sx-color-on-primary-container: #eaddff;
+  --sx-color-secondary: #ccc2dc;
+  --sx-color-on-secondary: #332d41;
+  --sx-color-secondary-container: #4a4458;
+  --sx-color-on-secondary-container: #e8def8;
+  --sx-color-tertiary: #efb8c8;
+  --sx-color-on-tertiary: #492532;
+  --sx-color-tertiary-container: #633b48;
+  --sx-color-on-tertiary-container: #ffd8e4;
+  --sx-color-surface: #141218;
+  --sx-color-surface-dim: #141218;
+  --sx-color-surface-bright: #3b383e;
+  --sx-color-on-surface: #e6e1e5;
+  --sx-color-surface-container: #211f26;
+  --sx-color-surface-container-low: #1d1b20;
+  --sx-color-surface-container-high: #2b2930;
+  --sx-color-background: #141218;
+  --sx-color-on-background: #e6e1e5;
+  --sx-color-outline: #938f99;
+  --sx-color-outline-variant: #444746;
+  --sx-color-shadow: #000;
+  --sx-color-surface-tint: #d0bcff;
+  --sx-internal-color-text: #fff;
+}
+
+:root {
+  --sx-spacing-padding1: 4px;
+  --sx-spacing-padding2: 8px;
+  --sx-spacing-padding3: 12px;
+  --sx-spacing-padding4: 16px;
+  --sx-spacing-padding6: 24px;
+  --sx-spacing-modal-padding: 16px;
+}
+
+:root {
+  --sx-box-shadow-level3: 0 3px 6px 0 rgb(0 0 0 / 16%),
+    0 3px 6px 0 rgb(0 0 0 / 23%);
+  --sx-rounding-extra-small: 4px;
+  --sx-rounding-small: 8px;
+  --sx-rounding-extra-large: 28px;
+  --sx-border: 1px solid var(--sx-color-outline-variant);
+}
+
+.is-dark {
+  --sx-border: 1px solid var(--sx-color-outline-variant);
+}
+
+:root {
+  --sx-font-small: 0.875rem;
+  --sx-font-extra-small: 0.75rem;
+  --sx-font-large: 1.125rem;
+  --sx-font-extra-large: 1.25rem;
+}
+
+@keyframes sx-ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.16;
+  }
+  40% {
+    width: 100px;
+    height: 100px;
+    opacity: 0.08;
+  }
+  100% {
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+  }
+}
+.sx__ripple {
+  position: relative;
+  overflow: hidden;
+}
+.sx__ripple::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: currentcolor;
+  opacity: 0.1;
+  visibility: hidden;
+  z-index: 2;
+}
+.sx__ripple:active::before {
+  visibility: visible;
+}
+.sx__ripple:not(:active)::before {
+  animation: sx-ripple 0.75s cubic-bezier(0, 0.1, 0.8, 1);
+  transition: visibility 0.75s step-end;
+}
+
+@keyframes sx-ripple-wide {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.16;
+  }
+  40% {
+    width: 300px;
+    height: 100px;
+    opacity: 0.08;
+  }
+  100% {
+    width: 450px;
+    height: 150px;
+    opacity: 0;
+  }
+}
+.sx__ripple--wide {
+  position: relative;
+  overflow: hidden;
+}
+.sx__ripple--wide::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: currentcolor;
+  opacity: 0.1;
+  visibility: hidden;
+  z-index: 2;
+}
+.sx__ripple--wide:active::before {
+  visibility: visible;
+}
+.sx__ripple--wide::before {
+  border-radius: var(--sx-rounding-small);
+}
+.sx__ripple--wide:not(:active)::before {
+  animation: sx-ripple-wide 0.75s cubic-bezier(0, 0.1, 0.8, 1);
+  transition: visibility 0.75s step-end;
+}
+
+.sx__chevron-wrapper {
+  position: relative;
+  border-radius: 50%;
+  min-height: 48px;
+  min-width: 48px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  font-size: 0;
+}
+.sx__chevron-wrapper:active {
+  background-color: var(--sx-internal-color-gray-ripple-background);
+}
+.sx__chevron-wrapper:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.sx__chevron-wrapper:hover, .sx__chevron-wrapper:focus {
+  background-color: var(--sx-color-surface-dim);
+}
+.is-dark .sx__chevron-wrapper:hover, .is-dark .sx__chevron-wrapper:focus {
+  background-color: var(--sx-color-surface-container-high);
+}
+.sx__chevron-wrapper .sx__chevron {
+  position: absolute;
+  top: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-width: 0.2rem 0.2rem 0 0;
+  border-style: solid;
+  border-color: var(--sx-internal-color-text);
+}
+
+.sx__chevron--previous {
+  left: calc(50% + 0.125rem);
+  transform: translate(-50%, -50%) rotate(225deg);
+}
+[dir=rtl] .sx__chevron--previous {
+  left: calc(50% - 0.125rem);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.sx__chevron--next {
+  left: calc(50% - 0.125rem);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+[dir=rtl] .sx__chevron--next {
+  left: calc(50% + 0.125rem);
+  transform: translate(-50%, -50%) rotate(225deg);
+}
+
+.sx__date-picker-wrapper {
+  position: relative;
+  color: var(--sx-color-on-background);
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.sx__date-picker-wrapper.has-full-width {
+  width: 100%;
+}
+.sx__date-picker-wrapper.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.sx__date-picker-wrapper * {
+  color: var(--sx-color-on-background);
+  box-sizing: border-box;
+}
+
+.sx__date-input-wrapper {
+  position: relative;
+}
+
+.sx__date-input-chevron-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: transform 0.2s ease-in-out;
+}
+.sx__date-input-chevron-wrapper:focus {
+  border: 2px solid var(--sx-color-primary);
+}
+.is-disabled .sx__date-input-chevron-wrapper {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.sx__date-input--active .sx__date-input-chevron-wrapper {
+  transform: translateY(-50%) rotate(180deg);
+}
+[dir=rtl] .sx__date-input-chevron-wrapper {
+  left: 1rem;
+  right: auto;
+}
+
+.sx__date-input-chevron {
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  filter: brightness(0.7);
+}
+
+.sx__date-input {
+  font-size: 1rem;
+  padding: var(--sx-spacing-padding4);
+  border: var(--sx-border);
+  border-radius: var(--sx-rounding-extra-small);
+  cursor: pointer;
+  background-color: var(--sx-color-background);
+  width: 100%;
+}
+.is-disabled .sx__date-input {
+  pointer-events: none;
+}
+.sx__date-input--active .sx__date-input {
+  border-color: var(--sx-color-primary);
+  outline: 1px solid var(--sx-color-primary);
+}
+
+.sx__date-input-label {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 12px;
+  padding: 0 var(--sx-spacing-padding1);
+  background-color: var(--sx-color-background);
+  font-size: 0.75rem;
+  color: var(--sx-color-neutral);
+  line-height: 1rem;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease-in-out;
+  pointer-events: none;
+}
+.sx__date-input--active .sx__date-input-label {
+  color: var(--sx-color-primary);
+}
+.is-dark .sx__date-input-label {
+  display: none;
+}
+
+.sx__date-picker-popup {
+  position: absolute;
+  height: -moz-fit-content;
+  height: fit-content;
+  z-index: 1;
+  top: calc(100% + 1px);
+  width: 20.75rem;
+  max-width: 500px;
+  max-height: 400px;
+  overflow: scroll;
+  box-shadow: var(--sx-box-shadow-level3);
+  padding: var(--sx-spacing-modal-padding);
+  background-color: var(--sx-color-background);
+  color: var(--sx-internal-color-text);
+}
+.sx__date-picker-popup.is-dark {
+  background-color: var(--sx-color-surface-container-high);
+}
+.sx__date-picker-popup.bottom-end {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+.sx__date-picker-popup.bottom-end[dir=rtl] {
+  right: auto;
+  left: 0;
+  transform: translateX(0);
+}
+.sx__date-picker-popup.bottom-start {
+  left: 0;
+  right: auto;
+  transform: translateX(0);
+}
+.sx__date-picker-popup.bottom-start[dir=rtl] {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+.sx__date-picker-popup.top-start {
+  inset: auto auto calc(100% + 1rem) 0;
+  transform: translateX(0);
+}
+.sx__date-picker-popup.top-end {
+  inset: auto 0 calc(100% + 1rem) auto;
+  transform: translateX(0);
+}
+
+.sx__date-picker__years-view {
+  margin: 0;
+}
+
+.sx__date-picker__years-accordion__expand-button {
+  width: 100%;
+  border-radius: 0;
+  background-color: transparent;
+  font-size: 1rem;
+  padding: 1em;
+  transition: background-color 0.2s ease-in-out;
+  color: var(--sx-internal-color-text);
+}
+.sx__is-expanded .sx__date-picker__years-accordion__expand-button {
+  background-color: var(--sx-color-surface-container);
+}
+.sx__date-picker__years-accordion__expand-button:hover {
+  background-color: var(--sx-color-surface-dim);
+}
+.sx__date-picker__years-accordion__expand-button:active {
+  background-color: var(--sx-internal-color-gray-ripple-background);
+}
+
+.sx__date-picker__years-view-accordion__panel {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sx__date-picker__years-view-accordion__month {
+  flex: 1 0 33.3333%;
+  background-color: transparent;
+  border: 0;
+  font-size: 0.9rem;
+  padding: 0.5em 0;
+  border-radius: 25px;
+  color: var(--sx-internal-color-text);
+}
+.sx__date-picker__years-view-accordion__month:hover {
+  background-color: var(--sx-color-primary);
+  color: var(--sx-color-on-primary);
+}
+
+.sx__date-picker__day-names {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  margin-bottom: 0.5em;
+}
+.sx__date-picker__day-names .sx__date-picker__day,
+.sx__date-picker__day-names .sx__date-picker__day-name {
+  flex: 1 1;
+  text-align: center;
+}
+
+.sx__date-picker__day-name {
+  font-weight: 700;
+  color: var(--sx-color-neutral-variant);
+}
+
+.sx__date-picker__month-view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+.sx__date-picker__month-view-header .sx__chevron-wrapper:hover {
+  background-color: var(--sx-color-surface-dim);
+}
+
+.sx__date-picker__month-view-header__month-year {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--sx-internal-color-text);
+}
+.sx__date-picker__month-view-header__month-year:hover {
+  color: var(--sx-color-primary);
+  text-decoration: underline;
+}
+
+.sx__date-picker__week {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  margin-bottom: 0.5em;
+}
+.sx__date-picker__week .sx__date-picker__day,
+.sx__date-picker__week .sx__date-picker__day-name {
+  flex: 1 1;
+  text-align: center;
+}
+
+.sx__date-picker__day {
+  background-color: transparent;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--sx-internal-color-text);
+}
+.sx__date-picker__day:hover {
+  background-color: var(--sx-color-surface-dim);
+}
+.sx__date-picker__day:focus {
+  outline-offset: -2px;
+  outline: 2px solid var(--sx-color-primary);
+}
+.sx__date-picker__day:disabled {
+  color: var(--sx-color-neutral-variant);
+  cursor: not-allowed;
+}
+.sx__date-picker__day.is-leading-or-trailing {
+  color: var(--sx-color-neutral-variant);
+}
+.sx__date-picker__day.sx__date-picker__day--selected {
+  background-color: var(--sx-color-primary-container);
+  color: var(--sx-color-on-primary-container);
+}
+.sx__date-picker__day.sx__date-picker__day--today {
+  background-color: var(--sx-color-primary);
+  color: var(--sx-color-on-primary);
+}
+
+:root {
+  --sx-calendar-header-input-font-size: clamp(12px, 0.875rem, 28px);
+  --sx-calendar-header-popup-z-index: 3;
+  --sx-calendar-week-grid-padding-left: 75px;
+}
+:root .sx__date-picker-popup.is-teleported {
+  z-index: 3;
+}
+
+.sx__calendar-wrapper {
+  height: 100%;
+  display: flex;
+  color: var(--sx-internal-color-text);
+}
+.sx__calendar-wrapper * {
+  box-sizing: border-box;
+}
+
+.sx__calendar {
+  position: relative;
+  flex: 1 1;
+  height: 100%;
+  border: var(--sx-border);
+  border-radius: var(--sx-rounding-small);
+  display: flex;
+  flex-flow: column;
+  background-color: var(--sx-color-background);
+  overflow: hidden;
+}
+
+.sx__view-container {
+  position: relative;
+  flex: 1 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.sx__slide-left {
+  animation: sx-slide-left 0.3s ease-out;
+}
+
+@keyframes sx-slide-left {
+  0% {
+    transform: translateX(8%);
+    filter: blur(0.25rem);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateX(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+.sx__slide-right {
+  animation: sx-slide-right 0.3s ease-out;
+}
+
+@keyframes sx-slide-right {
+  0% {
+    transform: translateX(-8%);
+    filter: blur(0.25rem);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateX(0);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+.sx__calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--sx-spacing-padding4);
+  gap: var(--sx-spacing-padding4);
+  flex-wrap: wrap;
+}
+.sx__calendar-header .sx__date-input {
+  padding: var(--sx-spacing-padding3) var(--sx-spacing-padding4);
+  font-size: var(--sx-calendar-header-input-font-size);
+}
+.sx__calendar-header .sx__date-picker-popup {
+  z-index: var(--sx-calendar-header-popup-z-index);
+}
+
+.sx__calendar-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--sx-spacing-padding4);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.sx__forward-backward-navigation {
+  height: 45px;
+}
+.sx__is-calendar-small .sx__forward-backward-navigation, .is-list-view .sx__forward-backward-navigation {
+  display: none;
+}
+
+.sx__calendar-header__week-number {
+  border-radius: 4px;
+  background-color: #eceef1;
+  color: var(--sx-color-on-surface);
+  padding: var(--sx-spacing-padding1) var(--sx-spacing-padding2);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.is-dark .sx__calendar-header__week-number {
+  background-color: #4a4458;
+}
+
+.sx__range-heading {
+  font-size: clamp(16px, 1.25rem, 24px);
+  max-width: 12.5rem; /* 200px with a browser using standard font size */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sx__is-calendar-small .sx__range-heading {
+  font-size: 16px;
+}
+.is-list-view .sx__range-heading {
+  display: none;
+}
+
+.sx__today-button {
+  padding: var(--sx-spacing-padding3) var(--sx-spacing-padding4);
+  border-radius: var(--sx-rounding-extra-small);
+  font-size: var(--sx-calendar-header-input-font-size);
+  color: var(--sx-internal-color-text);
+}
+.sx__today-button:active {
+  background-color: var(--sx-internal-color-gray-ripple-background);
+}
+.sx__is-calendar-small .sx__today-button {
+  display: none;
+}
+.sx__calendar-header .sx__today-button {
+  border: var(--sx-border);
+}
+.sx__today-button:hover, .sx__today-button:focus {
+  background-color: var(--sx-internal-color-light-gray);
+}
+.is-dark .sx__today-button:hover, .is-dark .sx__today-button:focus {
+  background-color: var(--sx-color-surface-container-low);
+}
+
+.sx__view-selection {
+  position: relative;
+  font-size: var(--sx-calendar-header-input-font-size);
+}
+
+.sx__view-selection-label {
+  position: absolute;
+  top: 0;
+  inset-inline-start: 12px;
+  padding: 0 var(--sx-spacing-padding1);
+  background-color: var(--sx-color-background);
+  font-size: 0.75rem;
+  color: var(--sx-color-neutral);
+  line-height: 1rem;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+}
+.is-dark .sx__view-selection-label {
+  display: none;
+}
+
+.sx__view-selection-selected-item {
+  height: 100%;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: var(--sx-spacing-padding3) var(--sx-spacing-padding4);
+  cursor: pointer;
+  border-radius: var(--sx-rounding-extra-small);
+  border: var(--sx-border);
+  display: flex;
+  align-items: center;
+  gap: var(--sx-spacing-padding2);
+}
+.sx__view-selection-selected-item:hover {
+  background-color: var(--sx-internal-color-light-gray);
+}
+.is-dark .sx__view-selection-selected-item:hover {
+  background-color: var(--sx-color-surface-container-low);
+}
+
+.sx__view-selection-chevron {
+  width: 1rem;
+  height: 1rem;
+  pointer-events: none;
+  filter: brightness(0.7);
+  transition: transform 0.2s ease-in-out;
+}
+
+.sx__view-selection.is-open .sx__view-selection-chevron {
+  transform: rotate(180deg);
+}
+
+.sx__view-selection-items {
+  position: absolute;
+  top: 100%;
+  box-shadow: var(--sx-box-shadow-level3);
+  margin: 0;
+  background-color: var(--sx-color-background);
+  z-index: var(--sx-calendar-header-popup-z-index);
+}
+.is-dark .sx__view-selection-items {
+  background-color: var(--sx-color-surface-container-high);
+}
+
+.sx__view-selection-item {
+  padding: var(--sx-spacing-padding4) var(--sx-spacing-padding6);
+  cursor: pointer;
+}
+.sx__view-selection-item:hover, .sx__view-selection-item:focus {
+  background-color: var(--sx-color-primary);
+  color: var(--sx-color-on-primary);
+}
+.sx__view-selection-item.is-selected {
+  background-color: var(--sx-color-surface-dim);
+}
+.sx__view-selection-item.is-selected:hover, .sx__view-selection-item.is-selected:focus {
+  background-color: var(--sx-color-primary);
+  color: var(--sx-color-on-primary);
+}
+
+.sx__month-grid-wrapper {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.sx__month-grid-week__week-number {
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;
+  background-color: #eceef1;
+  color: var(--sx-color-on-surface);
+  width: 1.5rem;
+  font-size: 0.75rem;
+}
+.is-dark .sx__month-grid-week__week-number {
+  background-color: #4a4458;
+}
+
+.sx__month-grid-week {
+  border-top: var(--sx-border);
+  flex: 1 1;
+  display: flex;
+}
+.sx__month-grid-week:first-child .sx__month-grid-week__week-number {
+  padding-top: 26px;
+}
+
+.sx__month-grid-day {
+  position: relative;
+  padding: var(--sx-spacing-padding2) 0;
+  flex: 1 1;
+}
+.sx__month-grid-day:not(:last-child) {
+  -webkit-border-end: var(--sx-border);
+          border-inline-end: var(--sx-border);
+}
+
+.sx__month-grid-day--dragover {
+  background-color: var(--sx-color-surface-container);
+}
+
+.sx__month-grid-day__header {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.sx__month-grid-day__header-day-name {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--sx-color-neutral);
+}
+
+.sx__month-grid-day__header-date {
+  font-size: var(--sx-font-extra-small);
+  margin-bottom: var(--sx-spacing-padding1);
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sx__month-grid-day__header-date.sx__is-today {
+  background-color: var(--sx-color-primary);
+  color: var(--sx-color-on-primary);
+}
+
+.sx__month-grid-day__events-more {
+  width: calc(100% - 10px);
+  font-size: var(--sx-font-extra-small);
+  color: var(--sx-color-neutral);
+  margin: var(--sx-spacing-padding1) 0;
+  padding: var(--sx-spacing-padding1);
+  border-radius: var(--sx-rounding-extra-small);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+.sx__month-grid-day__events-more:hover {
+  background-color: var(--sx-color-surface-container);
+  color: var(--sx-color-on-surface);
+}
+
+.sx__month-grid-background-event {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.sx__month-grid-day__events {
+  display: grid;
+  grid-gap: 4px;
+}
+
+.sx__month-grid-cell {
+  height: clamp(20px, 1.25rem, 24px);
+}
+
+.sx__month-grid-event {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--sx-spacing-padding1);
+  border-radius: var(--sx-rounding-extra-small);
+  font-size: clamp(12px, var(--sx-font-extra-small), 14px);
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: 1;
+}
+.sx__month-grid-event.is-event-new {
+  animation: sx-grow-event 0.3s ease-in-out forwards;
+}
+@keyframes sx-grow-event {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.sx__month-grid-event-time {
+  margin-right: 4px;
+}
+
+.sx__month-grid-blocker {
+  pointer-events: none;
+}
+
+.sx__month-agenda-week {
+  display: flex;
+}
+.sx__month-agenda-week:not(:first-child) {
+  border-top: var(--sx-border);
+}
+
+.sx__month-agenda-week__week-number {
+  text-align: center;
+  background-color: #eceef1;
+  color: var(--sx-color-on-surface);
+  width: 1.5rem;
+  font-size: 0.75rem;
+  padding-top: 9px;
+}
+.is-dark .sx__month-agenda-week__week-number {
+  background-color: #4a4458;
+}
+
+.sx__month-agenda-day {
+  padding: var(--sx-spacing-padding2);
+  flex: 1 1;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  height: 3rem;
+  border-radius: var(--sx-rounding-extra-small);
+  color: var(--sx-internal-color-text);
+}
+
+.sx__month-agenda-day--active {
+  box-shadow: inset 0 0 0 3px var(--sx-color-primary);
+}
+
+.sx__month-agenda-day__event-icons {
+  margin-top: 4px;
+  display: flex;
+  grid-gap: 3px;
+}
+
+.sx__month-agenda-day__event-icon {
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  filter: brightness(1.6);
+}
+.is-dark .sx__month-agenda-day__event-icon {
+  filter: initial;
+}
+
+.sx__month-agenda-day-names {
+  display: flex;
+  padding: var(--sx-spacing-padding2) 0;
+  font-size: var(--sx-font-extra-small);
+  color: var(--sx-color-neutral);
+}
+.sx__month-agenda-day-names.sx__has-week-numbers {
+  -webkit-padding-start: 1.5rem;
+          padding-inline-start: 1.5rem;
+}
+
+.sx__month-agenda-day-name {
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+}
+
+.sx__month-agenda-events {
+  padding: 0 var(--sx-spacing-padding2);
+}
+
+.sx__month-agenda-event {
+  padding: var(--sx-spacing-padding2);
+  margin-bottom: var(--sx-spacing-padding2);
+  border-radius: var(--sx-rounding-extra-small);
+  font-size: var(--sx-font-small);
+}
+.sx__month-agenda-event.is-event-new {
+  animation: sx-grow-event 0.3s ease-in-out forwards;
+}
+@keyframes sx-grow-event {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.sx__month-agenda-event:first-child {
+  margin-top: var(--sx-spacing-padding2);
+}
+
+.sx__month-agenda-event__title {
+  font-weight: 600;
+}
+
+.sx__month-agenda-event__has-icon {
+  display: flex;
+  align-items: center;
+}
+
+.sx__month-agenda-events__empty {
+  margin-top: var(--sx-spacing-padding4);
+  display: flex;
+  justify-content: center;
+}
+
+.sx__week-wrapper {
+  position: relative;
+}
+
+.sx__week-grid {
+  position: relative;
+  padding-left: var(--sx-calendar-week-grid-padding-left);
+  display: flex;
+  height: var(--sx-week-grid-height);
+  overflow: hidden;
+}
+
+.sx__week-header {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--sx-color-background);
+}
+
+.sx__week-header-content {
+  position: relative;
+}
+
+.sx__week-header-border {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  border-bottom: var(--sx-border);
+  border-left: 250px solid transparent;
+}
+
+.sx__list-wrapper {
+  padding: 0;
+  background-color: var(--sx-color-background);
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+}
+
+.sx__list-day {
+  padding: 0;
+  background-color: var(--sx-color-background);
+  will-change: opacity;
+  transform: translateZ(0);
+}
+
+.sx__list-day-header {
+  padding: var(--sx-spacing-padding2) var(--sx-spacing-padding4);
+  background-color: var(--sx-color-surface-container-low);
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.sx__list-day-date {
+  font-size: var(--sx-font-extra-small);
+  font-weight: 600;
+  color: var(--sx-color-neutral);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sx__list-day-events {
+  padding: 0 16px;
+  background: var(--sx-color-background);
+}
+
+.sx__list-event {
+  padding: 0.75rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.sx__list-event:not(:first-child) {
+  border-top: var(--sx-border);
+}
+
+.sx__list-event-color-line {
+  width: 3px;
+  height: 24px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sx__list-event-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.sx__list-event-title {
+  font-size: 1em;
+  color: var(--sx-color-on-background);
+  flex: 1 1;
+}
+
+.sx__list-event-times {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 80px;
+  gap: 2px;
+}
+
+.sx__list-event-start-time {
+  font-size: 0.85em;
+  color: var(--sx-color-on-background);
+}
+
+.sx__list-event-end-time {
+  font-size: 0.85em;
+  color: var(--sx-color-neutral);
+}
+
+.sx__list-event-arrow {
+  font-size: 0.85em;
+  color: var(--sx-color-neutral);
+  line-height: 1;
+}
+
+.sx__list-event-all-day {
+  font-size: 0.85em;
+  color: var(--sx-color-neutral);
+}
+
+.sx__list-day-margin {
+  height: 16px;
+}
+
+.sx__list-no-events {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--sx-color-neutral);
+  font-size: var(--sx-font-extra-small);
+  text-align: center;
+}
+
+.sx__week-grid__time-axis {
+  display: flex;
+  flex-flow: column;
+  position: absolute;
+  right: 0;
+  top: var(--sx-week-grid-offset-top);
+  width: calc(100% - 60px);
+}
+
+.sx__week-grid__hour {
+  position: relative;
+  height: var(--sx-week-grid-hour-height);
+  border-top: var(--sx-border);
+  font-size: var(--sx-font-extra-small);
+}
+.sx__week-grid__hour:first-child {
+  visibility: hidden;
+}
+
+.sx__week-grid__hour-text {
+  position: absolute;
+  left: -43px;
+  top: -0.75em;
+  color: var(--sx-color-neutral);
+}
+
+.sx__time-grid-day {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-left: var(--sx-border);
+}
+
+.sx__week-grid__date-axis {
+  padding-left: var(--sx-calendar-week-grid-padding-left);
+  display: flex;
+}
+
+.sx__week-grid__date {
+  flex: 1 1;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  padding: var(--sx-spacing-padding3) 0;
+  gap: var(--sx-spacing-padding1);
+}
+
+.sx__week-grid__day-name {
+  text-transform: uppercase;
+  font-size: var(--sx-font-extra-small);
+  color: var(--sx-color-neutral);
+  font-weight: 500;
+}
+.sx__week-grid__date--is-today .sx__week-grid__day-name {
+  color: var(--sx-color-primary);
+  font-weight: 700;
+}
+
+.sx__week-grid__date-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--sx-font-extra-large);
+  font-weight: 500;
+  color: var(--sx-color-neutral);
+  height: 2em;
+  width: 2em;
+}
+.sx__week-grid__date--is-today .sx__week-grid__date-number {
+  background-color: var(--sx-color-primary);
+  color: var(--sx-color-on-primary);
+  border-radius: 50%;
+}
+
+.sx__time-grid-event {
+  width: calc(100% - 10px);
+  padding: var(--sx-spacing-padding1);
+  position: absolute;
+  border-radius: var(--sx-rounding-extra-small);
+  font-size: var(--sx-font-extra-small);
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+}
+.sx__time-grid-event.is-event-copy {
+  opacity: 0.5;
+  box-shadow: var(--sx-box-shadow-level3);
+  z-index: 1;
+  transition: transform 0.15s ease-in-out;
+}
+.sx__time-grid-event.is-event-new {
+  animation: sx-grow-event 0.3s ease-in-out forwards;
+}
+@keyframes sx-grow-event {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+[data-has-dnd=true] .sx__time-grid-event {
+  touch-action: none;
+}
+
+.sx__is-resizing .sx__time-grid-event:has(+ .is-event-copy) {
+  opacity: 0;
+}
+.sx__is-resizing .is-event-copy {
+  opacity: 1;
+}
+
+.sx__time-grid-event-inner {
+  position: relative;
+  height: 100%;
+}
+
+.sx__time-grid-event-resize-handle {
+  display: block;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  cursor: ns-resize;
+  height: clamp(10px, 20px, 50%);
+  touch-action: none;
+}
+
+.sx__time-grid-event-title {
+  font-weight: 600;
+}
+
+.sx__time-grid-event-time,
+.sx__time-grid-event-people,
+.sx__time-grid-event-location {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.sx__title-and-time-compact {
+  display: flex;
+  align-items: center;
+  gap: var(--sx-spacing-padding2);
+}
+.sx__title-and-time-compact .sx__time-grid-event-title {
+  flex: 1 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sx__title-and-time-compact .sx__time-grid-event-time {
+  flex-shrink: 0;
+}
+
+.sx__event-icon {
+  min-width: 15px;
+  min-height: 15px;
+  max-width: 15px;
+  max-height: 15px;
+  -webkit-margin-end: var(--sx-spacing-padding2);
+          margin-inline-end: var(--sx-spacing-padding2);
+}
+
+.sx__date-grid {
+  display: flex;
+  padding-left: var(--sx-calendar-week-grid-padding-left);
+}
+
+.sx__date-grid-day {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-gap: 2px;
+  /* needed for the draw plugin */
+}
+.sx__date-grid-day .sx__spacer {
+  display: var(--sx-draw-plugin-spacer-display, none);
+  height: var(--sx-draw-plugin-spacer);
+}
+
+.sx__date-grid-event {
+  z-index: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--sx-spacing-padding1);
+  border-radius: var(--sx-rounding-extra-small);
+  font-size: clamp(12px, var(--sx-font-extra-small), 14px);
+  font-weight: 600;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.sx__date-grid-event:has(.sx__date-grid-event--left-overflow) {
+  margin-left: 10px;
+}
+.sx__date-grid-event:has(.sx__date-grid-event--right-overflow) {
+  margin-right: 10px;
+}
+.sx__date-grid-event.is-event-new {
+  animation: sx-grow-event 0.3s ease-in-out forwards;
+}
+@keyframes sx-grow-event {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.sx__date-grid-event .sx__date-grid-event--left-overflow {
+  position: absolute;
+  z-index: 1;
+  width: 10px;
+  height: 100%;
+  left: -10px;
+  -webkit-clip-path: polygon(100% 0, 0 50%, 100% 100%, 100% 0);
+          clip-path: polygon(100% 0, 0 50%, 100% 100%, 100% 0);
+}
+.sx__date-grid-event .sx__date-grid-event--right-overflow {
+  position: absolute;
+  z-index: 1;
+  width: 10px;
+  height: 100%;
+  right: -10px;
+  -webkit-clip-path: polygon(0 0, 100% 50%, 0 100%, 0 0);
+          clip-path: polygon(0 0, 100% 50%, 0 100%, 0 0);
+}
+.sx__date-grid-event.sx__date-grid-event--copy {
+  z-index: 2;
+  box-shadow: var(--sx-box-shadow-level3);
+  transition-property: transform, width;
+  transition-duration: 0.15s;
+  transition-timing-function: ease-in-out;
+}
+
+.sx__date-grid-event-text {
+  width: calc(100% - var(--sx-spacing-padding1) * 2);
+  left: var(--sx-spacing-padding1);
+  position: absolute;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+.sx__date-grid-event-text .sx__date-grid-event-time {
+  font-weight: initial;
+}
+
+.sx__date-grid-cell {
+  height: clamp(20px, 1.25rem, 24px);
+}
+
+.sx__date-grid-event-resize-handle {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: clamp(10px, 15px, 50%);
+  cursor: ew-resize;
+  z-index: 1;
+  touch-action: none;
+}
+[dir=rtl] .sx__date-grid-event-resize-handle {
+  left: 0;
+  right: auto;
+}
+
+.sx__date-grid-background-event {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+:root {
+  --sx-week-grid-height: 0;
+  --sx-time-axis-height: 0;
+  --sx-week-grid-hour-height: 0;
+  --sx-week-grid-offset-top: 0;
+}
+
+.sx__event-modal {
+  visibility: hidden;
+  position: fixed;
+  top: var(--sx-event-modal-top);
+  left: var(--sx-event-modal-left);
+  width: 400px;
+  max-width: 100%;
+  height: -moz-fit-content;
+  height: fit-content;
+  background-color: var(--sx-color-background);
+  z-index: 2;
+}
+.sx__event-modal.is-open {
+  animation: slide-sideways;
+  animation-duration: 0.3s;
+  visibility: initial;
+}
+.is-dark .sx__event-modal {
+  background-color: var(--sx-color-surface-container-high);
+}
+
+.sx__event-modal-default {
+  padding: var(--sx-spacing-padding6);
+  background-color: var(--sx-color-background);
+  box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 11px 15px -7px rgba(0, 0, 0, 0.2);
+  border-radius: var(--sx-rounding-small);
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+@keyframes slide-sideways {
+  from {
+    opacity: 0;
+    transform: translateX(var(--sx-event-modal-animation-start));
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.sx__event-modal .sx__event-icon {
+  min-width: 16px;
+  min-height: 16px;
+  max-width: 16px;
+  max-height: 16px;
+  -webkit-margin-end: var(--sx-spacing-padding2);
+          margin-inline-end: var(--sx-spacing-padding2);
+}
+
+.sx__event-modal__color-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 25%;
+  -webkit-margin-end: var(--sx-spacing-padding3);
+          margin-inline-end: var(--sx-spacing-padding3);
+}
+
+.sx__has-icon {
+  display: grid;
+  align-items: flex-start;
+  grid-template-columns: 30px 1fr;
+  margin-bottom: var(--sx-spacing-padding2);
+}
+.sx__has-icon .sx__event-icon {
+  margin-top: 2px;
+}
+.sx__has-icon .sx__event-modal__color-icon {
+  margin-top: 4px;
+}
+
+.sx__event-modal__title {
+  font-size: var(--sx-font-large);
+}
+
+.sx__event-modal__time {
+  font-size: var(--sx-font-small);
+}
+
+.sx__current-time-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #f00;
+  z-index: 0;
+}
+.sx__current-time-indicator::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #f00;
+}
+
+.sx__current-time-indicator-full-week {
+  width: calc(100% - var(--sx-calendar-week-grid-padding-left));
+  position: absolute;
+  inset: 0 0 0 var(--sx-calendar-week-grid-padding-left);
+  height: 2px;
+  background-color: rgba(255, 0, 0, 0.38);
+}
+
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/main/planner-inner/components/week-day-header/week-day-header.module.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.week-day-header_weekday__QSH26 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  text-align: center;
+  color: var(--sx-color-neutral);
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s;
+}
+.week-day-header_weekday__QSH26.today .week-day-header_weekdayText__CdaTr {
+  color: var(--sx-color-primary);
+}
+.week-day-header_weekday__QSH26.today .week-day-header_day__oLA_o {
+  color: #ffffff;
+  background-color: var(--sx-color-primary);
+  border-radius: 50%;
+}
+.week-day-header_weekday__QSH26:hover {
+  background-color: var(--hover);
+}
+
+.week-day-header_weekdayText__CdaTr {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.week-day-header_day__oLA_o {
+  font-size: 20px;
+  font-weight: 400;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.week-day-header_counter__HL9VH {
+  position: absolute;
+  right: 22%;
+  top: -10px;
+  background-color: var(--primary);
+  padding: 3px 6px;
+  border-radius: 5px;
+  color: var(--text);
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/page.module.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.page_plannerPage__kZWEq {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  padding: 23px 0px 20px 30px;
+  height: 100%;
+  position: relative;
+}
+
+.page_header__8HZKE {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.page_planner__ecdhu {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 5px;
+  background-color: var(--secondary);
+  padding: 0 1px 0 0;
+}
+
+.page_loader__69ty5 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

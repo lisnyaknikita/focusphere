@@ -1,0 +1,251 @@
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/google-auth-button/google-auth-button.module.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.google-auth-button_googleButton__LIyia {
+  width: 100%;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 10px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  margin-bottom: 20px;
+  position: relative;
+  transition: background-color 0.2s;
+}
+.google-auth-button_googleButton__LIyia:hover {
+  background-color: var(--primary);
+}
+.google-auth-button_googleButton__LIyia > svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/sidebar/components/logo/logo.module.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.logo_logoLink__n91Wx {
+  display: flex;
+  align-items: center;
+}
+.logo_logoLink__n91Wx > span {
+  margin-left: 10px;
+  text-transform: uppercase;
+  font-size: 36px;
+  transition: all 0.2s ease;
+}
+.logo_logoLink__n91Wx > span.collapsed {
+  margin-left: 0;
+}
+@media screen and (max-width: 1120px) {
+  .logo_logoLink__n91Wx > span {
+    font-size: 24px;
+  }
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[2].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[13].oneOf[2].use[2]!./node_modules/next/font/google/target.css?{"path":"src/shared/ui/sidebar/components/logo/logo.tsx","import":"Audiowide","arguments":[{"subsets":["latin"],"weight":"400"}],"variableName":"audioWide"} ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/* latin-ext */
+@font-face {
+  font-family: 'Audiowide';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/_next/static/media/e20ff468b6a47ae1-s.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Audiowide';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/_next/static/media/ab86f138d0d6e9da-s.p.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}@font-face {font-family: 'Audiowide Fallback';src: local("Arial");ascent-override: 78.10%;descent-override: 22.50%;line-gap-override: 0.00%;size-adjust: 126.73%
+}.__className_2d00a0 {font-family: 'Audiowide', 'Audiowide Fallback';font-weight: 400;font-style: normal
+}
+
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/sidebar/components/logo/components/logo-icon/logo-icon.module.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.logo-icon_logoIcon__Q0hBj > path {
+  fill: var(--logo-icon);
+  transition: all 0.2s;
+}
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(auth)/login/login-form/login-form.module.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.login-form_loginForm__NW8Kf {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form_formLabel__TI6Ic > span {
+  font-size: 14px;
+  font-weight: 400;
+  font-family: inherit;
+  color: var(--text);
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.login-form_formLabel__TI6Ic > input {
+  width: 100%;
+  border: 1px solid var(--btn-border);
+  background-color: transparent;
+  color: var(--text);
+  border-radius: 5px;
+  padding: 10px 10px;
+  font-size: 15px;
+  font-weight: 400;
+  font-family: inherit;
+}
+.login-form_formLabel__TI6Ic:first-child {
+  margin-bottom: 10px;
+}
+.login-form_formLabel__TI6Ic:nth-child(2) {
+  margin-bottom: 30px;
+}
+
+.login-form_passwordContainer__ADXNS {
+  position: relative;
+}
+.login-form_passwordContainer__ADXNS > input {
+  width: 100%;
+  border: 1px solid var(--btn-border);
+  background-color: transparent;
+  color: var(--text);
+  border-radius: 5px;
+  padding: 10px 10px;
+  font-size: 15px;
+  font-weight: 400;
+  font-family: inherit;
+}
+.login-form_passwordContainer__ADXNS > input[type=password] {
+  padding-right: 150px;
+}
+
+.login-form_forgotButton__9bpg_ {
+  position: absolute;
+  right: 2%;
+  top: 33%;
+  color: var(--textSecondary);
+  font-size: 14px;
+  font-weight: 400;
+}
+.login-form_forgotButton__9bpg_:hover {
+  text-decoration: underline;
+}
+
+.login-form_submitButton___0a3H {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--save-button-text);
+  padding: 10px 5px;
+  background-color: var(--save-button-bg);
+  border-radius: 10px;
+  display: inline-block;
+  width: 100%;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.login-form_submitButton___0a3H:hover {
+  background-color: #aaa;
+}
+
+.login-form_errorMessage__0EfHY {
+  font-size: 14px;
+  font-weight: 400;
+  color: #e85c5c;
+}
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(auth)/login/page.module.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.page_loginPage__IyAQ0 {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.page_logo__Wv_EZ {
+  position: absolute;
+  left: 30px;
+  top: 30px;
+}
+
+.page_authPrompt__EDVes {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.page_authPrompt__EDVes > span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  font-family: inherit;
+}
+.page_authPrompt__EDVes > .page_button__dr8p2 {
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.page_authPrompt__EDVes > .page_button__dr8p2:hover {
+  background-color: var(--secondary);
+}
+
+.page_loginBlock__mrQJa {
+  width: 460px;
+  border-radius: 5px;
+  padding: 20px 40px;
+  background-color: var(--secondary);
+  color: var(--text);
+}
+
+.page_title__UHenr {
+  font-size: 32px;
+  font-weight: 700;
+  font-family: inherit;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.page_divider__rzuUO {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+.page_divider__rzuUO > span {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  padding: 3px 10px;
+  border: 0.3px solid var(--btn-border);
+  border-radius: 5px;
+  position: relative;
+  background-color: var(--secondaryFull);
+}
+.page_divider__rzuUO > hr {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  height: 0.3px;
+  background-color: var(--btn-border);
+}

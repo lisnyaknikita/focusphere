@@ -1,0 +1,1462 @@
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/event-info-modal/event-info-modal.module.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.event-info-modal_modalInner__LJHEG {
+  position: relative;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary);
+  border-radius: 5px;
+}
+
+.event-info-modal_modalButtons__zdgp_ {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.event-info-modal_editButton__vILQt > svg {
+  width: 21px;
+  height: 25px;
+  color: #fff;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.event-info-modal_title__rt1Nq {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.event-info-modal_title__rt1Nq > span {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+}
+.event-info-modal_title__rt1Nq > h6 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.event-info-modal_date__oWGgB {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.event-info-modal_date__oWGgB > p {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.event-info-modal_description__ZPjdl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/modal/modal.module.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.modal_overlay__5mGqe {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.modal_modalPosition__jX_M9 {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  z-index: 11;
+}
+
+.modal_modalContainer___SA_q {
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.modal_modal__Lv68T {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: var(--primary);
+}
+@media screen and (max-width: 768px) {
+  .modal_modal__Lv68T {
+    padding: 10px;
+  }
+}
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/components/dashboard-block/components/events/events.module.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.events_events__MGyLe {
+  grid-column: 1;
+  grid-row: 1;
+  max-height: 100%;
+  overflow-y: hidden;
+  position: relative;
+}
+@media screen and (max-width: 1024px) {
+  .events_events__MGyLe {
+    order: 0;
+  }
+}
+
+.events_eventsList__1i2Al {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  max-height: 190px;
+  padding-right: 5px;
+  overflow-y: auto;
+}
+.events_eventsList__1i2Al::-webkit-scrollbar {
+  width: 4px;
+}
+.events_eventsList__1i2Al::-webkit-scrollbar-thumb {
+  background-color: var(--hover);
+  border-radius: 10px;
+}
+
+.events_eventItem__7sAH2 {
+  background-color: transparent;
+}
+.events_eventItem__7sAH2 > button {
+  text-align: left;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  padding: 7px;
+  display: inline-block;
+  width: 100%;
+  border: 1px solid #3b3a3a;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+  font-family: inherit;
+}
+.events_eventItem__7sAH2 > button:hover {
+  background-color: var(--hover);
+}
+
+.events_loader__UMHmt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.events_noEventsMessage__SGrRc {
+  font-size: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/components/dashboard-block/components/quotes/quotes.module.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.quotes_quotes__3blag {
+  text-align: center;
+  grid-column: 2;
+  grid-row: 1/span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media screen and (max-width: 1024px) {
+  .quotes_quotes__3blag {
+    order: 2;
+  }
+}
+
+.quotes_quoteContent__hznDs {
+  font-size: 22px;
+  font-style: italic;
+  color: var(--text);
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.quotes_quoteAuthor__9OFij {
+  font-size: 16px;
+  color: #aaa;
+  text-align: right;
+  font-style: normal;
+}
+
+.quotes_loader__vSDU_ {
+  margin: 0 auto;
+}
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[2].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[13].oneOf[2].use[2]!./node_modules/next/font/google/target.css?{"path":"src/shared/fonts/font-merriweather.ts","import":"Merriweather","arguments":[{"subsets":["latin"],"weight":["400","700"],"variable":"--font-merriweather","display":"swap"}],"variableName":"merriweather"} ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/fe4c52824bfaed3e-s.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/3e8ab5100a4aa694-s.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/b78b37b810acce9f-s.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/027647acf05c7ff8-s.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/1f3fe8c6df3d47c1-s.p.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/fe4c52824bfaed3e-s.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/3e8ab5100a4aa694-s.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/b78b37b810acce9f-s.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/027647acf05c7ff8-s.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Merriweather';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url(/_next/static/media/1f3fe8c6df3d47c1-s.p.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}@font-face {font-family: 'Merriweather Fallback';src: local("Times New Roman");ascent-override: 80.59%;descent-override: 22.36%;line-gap-override: 0.00%;size-adjust: 122.09%
+}.__className_9dd3c0 {font-family: 'Merriweather', 'Merriweather Fallback';font-style: normal
+}.__variable_9dd3c0 {--font-merriweather: 'Merriweather', 'Merriweather Fallback'
+}
+
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/shared/ui/checkbox-card/checkbox-card.module.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.checkbox-card_card__QXFNC {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+.checkbox-card_card__QXFNC:hover {
+  background-color: var(--hover);
+}
+.checkbox-card_card__QXFNC:hover > .checkbox-card_buttons__2tvY4 .checkbox-card_deleteButton__BaGDN {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+.checkbox-card_card__QXFNC:hover > .checkbox-card_buttons__2tvY4 .checkbox-card_editButton__2YGtq {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.checkbox-card_checkbox__eq3Um {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox-card_customCheckbox__QLQd1 {
+  width: 20px;
+  height: 20px;
+  background-color: var(--checkbox-bg);
+  border-radius: 5px;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkbox-card_checkbox__eq3Um:checked + .checkbox-card_customCheckbox__QLQd1::after {
+  content: "";
+  width: 6px;
+  height: 10px;
+  border: solid var(--checkbox-icon);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translateY(-2px) translateX(-1px);
+}
+
+.checkbox-card_label__Aecpg {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  max-width: 190px;
+}
+.checkbox-card_label__Aecpg.checked {
+  text-decoration: line-through;
+}
+
+.checkbox-card_buttons__2tvY4 {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-card_editButton__2YGtq {
+  position: relative;
+  width: 21px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.3px solid var(--text);
+  border-radius: 5px;
+  padding: 1px 2px;
+  transition: all 0.2s;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.checkbox-card_editButton__2YGtq > svg {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 16px;
+  height: 18px;
+  color: #fff;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+.checkbox-card_editButton__2YGtq > svg path {
+  transition: all 0.2s;
+}
+.checkbox-card_editButton__2YGtq:hover {
+  background-color: var(--line);
+}
+.checkbox-card_editButton__2YGtq:hover > svg path {
+  fill: var(--tab-bg);
+}
+
+.checkbox-card_deleteButton__BaGDN {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.3px solid #dc2a2a;
+  border-radius: 5px;
+  padding: 3px;
+  transition: all 0.2s;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.checkbox-card_deleteButton__BaGDN:hover {
+  background-color: #dc2a2a;
+}
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/components/dashboard-block/components/tasks/tasks.module.scss ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.tasks_tasks__ejaGx {
+  grid-column: 1;
+  grid-row: 2;
+  max-height: 100%;
+  position: relative;
+}
+@media screen and (max-width: 1024px) {
+  .tasks_tasks__ejaGx {
+    order: 1;
+  }
+}
+
+.tasks_tasksList__7z04F {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  max-height: 190px;
+  padding-right: 5px;
+  overflow-y: auto;
+}
+.tasks_tasksList__7z04F::-webkit-scrollbar {
+  width: 4px;
+}
+.tasks_tasksList__7z04F::-webkit-scrollbar-thumb {
+  background-color: var(--hover);
+  border-radius: 10px;
+}
+
+.tasks_loader__kB05V {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tasks_noTasksMessage__yBbBp {
+  font-size: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/components/dashboard-block/dashboard-block.module.scss ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.dashboard-block_dashboardInner__9g_9N {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 10px;
+  gap: 10px;
+  color: var(--text);
+  height: 100%;
+  margin-bottom: 20px;
+}
+.dashboard-block_dashboardInner__9g_9N > section {
+  background-color: var(--secondary);
+  border-radius: 5px;
+  padding: 13px 30px;
+}
+.dashboard-block_dashboardInner__9g_9N > section > h2 {
+  font-size: 24px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+@media screen and (max-width: 1120px) {
+  .dashboard-block_dashboardInner__9g_9N > section > h2 {
+    font-size: 21px;
+  }
+}
+@media (max-width: 1024px) {
+  .dashboard-block_dashboardInner__9g_9N {
+    display: flex;
+    flex-direction: column;
+  }
+}
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/components/quick-access/quick-access.module.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.quick-access_buttons__vDNj2 {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.quick-access_button__IBELb {
+  font-size: 16px;
+  font-weight: 400;
+  font-family: inherit;
+  padding: 5px 10px;
+  color: var(--text);
+  background-color: transparent;
+  border-radius: 5px;
+  border: 1px solid #3b3a3a;
+  transition: background-color 0.2s ease;
+}
+.quick-access_button__IBELb:hover {
+  background-color: var(--secondary);
+}
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/components/title/title.module.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.title_title__66Csf {
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+@media screen and (max-width: 1120px) {
+  .title_title__66Csf {
+    font-size: 32px;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .title_title__66Csf {
+    font-size: 26px;
+    margin-bottom: 30px;
+  }
+}
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/(dashboard)/page.module.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.page_dashboard__OMz7r {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  padding: 23px 0px 20px 30px;
+  height: 100%;
+}
+@media screen and (max-width: 1120px) {
+  .page_dashboard__OMz7r {
+    padding: 23px 15px 20px 15px;
+  }
+}
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/planner/components/main/daily-tasks-modal/daily-tasks-modal.module.scss ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.daily-tasks-modal_modalInner__znC2U {
+  width: 255px;
+  position: relative;
+}
+
+.daily-tasks-modal_title__Vme4V {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.daily-tasks-modal_taskList__sa_XW {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 295px;
+  overflow-y: auto;
+}
+.daily-tasks-modal_taskList__sa_XW > li > label:hover {
+  background-color: var(--secondary);
+}
+
+.daily-tasks-modal_addTaskButton__x__rS {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--btn-border);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+  margin: 20px auto 0 auto;
+}
+.daily-tasks-modal_addTaskButton__x__rS:hover {
+  background-color: var(--secondary);
+}
+
+.daily-tasks-modal_closeButton__l4adc {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 25px;
+  height: 25px;
+}
+.daily-tasks-modal_closeButton__l4adc > svg circle {
+  fill: var(--close-button-bg);
+  transition: all 0.2s;
+}
+.daily-tasks-modal_closeButton__l4adc > svg path {
+  fill: var(--close-button-fill);
+}
+.daily-tasks-modal_closeButton__l4adc:hover > svg circle {
+  fill: var(--hover);
+}
+
+.daily-tasks-modal_loader__NKYOH {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.daily-tasks-modal_emptyMessage___adjU {
+  font-size: 18px;
+  text-align: center;
+  color: var(--text);
+}
+
+.daily-tasks-modal_newTaskItem__wJhkP {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 5px;
+  padding: 7px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--btn-border);
+  transition: background-color 0.2s ease;
+}
+.daily-tasks-modal_newTaskItem__wJhkP:hover {
+  background-color: var(--hover);
+}
+
+.daily-tasks-modal_inlineInput__YRES4 {
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+  color: var(--text);
+}
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/calendar/components/event-modal/components/color-picker/color-picker.module.scss ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.color-picker_colorPicker__UqVV4 {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.color-picker_triggerButton__0gP0g {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px;
+  background-color: var(--secondary);
+  border-radius: 5px;
+}
+
+.color-picker_selectedColorCircle__ssMVv {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+}
+
+.color-picker_arrow___3A5h {
+  margin-bottom: 2px;
+}
+
+.color-picker_dropdown__t5fXf {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  background-color: var(--secondaryFull);
+  padding: 8px;
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 8px;
+  gap: 8px;
+}
+
+.color-picker_colorOption__NPSfG {
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./node_modules/react-day-picker/src/style.css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************/
+/* Variables declaration */
+.rdp-root {
+  --rdp-accent-color: blue; /* The accent color used for selected days and UI elements. */
+  --rdp-accent-background-color: #f0f0ff; /* The accent background color used for selected days and UI elements. */
+
+  --rdp-day-height: 44px; /* The height of the day cells. */
+  --rdp-day-width: 44px; /* The width of the day cells. */
+
+  --rdp-day_button-border-radius: 100%; /* The border radius of the day cells. */
+  --rdp-day_button-border: 2px solid transparent; /* The border of the day cells. */
+  --rdp-day_button-height: 42px; /* The height of the day cells. */
+  --rdp-day_button-width: 42px; /* The width of the day cells. */
+
+  --rdp-selected-border: 2px solid var(--rdp-accent-color); /* The border of the selected days. */
+  --rdp-disabled-opacity: 0.5; /* The opacity of the disabled days. */
+  --rdp-outside-opacity: 0.75; /* The opacity of the days outside the current month. */
+  --rdp-today-color: var(--rdp-accent-color); /* The color of the today's date. */
+
+  --rdp-dropdown-gap: 0.5rem; /* The gap between the dropdowns used in the month captons. */
+
+  --rdp-months-gap: 2rem; /* The gap between the months in the multi-month view. */
+
+  --rdp-nav_button-disabled-opacity: 0.5; /* The opacity of the disabled navigation buttons. */
+  --rdp-nav_button-height: 2.25rem; /* The height of the navigation buttons. */
+  --rdp-nav_button-width: 2.25rem; /* The width of the navigation buttons. */
+  --rdp-nav-height: 2.75rem; /* The height of the navigation bar. */
+
+  --rdp-range_middle-background-color: var(--rdp-accent-background-color); /* The color of the background for days in the middle of a range. */
+  --rdp-range_middle-color: inherit; /* The color of the range text. */
+
+  --rdp-range_start-color: white; /* The color of the range text. */
+  --rdp-range_start-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    transparent 50%,
+    var(--rdp-range_middle-background-color) 50%
+  ); /* Used for the background of the start of the selected range. */
+  --rdp-range_start-date-background-color: var(--rdp-accent-color); /* The background color of the date when at the start of the selected range. */
+
+  --rdp-range_end-background: linear-gradient(
+    var(--rdp-gradient-direction),
+    var(--rdp-range_middle-background-color) 50%,
+    transparent 50%
+  ); /* Used for the background of the end of the selected range. */
+  --rdp-range_end-color: white; /* The color of the range text. */
+  --rdp-range_end-date-background-color: var(--rdp-accent-color); /* The background color of the date when at the end of the selected range. */
+
+  --rdp-week_number-border-radius: 100%; /* The border radius of the week number. */
+  --rdp-week_number-border: 2px solid transparent; /* The border of the week number. */
+
+  --rdp-week_number-height: var(--rdp-day-height); /* The height of the week number cells. */
+  --rdp-week_number-opacity: 0.75; /* The opacity of the week number. */
+  --rdp-week_number-width: var(--rdp-day-width); /* The width of the week number cells. */
+  --rdp-weeknumber-text-align: center; /* The text alignment of the weekday cells. */
+
+  --rdp-weekday-opacity: 0.75; /* The opacity of the weekday. */
+  --rdp-weekday-padding: 0.5rem 0rem; /* The padding of the weekday. */
+  --rdp-weekday-text-align: center; /* The text alignment of the weekday cells. */
+
+  --rdp-gradient-direction: 90deg;
+
+  --rdp-animation_duration: 0.3s;
+  --rdp-animation_timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rdp-root[dir="rtl"] {
+  --rdp-gradient-direction: -90deg;
+}
+
+.rdp-root[data-broadcast-calendar="true"] {
+  --rdp-outside-opacity: unset;
+}
+
+/* Root of the component. */
+.rdp-root {
+  position: relative; /* Required to position the navigation toolbar. */
+  box-sizing: border-box;
+}
+
+.rdp-root * {
+  box-sizing: border-box;
+}
+
+.rdp-day {
+  width: var(--rdp-day-width);
+  height: var(--rdp-day-height);
+  text-align: center;
+}
+
+.rdp-day_button {
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  width: var(--rdp-day_button-width);
+  height: var(--rdp-day_button-height);
+  border: var(--rdp-day_button-border);
+  border-radius: var(--rdp-day_button-border-radius);
+}
+
+.rdp-day_button:disabled {
+  cursor: revert;
+}
+
+.rdp-caption_label {
+  z-index: 1;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  white-space: nowrap;
+  border: 0;
+}
+
+.rdp-dropdown:focus-visible ~ .rdp-caption_label {
+  outline: 5px auto Highlight;
+  /* biome-ignore lint/suspicious/noDuplicateProperties: backward compatibility */
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.rdp-button_next,
+.rdp-button_previous {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  appearance: none;
+
+  width: var(--rdp-nav_button-width);
+  height: var(--rdp-nav_button-height);
+}
+
+.rdp-button_next:disabled,
+.rdp-button_next[aria-disabled="true"],
+.rdp-button_previous:disabled,
+.rdp-button_previous[aria-disabled="true"] {
+  cursor: revert;
+
+  opacity: var(--rdp-nav_button-disabled-opacity);
+}
+
+.rdp-chevron {
+  display: inline-block;
+  fill: var(--rdp-accent-color);
+}
+
+.rdp-root[dir="rtl"] .rdp-nav .rdp-chevron {
+  transform: rotate(180deg);
+  transform-origin: 50%;
+}
+
+.rdp-dropdowns {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rdp-dropdown-gap);
+}
+.rdp-dropdown {
+  z-index: 2;
+
+  /* Reset */
+  opacity: 0;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  position: absolute;
+  inset-block-start: 0;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: inherit;
+  border: none;
+  line-height: inherit;
+}
+
+.rdp-dropdown_root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rdp-dropdown_root[data-disabled="true"] .rdp-chevron {
+  opacity: var(--rdp-disabled-opacity);
+}
+
+.rdp-month_caption {
+  display: flex;
+  align-content: center;
+  height: var(--rdp-nav-height);
+  font-weight: bold;
+  font-size: large;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-month,
+.rdp-root[data-nav-layout="after"] .rdp-month {
+  position: relative;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-month_caption {
+  justify-content: center;
+  -webkit-margin-start: var(--rdp-nav_button-width);
+          margin-inline-start: var(--rdp-nav_button-width);
+  -webkit-margin-end: var(--rdp-nav_button-width);
+          margin-inline-end: var(--rdp-nav_button-width);
+  position: relative;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-button_previous {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  height: var(--rdp-nav-height);
+  display: inline-flex;
+}
+
+.rdp-root[data-nav-layout="around"] .rdp-button_next {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 0;
+  height: var(--rdp-nav-height);
+  display: inline-flex;
+  justify-content: center;
+}
+
+.rdp-months {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rdp-months-gap);
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+}
+
+.rdp-month_grid {
+  border-collapse: collapse;
+}
+
+.rdp-nav {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+
+  display: flex;
+  align-items: center;
+
+  height: var(--rdp-nav-height);
+}
+
+.rdp-weekday {
+  opacity: var(--rdp-weekday-opacity);
+  padding: var(--rdp-weekday-padding);
+  font-weight: 500;
+  font-size: smaller;
+  text-align: var(--rdp-weekday-text-align);
+  text-transform: var(--rdp-weekday-text-transform);
+}
+
+.rdp-week_number {
+  opacity: var(--rdp-week_number-opacity);
+  font-weight: 400;
+  font-size: small;
+  height: var(--rdp-week_number-height);
+  width: var(--rdp-week_number-width);
+  border: var(--rdp-week_number-border);
+  border-radius: var(--rdp-week_number-border-radius);
+  text-align: var(--rdp-weeknumber-text-align);
+}
+
+/* DAY MODIFIERS */
+.rdp-today:not(.rdp-outside) {
+  color: var(--rdp-today-color);
+}
+
+.rdp-selected {
+  font-weight: bold;
+  font-size: large;
+}
+
+.rdp-selected .rdp-day_button {
+  border: var(--rdp-selected-border);
+}
+
+.rdp-outside {
+  opacity: var(--rdp-outside-opacity);
+}
+
+.rdp-disabled {
+  opacity: var(--rdp-disabled-opacity);
+}
+
+.rdp-hidden {
+  visibility: hidden;
+  color: var(--rdp-range_start-color);
+}
+
+.rdp-range_start {
+  background: var(--rdp-range_start-background);
+}
+
+.rdp-range_start .rdp-day_button {
+  background-color: var(--rdp-range_start-date-background-color);
+  color: var(--rdp-range_start-color);
+}
+
+.rdp-range_middle {
+  background-color: var(--rdp-range_middle-background-color);
+}
+
+.rdp-range_middle .rdp-day_button {
+  border: unset;
+  border-radius: unset;
+  color: var(--rdp-range_middle-color);
+}
+
+.rdp-range_end {
+  background: var(--rdp-range_end-background);
+  color: var(--rdp-range_end-color);
+}
+
+.rdp-range_end .rdp-day_button {
+  color: var(--rdp-range_start-color);
+  background-color: var(--rdp-range_end-date-background-color);
+}
+
+.rdp-range_start.rdp-range_end {
+  background: revert;
+}
+
+.rdp-focusable {
+  cursor: pointer;
+}
+
+@keyframes rdp-slide_in_left {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rdp-slide_in_right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes rdp-slide_out_left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes rdp-slide_out_right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.rdp-weeks_before_enter {
+  animation: rdp-slide_in_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-weeks_before_exit {
+  animation: rdp-slide_out_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-weeks_after_enter {
+  animation: rdp-slide_in_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-weeks_after_exit {
+  animation: rdp-slide_out_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_after_enter {
+  animation: rdp-slide_in_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_before_exit {
+  animation: rdp-slide_out_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_before_enter {
+  animation: rdp-slide_in_right var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-root[dir="rtl"] .rdp-weeks_after_exit {
+  animation: rdp-slide_out_left var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+@keyframes rdp-fade_in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rdp-fade_out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.rdp-caption_after_enter {
+  animation: rdp-fade_in var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-caption_after_exit {
+  animation: rdp-fade_out var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-caption_before_enter {
+  animation: rdp-fade_in var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+.rdp-caption_before_exit {
+  animation: rdp-fade_out var(--rdp-animation_duration)
+    var(--rdp-animation_timing) forwards;
+}
+
+/*!************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./node_modules/react-time-picker/dist/TimePicker.css ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************/
+.react-time-picker {
+  display: inline-flex;
+  position: relative;
+}
+
+.react-time-picker,
+.react-time-picker *,
+.react-time-picker *:before,
+.react-time-picker *:after {
+  box-sizing: border-box;
+}
+
+.react-time-picker--disabled {
+  background-color: #f0f0f0;
+  color: #6d6d6d;
+}
+
+.react-time-picker__wrapper {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  border: thin solid gray;
+}
+
+.react-time-picker__inputGroup {
+  min-width: calc((4px * 3) + 0.54em * 6 + 0.217em * 2);
+  flex-grow: 1;
+  padding: 0 2px;
+  box-sizing: content-box;
+}
+
+.react-time-picker__inputGroup__divider {
+  padding: 1px 0;
+  white-space: pre;
+}
+
+.react-time-picker__inputGroup__divider,
+.react-time-picker__inputGroup__leadingZero {
+  display: inline-block;
+  font: inherit;
+}
+
+.react-time-picker__inputGroup__input {
+  min-width: 0.54em;
+  height: 100%;
+  position: relative;
+  padding: 0 1px;
+  border: 0;
+  background: none;
+  color: currentColor;
+  font: inherit;
+  box-sizing: content-box;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.react-time-picker__inputGroup__input::-webkit-outer-spin-button,
+.react-time-picker__inputGroup__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.react-time-picker__inputGroup__input:invalid {
+  background: rgba(255, 0, 0, 0.1);
+}
+
+.react-time-picker__inputGroup__input--hasLeadingZero {
+  margin-left: -0.54em;
+  padding-left: calc(1px + 0.54em);
+}
+
+.react-time-picker__inputGroup__amPm {
+  font: inherit;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+}
+
+.react-time-picker__button {
+  border: 0;
+  background: transparent;
+  padding: 4px 6px;
+}
+
+.react-time-picker__button:enabled {
+  cursor: pointer;
+}
+
+.react-time-picker__button:enabled:hover .react-time-picker__button__icon,
+.react-time-picker__button:enabled:focus .react-time-picker__button__icon {
+  stroke: #0078d7;
+}
+
+.react-time-picker__button:disabled .react-time-picker__button__icon {
+  stroke: #6d6d6d;
+}
+
+.react-time-picker__button svg {
+  display: inherit;
+}
+
+.react-time-picker__clock {
+  width: 200px;
+  height: 200px;
+  max-width: 100vw;
+  padding: 25px;
+  background-color: white;
+  border: thin solid #a0a096;
+  z-index: 1;
+}
+
+.react-time-picker__clock--closed {
+  display: none;
+}
+
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/calendar/components/event-modal/components/date-time/date-time.module.scss ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.date-time_dateTime__le9YR {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.date-time_icon__RZKKq > svg path {
+  fill: var(--text);
+}
+
+.date-time_date__ss_te {
+  color: var(--text);
+}
+
+.date-time_date__ss_te {
+  font-size: 16px;
+  font-family: inherit;
+}
+.date-time_date__ss_te:hover {
+  text-decoration: underline;
+}
+
+.date-time_timePicker__kdaTe {
+  font-size: 14px;
+  font-family: inherit;
+}
+.date-time_timePicker__kdaTe > div {
+  border: none !important;
+}
+.date-time_timePicker__kdaTe > div div {
+  min-width: auto !important;
+}
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/calendar/components/event-modal/components/description/description.module.scss ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.description_description__Zi30L {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.description_icon__MVmiN > svg path {
+  fill: var(--text);
+}
+
+.description_addButton__2c22W {
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  padding-bottom: 5px;
+}
+.description_addButton__2c22W:hover {
+  text-decoration: underline;
+}
+
+.description_descriptionForm__KYk1N {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.description_descriptionTextarea___u6Sg {
+  width: 100%;
+  color: var(--text);
+  border: 0.3px solid var(--line);
+  border-radius: 5px;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  min-height: 100px;
+  padding: 7px;
+}
+
+.description_descriptionContent__lFAhe {
+  width: 250px;
+  min-height: 100px;
+  font-size: 14px;
+}
+
+.description_saveDescriptionButton__ueSBn {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--save-button-text);
+  padding: 4px 2px;
+  background-color: var(--save-button-bg);
+  border-radius: 10px;
+  display: inline-block;
+  width: 100%;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.description_saveDescriptionButton__ueSBn:hover {
+  background-color: #aaa;
+}
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[13].oneOf[7].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[13].oneOf[7].use[5]!./src/app/(main)/calendar/components/event-modal/event-modal.module.scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+.event-modal_modalInner__oUiGU {
+  width: 300px;
+  position: relative;
+  padding: 10px 20px 0 20px;
+}
+
+.event-modal_eventForm__L1D24 {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-modal_eventTitle__J4LRa {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  font-size: 18px;
+  font-family: inherit;
+  color: var(--text);
+  padding: 2px 7px;
+  margin-bottom: 20px;
+}
+.event-modal_eventTitle__J4LRa::placeholder {
+  color: color-mix(in srgb, var(--line) 60%, transparent);
+}
+
+.event-modal_saveButton__9rPfO {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--save-button-text);
+  padding: 4px;
+  background-color: var(--save-button-bg);
+  border-radius: 10px;
+  display: inline-block;
+  width: 100%;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+.event-modal_saveButton__9rPfO:hover {
+  background-color: #aaa;
+}
+
+.event-modal_closeButton__XgdhN {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 25px;
+  height: 25px;
+}
+.event-modal_closeButton__XgdhN > svg circle {
+  fill: var(--close-button-bg);
+  transition: all 0.2s;
+}
+.event-modal_closeButton__XgdhN > svg path {
+  fill: var(--close-button-fill);
+}
+.event-modal_closeButton__XgdhN:hover > svg circle {
+  fill: var(--hover);
+}
