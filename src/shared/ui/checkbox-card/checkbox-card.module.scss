@@ -1,0 +1,128 @@
+.card {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border-radius: 5px;
+	padding: 7px;
+	cursor: pointer;
+	position: relative;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: var(--hover);
+
+		> .buttons .deleteButton {
+			opacity: 1;
+			visibility: visible;
+			pointer-events: all;
+		}
+
+		> .buttons .editButton {
+			opacity: 1;
+			visibility: visible;
+			pointer-events: all;
+		}
+	}
+}
+
+.checkbox {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.customCheckbox {
+	width: 20px;
+	height: 20px;
+	background-color: var(--checkbox-bg);
+	border-radius: 5px;
+	margin-right: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.checkbox:checked + &::after {
+		content: '';
+		width: 6px;
+		height: 10px;
+		border: solid var(--checkbox-icon);
+		border-width: 0 2px 2px 0;
+		transform: rotate(45deg) translateY(-2px) translateX(-1px);
+	}
+}
+
+.label {
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--text);
+	user-select: none;
+	max-width: 190px;
+
+	&:global(.checked) {
+		text-decoration: line-through;
+	}
+}
+
+.buttons {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.editButton {
+	position: relative;
+	width: 21px;
+	height: 21px;
+
+	> svg {
+		position: absolute;
+		top: -1px;
+		left: 0;
+		width: 16px;
+		height: 18px;
+		color: #fff;
+		opacity: 1;
+		transition: opacity 0.2s;
+
+		path {
+			transition: all 0.2s;
+		}
+	}
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0.3px solid var(--text);
+	border-radius: 5px;
+	padding: 1px 2px;
+	transition: all 0.2s;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+
+	&:hover {
+		background-color: var(--line);
+
+		> svg path {
+			fill: var(--tab-bg);
+		}
+	}
+}
+
+.deleteButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0.3px solid #dc2a2a;
+	border-radius: 5px;
+	padding: 3px;
+	transition: all 0.2s;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+
+	&:hover {
+		background-color: #dc2a2a;
+	}
+}

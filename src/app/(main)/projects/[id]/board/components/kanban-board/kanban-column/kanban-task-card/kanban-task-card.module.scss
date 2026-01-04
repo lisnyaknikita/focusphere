@@ -1,0 +1,48 @@
+.taskCard {
+	width: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	cursor: grab;
+	overflow: hidden;
+}
+
+.taskTitle {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--text);
+	margin-bottom: 5px;
+}
+
+.taskDescription {
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.taskCardFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.taskAssignee {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	> span {
+		font-size: 14px;
+		font-weight: 400;
+		color: var(--text);
+	}
+}
+
+.taskDate {
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+}

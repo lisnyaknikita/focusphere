@@ -1,0 +1,31 @@
+.quotes {
+	text-align: center;
+	grid-column: 2;
+	grid-row: 1 / span 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	@media screen and (max-width: 1024px) {
+		order: 2;
+	}
+}
+
+.quoteContent {
+	font-size: 22px;
+	font-style: italic;
+	color: var(--text);
+	position: relative;
+	margin-bottom: 20px;
+}
+
+.quoteAuthor {
+	font-size: 16px;
+	color: #aaa;
+	text-align: right;
+	font-style: normal;
+}
+
+.loader {
+	margin: 0 auto;
+}

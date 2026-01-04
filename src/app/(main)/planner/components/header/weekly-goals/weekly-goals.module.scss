@@ -1,0 +1,71 @@
+.weeklyGoals {
+	position: relative;
+
+	&:global(.opened) {
+		> .trigger svg {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.trigger {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+
+	> svg {
+		transition: transform 0.2s;
+	}
+}
+
+.dropdown {
+	position: absolute;
+	top: 34px;
+	width: 380px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	background-color: var(--secondaryFull);
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	z-index: 10;
+}
+
+.inlineEditInput {
+	width: 100%;
+	border: 1px solid var(--btn-border);
+	color: var(--text);
+	background-color: transparent;
+	outline: none;
+	font-size: 16px;
+	font-family: inherit;
+	padding: 7px;
+}
+
+.startNewWeekButton {
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}

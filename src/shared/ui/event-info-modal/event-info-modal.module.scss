@@ -1,0 +1,64 @@
+.modalInner {
+	position: relative;
+	padding: 10px 20px;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--primary);
+	border-radius: 5px;
+}
+
+.modalButtons {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	justify-content: flex-end;
+	margin-bottom: 20px;
+}
+
+.editButton {
+	> svg {
+		width: 21px;
+		height: 25px;
+		color: #fff;
+		opacity: 1;
+		transition: opacity 0.2s;
+	}
+}
+
+.title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+
+	> span {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		border-radius: 5px;
+	}
+
+	> h6 {
+		font-size: 18px;
+		font-weight: 700;
+		color: var(--text);
+	}
+}
+
+.date {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 10px;
+
+	> p {
+		font-size: 16px;
+		color: var(--text);
+	}
+}
+
+.description {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
