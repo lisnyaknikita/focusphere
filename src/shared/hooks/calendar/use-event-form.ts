@@ -4,6 +4,16 @@ import { EventForm } from '@/shared/types/event'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { useState } from 'react'
 
+const getInitialTimeRange = () => {
+	const now = new Date()
+	const currentHour = now.getHours()
+
+	const start = `${String(currentHour).padStart(2, '0')}:00`
+	const end = `${String((currentHour + 1) % 24).padStart(2, '0')}:00`
+
+	return { start, end }
+}
+
 const createISOStringFromForm = (dateString: string, timeString: string): string => {
 	if (!dateString || !timeString) {
 		throw new Error('Missing date or time')
@@ -21,17 +31,19 @@ const createISOStringFromForm = (dateString: string, timeString: string): string
 	return date.toISOString()
 }
 
-const INITIAL_FORM_STATE: EventForm = {
-	title: '',
-	description: undefined,
-	date: new Date().toISOString().slice(0, 10),
-	startTime: '09:00',
-	endTime: '10:00',
-	color: '#D79716',
-}
-
 export const useEventForm = (onSuccess: () => void) => {
-	const [form, setForm] = useState<EventForm>(INITIAL_FORM_STATE)
+	const [form, setForm] = useState<EventForm>(() => {
+		const { start, end } = getInitialTimeRange()
+
+		return {
+			title: '',
+			description: undefined,
+			date: new Date().toISOString().slice(0, 10),
+			startTime: start,
+			endTime: end,
+			color: '#D79716',
+		}
+	})
 
 	const setFormField = <K extends keyof EventForm>(key: K, value: EventForm[K]) => {
 		setForm(prev => ({ ...prev, [key]: value }))
