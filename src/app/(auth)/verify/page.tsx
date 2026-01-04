@@ -2,11 +2,11 @@
 
 import { account } from '@/lib/appwrite'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 import classes from './page.module.scss'
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
@@ -35,9 +35,10 @@ export default function VerifyEmailPage() {
 		}
 
 		verify()
-	}, [])
+	}, [searchParams, router])
 
-	if (status === 'loading') return <p>Verifying…</p>
+	if (status === 'loading') return <p className={classes.loading}>Verifying…</p>
+
 	if (status === 'success')
 		return (
 			<div className={classes.verifyPage}>
@@ -55,5 +56,13 @@ export default function VerifyEmailPage() {
 				<p>The link may be expired or invalid.</p>
 			</div>
 		</div>
+	)
+}
+
+export default function VerifyEmailPage() {
+	return (
+		<Suspense fallback={<p>Loading...</p>}>
+			<VerifyEmailContent />
+		</Suspense>
 	)
 }
