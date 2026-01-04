@@ -10,11 +10,16 @@ export const GoogleAuthButton = () => {
 
 	const loginWithGoogle = async () => {
 		setIsLoading(true)
+
+		const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+			? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+			: 'http://localhost:3000'
+
 		try {
 			account.createOAuth2Session({
 				provider: OAuthProvider.Google,
-				success: process.env.NEXT_PUBLIC_SUCCESS_URL || 'http://localhost:3000',
-				failure: process.env.NEXT_PUBLIC_FAILURE_URL || 'http://localhost:3000/login',
+				success: `${baseUrl}/`,
+				failure: `${baseUrl}/login`,
 			})
 		} catch (error) {
 			console.error('Auth error:', error)
