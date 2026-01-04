@@ -11,7 +11,13 @@ import { navItems } from './navigation-items'
 import classes from './sidebar.module.scss'
 
 export const Sidebar = () => {
-	const [isCollapsed, setIsCollapsed] = useState(false)
+	const [isCollapsed, setIsCollapsed] = useState(() => {
+		if (typeof window !== 'undefined') {
+			const saved = localStorage.getItem('sidebar-collapsed')
+			return saved === 'true'
+		}
+		return false
+	})
 
 	const pathname = usePathname()
 
