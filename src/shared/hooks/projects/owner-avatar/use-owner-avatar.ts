@@ -19,6 +19,7 @@ export const useOwnerAvatar = (userId: string) => {
 					setAvatarUrl(url)
 				}
 			} catch (e) {
+				console.error(e)
 				setAvatarUrl('/avatar.jpg')
 			} finally {
 				setIsLoading(false)
