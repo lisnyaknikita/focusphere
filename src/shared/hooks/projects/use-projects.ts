@@ -16,7 +16,7 @@ export const useProjects = (type: 'solo' | 'team') => {
 
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-				tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS_ID!,
+				tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 				queries: [Query.equal('ownerId', userId), Query.equal('type', type), Query.orderDesc('$createdAt')],
 			})
 

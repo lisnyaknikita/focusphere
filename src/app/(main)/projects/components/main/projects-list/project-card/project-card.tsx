@@ -1,4 +1,5 @@
 import { Project } from '@/shared/types/project'
+import Link from 'next/link'
 import { OwnerAvatar } from './components/owner-avatar/owner-avatar'
 import classes from './project-card.module.scss'
 
@@ -12,7 +13,9 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 			<header className={classes.logo}>Project logo</header>
 			<main className={classes.projectInfo}>
 				<div className={classes.title}>
-					<h6>{project.title}</h6>
+					<Link href={`/projects/${project.$id}/board`}>
+						<h6>{project.title}</h6>
+					</Link>
 					<button>
 						<svg width='16' height='15' viewBox='0 0 16 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
 							<path
