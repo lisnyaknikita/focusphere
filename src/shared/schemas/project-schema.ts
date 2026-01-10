@@ -5,6 +5,7 @@ export const projectSchema = z.object({
 	type: z.enum(['solo', 'team'], {
 		message: 'Please select a project type',
 	}),
+	description: z.string().max(200, 'Description is too long').optional(),
 })
 
 export type ProjectFormValues = z.infer<typeof projectSchema>
