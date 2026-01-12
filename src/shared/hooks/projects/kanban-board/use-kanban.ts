@@ -1,0 +1,60 @@
+import { createKanbanTask, getKanbanTasks, updateKanbanTask } from '@/lib/projects/kanban-board-tasks/tasks'
+import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
+import { useEffect, useState } from 'react'
+import { useUser } from '../../use-user/use-user'
+
+export const useKanban = (projectId: string) => {
+	const [tasks, setTasks] = useState<KanbanTask[]>([])
+	const [isLoading, setIsLoading] = useState(true)
+
+	const { user } = useUser()
+
+	useEffect(() => {
+		if (!projectId) return
+
+		const fetchTasks = async () => {
+			try {
+				setIsLoading(true)
+				const res = await getKanbanTasks(projectId)
+				setTasks(res.rows as unknown as KanbanTask[])
+			} catch (error) {
+				console.error('Failed to fetch tasks:', error)
+			} finally {
+				setIsLoading(false)
+			}
+		}
+
+		fetchTasks()
+	}, [projectId])
+
+	const addTask = async (title: string, status: TaskStatus) => {
+		try {
+			const payload: CreateKanbanTaskPayload = {
+				title,
+				status,
+				projectId,
+				assigneeName: user?.name || 'Unknown user',
+			}
+
+			const res = await createKanbanTask(payload)
+			setTasks(prev => [...prev, res as unknown as KanbanTask])
+		} catch (error) {
+			console.error('Failed to add task:', error)
+		}
+	}
+
+	const moveTask = async (taskId: string, newStatus: TaskStatus) => {
+		const previousTasks = [...tasks]
+
+		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, status: newStatus } : t)))
+
+		try {
+			await updateKanbanTask(taskId, { status: newStatus })
+		} catch (error) {
+			console.error('Failed to move task:', error)
+			setTasks(previousTasks)
+		}
+	}
+
+	return { tasks, isLoading, addTask, moveTask }
+}

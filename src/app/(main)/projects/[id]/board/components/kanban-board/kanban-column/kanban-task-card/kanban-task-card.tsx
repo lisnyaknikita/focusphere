@@ -1,15 +1,15 @@
-import { Task } from '@/shared/types/kanban'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { useDraggable } from '@dnd-kit/core'
 import Image from 'next/image'
 import classes from './kanban-task-card.module.scss'
 
 interface KanbanTaskCardProps {
-	task: Task
+	task: KanbanTask
 }
 
 export const KanbanTaskCard = ({ task }: KanbanTaskCardProps) => {
 	const { attributes, listeners, setNodeRef, transform } = useDraggable({
-		id: task.id,
+		id: task.$id,
 	})
 
 	const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined
@@ -21,9 +21,11 @@ export const KanbanTaskCard = ({ task }: KanbanTaskCardProps) => {
 			<footer className={classes.taskCardFooter}>
 				<div className={classes.taskAssignee}>
 					<Image src={'/avatar.jpg'} alt='assignee' width={23} height={23} />
-					<span>{task.assignee}</span>
+					<span>{task.assigneeName}</span>
 				</div>
-				<div className={classes.taskDate}>{task.createdAt}</div>
+				<div className={classes.taskDate}>
+					{new Date(task.$createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+				</div>
 			</footer>
 		</li>
 	)
