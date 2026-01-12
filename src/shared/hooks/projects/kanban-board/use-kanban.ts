@@ -32,6 +32,7 @@ export const useKanban = (projectId: string) => {
 			const payload: CreateKanbanTaskPayload = {
 				title,
 				status,
+				priority: 'medium',
 				projectId,
 				assigneeName: user?.name || 'Unknown user',
 			}

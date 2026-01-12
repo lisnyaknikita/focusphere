@@ -3,6 +3,13 @@ import { useDraggable } from '@dnd-kit/core'
 import Image from 'next/image'
 import classes from './kanban-task-card.module.scss'
 
+const priorityColors = {
+	low: '#A3A3A3',
+	medium: '#FBBF24',
+	high: '#F97316',
+	urgent: '#DC2626',
+}
+
 interface KanbanTaskCardProps {
 	task: KanbanTask
 }
@@ -23,6 +30,10 @@ export const KanbanTaskCard = ({ task }: KanbanTaskCardProps) => {
 					<Image src={'/avatar.jpg'} alt='assignee' width={23} height={23} />
 					<span>{task.assigneeName}</span>
 				</div>
+				<span
+					className={classes.priorityIndicator}
+					style={{ backgroundColor: priorityColors[task.priority || 'medium'] }}
+				/>
 				<div className={classes.taskDate}>
 					{new Date(task.$createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
 				</div>
