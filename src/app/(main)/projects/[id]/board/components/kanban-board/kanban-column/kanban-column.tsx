@@ -1,7 +1,7 @@
+import { useCreateTask } from '@/shared/hooks/projects/kanban-board/use-create-task'
 import { Column } from '@/shared/types/kanban'
 import { KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { useDroppable } from '@dnd-kit/core'
-import { useState } from 'react'
 import classes from './kanban-column.module.scss'
 import { KanbanTaskCard } from './kanban-task-card/kanban-task-card'
 
@@ -13,30 +13,9 @@ interface KanbanColumnProps {
 }
 
 export const KanbanColumn = ({ column, tasks, listHeight, onAddTask }: KanbanColumnProps) => {
-	const [isAdding, setIsAdding] = useState(false)
-	const [title, setTitle] = useState('')
-	const [isSubmitting, setIsSubmitting] = useState(false)
+	const { isAdding, title, setTitle, handleAddSubmit, setIsAdding, isSubmitting } = useCreateTask({ onAddTask, column })
 
 	const { setNodeRef } = useDroppable({ id: column.id })
-
-	const handleAddSubmit = async () => {
-		if (!title.trim()) {
-			setIsAdding(false)
-			return
-		}
-
-		setIsSubmitting(true)
-
-		try {
-			await onAddTask(title, column.id as TaskStatus)
-			setTitle('')
-			setIsAdding(false)
-		} catch (error) {
-			console.error('Error adding task:', error)
-		} finally {
-			setIsSubmitting(false)
-		}
-	}
 
 	return (
 		<div className={classes.column} ref={setNodeRef}>

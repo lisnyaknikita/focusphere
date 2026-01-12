@@ -1,3 +1,4 @@
+import { getUserAvatar } from '@/lib/appwrite'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { useDraggable } from '@dnd-kit/core'
 import Image from 'next/image'
@@ -27,7 +28,7 @@ export const KanbanTaskCard = ({ task }: KanbanTaskCardProps) => {
 			<p className={classes.taskDescription}>{task.description}</p>
 			<footer className={classes.taskCardFooter}>
 				<div className={classes.taskAssignee}>
-					<Image src={'/avatar.jpg'} alt='assignee' width={23} height={23} />
+					<Image src={getUserAvatar(task.assigneeName)} alt={task.assigneeName} width={23} height={23} />
 					<span>{task.assigneeName}</span>
 				</div>
 				<span
