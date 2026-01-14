@@ -1,10 +1,17 @@
 import { Project } from '@/shared/types/project'
+import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { OwnerAvatar } from './components/owner-avatar/owner-avatar'
 import classes from './project-card.module.scss'
 
 interface ProjectCardProps {
 	project: Project
+}
+
+export const getRelativeTime = (date: string | Date) => {
+	return formatDistanceToNow(new Date(date), {
+		addSuffix: true,
+	})
 }
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
@@ -32,10 +39,10 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 							<OwnerAvatar userId={project.ownerId} size={30} />
 						</li>
 					</ul>
-					<div className={classes.updateDate}>Updated 2 days ago</div>
+					<div className={classes.updateDate}>{getRelativeTime(project.$updatedAt)}</div>
 				</div>
 			</main>
-			<footer className={classes.progress}>
+			{/* <footer className={classes.progress}>
 				<div className={classes.completedTasks}>
 					<svg width='18' height='16' viewBox='0 0 20 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path
@@ -63,7 +70,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 						</svg>
 					</button>
 				</div>
-			</footer>
+			</footer> */}
 		</li>
 	)
 }

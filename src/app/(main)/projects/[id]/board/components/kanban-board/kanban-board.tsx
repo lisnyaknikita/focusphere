@@ -21,7 +21,7 @@ const COLUMNS: Column[] = [
 
 export const KanbanBoard = () => {
 	const { project } = useProject()
-	const { tasks, isLoading, addTask, moveTask, updateTask, deleteTask } = useKanban(project?.$id ?? '')
+	const { tasks, isLoading, addTask, moveTask, updateTask, deleteTask } = useKanban(project!)
 	const [activeTask, setActiveTask] = useState<KanbanTask | null>(null)
 	const { sectionRef, listHeight } = useSectionHeight(0.894)
 

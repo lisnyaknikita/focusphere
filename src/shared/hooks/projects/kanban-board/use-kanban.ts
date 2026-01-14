@@ -4,23 +4,29 @@ import {
 	getKanbanTasks,
 	updateKanbanTask,
 } from '@/lib/projects/kanban-board-tasks/tasks'
+import { touchProject } from '@/lib/projects/projects'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
+import { Project } from '@/shared/types/project'
 import { useEffect, useState } from 'react'
 import { useUser } from '../../use-user/use-user'
 
-export const useKanban = (projectId: string) => {
+export const useKanban = (project: Project) => {
 	const [tasks, setTasks] = useState<KanbanTask[]>([])
 	const [isLoading, setIsLoading] = useState(true)
 
 	const { user } = useUser()
 
+	const triggerProjectUpdate = () => {
+		touchProject(project.$id).catch(console.error)
+	}
+
 	useEffect(() => {
-		if (!projectId) return
+		if (!project?.$id) return
 
 		const fetchTasks = async () => {
 			try {
 				setIsLoading(true)
-				const res = await getKanbanTasks(projectId)
+				const res = await getKanbanTasks(project.$id)
 				setTasks(res.rows as unknown as KanbanTask[])
 			} catch (error) {
 				console.error('Failed to fetch tasks:', error)
@@ -30,7 +36,7 @@ export const useKanban = (projectId: string) => {
 		}
 
 		fetchTasks()
-	}, [projectId])
+	}, [project?.$id])
 
 	const addTask = async (title: string, status: TaskStatus) => {
 		try {
@@ -38,12 +44,13 @@ export const useKanban = (projectId: string) => {
 				title,
 				status,
 				priority: 'medium',
-				projectId,
+				projectId: project.$id,
 				assigneeName: user?.name || 'Unknown user',
 			}
 
 			const res = await createKanbanTask(payload)
 			setTasks(prev => [...prev, res as unknown as KanbanTask])
+			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to add task:', error)
 		}
@@ -56,6 +63,7 @@ export const useKanban = (projectId: string) => {
 
 		try {
 			await updateKanbanTask(taskId, { status: newStatus })
+			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to move task:', error)
 			setTasks(previousTasks)
@@ -69,6 +77,7 @@ export const useKanban = (projectId: string) => {
 
 		try {
 			await updateKanbanTask(taskId, data)
+			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to update task:', error)
 			setTasks(previousTasks)
@@ -82,6 +91,7 @@ export const useKanban = (projectId: string) => {
 
 		try {
 			await deleteKanbanTask(taskId)
+			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to delete task:', error)
 			setTasks(previousTasks)

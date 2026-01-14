@@ -56,3 +56,16 @@ export const deleteProject = async (projectId: string): Promise<Project> => {
 
 	return response as unknown as Project
 }
+
+export const touchProject = async (projectId: string): Promise<Project> => {
+	const response = await tablesDB.updateRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
+		rowId: projectId,
+		data: {
+			lastActivity: new Date().toISOString(),
+		},
+	})
+
+	return response as unknown as Project
+}
