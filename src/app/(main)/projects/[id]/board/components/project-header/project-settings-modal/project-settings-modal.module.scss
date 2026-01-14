@@ -79,19 +79,40 @@
 	}
 }
 
+.buttons {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+}
+
 .saveButton {
 	font-size: 16px;
 	font-weight: 400;
 	color: var(--save-button-text);
-	padding: 4px;
+	padding: 4px 8px;
 	background-color: var(--save-button-bg);
-	border-radius: 10px;
+	border-radius: 5px;
 	display: inline-block;
-	width: 100%;
 	font-family: inherit;
 	transition: background-color 0.2s;
 
 	&:hover {
 		background-color: #aaa;
+	}
+}
+
+.deleteButton {
+	color: var(--text);
+	border: 0.3px solid #dc2a2a;
+	border-radius: 5px;
+	padding: 4px 8px;
+	font-size: 16px;
+	font-weight: 400;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #dc2a2a;
 	}
 }
