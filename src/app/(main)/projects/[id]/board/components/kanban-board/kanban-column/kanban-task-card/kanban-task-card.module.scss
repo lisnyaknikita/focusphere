@@ -1,11 +1,34 @@
 .taskCard {
 	width: 100%;
-	padding: 10px;
 	border-radius: 5px;
 	background-color: var(--secondary);
 	border: 1px solid var(--btn-border);
-	cursor: grab;
 	overflow: hidden;
+	display: flex;
+}
+
+.taskContent {
+	flex-basis: 90%;
+	padding: 10px;
+}
+
+.dragHandle {
+	flex-basis: 10%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: grab;
+	padding: 10px;
+	border-left: 0.3px solid var(--btn-border);
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	> button {
+		cursor: grab;
+	}
 }
 
 .taskTitle {

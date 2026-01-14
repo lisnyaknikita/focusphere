@@ -1,6 +1,6 @@
 import { useCreateTask } from '@/shared/hooks/projects/kanban-board/use-create-task'
 import { Column } from '@/shared/types/kanban'
-import { KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
+import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { useDroppable } from '@dnd-kit/core'
 import classes from './kanban-column.module.scss'
 import { KanbanTaskCard } from './kanban-task-card/kanban-task-card'
@@ -10,9 +10,18 @@ interface KanbanColumnProps {
 	tasks: KanbanTask[]
 	listHeight: number
 	onAddTask: (title: string, status: TaskStatus) => Promise<void>
+	onUpdateTask: (taskId: string, data: Partial<CreateKanbanTaskPayload>) => Promise<void>
+	onDeleteTask: (taskId: string) => Promise<void>
 }
 
-export const KanbanColumn = ({ column, tasks, listHeight, onAddTask }: KanbanColumnProps) => {
+export const KanbanColumn = ({
+	column,
+	tasks,
+	listHeight,
+	onAddTask,
+	onUpdateTask,
+	onDeleteTask,
+}: KanbanColumnProps) => {
 	const { isAdding, title, setTitle, handleAddSubmit, setIsAdding, isSubmitting } = useCreateTask({ onAddTask, column })
 
 	const { setNodeRef } = useDroppable({ id: column.id })
@@ -27,7 +36,7 @@ export const KanbanColumn = ({ column, tasks, listHeight, onAddTask }: KanbanCol
 			<div className={classes.scrollWrapper} style={{ maxHeight: `${listHeight}px` }}>
 				<ul className={classes.tasksList}>
 					{tasks.map(task => (
-						<KanbanTaskCard key={task.$id} task={task} />
+						<KanbanTaskCard key={task.$id} task={task} onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} />
 					))}
 					{isAdding && (
 						<li className={classes.inlineItem}>

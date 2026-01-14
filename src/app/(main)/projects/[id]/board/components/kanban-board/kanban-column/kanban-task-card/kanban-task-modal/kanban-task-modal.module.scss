@@ -1,0 +1,113 @@
+.modalInner {
+	width: 600px;
+	position: relative;
+	padding: 10px 20px 0 20px;
+	display: flex;
+	gap: 20px;
+}
+
+.titleInput {
+	width: 100%;
+	font-size: 24px;
+	font-weight: 700;
+	font-family: inherit;
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: 5px;
+	color: var(--text);
+	resize: none;
+	padding: 4px 8px;
+	margin-left: -8px;
+	margin-bottom: 20px;
+	outline: none;
+
+	&:focus {
+		border-color: var(--accent);
+		background: var(--bg-secondary);
+	}
+}
+
+.descriptionSection {
+	> span {
+		font-size: 18px;
+		font-weight: 700;
+		font-family: inherit;
+		color: var(--text);
+		display: inline-block;
+	}
+
+	> textarea {
+		width: 100%;
+		min-height: 150px;
+		background-color: transparent;
+		border: 1px solid transparent;
+		border-radius: 5px;
+		color: var(--text);
+		font-size: 15px;
+		font-family: inherit;
+		resize: none;
+		padding: 8px;
+		margin-left: -8px;
+
+		&:focus {
+			border-color: var(--accent);
+			background: var(--bg-secondary);
+		}
+	}
+}
+
+.taskDetails {
+	display: flex;
+	flex-direction: column;
+}
+
+.detailItem {
+	font-size: 16px;
+	font-weight: 700;
+	font-family: inherit;
+	color: var(--text);
+	display: inline-block;
+	margin-bottom: 20px;
+
+	> .assignee {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 14px;
+		margin-top: 5px;
+
+		img {
+			border-radius: 5px;
+		}
+	}
+
+	> .prioritySelect {
+		width: 100%;
+		padding: 5px;
+		background: var(--bg-secondary);
+		border-radius: 5px;
+		color: var(--text);
+		font-family: inherit;
+		cursor: pointer;
+		margin-top: 5px;
+	}
+}
+
+.deleteButton {
+	margin-top: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text);
+	border: 0.3px solid #dc2a2a;
+	border-radius: 5px;
+	padding: 3px 6px;
+	font-size: 14px;
+	font-weight: 400;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #dc2a2a;
+	}
+}

@@ -1,4 +1,9 @@
-import { createKanbanTask, getKanbanTasks, updateKanbanTask } from '@/lib/projects/kanban-board-tasks/tasks'
+import {
+	createKanbanTask,
+	deleteKanbanTask,
+	getKanbanTasks,
+	updateKanbanTask,
+} from '@/lib/projects/kanban-board-tasks/tasks'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { useEffect, useState } from 'react'
 import { useUser } from '../../use-user/use-user'
@@ -57,5 +62,31 @@ export const useKanban = (projectId: string) => {
 		}
 	}
 
-	return { tasks, isLoading, addTask, moveTask }
+	const updateTask = async (taskId: string, data: Partial<CreateKanbanTaskPayload>) => {
+		const previousTasks = [...tasks]
+
+		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, ...data } : t)))
+
+		try {
+			await updateKanbanTask(taskId, data)
+		} catch (error) {
+			console.error('Failed to update task:', error)
+			setTasks(previousTasks)
+		}
+	}
+
+	const deleteTask = async (taskId: string) => {
+		const previousTasks = [...tasks]
+
+		setTasks(prev => prev.filter(t => t.$id !== taskId))
+
+		try {
+			await deleteKanbanTask(taskId)
+		} catch (error) {
+			console.error('Failed to delete task:', error)
+			setTasks(previousTasks)
+		}
+	}
+
+	return { tasks, isLoading, addTask, moveTask, updateTask, deleteTask }
 }

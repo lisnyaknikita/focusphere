@@ -21,7 +21,7 @@ const COLUMNS: Column[] = [
 
 export const KanbanBoard = () => {
 	const { project } = useProject()
-	const { tasks, isLoading, addTask, moveTask } = useKanban(project?.$id ?? '')
+	const { tasks, isLoading, addTask, moveTask, updateTask, deleteTask } = useKanban(project?.$id ?? '')
 	const [activeTask, setActiveTask] = useState<KanbanTask | null>(null)
 	const { sectionRef, listHeight } = useSectionHeight(0.894)
 
@@ -58,9 +58,13 @@ export const KanbanBoard = () => {
 						tasks={tasks.filter(task => task.status === column.id)}
 						listHeight={listHeight}
 						onAddTask={addTask}
+						onUpdateTask={updateTask}
+						onDeleteTask={deleteTask}
 					/>
 				))}
-				<DragOverlay>{activeTask ? <KanbanTaskCard task={activeTask} /> : null}</DragOverlay>
+				<DragOverlay>
+					{activeTask ? <KanbanTaskCard task={activeTask} onUpdateTask={updateTask} onDeleteTask={deleteTask} /> : null}
+				</DragOverlay>
 			</DndContext>
 		</div>
 	)
