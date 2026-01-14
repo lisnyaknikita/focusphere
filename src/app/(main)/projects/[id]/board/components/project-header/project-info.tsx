@@ -1,5 +1,6 @@
 'use client'
 
+import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
 import { Project } from '@/shared/types/project'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useState } from 'react'
@@ -12,6 +13,7 @@ interface ProjectInfoProps {
 
 export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 	const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false)
+	const { tasks, isLoading } = useKanban(project!)
 
 	return (
 		<>
@@ -27,7 +29,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 									fill='var(--text)'
 								/>
 							</svg>
-							<span>5 team members</span>
+							<span>{project.type === 'solo' ? '1 team member' : '2 team members'}</span>
 						</div>
 						<div className={classes.tasks}>
 							<svg width='16' height='15' viewBox='0 0 16 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -36,7 +38,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 									fill='var(--text)'
 								/>
 							</svg>
-							<span>10 tasks</span>
+							<span>{isLoading ? '' : `${tasks.length} ${tasks.length > 1 ? 'tasks' : 'task'}`}</span>
 						</div>
 					</div>
 				</div>

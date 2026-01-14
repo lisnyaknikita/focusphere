@@ -39,7 +39,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 							<OwnerAvatar userId={project.ownerId} size={30} />
 						</li>
 					</ul>
-					<div className={classes.updateDate}>{getRelativeTime(project.$updatedAt)}</div>
+					<div className={classes.updateDate}>Updated {getRelativeTime(project.$updatedAt)}</div>
 				</div>
 			</main>
 			{/* <footer className={classes.progress}>
