@@ -1,5 +1,5 @@
 import { ProjectProvider } from '@/shared/context/project-context'
-import { ProjectTabs } from './components/tabs/tabs'
+import { ProjectHeader } from './components/project-header/project-header'
 import classes from './page.module.scss'
 
 export default async function ProjectLayout({
@@ -14,9 +14,7 @@ export default async function ProjectLayout({
 	return (
 		<ProjectProvider projectId={id}>
 			<div className={classes.projectPage}>
-				<header className={classes.header}>
-					<ProjectTabs projectId={id} />
-				</header>
+				<ProjectHeader projectId={id} />
 				<main className={classes.main}>{children}</main>
 			</div>
 		</ProjectProvider>
