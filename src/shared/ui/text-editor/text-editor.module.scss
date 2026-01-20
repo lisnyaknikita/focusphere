@@ -9,3 +9,67 @@
 	top: 50%;
 	transform: translate(-50%, -50%);
 }
+
+.editor {
+	display: flex;
+	flex-direction: column;
+	// padding: 10px 15px;
+	width: 100%;
+	height: 100%;
+	flex: 1;
+}
+
+.editorInner {
+	display: flex;
+	flex-direction: column;
+	// border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+}
+
+.titleInput {
+	position: absolute;
+	top: 45px;
+	width: 100%;
+	font-size: 32px;
+	font-weight: 700;
+	border: none;
+	outline: none;
+	background: transparent;
+	color: var(--text);
+	padding: 0 10px;
+}
+
+.additionalButtons {
+	display: flex;
+	align-items: center;
+	padding: 0 10px 5px 10px;
+}
+
+.sendButton {
+	margin-left: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 5px 10px;
+	border-radius: 5px;
+	border: 1px solid var(--btn-border);
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.emptyEditor {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+	font-family: inherit;
+	color: var(--text);
+}

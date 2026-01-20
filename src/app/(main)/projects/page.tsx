@@ -1,5 +1,6 @@
 'use client'
 
+import { useProjects } from '@/shared/hooks/projects/use-projects'
 import { Tabs } from '@/shared/tabs/tabs'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
@@ -15,6 +16,7 @@ const VIEW_KEY = 'projectsView'
 
 export default function Projects() {
 	const [view, setView] = useState<ProjectsView | null>(null)
+	const { projects, isLoading } = useProjects(view ?? 'solo')
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
@@ -37,11 +39,9 @@ export default function Projects() {
 						<CreateButton />
 					</header>
 					<main className={classes.projects}>
-						<ProjectsList />
+						<ProjectsList projects={projects} isLoading={isLoading} />
 					</main>
-					<footer className={classes.pagination}>
-						<Pagination />
-					</footer>
+					<footer className={classes.pagination}>{projects.length > 0 && <Pagination />}</footer>
 				</>
 			)}
 		</div>

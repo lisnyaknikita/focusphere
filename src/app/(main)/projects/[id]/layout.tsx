@@ -1,4 +1,5 @@
-import { ProjectTabs } from './components/tabs/tabs'
+import { ProjectProvider } from '@/shared/context/project-context'
+import { ProjectHeader } from './components/project-header/project-header'
 import classes from './page.module.scss'
 
 export default async function ProjectLayout({
@@ -11,11 +12,11 @@ export default async function ProjectLayout({
 	const { id } = await params
 
 	return (
-		<div className={classes.projectPage}>
-			<header className={classes.header}>
-				<ProjectTabs projectId={id} />
-			</header>
-			<main className={classes.main}>{children}</main>
-		</div>
+		<ProjectProvider projectId={id}>
+			<div className={classes.projectPage}>
+				<ProjectHeader projectId={id} />
+				<main className={classes.main}>{children}</main>
+			</div>
+		</ProjectProvider>
 	)
 }
