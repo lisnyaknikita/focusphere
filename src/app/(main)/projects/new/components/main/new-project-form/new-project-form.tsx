@@ -8,7 +8,7 @@ import classes from './new-project-form.module.scss'
 
 export const NewProjectForm = () => {
 	const router = useRouter()
-	const { create, isLoading, error } = useCreateProject()
+	const { create, isLoading } = useCreateProject()
 
 	const {
 		register,
