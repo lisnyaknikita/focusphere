@@ -1,13 +1,28 @@
-import Image from 'next/image'
+import { Project } from '@/shared/types/project'
+import { formatDistanceToNow } from 'date-fns'
+import Link from 'next/link'
+import { OwnerAvatar } from './components/owner-avatar/owner-avatar'
 import classes from './project-card.module.scss'
 
-export const ProjectCard = () => {
+interface ProjectCardProps {
+	project: Project
+}
+
+export const getRelativeTime = (date: string | Date) => {
+	return formatDistanceToNow(new Date(date), {
+		addSuffix: true,
+	})
+}
+
+export const ProjectCard = ({ project }: ProjectCardProps) => {
 	return (
 		<li className={classes.projectCard}>
 			<header className={classes.logo}>Project logo</header>
 			<main className={classes.projectInfo}>
 				<div className={classes.title}>
-					<h6>Website Redesign</h6>
+					<Link href={`/projects/${project.$id}/board`}>
+						<h6>{project.title}</h6>
+					</Link>
 					<button>
 						<svg width='16' height='15' viewBox='0 0 16 15' fill='none' xmlns='http://www.w3.org/2000/svg'>
 							<path
@@ -17,19 +32,17 @@ export const ProjectCard = () => {
 						</svg>
 					</button>
 				</div>
-				<p className={classes.description}>
-					Complete overhaul of the company website with new branding and improved UX
-				</p>
+				<p className={classes.description}>{project.description || ''}</p>
 				<div className={classes.moreInfo}>
 					<ul className={classes.teamMembers}>
 						<li className={classes.avatar}>
-							<Image src={'/avatar.jpg'} alt='Team member' width={30} height={30} />
+							<OwnerAvatar userId={project.ownerId} size={30} />
 						</li>
 					</ul>
-					<div className={classes.updateDate}>Updated 2 days ago</div>
+					<div className={classes.updateDate}>Updated {getRelativeTime(project.$updatedAt)}</div>
 				</div>
 			</main>
-			<footer className={classes.progress}>
+			{/* <footer className={classes.progress}>
 				<div className={classes.completedTasks}>
 					<svg width='18' height='16' viewBox='0 0 20 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path
@@ -57,7 +70,7 @@ export const ProjectCard = () => {
 						</svg>
 					</button>
 				</div>
-			</footer>
+			</footer> */}
 		</li>
 	)
 }

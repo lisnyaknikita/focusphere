@@ -30,10 +30,10 @@ export default function Notes() {
 				</main>
 			</div>
 			<Modal isVisible={isNewNoteModalOpened} onClose={() => setIsNewNoteModalOpened(false)}>
-				<NewNoteModal />
+				<NewNoteModal onClose={() => setIsNewNoteModalOpened(false)} />
 			</Modal>
 			<Modal isVisible={isTagsModalVisible} onClose={() => setIsTagsModalVisible(false)}>
-				<NewNoteModal />
+				<NewNoteModal onClose={() => setIsTagsModalVisible(false)} />
 			</Modal>
 		</>
 	)

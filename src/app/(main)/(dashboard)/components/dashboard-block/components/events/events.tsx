@@ -12,7 +12,7 @@ import { BeatLoader } from 'react-spinners'
 import classes from './events.module.scss'
 
 export const EventsBlock = () => {
-	const { sectionRef, listHeight } = useSectionHeight(0.73)
+	const { sectionRef, listHeight } = useSectionHeight(0.72)
 	const { events, isLoading } = useEventsByToday()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedEvent, setSelectedEvent] = useState<SXEvent | null>(null)

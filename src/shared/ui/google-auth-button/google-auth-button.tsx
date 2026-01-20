@@ -11,9 +11,8 @@ export const GoogleAuthButton = () => {
 	const loginWithGoogle = async () => {
 		setIsLoading(true)
 
-		const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-			? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-			: 'http://localhost:3000'
+		const baseUrl =
+			process.env.NODE_ENV === 'production' ? 'https://focusphere-test.vercel.app' : 'http://localhost:3000'
 
 		try {
 			account.createOAuth2Session({

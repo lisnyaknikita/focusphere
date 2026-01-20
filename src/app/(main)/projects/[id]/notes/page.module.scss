@@ -9,7 +9,30 @@
 	border-radius: 5px;
 	height: 100%;
 	flex: 1;
+	position: relative;
 }
 
-.titleAndNotesList {
+.deleteButton {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0.3px solid #dc2a2a;
+	border-radius: 5px;
+	padding: 3px;
+	transition: all 0.2s;
+
+	&:hover {
+		background-color: #dc2a2a;
+	}
+}
+
+.loader {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 }

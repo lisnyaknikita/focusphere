@@ -241,6 +241,9 @@ ul {
 	border: none !important;
 	height: unset !important;
 	font-family: inherit !important;
+	flex: 1 !important;
+	overflow-y: auto !important;
+	padding-top: 50px !important;
 }
 
 .ql-editor {
@@ -265,6 +268,12 @@ ul {
 
 .ql-renderer {
 	padding: 0 !important;
+}
+
+.ql-custom {
+	display: flex !important;
+	flex-direction: column !important;
+	overflow: hidden !important;
 }
 
 .sx__calendar {

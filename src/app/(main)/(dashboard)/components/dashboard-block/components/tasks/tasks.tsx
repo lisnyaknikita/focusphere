@@ -8,7 +8,7 @@ import { BeatLoader } from 'react-spinners'
 import classes from './tasks.module.scss'
 
 export const TasksBlock = () => {
-	const { sectionRef, listHeight } = useSectionHeight(0.73)
+	const { sectionRef, listHeight } = useSectionHeight(0.72)
 	const { tasks, isLoading, handleToggleTask } = useTasksByToday()
 
 	return (
