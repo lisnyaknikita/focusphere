@@ -1,5 +1,4 @@
 import { useNewNote } from '@/shared/hooks/projects/notes/use-new-note'
-import { TagsInput } from '../tags-input/tags-input'
 import classes from './new-note-modal.module.scss'
 
 interface NewNoteModalProps {
@@ -21,7 +20,7 @@ export const NewNoteModal = ({ onClose }: NewNoteModalProps) => {
 					onChange={e => setTitle(e.target.value)}
 					autoFocus
 				/>
-				<TagsInput />
+				{/* <TagsInput /> */}
 				<div className={classes.buttons}>
 					<button type='submit' className={classes.confirmButton}>
 						Create note

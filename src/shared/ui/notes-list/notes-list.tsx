@@ -1,4 +1,5 @@
 import { useProject } from '@/shared/context/project-context'
+import { stripHtml } from '@/shared/utils/strip-html/strip-html'
 import clsx from 'clsx'
 import classes from './notes-list.module.scss'
 
@@ -39,7 +40,7 @@ export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
 								</div>
 								<div className={classes.content}>
 									<h4 className={classes.noteTitle}>{note.title}</h4>
-									<h6 className={classes.noteSubtitle}>{note.content}</h6>
+									<h6 className={classes.noteSubtitle}>{stripHtml(note.content)}</h6>
 									<time className={classes.noteTime}>{time}</time>
 								</div>
 							</a>

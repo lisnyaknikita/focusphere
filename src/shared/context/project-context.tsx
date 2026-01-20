@@ -15,7 +15,8 @@ interface ProjectContextType {
 	setActiveNote: (note: ProjectNote | null) => void
 	createNote: (title?: string) => Promise<void>
 	deleteNote: (noteId: string) => Promise<void>
-	handleContentChange: (content: string) => void
+	handleContentChange: (content: string, noteId: string) => void
+	handleTitleChange: (title: string, noteId: string) => void
 	isNotesLoading: boolean
 }
 
@@ -59,6 +60,7 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 				createNote: notesData.createNote,
 				deleteNote: notesData.deleteNote,
 				handleContentChange: notesData.handleContentChange,
+				handleTitleChange: notesData.handleTitleChange,
 				isNotesLoading: notesData.isLoading,
 			}}
 		>
