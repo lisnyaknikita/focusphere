@@ -7,6 +7,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	position: relative;
 }
 
 .timerLabel {
@@ -35,5 +36,33 @@
 	width: 25px;
 	height: 25px;
 	border-radius: 50%;
-	background-color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--text);
+	opacity: 0.4;
+
+	&:global(.active) {
+		opacity: 1;
+		border-width: 2px;
+		border-color: var(--text);
+		transform: scale(1.1);
+	}
+
+	&:global(.onBreak) {
+		opacity: 1;
+		border-width: 2px;
+		border-color: var(--tab-bg-active);
+		border-style: dashed;
+	}
+
+	&:global(.completed) {
+		opacity: 1;
+		background-color: var(--text);
+		border-color: var(--text);
+	}
+}
+
+.resetButton {
+	position: absolute;
+	top: 20px;
+	right: 20px;
 }
