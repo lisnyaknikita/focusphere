@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import classes from './timer.module.scss'
 
 export const Timer = () => {
-	const { timeLeft, status, startTimer, pauseTimer, resetTimer, currentSession, settings } = useTimer()
+	const { timeLeft, status, startTimer, pauseTimer, resetTimer, jumpToFinish, currentSession, settings } = useTimer()
 
 	const minutes = Math.floor(timeLeft / 60)
 	const seconds = timeLeft % 60
@@ -78,7 +78,7 @@ export const Timer = () => {
 					</svg>
 				</button>
 			)}
-			{/* {(status === 'work' || status === 'break') && (
+			{(status === 'work' || status === 'break') && (
 				<button
 					onClick={jumpToFinish}
 					style={{
@@ -90,7 +90,7 @@ export const Timer = () => {
 				>
 					⏩ Test Transition (5s left)
 				</button>
-			)} */}
+			)}
 		</div>
 	)
 }

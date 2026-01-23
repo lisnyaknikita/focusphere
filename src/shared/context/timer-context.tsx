@@ -26,7 +26,7 @@ interface TimerContextType {
 	pauseTimer: () => void
 	resetTimer: () => void
 	updateSettings: (newSettings: Partial<TimerSettings>) => void
-	// jumpToFinish: () => void
+	jumpToFinish: () => void
 }
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined)
@@ -45,6 +45,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	const expiryTimestampRef = useRef<number | null>(null)
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const lastActiveStatusRef = useRef<'work' | 'break'>('work')
+	const audioRef = useRef<HTMLAudioElement | null>(null)
 
 	const persist = useCallback((data: Partial<TimerPersistedState>) => {
 		const current = localStorage.getItem(STORAGE_KEY)
@@ -52,16 +53,16 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...base, ...data }))
 	}, [])
 
-	// const jumpToFinish = useCallback(() => {
-	// 	if (status === 'idle' || status === 'paused') return
+	const jumpToFinish = useCallback(() => {
+		if (status === 'idle' || status === 'paused') return
 
-	// 	const buffer = 5
-	// 	const newExpiry = Date.now() + buffer * 1000
+		const buffer = 5
+		const newExpiry = Date.now() + buffer * 1000
 
-	// 	expiryTimestampRef.current = newExpiry
-	// 	setTimeLeft(buffer)
-	// 	persist({ expiry: newExpiry })
-	// }, [status, persist])
+		expiryTimestampRef.current = newExpiry
+		setTimeLeft(buffer)
+		persist({ expiry: newExpiry })
+	}, [status, persist])
 
 	const resetTimer = useCallback(() => {
 		setStatus('idle')
@@ -73,6 +74,8 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	}, [settings.flowDuration])
 
 	const handleTimerComplete = useCallback(() => {
+		playNotification()
+
 		if (status === 'work') {
 			if (currentSession < settings.totalSessions) {
 				const nextSeconds = settings.breakDuration * 60
@@ -107,6 +110,21 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 			setTimeLeft(distance)
 		}
 	}, [status, handleTimerComplete])
+
+	const playNotification = useCallback(() => {
+		if (audioRef.current) {
+			audioRef.current.currentTime = 0.5
+			audioRef.current.play().catch(err => {
+				console.error('Audio error: ', err)
+			})
+		}
+	}, [])
+
+	useEffect(() => {
+		audioRef.current = new Audio('/ding-sound.webm')
+
+		if (audioRef.current) audioRef.current.volume = 0.5
+	}, [])
 
 	useEffect(() => {
 		if (status === 'work' || status === 'break') {
@@ -190,7 +208,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 				pauseTimer,
 				resetTimer,
 				updateSettings,
-				// jumpToFinish,
+				jumpToFinish,
 			}}
 		>
 			{children}
