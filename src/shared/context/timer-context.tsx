@@ -121,6 +121,25 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	}, [])
 
 	useEffect(() => {
+		if (status === 'idle') {
+			document.title = 'Focusphere | Timer'
+			return
+		}
+
+		const mins = Math.floor(timeLeft / 60)
+			.toString()
+			.padStart(2, '0')
+		const secs = (timeLeft % 60).toString().padStart(2, '0')
+
+		const currentMode = status === 'paused' ? lastActiveStatusRef.current : status
+		const emoji = currentMode === 'work' ? '🚀' : '☕'
+
+		const pauseSign = status === 'paused' ? '⏸️ ' : ''
+
+		document.title = `${pauseSign}${emoji} ${mins}:${secs} | Focusphere`
+	}, [timeLeft, status])
+
+	useEffect(() => {
 		audioRef.current = new Audio('/ding-sound.webm')
 
 		if (audioRef.current) audioRef.current.volume = 0.5
