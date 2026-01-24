@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import classes from './background-sounds-dropdown.module.scss'
 
-const backgroundSounds = ['White noise', 'Lofi music', 'Gunna']
+const backgroundSounds = ['Pink noise', 'Brown noise', 'Lofi']
 
 export const BackgroundSoundsDropdown = () => {
 	const [open, setOpen] = useState(false)
