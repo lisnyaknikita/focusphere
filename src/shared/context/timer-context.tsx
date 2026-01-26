@@ -97,6 +97,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 			} else {
 				setStatus('completed')
 				persist({ status: 'completed' })
+				showNotification('Goal reached! 🏆', 'You have completed all flow sessions.')
 			}
 		} else if (status === 'break') {
 			const nextSession = currentSession + 1
@@ -236,6 +237,23 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 			} else {
 				if (data.settings) setTimeLeft(data.settings.flowDuration * 60)
 			}
+		}
+	}, [])
+
+	const showNotification = useCallback((title: string, body: string) => {
+		if (!('Notification' in window)) return
+
+		if (Notification.permission === 'granted') {
+			new Notification(title, {
+				body,
+				icon: '/favicon.ico',
+			})
+		}
+	}, [])
+
+	useEffect(() => {
+		if ('Notification' in window && Notification.permission === 'default') {
+			Notification.requestPermission()
 		}
 	}, [])
 
