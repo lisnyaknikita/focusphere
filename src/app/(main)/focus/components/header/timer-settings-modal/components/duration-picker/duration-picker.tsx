@@ -1,10 +1,12 @@
-import { useState } from 'react'
+'use client'
+
+import { useTimer } from '@/shared/context/timer-context'
 import classes from './duration-picker.module.scss'
 
 const durations = {
-	flow: [25, 30, 50, 60, 90],
-	break: [5, 10, 15],
-	sessions: [2, 4, 6],
+	flow: [25, 30, 45, 50, 60, 90],
+	break: [5, 10, 15, 20],
+	sessions: [2, 4, 6, 8],
 }
 
 interface DurationPickerProps {
@@ -12,14 +14,28 @@ interface DurationPickerProps {
 }
 
 export const DurationPicker = ({ type }: DurationPickerProps) => {
-	const [index, setIndex] = useState(0)
+	const { settings, updateSettings } = useTimer()
 
-	const decrement = () => {
-		setIndex(prev => (prev > 0 ? prev - 1 : prev))
-	}
+	const settingsMap = {
+		flow: 'flowDuration',
+		break: 'breakDuration',
+		sessions: 'totalSessions',
+	} as const
+
+	const currentValue = settings[settingsMap[type]]
+	const options = durations[type]
+	const currentIndex = options.indexOf(currentValue)
 
 	const increment = () => {
-		setIndex(prev => (prev < durations[type].length - 1 ? prev + 1 : prev))
+		if (currentIndex < options.length - 1) {
+			updateSettings({ [settingsMap[type]]: options[currentIndex + 1] })
+		}
+	}
+
+	const decrement = () => {
+		if (currentIndex > 0) {
+			updateSettings({ [settingsMap[type]]: options[currentIndex - 1] })
+		}
 	}
 
 	return (
@@ -33,7 +49,7 @@ export const DurationPicker = ({ type }: DurationPickerProps) => {
 				</svg>
 			</button>
 			<span className={classes.input}>
-				{durations[type][index]} {type === 'sessions' ? 'sessions' : 'minutes'}
+				{currentValue} {type === 'sessions' ? 'sessions' : 'minutes'}
 			</span>
 			<button className={classes.plus} onClick={increment} type='button'>
 				<svg width='20' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
