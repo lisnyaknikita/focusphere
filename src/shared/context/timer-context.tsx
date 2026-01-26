@@ -15,6 +15,8 @@ interface TimerPersistedState {
 	expiry: number | null
 	currentSession: number
 	settings: TimerSettings
+	timeLeft: number
+	mode: 'work' | 'break'
 }
 
 interface TimerContextType {
@@ -46,11 +48,19 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	const intervalRef = useRef<NodeJS.Timeout | null>(null)
 	const lastActiveStatusRef = useRef<'work' | 'break'>('work')
 	const audioRef = useRef<HTMLAudioElement | null>(null)
+	const modeRef = useRef<'work' | 'break'>('work')
 
 	const persist = useCallback((data: Partial<TimerPersistedState>) => {
 		const current = localStorage.getItem(STORAGE_KEY)
 		const base = current ? JSON.parse(current) : {}
-		localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...base, ...data }))
+		localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				...base,
+				...data,
+				mode: modeRef.current,
+			})
+		)
 	}, [])
 
 	const jumpToFinish = useCallback(() => {
@@ -79,6 +89,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		if (status === 'work') {
 			if (currentSession < settings.totalSessions) {
 				const nextSeconds = settings.breakDuration * 60
+				modeRef.current = 'break'
 				setStatus('break')
 				setTimeLeft(nextSeconds)
 				expiryTimestampRef.current = Date.now() + nextSeconds * 1000
@@ -90,6 +101,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		} else if (status === 'break') {
 			const nextSession = currentSession + 1
 			const nextSeconds = settings.flowDuration * 60
+			modeRef.current = 'work'
 			setCurrentSession(nextSession)
 			setStatus('work')
 			setTimeLeft(nextSeconds)
@@ -157,13 +169,9 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	}, [status, tickLogic])
 
 	const startTimer = () => {
-		let nextStatus: 'work' | 'break' = lastActiveStatusRef.current
+		let nextStatus: 'work' | 'break' = modeRef.current
 
 		if (status === 'idle') {
-			nextStatus = 'work'
-		} else if (status === 'break') {
-			nextStatus = 'break'
-		} else if (status === 'work') {
 			nextStatus = 'work'
 		}
 
@@ -171,18 +179,19 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		const expiry = Date.now() + seconds * 1000
 
 		expiryTimestampRef.current = expiry
+		modeRef.current = nextStatus
 		setTimeLeft(seconds)
 		setStatus(nextStatus)
-		lastActiveStatusRef.current = nextStatus
+
 		persist({ status: nextStatus, expiry, currentSession, settings })
 	}
 
 	const pauseTimer = () => {
 		if (status === 'work' || status === 'break') {
-			lastActiveStatusRef.current = status
+			modeRef.current = status
 		}
 		setStatus('paused')
-		persist({ status: 'paused', expiry: expiryTimestampRef.current })
+		persist({ status: 'paused', expiry: null, timeLeft: timeLeft })
 	}
 
 	const updateSettings = (newSettings: Partial<TimerSettings>) => {
@@ -202,16 +211,25 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 			const data: TimerPersistedState = JSON.parse(saved)
 			if (data.settings) setSettings(data.settings)
 			if (data.currentSession) setCurrentSession(data.currentSession)
+
+			if (data.mode) modeRef.current = data.mode
+
 			if (data.status) setStatus(data.status)
 
-			if (data.expiry) {
-				expiryTimestampRef.current = data.expiry
-				const distance = Math.max(0, Math.round((data.expiry - Date.now()) / 1000))
-				if (distance > 0) {
-					setTimeLeft(distance)
-				} else if (data.status !== 'idle' && data.status !== 'paused') {
-					handleTimerComplete()
+			if (data.status === 'paused') {
+				setTimeLeft(data.timeLeft)
+			} else if (data.status === 'work' || data.status === 'break') {
+				if (data.expiry) {
+					expiryTimestampRef.current = data.expiry
+					const distance = Math.max(0, Math.round((data.expiry - Date.now()) / 1000))
+					if (distance > 0) {
+						setTimeLeft(distance)
+					} else {
+						handleTimerComplete()
+					}
 				}
+			} else {
+				if (data.settings) setTimeLeft(data.settings.flowDuration * 60)
 			}
 		}
 	}, [])
