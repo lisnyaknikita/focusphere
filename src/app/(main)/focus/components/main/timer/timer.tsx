@@ -14,6 +14,17 @@ export const Timer = () => {
 	const isRunning = status === 'work' || status === 'break'
 	const handleAction = isRunning ? pauseTimer : startTimer
 
+	if (status === 'completed') {
+		return (
+			<div className={clsx(classes.timerInner, status === 'completed' && 'completed')}>
+				<h2 className={classes.timerLabel}>All sessions done!</h2>
+				<button className={classes.completedResetButton} onClick={resetTimer}>
+					Restart
+				</button>
+			</div>
+		)
+	}
+
 	return (
 		<div className={classes.timerInner}>
 			<h2 className={classes.timerLabel}>{status === 'break' ? 'Break' : 'Flow'}</h2>

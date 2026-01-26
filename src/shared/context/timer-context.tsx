@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-type TimerStatus = 'idle' | 'work' | 'break' | 'paused'
+type TimerStatus = 'idle' | 'work' | 'break' | 'paused' | 'completed'
 
 interface TimerSettings {
 	flowDuration: number
@@ -95,8 +95,8 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 				expiryTimestampRef.current = Date.now() + nextSeconds * 1000
 				persist({ status: 'break', expiry: expiryTimestampRef.current })
 			} else {
-				alert('All sessions completed!')
-				resetTimer()
+				setStatus('completed')
+				persist({ status: 'completed' })
 			}
 		} else if (status === 'break') {
 			const nextSession = currentSession + 1
@@ -135,6 +135,11 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 	useEffect(() => {
 		if (status === 'idle') {
 			document.title = 'Focusphere | Timer'
+			return
+		}
+
+		if (status === 'completed') {
+			document.title = 'Done! 🏆 | Focusphere'
 			return
 		}
 

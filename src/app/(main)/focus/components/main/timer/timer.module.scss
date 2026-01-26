@@ -8,6 +8,10 @@
 	flex-direction: column;
 	align-items: center;
 	position: relative;
+
+	&:global(.completed) {
+		justify-content: center;
+	}
 }
 
 .timerLabel {
@@ -65,4 +69,21 @@
 	position: absolute;
 	top: 20px;
 	right: 20px;
+}
+
+.completedResetButton {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 5px 15px;
+	margin-top: 0px;
+	background-color: var(--save-button-bg);
+	border-radius: 10px;
+	display: inline-block;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
 }
