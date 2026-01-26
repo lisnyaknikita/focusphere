@@ -28,7 +28,7 @@ interface TimerContextType {
 	pauseTimer: () => void
 	resetTimer: () => void
 	updateSettings: (newSettings: Partial<TimerSettings>) => void
-	jumpToFinish: () => void
+	// jumpToFinish: () => void
 }
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined)
@@ -63,16 +63,16 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 		)
 	}, [])
 
-	const jumpToFinish = useCallback(() => {
-		if (status === 'idle' || status === 'paused') return
+	// const jumpToFinish = useCallback(() => {
+	// 	if (status === 'idle' || status === 'paused') return
 
-		const buffer = 5
-		const newExpiry = Date.now() + buffer * 1000
+	// 	const buffer = 5
+	// 	const newExpiry = Date.now() + buffer * 1000
 
-		expiryTimestampRef.current = newExpiry
-		setTimeLeft(buffer)
-		persist({ expiry: newExpiry })
-	}, [status, persist])
+	// 	expiryTimestampRef.current = newExpiry
+	// 	setTimeLeft(buffer)
+	// 	persist({ expiry: newExpiry })
+	// }, [status, persist])
 
 	const resetTimer = useCallback(() => {
 		setStatus('idle')
@@ -245,7 +245,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 				pauseTimer,
 				resetTimer,
 				updateSettings,
-				jumpToFinish,
+				// jumpToFinish,
 			}}
 		>
 			{children}
