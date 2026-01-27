@@ -1,4 +1,4 @@
-import { useProject } from '@/shared/context/project-context'
+import { useNotesContext } from '@/shared/context/notes-context'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
 import clsx from 'clsx'
 import classes from './notes-list.module.scss'
@@ -9,7 +9,7 @@ interface NotesListProps {
 }
 
 export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
-	const { notes, activeNote, setActiveNote, project } = useProject()
+	const { notes, activeNote, setActiveNote, headerTitle, isLoading } = useNotesContext()
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString)
@@ -22,9 +22,9 @@ export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
 
 	return (
 		<div className={clsx(classes.listWrapper, withTags && 'withTags')}>
-			{withTitle && <h3 className={classes.title}>{project?.title}</h3>}
+			{withTitle && <h3 className={classes.title}>{headerTitle}</h3>}
 			<ul className={clsx(classes.notesList, withTitle && 'withTitle')}>
-				{notes.length === 0 && project && <p className={classes.noNotesMessage}>No notes here</p>}
+				{!isLoading && notes.length === 0 && <p className={classes.noNotesMessage}>No entries here</p>}
 				{notes.map(note => {
 					const { day, number, time } = formatDate(note.$createdAt)
 					return (

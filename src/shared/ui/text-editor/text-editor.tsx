@@ -1,13 +1,13 @@
 'use client'
 
-import { useProject } from '@/shared/context/project-context'
+import { useNotesContext } from '@/shared/context/notes-context'
 import Quill, { QuillOptions } from 'quill'
 import 'quill/dist/quill.snow.css'
 import { useEffect, useRef } from 'react'
 import classes from './text-editor.module.scss'
 
 export const TextEditor = () => {
-	const { activeNote, handleContentChange, handleTitleChange } = useProject()
+	const { activeNote, handleContentChange, handleTitleChange } = useNotesContext()
 	const containerRef = useRef<HTMLDivElement>(null)
 	const quillRef = useRef<Quill | null>(null)
 

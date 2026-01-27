@@ -4,7 +4,8 @@ import { getProjectById } from '@/lib/projects/projects'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { useNotes } from '../hooks/projects/notes/use-notes'
 import { Project } from '../types/project'
-import { ProjectNote } from '../types/project-note'
+import { BaseNote, ProjectNote } from '../types/project-note'
+import { NotesContext } from './notes-context'
 
 interface ProjectContextType {
 	project: Project | null
@@ -64,7 +65,19 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 				isNotesLoading: notesData.isLoading,
 			}}
 		>
-			{children}
+			<NotesContext.Provider
+				value={{
+					notes: notesData.notes,
+					activeNote: notesData.activeNote,
+					setActiveNote: notesData.setActiveNote as (note: BaseNote | null) => void,
+					handleContentChange: notesData.handleContentChange,
+					handleTitleChange: notesData.handleTitleChange,
+					isLoading: notesData.isLoading,
+					headerTitle: project?.title,
+				}}
+			>
+				{children}
+			</NotesContext.Provider>
 		</ProjectContext.Provider>
 	)
 }

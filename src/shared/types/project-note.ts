@@ -1,10 +1,13 @@
 import { Models } from 'appwrite'
 
-export interface ProjectNote extends Models.Document {
+export interface BaseNote extends Models.Document {
 	title: string
 	content: string
-	projectId: string
 	userId: string
+}
+
+export interface ProjectNote extends BaseNote {
+	projectId: string
 }
 
 export interface CreateProjectNotePayload {
