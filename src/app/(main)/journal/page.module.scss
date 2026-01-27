@@ -23,4 +23,23 @@
 	background-color: var(--secondary);
 	border-radius: 5px;
 	border: 1px solid var(--secondaryFull);
+	position: relative;
+}
+
+.deleteButton {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0.3px solid #dc2a2a;
+	border-radius: 5px;
+	padding: 3px;
+	transition: all 0.2s;
+
+	&:hover {
+		background-color: #dc2a2a;
+	}
 }

@@ -87,10 +87,20 @@ export const useDiaryNotes = (userId: string) => {
 	const deleteNote = async (noteId: string) => {
 		try {
 			await deleteDiaryEntry(noteId)
-			setNotes(prev => prev.filter(n => n.$id !== noteId))
-			if (activeNote?.$id === noteId) {
-				setActiveNote(null)
-			}
+
+			setNotes(prev => {
+				const filteredNotes = prev.filter(n => n.$id !== noteId)
+
+				if (activeNote?.$id === noteId) {
+					if (filteredNotes.length > 0) {
+						setActiveNote(filteredNotes[0])
+					} else {
+						setActiveNote(null)
+					}
+				}
+
+				return filteredNotes
+			})
 		} catch (error) {
 			console.error('Failed to delete entry:', error)
 		}
