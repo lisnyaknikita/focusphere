@@ -72,6 +72,8 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 					setActiveNote: notesData.setActiveNote as (note: BaseNote | null) => void,
 					handleContentChange: notesData.handleContentChange,
 					handleTitleChange: notesData.handleTitleChange,
+					createNote: notesData.createNote,
+					deleteNote: notesData.deleteNote,
 					isLoading: notesData.isLoading,
 					headerTitle: project?.title,
 				}}
