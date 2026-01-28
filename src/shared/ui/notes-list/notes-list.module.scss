@@ -47,6 +47,10 @@
 		border-top: 0.2px solid transparent;
 		border-top-left-radius: 5px;
 
+		&:global(.active) {
+			border-top: 0.2px solid var(--btn-border);
+		}
+
 		&:hover {
 			border-top: 0.2px solid var(--btn-border);
 		}
