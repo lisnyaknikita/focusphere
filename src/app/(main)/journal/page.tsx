@@ -31,7 +31,7 @@ const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened
 				) : (
 					<>
 						<NotesList />
-						<TextEditor />
+						<TextEditor key={activeNote?.$id || 'empty'} />
 
 						{activeNote && (
 							<button className={classes.deleteButton} onClick={onDelete} disabled={!activeNote}>
