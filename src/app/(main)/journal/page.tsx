@@ -1,36 +1,77 @@
 'use client'
 
+import { DiaryProvider } from '@/shared/context/diary-context'
+import { useDeleteDiaryNote } from '@/shared/hooks/diary/use-delete-diary-note'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
-import dynamic from 'next/dynamic'
+import { TextEditor } from '@/shared/ui/text-editor/text-editor'
 import { useState } from 'react'
+import { BeatLoader } from 'react-spinners'
 import { CreateButton } from './components/header/components/create-button/create-button'
 import { NewEntryModal } from './components/header/components/new-entry-modal/new-entry-modal'
 import { TemplatesDropdown } from './components/header/components/templates-dropdown/templates-dropdown'
 import classes from './page.module.scss'
 
-const TextEditor = dynamic(() => import('../../../shared/ui/text-editor/text-editor').then(m => m.TextEditor), {
-	ssr: false,
-})
+const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened: (v: boolean) => void }) => {
+	const { activeNote, isLoading, onDelete } = useDeleteDiaryNote()
+
+	return (
+		<div className={classes.journalPage}>
+			<header className={classes.header}>
+				<CreateButton setIsNewEntryModalOpened={setIsNewEntryModalOpened} />
+				<TemplatesDropdown />
+			</header>
+
+			<main className={classes.journal}>
+				{isLoading ? (
+					<div className={classes.loaderWrapper}>
+						<BeatLoader color='#aaa' size={10} />
+					</div>
+				) : (
+					<>
+						<NotesList />
+						<TextEditor key={activeNote?.$id || 'empty'} />
+
+						{activeNote && (
+							<button className={classes.deleteButton} onClick={onDelete} disabled={!activeNote}>
+								<svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
+									<path
+										d='M12.2493 2.33333H10.441C10.3056 1.67499 9.94741 1.08345 9.42675 0.658419C8.90608 0.233386 8.2548 0.000848473 7.58268 0L6.41602 0C5.7439 0.000848473 5.09262 0.233386 4.57195 0.658419C4.05129 1.08345 3.69307 1.67499 3.55768 2.33333H1.74935C1.59464 2.33333 1.44627 2.39479 1.33687 2.50419C1.22747 2.61358 1.16602 2.76196 1.16602 2.91667C1.16602 3.07138 1.22747 3.21975 1.33687 3.32915C1.44627 3.43854 1.59464 3.5 1.74935 3.5H2.33268V11.0833C2.33361 11.8566 2.6412 12.5979 3.18798 13.1447C3.73476 13.6915 4.47609 13.9991 5.24935 14H8.74935C9.52261 13.9991 10.2639 13.6915 10.8107 13.1447C11.3575 12.5979 11.6651 11.8566 11.666 11.0833V3.5H12.2493C12.4041 3.5 12.5524 3.43854 12.6618 3.32915C12.7712 3.21975 12.8327 3.07138 12.8327 2.91667C12.8327 2.76196 12.7712 2.61358 12.6618 2.50419C12.5524 2.39479 12.4041 2.33333 12.2493 2.33333ZM6.41602 1.16667H7.58268C7.94451 1.16711 8.29734 1.27947 8.59279 1.48834C8.88824 1.69721 9.11184 1.99237 9.23293 2.33333H4.76577C4.88686 1.99237 5.11046 1.69721 5.40591 1.48834C5.70136 1.27947 6.05419 1.16711 6.41602 1.16667ZM10.4993 11.0833C10.4993 11.5475 10.315 11.9926 9.98679 12.3208C9.6586 12.649 9.21348 12.8333 8.74935 12.8333H5.24935C4.78522 12.8333 4.3401 12.649 4.01191 12.3208C3.68372 11.9926 3.49935 11.5475 3.49935 11.0833V3.5H10.4993V11.0833Z'
+										fill='var(--text)'
+									/>
+									<path
+										d='M5.83333 10.5002C5.98804 10.5002 6.13642 10.4387 6.24581 10.3293C6.35521 10.2199 6.41667 10.0715 6.41667 9.91683V6.41683C6.41667 6.26212 6.35521 6.11375 6.24581 6.00435C6.13642 5.89495 5.98804 5.8335 5.83333 5.8335C5.67862 5.8335 5.53025 5.89495 5.42085 6.00435C5.31146 6.11375 5.25 6.26212 5.25 6.41683V9.91683C5.25 10.0715 5.31146 10.2199 5.42085 10.3293C5.53025 10.4387 5.67862 10.5002 5.83333 10.5002Z'
+										fill='var(--text)'
+									/>
+									<path
+										d='M8.16732 10.5002C8.32203 10.5002 8.4704 10.4387 8.5798 10.3293C8.68919 10.2199 8.75065 10.0715 8.75065 9.91683V6.41683C8.75065 6.26212 8.68919 6.11375 8.5798 6.00435C8.4704 5.89495 8.32203 5.8335 8.16732 5.8335C8.01261 5.8335 7.86424 5.89495 7.75484 6.00435C7.64544 6.11375 7.58398 6.26212 7.58398 6.41683V9.91683C7.58398 10.0715 7.64544 10.2199 7.75484 10.3293C7.86424 10.4387 8.01261 10.5002 8.16732 10.5002Z'
+										fill='var(--text)'
+									/>
+								</svg>
+							</button>
+						)}
+					</>
+				)}
+			</main>
+		</div>
+	)
+}
 
 export default function Journal() {
 	const [isNewEntryModalOpened, setIsNewEntryModalOpened] = useState(false)
+	const { user } = useUser()
+
+	if (!user) {
+		return null
+	}
 
 	return (
-		<>
-			<div className={classes.journalPage}>
-				<header className={classes.header}>
-					<CreateButton setIsNewEntryModalOpened={setIsNewEntryModalOpened} />
-					<TemplatesDropdown />
-				</header>
-				<main className={classes.journal}>
-					<NotesList />
-					<TextEditor />
-				</main>
-			</div>
+		<DiaryProvider userId={user.$id}>
+			<JournalContent setIsNewEntryModalOpened={setIsNewEntryModalOpened} />
 			<Modal isVisible={isNewEntryModalOpened} onClose={() => setIsNewEntryModalOpened(false)}>
-				<NewEntryModal />
+				<NewEntryModal onClose={() => setIsNewEntryModalOpened(false)} />
 			</Modal>
-		</>
+		</DiaryProvider>
 	)
 }

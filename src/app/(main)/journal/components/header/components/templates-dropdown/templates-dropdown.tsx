@@ -1,23 +1,24 @@
+import { JOURNAL_TEMPLATES, TemplateKey } from '@/shared/constants/journal-templates'
+import { useNotesContext } from '@/shared/context/notes-context'
+import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import classes from './templates-dropdown.module.scss'
 
-const templates = [
-	'Emotional Check-In',
-	'Gratitude',
-	'Mind Dump',
-	'Anxiety Journal',
-	'Success Journal',
-	'Morning Planning',
-	'Evening Reflection',
-]
-
 export const TemplatesDropdown = () => {
 	const [open, setOpen] = useState(false)
+	const { createNote } = useNotesContext()
+
+	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
+
+	const handleSelect = async (key: TemplateKey) => {
+		await createNote(key)
+		setOpen(false)
+	}
 
 	return (
-		<div className={clsx(classes.templates, open && 'opened')}>
+		<div ref={dropdownRef} className={clsx(classes.templates, open && 'opened')}>
 			<button className={classes.trigger} onClick={() => setOpen(prev => !prev)}>
 				<span>Templates</span>
 				<svg width='11' height='6' viewBox='0 0 11 6' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -36,9 +37,14 @@ export const TemplatesDropdown = () => {
 						exit={{ opacity: 0, scale: 0.97, y: -4 }}
 						transition={{ duration: 0.18, ease: 'easeOut' }}
 					>
-						{templates.map((sound, i) => (
-							<button className={classes.templateItem} key={i}>
-								{sound}
+						{Object.values(JOURNAL_TEMPLATES).map(template => (
+							<button
+								className={classes.templateItem}
+								key={template.key}
+								onClick={() => handleSelect(template.key as TemplateKey)}
+							>
+								<span className={classes.icon}>{template.icon}</span>
+								{template.title}
 							</button>
 						))}
 					</motion.div>
