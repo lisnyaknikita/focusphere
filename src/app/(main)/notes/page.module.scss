@@ -12,6 +12,7 @@
 	margin-bottom: 40px;
 	display: flex;
 	justify-content: flex-end;
+	gap: 20px;
 }
 
 .notes {
@@ -41,4 +42,11 @@
 	&:hover {
 		background-color: #dc2a2a;
 	}
+}
+
+.emptySearch {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 }

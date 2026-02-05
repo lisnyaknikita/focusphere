@@ -10,10 +10,12 @@ import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { CreateButton } from './components/header/create-button/create-button'
 import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
+import { SearchInput } from './components/header/search-input/search-input'
 import classes from './page.module.scss'
 
 const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v: boolean) => void }) => {
-	const { activeNote, isLoading, deleteNote } = useNotesContext()
+	const { activeNote, isLoading, deleteNote, notes, searchQuery } = useNotesContext()
+	const isSearchEmpty = searchQuery && searchQuery.trim().length > 0 && notes.length === 0
 
 	const handleDelete = async () => {
 		if (!activeNote) return
@@ -26,6 +28,7 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 		<div className={classes.notesPage}>
 			<header className={classes.header}>
 				<CreateButton setIsNewNoteModalOpened={setIsNewNoteModalOpened} />
+				<SearchInput />
 			</header>
 
 			<main className={classes.notes}>
@@ -35,7 +38,7 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 					</div>
 				) : (
 					<>
-						<NotesList />
+						{isSearchEmpty ? <div className={classes.emptySearch}>No notes found</div> : <NotesList />}
 						<TextEditor key={activeNote?.$id} />
 
 						{activeNote && (

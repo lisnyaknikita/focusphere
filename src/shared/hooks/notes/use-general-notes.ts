@@ -2,12 +2,15 @@
 
 import { createGeneralNote, deleteGeneralNote, getGeneralNotes, updateGeneralNote } from '@/lib/notes/notes'
 import { BaseNote } from '@/shared/types/project-note'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDebounce } from '../use-debounce/use-debounce'
 
 export const useGeneralNotes = (userId: string) => {
 	const [notes, setNotes] = useState<BaseNote[]>([])
 	const [activeNote, setActiveNote] = useState<BaseNote | null>(null)
 	const [isLoading, setIsLoading] = useState(true)
+	const [searchQuery, setSearchQuery] = useState('')
+	const debouncedSearch = useDebounce(searchQuery, 300)
 
 	useEffect(() => {
 		const fetchNotes = async () => {
@@ -70,8 +73,25 @@ export const useGeneralNotes = (userId: string) => {
 		}
 	}
 
+	const filteredNotes = useMemo(() => {
+		const query = debouncedSearch.toLowerCase().trim()
+		if (!query) return notes
+
+		return notes.filter(note => note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query))
+	}, [notes, debouncedSearch])
+
+	useEffect(() => {
+		if (debouncedSearch.trim() !== '') {
+			if (filteredNotes.length > 0) {
+				setActiveNote(filteredNotes[0])
+			} else {
+				setActiveNote(null)
+			}
+		}
+	}, [filteredNotes, debouncedSearch, setActiveNote])
+
 	return {
-		notes,
+		notes: filteredNotes,
 		activeNote,
 		setActiveNote,
 		isLoading,
@@ -79,5 +99,7 @@ export const useGeneralNotes = (userId: string) => {
 		deleteNote: handleDelete,
 		handleTitleChange,
 		handleContentChange,
+		searchQuery,
+		setSearchQuery,
 	}
 }

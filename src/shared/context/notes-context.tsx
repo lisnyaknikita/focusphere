@@ -13,6 +13,8 @@ interface NotesContextType<T extends BaseNote = BaseNote> {
 	deleteNote: (noteId: string) => Promise<void>
 	isLoading: boolean
 	headerTitle?: string
+	searchQuery?: string
+	setSearchQuery?: (query: string) => void
 }
 
 export const NotesContext = createContext<NotesContextType<BaseNote> | undefined>(undefined)
