@@ -8,7 +8,7 @@ import { Modal } from '../modal/modal'
 export const DailyTasksModalWrapper = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const { iso: todayIso } = useToday()
+	const today = useToday()
 
 	const isOpen = searchParams.get('modal') === 'create-daily-task'
 
@@ -21,7 +21,7 @@ export const DailyTasksModalWrapper = () => {
 
 	return (
 		<Modal isVisible={isOpen} onClose={handleClose}>
-			<DailyTasksModal date={todayIso} onClose={handleClose} />
+			<DailyTasksModal date={today ? today?.iso : ''} onClose={handleClose} />
 		</Modal>
 	)
 }

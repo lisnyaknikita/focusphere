@@ -17,4 +17,11 @@ export interface CreateProjectNotePayload {
 	userId: string
 }
 
+export interface CreateGeneralNotePayload {
+	title: string
+	content: string
+	userId: string
+}
+
 export type UpdateProjectNotePayload = Partial<CreateProjectNotePayload>
+export type UpdateGeneralNotePayload = Partial<CreateGeneralNotePayload>

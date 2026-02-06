@@ -135,7 +135,6 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 	useEffect(() => {
 		if (status === 'idle') {
-			document.title = 'Focusphere | Timer'
 			return
 		}
 
