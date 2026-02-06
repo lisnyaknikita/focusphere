@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react'
 import classes from './text-editor.module.scss'
 
 export const TextEditor = () => {
-	const { activeNote, handleContentChange, handleTitleChange } = useNotesContext()
+	const { activeNote, handleContentChange, handleTitleChange, searchQuery } = useNotesContext()
 	const containerRef = useRef<HTMLDivElement>(null)
 	const quillRef = useRef<Quill | null>(null)
 
@@ -58,6 +58,10 @@ export const TextEditor = () => {
 	}, [activeNote?.$id])
 
 	if (!activeNote) {
+		if (searchQuery && searchQuery.trim() !== '') {
+			return <div className={classes.emptyBySearchEditor} />
+		}
+
 		return (
 			<div className={classes.emptyEditor}>
 				<div className={classes.emptyContent}>
