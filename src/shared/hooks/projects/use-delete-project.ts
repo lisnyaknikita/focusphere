@@ -7,9 +7,6 @@ export const useDeleteProject = () => {
 	const [error, setError] = useState<string | null>(null)
 
 	const remove = async (projectId: string, onSuccess?: () => void) => {
-		const isConfirmed = confirm('Are you sure you want to delete this project? This action cannot be undone.')
-		if (!isConfirmed) return
-
 		setIsDeleting(true)
 		setError(null)
 
