@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react'
 import { Modal } from '../modal/modal'
 import classes from './confirm-modal.module.scss'
 
@@ -20,6 +21,28 @@ export const ConfirmModal = ({
 	onConfirm,
 	onClose,
 }: ConfirmModalProps) => {
+	const handleConfirm = useCallback(() => {
+		onConfirm()
+		onClose()
+	}, [onConfirm, onClose])
+
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (isVisible && event.key === 'Enter') {
+				event.preventDefault()
+				handleConfirm()
+			}
+		}
+
+		if (isVisible) {
+			window.addEventListener('keydown', handleKeyDown)
+		}
+
+		return () => {
+			window.removeEventListener('keydown', handleKeyDown)
+		}
+	}, [isVisible, handleConfirm])
+
 	return (
 		<Modal isVisible={isVisible} onClose={onClose} className={classes.confirmModal}>
 			<div className={classes.content}>
@@ -30,14 +53,7 @@ export const ConfirmModal = ({
 				<button type='button' className={classes.cancelButton} onClick={onClose}>
 					{cancelText}
 				</button>
-				<button
-					type='button'
-					className={classes.confirmButton}
-					onClick={() => {
-						onConfirm()
-						onClose()
-					}}
-				>
+				<button type='button' className={classes.confirmButton} onClick={handleConfirm} autoFocus>
 					{confirmText}
 				</button>
 			</div>
