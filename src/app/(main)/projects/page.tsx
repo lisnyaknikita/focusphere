@@ -16,7 +16,8 @@ const VIEW_KEY = 'projectsView'
 
 export default function Projects() {
 	const [view, setView] = useState<ProjectsView | null>(null)
-	const { projects, isLoading } = useProjects(view ?? 'solo')
+	const [searchQuery, setSearchQuery] = useState('')
+	const { projects, isLoading } = useProjects(view ?? 'solo', searchQuery)
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
@@ -35,7 +36,7 @@ export default function Projects() {
 				<>
 					<header className={classes.header}>
 						<Tabs tabs={['solo', 'team']} activeTab={view} onChange={setView} />
-						<Search />
+						<Search value={searchQuery} onChange={setSearchQuery} />
 						<CreateButton />
 					</header>
 					<main className={classes.projects}>
