@@ -1,4 +1,5 @@
 import { CALENDAR_COLORS } from '@/lib/events/calendar-config'
+import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import { EventForm } from '@/shared/types/event'
 import { TimeBlockForm } from '@/shared/types/time-block'
 import { useState } from 'react'
@@ -16,6 +17,8 @@ const COLORS = Object.values(CALENDAR_COLORS)
 export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setFormField }: ColorPickerProps<T>) => {
 	const [open, setOpen] = useState(false)
 
+	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
+
 	const selectedColor = form.color
 
 	const handleColorSelect = (color: string) => {
@@ -24,7 +27,7 @@ export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setForm
 	}
 
 	return (
-		<div className={classes.colorPicker}>
+		<div className={classes.colorPicker} ref={dropdownRef}>
 			<button className={classes.triggerButton} onClick={() => setOpen(prev => !prev)} type='button'>
 				<span className={classes.selectedColorCircle} style={{ backgroundColor: selectedColor }}></span>
 				<span className={classes.arrow}>

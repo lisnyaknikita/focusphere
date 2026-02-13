@@ -33,8 +33,8 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 		<>
 			<div className={classes.notesPage}>
 				<header className={classes.header}>
-					<CreateButton setIsNewNoteModalOpened={setIsNewNoteModalOpened} />
 					<SearchInput />
+					<CreateButton setIsNewNoteModalOpened={setIsNewNoteModalOpened} />
 				</header>
 
 				<main className={classes.notes}>

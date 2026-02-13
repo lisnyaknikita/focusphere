@@ -21,6 +21,7 @@ export const EventModal = ({ onClose }: EventModalProps) => {
 					aria-label='Event title'
 					value={form.title}
 					onChange={e => setFormField('title', e.target.value)}
+					autoFocus
 				/>
 				<DateTime form={form} setFormField={setFormField} />
 				<Description form={form} setFormField={setFormField} />
