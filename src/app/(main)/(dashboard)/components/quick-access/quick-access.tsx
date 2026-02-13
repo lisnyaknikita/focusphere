@@ -15,7 +15,9 @@ export const QuickAccess = () => {
 				<button className={classes.button} onClick={() => router.push('?modal=create-daily-task')}>
 					Add Task for Today
 				</button>
-				<button className={classes.button}>Start Focus Session</button>
+				<button className={classes.button} onClick={() => router.push('?modal=quick-idea')}>
+					Capture Idea
+				</button>
 			</div>
 		</footer>
 	)
