@@ -7,8 +7,9 @@ import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
 
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
+import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CalendarView } from '../../../constants/calendar.constants'
 
 interface CalendarInnerProps {
@@ -18,16 +19,23 @@ interface CalendarInnerProps {
 
 export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
 	const { calendar, eventsService, setView, eventModal } = useCalendarApp({ defaultView: view })
-
 	const { handleDelete } = useEventDeletion({ eventsService, eventModal })
+	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
+
+	const handleConfirmDelete = async () => {
+		if (eventToDelete) {
+			await handleDelete(String(eventToDelete.id))
+			setEventToDelete(null)
+		}
+	}
 
 	const customComponents = useMemo(
 		() => ({
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
-				<EventInfoModal event={calendarEvent} onConfirmDelete={handleDelete} />
+				<EventInfoModal event={calendarEvent} onConfirmDelete={() => setEventToDelete(calendarEvent)} />
 			),
 		}),
-		[handleDelete]
+		[]
 	)
 
 	useEffect(() => {
@@ -53,5 +61,20 @@ export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
 		return () => clearTimeout(timeout)
 	}, [])
 
-	return <ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
+	return (
+		<>
+			<ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
+			<ConfirmModal
+				isVisible={!!eventToDelete}
+				onClose={() => setEventToDelete(null)}
+				onConfirm={handleConfirmDelete}
+				title='Delete Event'
+				message={
+					<>
+						Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
+					</>
+				}
+			/>
+		</>
+	)
 }

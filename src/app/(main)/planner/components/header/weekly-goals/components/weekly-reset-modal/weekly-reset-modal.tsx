@@ -35,11 +35,11 @@ export const WeeklyResetModal = ({ goals, onClose, onConfirm }: WeeklyResetModal
 				</>
 			)}
 			<div className={classes.actionButtons}>
-				<button onClick={onConfirm} className={classes.confirmButton}>
-					Start new week
-				</button>
 				<button onClick={onClose} className={classes.cancelButton}>
 					Cancel
+				</button>
+				<button onClick={onConfirm} className={classes.confirmButton}>
+					Start new week
 				</button>
 			</div>
 		</div>

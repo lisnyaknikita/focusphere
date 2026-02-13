@@ -20,6 +20,7 @@ export const TimeBlockModal = ({ onClose }: TimeBlockModalProps) => {
 					aria-label='Time block'
 					value={form.title}
 					onChange={e => setFormField('title', e.target.value)}
+					autoFocus
 				/>
 				<DateTime form={form} setFormField={setFormField} />
 				<ColorPicker form={form} setFormField={setFormField} />

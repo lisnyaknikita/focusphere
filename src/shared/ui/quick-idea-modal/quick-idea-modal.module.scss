@@ -1,35 +1,29 @@
 .modalInner {
-	width: 400px;
+	width: 255px;
 	position: relative;
-
-	> h2 {
-		text-align: center;
-		font-size: 24px;
-		color: var(--text);
-		margin-bottom: 20px;
-	}
 }
 
-.innerTitle {
+.title {
 	font-size: 18px;
+	font-weight: 400;
 	color: var(--text);
-	text-align: center;
-	margin-bottom: 10px;
-}
-
-.goalsList {
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
 	margin-bottom: 20px;
-
-	> li {
-		font-size: 16px;
-		color: var(--text);
-	}
 }
 
-.actionButtons {
+.notesContent {
+	width: 100%;
+	border: 1px solid var(--btn-border);
+	background-color: transparent;
+	outline: none;
+	font-size: 16px;
+	font-family: inherit;
+	color: var(--text);
+	padding: 5px;
+	resize: vertical;
+	margin-bottom: 20px;
+}
+
+.buttons {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;

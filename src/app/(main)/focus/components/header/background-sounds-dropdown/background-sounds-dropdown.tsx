@@ -1,5 +1,6 @@
 'use client'
 
+import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
@@ -10,8 +11,10 @@ const backgroundSounds = ['Pink noise', 'Brown noise', 'Lofi']
 export const BackgroundSoundsDropdown = () => {
 	const [open, setOpen] = useState(false)
 
+	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
+
 	return (
-		<div className={clsx(classes.backgroundSounds, open && 'opened')}>
+		<div ref={dropdownRef} className={clsx(classes.backgroundSounds, open && 'opened')}>
 			<button className={classes.trigger} onClick={() => setOpen(prev => !prev)}>
 				<span>Background sound</span>
 				<svg width='11' height='6' viewBox='0 0 11 6' fill='none' xmlns='http://www.w3.org/2000/svg'>

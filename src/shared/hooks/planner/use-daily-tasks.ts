@@ -90,8 +90,6 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 	}
 
 	const handleDeleteTask = async (taskId: string) => {
-		if (!window.confirm('Are you sure you want to delete this task?')) return
-
 		const previousTasks = [...tasks]
 
 		try {

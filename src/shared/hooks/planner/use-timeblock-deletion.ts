@@ -12,11 +12,6 @@ interface DeletionDependencies {
 export const useTimeBlockDeletion = ({ eventsService, eventModal }: DeletionDependencies) => {
 	const handleDelete = useCallback(
 		async (id: string) => {
-			const confirmed = window.confirm('Delete this time block?')
-			if (!confirmed) {
-				return
-			}
-
 			try {
 				await deleteTimeBlock(id)
 
