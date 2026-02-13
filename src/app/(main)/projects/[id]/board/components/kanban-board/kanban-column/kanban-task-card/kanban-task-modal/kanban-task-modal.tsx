@@ -1,11 +1,10 @@
 import { getUserAvatar } from '@/lib/appwrite'
-import { KanbanTask, TaskPriority } from '@/shared/types/kanban-task'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import Image from 'next/image'
 import { useState } from 'react'
+import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
 import classes from './kanban-task-modal.module.scss'
-
-const PRIORITIES: TaskPriority[] = ['low', 'medium', 'high', 'urgent']
 
 interface KanbanTaskModalProps {
 	task: KanbanTask
@@ -74,7 +73,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 
 					<div className={classes.detailItem}>
 						<span className={classes.label}>Priority</span>
-						<select
+						{/* <select
 							className={classes.prioritySelect}
 							value={task.priority || 'medium'}
 							onChange={e => onUpdate(task.$id, { priority: e.target.value as TaskPriority })}
@@ -84,7 +83,11 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 									{p.charAt(0).toUpperCase() + p.slice(1)}
 								</option>
 							))}
-						</select>
+						</select> */}
+						<PriorityDropdown
+							value={task.priority || 'medium'}
+							onChange={newPriority => onUpdate(task.$id, { priority: newPriority })}
+						/>
 					</div>
 
 					<button className={classes.deleteButton} onClick={() => setIsDeleteConfirmOpen(true)}>
