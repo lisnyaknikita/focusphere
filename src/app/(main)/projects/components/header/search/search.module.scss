@@ -1,41 +1,67 @@
-.search {
-	cursor: pointer;
+.searchWrapper {
 	margin-left: auto;
 	margin-right: 10px;
 	display: flex;
 	align-items: center;
-	color: var(--text);
-	background-color: transparent;
 	border: 1px solid var(--btn-border);
 	border-radius: 5px;
-	padding: 5px 10px;
-	font-family: inherit;
 	overflow: hidden;
-	transition: background-color 0.2s;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	width: 40px;
+
+	&:global(.expanded) {
+		width: 250px;
+		background-color: var(--background);
+	}
 
 	&:hover {
-		background-color: var(--secondary);
+		border-color: var(--text);
 	}
 }
 
-.searchInput {
+.searchIcon {
+	flex-shrink: 0;
+	width: 40px;
+	height: 25px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
 	color: var(--text);
+	cursor: pointer;
+	transition: color 0.2s;
+}
+
+.searchInput {
+	flex: 1;
+	border: none;
 	background-color: transparent;
+	color: var(--text);
+	font-family: inherit;
+	font-size: 14px;
+	padding: 5px 10px 5px 0;
+	outline: none;
+}
+
+.clearBtn {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	margin-right: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--secondary);
 	border: none;
 	border-radius: 5px;
-	font-family: inherit;
-	width: 0;
-	opacity: 0;
-	visibility: hidden;
-	padding: 0;
-	transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+	color: var(--text);
+	cursor: pointer;
+	font-size: 16px;
+	transition: all 0.2s;
 
-	&:global(.active) {
-		outline: none;
-		opacity: 1;
-		visibility: visible;
-		padding: 0 5px;
-		width: 150px;
-		margin-right: 5px;
+	&:hover {
+		background-color: var(--hover);
+		color: var(--text);
 	}
 }

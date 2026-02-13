@@ -12,11 +12,6 @@ interface DeletionDependencies {
 export const useEventDeletion = ({ eventsService, eventModal }: DeletionDependencies) => {
 	const handleDelete = useCallback(
 		async (id: string) => {
-			const confirmed = window.confirm('Delete this event?')
-			if (!confirmed) {
-				return
-			}
-
 			try {
 				await deleteEvent(id)
 
