@@ -9,9 +9,9 @@ import { BeatLoader } from 'react-spinners'
 import 'temporal-polyfill/global'
 import { Tabs } from '../../../shared/tabs/tabs'
 import { EventModal } from './components/event-modal/event-modal'
-import { CreateButton } from './components/header/create-button/create-button'
 import { CalendarInner } from './components/main/calendar/calendar'
 
+import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
 import { CalendarView } from './constants/calendar.constants'
@@ -78,7 +78,7 @@ export default function Calendar() {
 					<>
 						<header className={classes.header}>
 							<Tabs tabs={['month', 'week', 'day']} activeTab={view} onChange={setView} />
-							<CreateButton setIsModalVisible={setIsModalVisible} />
+							<CreateButton setIsModalVisible={setIsModalVisible} text='Add event' />
 						</header>
 						<main className={classes.calendar}>
 							<CalendarInner events={events} view={view} />
