@@ -4,12 +4,12 @@ import { GeneralNotesProvider } from '@/shared/context/general-notes-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
+import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
 import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
-import { CreateButton } from './components/header/create-button/create-button'
 import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
 import { SearchInput } from './components/header/search-input/search-input'
 import classes from './page.module.scss'
@@ -34,7 +34,7 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 			<div className={classes.notesPage}>
 				<header className={classes.header}>
 					<SearchInput />
-					<CreateButton setIsNewNoteModalOpened={setIsNewNoteModalOpened} />
+					<CreateButton setIsModalVisible={setIsNewNoteModalOpened} text='New note' />
 				</header>
 
 				<main className={classes.notes}>

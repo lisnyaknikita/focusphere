@@ -15,9 +15,10 @@ import { CalendarView } from '../../../constants/calendar.constants'
 interface CalendarInnerProps {
 	events: CalendarEvent[]
 	view: CalendarView
+	getEvents: () => void
 }
 
-export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
+export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) => {
 	const { calendar, eventsService, setView, eventModal } = useCalendarApp({ defaultView: view })
 	const { handleDelete } = useEventDeletion({ eventsService, eventModal })
 	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
@@ -32,10 +33,14 @@ export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
 	const customComponents = useMemo(
 		() => ({
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
-				<EventInfoModal event={calendarEvent} onConfirmDelete={() => setEventToDelete(calendarEvent)} />
+				<EventInfoModal
+					event={calendarEvent}
+					onConfirmDelete={() => setEventToDelete(calendarEvent)}
+					onUpdated={() => getEvents()}
+				/>
 			),
 		}),
-		[]
+		[getEvents]
 	)
 
 	useEffect(() => {

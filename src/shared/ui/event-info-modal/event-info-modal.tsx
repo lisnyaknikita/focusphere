@@ -1,13 +1,25 @@
+import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/components/color-picker/color-picker'
+import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
+import { Description } from '@/app/(main)/calendar/components/event-modal/components/description/description'
+import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
+import { useState } from 'react'
 import classes from './event-info-modal.module.scss'
 
 interface EventInfoModalProps {
 	event: SXEvent
 	onConfirmDelete?: (eventId: string) => Promise<void> | void
+	onUpdated?: () => void
 }
 
-export const EventInfoModal = ({ event, onConfirmDelete }: EventInfoModalProps) => {
+export const EventInfoModal = ({ event, onConfirmDelete, onUpdated }: EventInfoModalProps) => {
+	const [isEditing, setIsEditing] = useState(false)
+	const { form, setFormField, handleSubmit } = useEventForm(() => {
+		setIsEditing(false)
+		onUpdated?.()
+	}, event)
+
 	const formattedDate = formatDateRange(event.start, event.end)
 
 	const isReadOnly = !onConfirmDelete
@@ -18,12 +30,39 @@ export const EventInfoModal = ({ event, onConfirmDelete }: EventInfoModalProps) 
 		}
 	}
 
+	if (isEditing) {
+		return (
+			<div className={classes.modalInner}>
+				<form onSubmit={handleSubmit} className={classes.editForm}>
+					<input
+						className={classes.titleInput}
+						value={form.title}
+						onChange={e => setFormField('title', e.target.value)}
+						autoFocus
+					/>
+					<DateTime form={form} setFormField={setFormField} />
+					<Description form={form} setFormField={setFormField} />
+					<ColorPicker form={form} setFormField={setFormField} />
+
+					<div className={classes.actions}>
+						<button type='submit' className={classes.saveBtn}>
+							Save
+						</button>
+						<button type='button' className={classes.cancelBtn} onClick={() => setIsEditing(false)}>
+							Cancel
+						</button>
+					</div>
+				</form>
+			</div>
+		)
+	}
+
 	return (
 		<div className={classes.modalInner}>
 			<div className={classes.modalButtons}>
 				{!isReadOnly && (
 					<>
-						<button className={classes.editButton}>
+						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<svg fill='none' viewBox='0 0 19 23' xmlns='http://www.w3.org/2000/svg'>
 								<path
 									d='m14.473 5.0741c-0.3682-0.30848-0.8438-0.45823-1.3223-0.41637-0.4786 0.04187-0.9209 0.27193-1.23 0.63966l-8.0978 9.6505 0.22329 2.5522 2.5523-0.2233 8.0978-9.6505c0.3084-0.36826 0.458-0.84381 0.4162-1.3223-0.0419-0.47848-0.2719-0.92082-0.6395-1.2299zm-8.3721 11.242-1.1456 0.1003-0.10023-1.1457 6.0502-7.2047 1.2459 1.0454-6.0502 7.2047zm7.8295-9.3328-1.1395 1.358-1.2434-1.0456 1.1392-1.3559c0.1386-0.16521 0.3372-0.26858 0.552-0.28738 0.2149-0.0188 0.4284 0.04852 0.5936 0.18715s0.2686 0.33721 0.2874 0.55205c0.0188 0.21485-0.0485 0.42836-0.1872 0.59357l-0.0021-0.00182z'
