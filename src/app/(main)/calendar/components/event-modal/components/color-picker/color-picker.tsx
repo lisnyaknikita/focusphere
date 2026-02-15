@@ -21,14 +21,22 @@ export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setForm
 
 	const selectedColor = form.color
 
-	const handleColorSelect = (color: string) => {
+	const handleColorSelect = (e: React.MouseEvent, color: string) => {
+		e.stopPropagation()
+
 		setFormField('color', color)
 		setOpen(false)
 	}
 
+	const handleTriggerClick = (e: React.MouseEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
+		setOpen(prev => !prev)
+	}
+
 	return (
 		<div className={classes.colorPicker} ref={dropdownRef}>
-			<button className={classes.triggerButton} onClick={() => setOpen(prev => !prev)} type='button'>
+			<button className={classes.triggerButton} onClick={handleTriggerClick} type='button'>
 				<span className={classes.selectedColorCircle} style={{ backgroundColor: selectedColor }}></span>
 				<span className={classes.arrow}>
 					{open ? (
@@ -57,7 +65,7 @@ export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setForm
 							key={color}
 							className={classes.colorOption}
 							style={{ backgroundColor: color }}
-							onClick={() => handleColorSelect(color)}
+							onClick={e => handleColorSelect(e, color)}
 						/>
 					))}
 				</div>

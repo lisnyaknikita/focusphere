@@ -56,7 +56,7 @@ export default function Calendar() {
 							<CreateButton setIsModalVisible={setIsModalVisible} text='Add event' />
 						</header>
 						<main className={classes.calendar}>
-							<CalendarInner events={events} view={view} />
+							<CalendarInner events={events} view={view} getEvents={getEvents} />
 						</main>
 					</>
 				)}
