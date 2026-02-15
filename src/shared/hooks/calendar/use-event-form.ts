@@ -1,7 +1,9 @@
 import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
-import { createEvent } from '@/lib/events/events'
+import { createEvent, updateEvent } from '@/lib/events/events'
 import { EventForm } from '@/shared/types/event'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import { formatDate, formatTime, toJSDate } from '@/shared/utils/temporal-adapter/temporal-adapter'
+import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
 
 const getInitialTimeRange = () => {
@@ -31,8 +33,22 @@ const createISOStringFromForm = (dateString: string, timeString: string): string
 	return date.toISOString()
 }
 
-export const useEventForm = (onSuccess: () => void) => {
+export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
 	const [form, setForm] = useState<EventForm>(() => {
+		if (initialEvent) {
+			const startDate = toJSDate(initialEvent.start)
+			const endDate = toJSDate(initialEvent.end)
+
+			return {
+				title: initialEvent.title || '',
+				description: initialEvent.description as string | undefined,
+				date: formatDate(startDate),
+				startTime: formatTime(startDate),
+				endTime: formatTime(endDate),
+				color: (initialEvent.color as string) || '#D79716',
+			}
+		}
+
 		const { start, end } = getInitialTimeRange()
 
 		return {
@@ -56,7 +72,7 @@ export const useEventForm = (onSuccess: () => void) => {
 		const endDateISO = createISOStringFromForm(form.date, form.endTime)
 		const userId = await getCurrentUserId()
 
-		await createEvent({
+		const eventData = {
 			title: form.title,
 			description: form.description,
 			startDate: startDateISO,
@@ -64,9 +80,18 @@ export const useEventForm = (onSuccess: () => void) => {
 			color: form.color,
 			calendarId: getCalendarIdByColor(form.color),
 			userId,
-		})
+		}
 
-		onSuccess()
+		try {
+			if (initialEvent?.id) {
+				await updateEvent(String(initialEvent.id), eventData)
+			} else {
+				await createEvent(eventData)
+			}
+			onSuccess()
+		} catch (error) {
+			console.error('Save failed:', error)
+		}
 	}
 
 	return {
