@@ -1,6 +1,12 @@
 .modalInner {
-	width: 255px;
+	width: 400px;
 	position: relative;
+
+	:global {
+		span[class*='checkbox-card_label'] {
+			max-width: 320px !important;
+		}
+	}
 }
 
 .title {
