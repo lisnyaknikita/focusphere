@@ -64,7 +64,7 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 	}
 
 	return (
-		<div className={classes.wrapper}>
+		<div className={classes.wrapper} title={username}>
 			{isEditing ? (
 				<input
 					ref={inputRef}

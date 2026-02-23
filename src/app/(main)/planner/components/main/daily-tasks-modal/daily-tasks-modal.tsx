@@ -11,7 +11,7 @@ interface DailyTasksModalProps {
 	date: string
 	onClose: () => void
 }
-
+//TODO: pull reaquest, main branch updates, then - team project creation
 export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 	const [taskToDelete, setTaskToDelete] = useState<DailyTask | null>(null)
 
