@@ -1,7 +1,7 @@
 import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/components/color-picker/color-picker'
 import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
 import { Description } from '@/app/(main)/calendar/components/event-modal/components/description/description'
-import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
@@ -11,14 +11,19 @@ interface EventInfoModalProps {
 	event: SXEvent
 	onConfirmDelete?: (eventId: string) => Promise<void> | void
 	onUpdated?: () => void
+	actions?: CalendarActions
 }
 
-export const EventInfoModal = ({ event, onConfirmDelete, onUpdated }: EventInfoModalProps) => {
+export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, actions }: EventInfoModalProps) => {
 	const [isEditing, setIsEditing] = useState(false)
-	const { form, setFormField, handleSubmit } = useEventForm(() => {
-		setIsEditing(false)
-		onUpdated?.()
-	}, event)
+	const { form, setFormField, handleSubmit } = useEventForm(
+		() => {
+			setIsEditing(false)
+			onUpdated?.()
+		},
+		event,
+		actions
+	)
 
 	const formattedDate = formatDateRange(event.start, event.end)
 

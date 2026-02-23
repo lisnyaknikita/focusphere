@@ -68,6 +68,7 @@ export default function Planner() {
 							eventsService={eventsService}
 							eventModal={eventModal}
 							onDayClick={handleDayClick}
+							refreshTimeBlocks={refreshTimeBlocks}
 						/>
 					)}
 				</main>

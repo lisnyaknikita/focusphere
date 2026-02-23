@@ -6,6 +6,7 @@ import { ScheduleXCalendar } from '@schedule-x/react'
 
 import '@schedule-x/theme-default/dist/index.css'
 
+import { createEvent, updateEvent } from '@/lib/events/events'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
@@ -36,7 +37,14 @@ export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) =
 				<EventInfoModal
 					event={calendarEvent}
 					onConfirmDelete={() => setEventToDelete(calendarEvent)}
-					onUpdated={() => getEvents()}
+					onUpdated={() => {
+						getEvents()
+						eventModal.close()
+					}}
+					actions={{
+						create: createEvent,
+						update: updateEvent,
+					}}
 				/>
 			),
 		}),
