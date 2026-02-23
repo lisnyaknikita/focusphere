@@ -1,3 +1,4 @@
+import { createEvent, updateEvent } from '@/lib/events/events'
 import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
@@ -9,7 +10,10 @@ interface EventModalProps {
 }
 
 export const EventModal = ({ onClose }: EventModalProps) => {
-	const { form, setFormField, handleSubmit } = useEventForm(onClose)
+	const { form, setFormField, handleSubmit } = useEventForm(onClose, undefined, {
+		create: createEvent,
+		update: updateEvent,
+	})
 
 	return (
 		<div className={classes.modalInner}>

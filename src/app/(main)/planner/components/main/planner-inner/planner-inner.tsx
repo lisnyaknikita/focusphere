@@ -1,3 +1,4 @@
+import { createTimeBlock, updateTimeBlock } from '@/lib/planner/planner'
 import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { useTimeBlockDeletion } from '@/shared/hooks/planner/use-timeblock-deletion'
 import { TimeBlock } from '@/shared/types/time-block'
@@ -19,6 +20,7 @@ interface PlannerInnerProps {
 	eventsService: ReturnType<typeof createEventsServicePlugin>
 	eventModal: ReturnType<typeof createEventModalPlugin>
 	onDayClick: (date: string) => void
+	refreshTimeBlocks: () => void
 }
 
 export const PlannerInner = ({
@@ -28,6 +30,7 @@ export const PlannerInner = ({
 	calendar,
 	eventsService,
 	eventModal,
+	refreshTimeBlocks,
 }: PlannerInnerProps) => {
 	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
 	const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
@@ -44,13 +47,24 @@ export const PlannerInner = ({
 	const customComponents = useMemo(
 		() => ({
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
-				<EventInfoModal event={calendarEvent} onConfirmDelete={() => setEventToDelete(calendarEvent)} />
+				<EventInfoModal
+					event={calendarEvent}
+					onConfirmDelete={() => setEventToDelete(calendarEvent)}
+					onUpdated={() => {
+						refreshTimeBlocks()
+						eventModal.close()
+					}}
+					actions={{
+						create: createTimeBlock,
+						update: updateTimeBlock,
+					}}
+				/>
 			),
 			weekGridDate: ({ date }: { date: string }) => (
 				<WeekDayHeader date={date} onDayClick={onDayClick} incompleteTasksCount={dailyTasksCountByDate[date] ?? 0} />
 			),
 		}),
-		[, onDayClick, dailyTasksCountByDate]
+		[, onDayClick, dailyTasksCountByDate, refreshTimeBlocks]
 	)
 
 	return (

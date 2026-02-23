@@ -1,10 +1,14 @@
 import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
-import { createEvent, updateEvent } from '@/lib/events/events'
-import { EventForm } from '@/shared/types/event'
+import { CreateEventPayload, EventForm } from '@/shared/types/event'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { formatDate, formatTime, toJSDate } from '@/shared/utils/temporal-adapter/temporal-adapter'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
+
+export interface CalendarActions {
+	create: (data: CreateEventPayload) => Promise<unknown>
+	update: (id: string, data: Partial<Omit<CreateEventPayload, 'userId'>>) => Promise<unknown>
+}
 
 const getInitialTimeRange = () => {
 	const now = new Date()
@@ -33,7 +37,7 @@ const createISOStringFromForm = (dateString: string, timeString: string): string
 	return date.toISOString()
 }
 
-export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
+export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent, actions?: CalendarActions) => {
 	const [form, setForm] = useState<EventForm>(() => {
 		if (initialEvent) {
 			const startDate = toJSDate(initialEvent.start)
@@ -67,12 +71,13 @@ export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
+		if (!actions) return
 
 		const startDateISO = createISOStringFromForm(form.date, form.startTime)
 		const endDateISO = createISOStringFromForm(form.date, form.endTime)
 		const userId = await getCurrentUserId()
 
-		const eventData = {
+		const eventData: CreateEventPayload = {
 			title: form.title,
 			description: form.description,
 			startDate: startDateISO,
@@ -84,9 +89,18 @@ export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
 
 		try {
 			if (initialEvent?.id) {
-				await updateEvent(String(initialEvent.id), eventData)
+				const updateData: Partial<Omit<CreateEventPayload, 'userId'>> = {
+					title: eventData.title,
+					description: eventData.description,
+					startDate: eventData.startDate,
+					endDate: eventData.endDate,
+					color: eventData.color,
+					calendarId: eventData.calendarId,
+				}
+
+				await actions.update(String(initialEvent.id), updateData)
 			} else {
-				await createEvent(eventData)
+				await actions.create(eventData)
 			}
 			onSuccess()
 		} catch (error) {

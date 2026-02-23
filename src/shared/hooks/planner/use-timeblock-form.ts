@@ -1,7 +1,9 @@
 import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
-import { createTimeBlock } from '@/lib/planner/planner'
+import { createTimeBlock, updateTimeBlock } from '@/lib/planner/planner'
 import { TimeBlockForm } from '@/shared/types/time-block'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import { formatDate, formatTime, toJSDate } from '@/shared/utils/temporal-adapter/temporal-adapter'
+import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
 
 const getInitialTimeRange = () => {
@@ -31,8 +33,21 @@ const createISOStringFromForm = (dateString: string, timeString: string): string
 	return date.toISOString()
 }
 
-export const useTimeBlockForm = (onSuccess: () => void) => {
+export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
 	const [form, setForm] = useState<TimeBlockForm>(() => {
+		if (initialEvent) {
+			const startDate = toJSDate(initialEvent.start)
+			const endDate = toJSDate(initialEvent.end)
+
+			return {
+				title: initialEvent.title || '',
+				date: formatDate(startDate),
+				startTime: formatTime(startDate),
+				endTime: formatTime(endDate),
+				color: (initialEvent.color as string) || '#D79716',
+			}
+		}
+
 		const { start, end } = getInitialTimeRange()
 
 		return {
@@ -55,16 +70,25 @@ export const useTimeBlockForm = (onSuccess: () => void) => {
 		const endDateISO = createISOStringFromForm(form.date, form.endTime)
 		const userId = await getCurrentUserId()
 
-		await createTimeBlock({
+		const timeBlockData = {
 			title: form.title,
 			startDate: startDateISO,
 			endDate: endDateISO,
 			color: form.color,
 			calendarId: getCalendarIdByColor(form.color),
 			userId,
-		})
+		}
 
-		onSuccess()
+		try {
+			if (initialEvent?.id) {
+				await updateTimeBlock(String(initialEvent.id), timeBlockData)
+			} else {
+				await createTimeBlock(timeBlockData)
+			}
+			onSuccess()
+		} catch (error) {
+			console.error('Save failed:', error)
+		}
 	}
 
 	return {
