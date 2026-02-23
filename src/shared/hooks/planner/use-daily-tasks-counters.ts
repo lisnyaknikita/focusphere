@@ -15,7 +15,7 @@ export const useDailyTasksCounters = () => {
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
-				queries: [Query.equal('userId', userId), Query.equal('isCompleted', false)],
+				queries: [Query.equal('userId', userId), Query.equal('isCompleted', false), Query.limit(999)],
 			})
 
 			const map: Record<string, number> = {}
