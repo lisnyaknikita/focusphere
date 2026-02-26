@@ -1,6 +1,6 @@
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { CreateProjectPayload, Project } from '@/shared/types/project'
-import { Client, ID, TablesDB } from 'appwrite'
+import { Client, ID, Permission, Role, TablesDB } from 'appwrite'
 import { deleteKanbanTask, getKanbanTasks } from './kanban-board-tasks/tasks'
 
 const client = new Client()
@@ -10,11 +10,23 @@ const client = new Client()
 const tablesDB = new TablesDB(client)
 
 export const createProject = async (data: CreateProjectPayload) => {
+	const permissions = [
+		Permission.read(Role.user(data.ownerId)),
+		Permission.update(Role.user(data.ownerId)),
+		Permission.delete(Role.user(data.ownerId)),
+	]
+
+	if (data.type === 'team' && data.teamId) {
+		permissions.push(Permission.read(Role.team(data.teamId)))
+		permissions.push(Permission.update(Role.team(data.teamId)))
+	}
+
 	return tablesDB.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 		rowId: ID.unique(),
 		data,
+		permissions,
 	})
 }
 
