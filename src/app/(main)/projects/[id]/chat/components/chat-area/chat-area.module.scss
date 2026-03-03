@@ -52,6 +52,11 @@
 	}
 }
 
+.main {
+	max-height: 477px;
+	overflow-y: auto;
+}
+
 .messages {
 	padding: 0 15px;
 	display: flex;
@@ -70,6 +75,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	min-width: 0;
 }
 
 .messageHeader {
@@ -94,4 +100,12 @@
 	font-size: 16px;
 	font-weight: 400;
 	color: color-mix(in srgb, var(--text) 80%, transparent);
+	word-break: break-word;
+	overflow-wrap: break-word;
+	white-space: pre-wrap;
+
+	> ul,
+	ol {
+		padding-left: 16px;
+	}
 }
