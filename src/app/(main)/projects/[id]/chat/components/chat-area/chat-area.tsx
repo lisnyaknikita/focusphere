@@ -1,18 +1,29 @@
 import { ChatChannel, ChatMessage } from '@/shared/types/chat'
-import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import classes from './chat-area.module.scss'
 import { Editor } from './components/editor/editor'
 import { Header } from './components/header/header'
+import { MessageItem } from './components/message-item/message-item'
 
 interface ChatAreaProps {
 	activeChannel: ChatChannel | null
 	messages: ChatMessage[]
 	onSendMessage: (content: string) => void
+	onUpdateMessage: (id: string, content: string) => void
+	onDeleteMessage: (id: string) => void
+	currentUserId: string | undefined
 	isLoading: boolean
 }
 
-export const ChatArea = ({ activeChannel, messages, onSendMessage, isLoading }: ChatAreaProps) => {
+export const ChatArea = ({
+	activeChannel,
+	messages,
+	onSendMessage,
+	onUpdateMessage,
+	onDeleteMessage,
+	currentUserId,
+	isLoading,
+}: ChatAreaProps) => {
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const hasScrolledRef = useRef<string | null>(null)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
@@ -60,25 +71,19 @@ export const ChatArea = ({ activeChannel, messages, onSendMessage, isLoading }: 
 								<div className={classes.loading}>Loading messages...</div>
 							) : (
 								<>
-									{messages.map(message => (
-										<div className={classes.message} key={message.$id}>
-											<div className={classes.authorAvatar}>
-												<Image src={message.senderAvatar || '/avatar.jpg'} alt='avatar' width={46} height={46} />
-											</div>
-											<div className={classes.messageContent}>
-												<div className={classes.messageHeader}>
-													<div className={classes.name}>{message.senderName}</div>
-													<time>
-														{new Date(message.$createdAt).toLocaleTimeString([], {
-															hour: '2-digit',
-															minute: '2-digit',
-														})}
-													</time>
-												</div>
-												<div className={classes.messageText} dangerouslySetInnerHTML={{ __html: message.content }} />
-											</div>
-										</div>
-									))}
+									{messages.map((message, index) => {
+										const isContinuation = index > 0 && messages[index - 1].senderId === message.senderId
+										return (
+											<MessageItem
+												key={message.$id}
+												isContinuation={isContinuation}
+												message={message}
+												currentUserId={currentUserId}
+												onUpdate={onUpdateMessage}
+												onDelete={onDeleteMessage}
+											/>
+										)
+									})}
 									<div ref={messagesEndRef} style={{ height: '1px' }} />
 								</>
 							)}
@@ -86,7 +91,6 @@ export const ChatArea = ({ activeChannel, messages, onSendMessage, isLoading }: 
 					</>
 				)}
 			</main>
-
 			{activeChannel && <Editor onSend={onSendMessage} disabled={false} />}
 		</div>
 	)

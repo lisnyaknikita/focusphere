@@ -38,6 +38,9 @@ export default function ChatPage() {
 					activeChannel={chat.activeChannel}
 					messages={chat.messages}
 					onSendMessage={handleSendMessage}
+					onUpdateMessage={chat.updateMessage}
+					onDeleteMessage={chat.deleteMessage}
+					currentUserId={user?.$id}
 					isLoading={chat.isLoadingMessages}
 				/>
 			</div>

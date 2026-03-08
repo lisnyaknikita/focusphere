@@ -48,16 +48,12 @@ export const getMessages = async (channelId: string) => {
 	})
 }
 
-export const sendMessage = async (payload: CreateMessagePayload, teamId?: string) => {
+export const sendMessage = async (payload: CreateMessagePayload) => {
 	const permissions = [
 		Permission.read(Role.any()),
 		Permission.update(Role.user(payload.senderId)),
 		Permission.delete(Role.user(payload.senderId)),
 	]
-
-	if (teamId) {
-		permissions.push(Permission.read(Role.team(teamId)))
-	}
 
 	return tablesDB.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
@@ -65,5 +61,22 @@ export const sendMessage = async (payload: CreateMessagePayload, teamId?: string
 		rowId: ID.unique(),
 		data: payload,
 		permissions,
+	})
+}
+
+export const updateMessage = async (messageId: string, content: string) => {
+	return tablesDB.updateRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: MESSAGES_TABLE,
+		rowId: messageId,
+		data: { content },
+	})
+}
+
+export const deleteMessage = async (messageId: string) => {
+	return tablesDB.deleteRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: MESSAGES_TABLE,
+		rowId: messageId,
 	})
 }

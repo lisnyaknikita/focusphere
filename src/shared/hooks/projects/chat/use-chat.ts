@@ -1,4 +1,11 @@
-import { createChannel, getChannels, getMessages, sendMessage } from '@/lib/projects/chat/chat'
+import {
+	createChannel,
+	deleteMessage,
+	getChannels,
+	getMessages,
+	sendMessage,
+	updateMessage,
+} from '@/lib/projects/chat/chat'
 import { ChatChannel, ChatMessage, CreateChannelPayload } from '@/shared/types/chat'
 import { Project } from '@/shared/types/project'
 import { useCallback, useEffect, useState } from 'react'
@@ -74,20 +81,43 @@ export const useChat = (project: Project | null) => {
 		setMessages(prev => [...prev, optimisticMessage])
 
 		try {
-			await sendMessage(
-				{
-					content,
-					channelId: activeChannel.$id,
-					senderId: userId,
-					senderName: userName,
-					senderAvatar: avatar,
-				},
-				project.teamId
-			)
+			await sendMessage({
+				content,
+				channelId: activeChannel.$id,
+				senderId: userId,
+				senderName: userName,
+				senderAvatar: avatar,
+			})
 			await refreshMessages(activeChannel.$id, true)
 		} catch (err) {
 			setMessages(prev => prev.filter(m => m.$id !== optimisticMessage.$id))
 			console.error('Failed to send message:', err)
+		}
+	}
+
+	const handleUpdateMessage = async (messageId: string, newContent: string) => {
+		const oldMessages = [...messages]
+		setMessages(prev =>
+			prev.map(m => (m.$id === messageId ? { ...m, content: newContent, $updatedAt: new Date().toISOString() } : m))
+		)
+
+		try {
+			await updateMessage(messageId, newContent)
+		} catch (err) {
+			setMessages(oldMessages)
+			console.error('Failed to update message:', err)
+		}
+	}
+
+	const handleDeleteMessage = async (messageId: string) => {
+		const oldMessages = [...messages]
+		setMessages(prev => prev.filter(m => m.$id !== messageId))
+
+		try {
+			await deleteMessage(messageId)
+		} catch (err) {
+			setMessages(oldMessages)
+			console.error('Failed to delete message:', err)
 		}
 	}
 
@@ -117,6 +147,8 @@ export const useChat = (project: Project | null) => {
 		isLoadingMessages,
 		createChannel: handleCreateChannel,
 		sendMessage: handleSendMessage,
+		updateMessage: handleUpdateMessage,
+		deleteMessage: handleDeleteMessage,
 		refreshChannels,
 	}
 }
