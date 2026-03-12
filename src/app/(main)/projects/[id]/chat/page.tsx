@@ -29,10 +29,13 @@ export default function ChatPage() {
 		<div className={classes.chatPage}>
 			<div className={classes.inner}>
 				<ChatSidebar
+					teammates={chat.teammates}
 					channels={chat.channels}
 					activeChannelId={chat.activeChannel?.$id}
 					onSelectChannel={chat.setActiveChannel}
 					projectTitle={project.title}
+					onCreateChannel={chat.createChannel}
+					currentUserId={user?.$id}
 				/>
 				<ChatArea
 					activeChannel={chat.activeChannel}
@@ -40,6 +43,8 @@ export default function ChatPage() {
 					onSendMessage={handleSendMessage}
 					onUpdateMessage={chat.updateMessage}
 					onDeleteMessage={chat.deleteMessage}
+					onUpdateChannel={chat.updateChannel}
+					onDeleteChannel={chat.deleteChannel}
 					currentUserId={user?.$id}
 					isLoading={chat.isLoadingMessages}
 				/>

@@ -8,9 +8,11 @@ import classes from './header.module.scss'
 
 interface HeaderProps {
 	activeChannel: ChatChannel | null
+	onUpdateChannel: (id: string, name: string) => Promise<void>
+	onDeleteChannel: (id: string) => Promise<void>
 }
 
-export const Header = ({ activeChannel }: HeaderProps) => {
+export const Header = ({ activeChannel, onUpdateChannel, onDeleteChannel }: HeaderProps) => {
 	const [isChannelInfoOpened, setIsChannelInfoOpened] = useState(false)
 
 	if (!activeChannel) return <header className={classes.header} />
@@ -35,7 +37,12 @@ export const Header = ({ activeChannel }: HeaderProps) => {
 				</button>
 			</header>
 			<Modal isVisible={isChannelInfoOpened} onClose={() => setIsChannelInfoOpened(false)}>
-				<ChannelInfoModal channel={activeChannel} onClose={() => setIsChannelInfoOpened(false)} />
+				<ChannelInfoModal
+					channel={activeChannel}
+					onClose={() => setIsChannelInfoOpened(false)}
+					onUpdate={onUpdateChannel}
+					onDelete={onDeleteChannel}
+				/>
 			</Modal>
 		</>
 	)

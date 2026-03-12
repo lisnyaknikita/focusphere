@@ -11,6 +11,8 @@ interface ChatAreaProps {
 	onSendMessage: (content: string) => void
 	onUpdateMessage: (id: string, content: string) => void
 	onDeleteMessage: (id: string) => void
+	onUpdateChannel: (id: string, name: string) => Promise<void>
+	onDeleteChannel: (id: string) => Promise<void>
 	currentUserId: string | undefined
 	isLoading: boolean
 }
@@ -21,6 +23,8 @@ export const ChatArea = ({
 	onSendMessage,
 	onUpdateMessage,
 	onDeleteMessage,
+	onUpdateChannel,
+	onDeleteChannel,
 	currentUserId,
 	isLoading,
 }: ChatAreaProps) => {
@@ -47,13 +51,14 @@ export const ChatArea = ({
 
 		prevMessagesLengthRef.current = messages.length
 	}, [messages, isLoading, activeChannel?.$id])
-
+	//TODO: separate messages by date(divider)
+	//TODO: update names in chat when user edited it
 	return (
 		<div className={classes.chatArea}>
-			<Header activeChannel={activeChannel} />
-			<main className={classes.main} style={{ flex: 1 }}>
+			<Header activeChannel={activeChannel} onUpdateChannel={onUpdateChannel} onDeleteChannel={onDeleteChannel} />
+			<main className={classes.main}>
 				{!activeChannel ? (
-					<div className={classes.emptyState}>Select a channel to start chatting</div>
+					<div className={classes.emptyState}>Select a channel to start a conversation, or create your first one</div>
 				) : (
 					<>
 						<div className={classes.chatInfo}>

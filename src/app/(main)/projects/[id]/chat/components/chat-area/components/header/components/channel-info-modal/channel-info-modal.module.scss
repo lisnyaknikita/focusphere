@@ -46,6 +46,19 @@
 	margin-bottom: 30px;
 }
 
+.input {
+	width: 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	border-radius: 5px;
+	border: 1px solid var(--btn-border);
+	background-color: transparent;
+	padding: 20px 20px;
+	font-family: inherit;
+	margin-bottom: 30px;
+}
+
 .channelName {
 	display: flex;
 	flex-direction: column;

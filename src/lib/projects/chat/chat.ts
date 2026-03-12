@@ -1,14 +1,19 @@
 import { CreateChannelPayload, CreateMessagePayload } from '@/shared/types/chat'
-import { Client, ID, Permission, Query, Role, TablesDB } from 'appwrite'
+import { Client, ID, Permission, Query, Role, TablesDB, Teams } from 'appwrite'
 
 const client = new Client()
 	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
 	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
 
 const tablesDB = new TablesDB(client)
+const teams = new Teams(client)
 
 const CHANNELS_TABLE = process.env.NEXT_PUBLIC_TABLE_PROJECT_CHANNELS!
 const MESSAGES_TABLE = process.env.NEXT_PUBLIC_TABLE_PROJECT_MESSAGES!
+
+export const getTeamMembers = async (teamId: string) => {
+	return await teams.listMemberships(teamId)
+}
 
 export const getChannels = async (projectId: string) => {
 	return tablesDB.listRows({
@@ -37,6 +42,23 @@ export const createChannel = async (payload: CreateChannelPayload) => {
 		rowId: ID.unique(),
 		data,
 		permissions,
+	})
+}
+
+export const updateChannel = async (channelId: string, name: string) => {
+	return tablesDB.updateRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: CHANNELS_TABLE,
+		rowId: channelId,
+		data: { name },
+	})
+}
+
+export const deleteChannel = async (channelId: string) => {
+	return tablesDB.deleteRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: CHANNELS_TABLE,
+		rowId: channelId,
 	})
 }
 
