@@ -1,6 +1,7 @@
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { CreateProjectPayload, Project } from '@/shared/types/project'
 import { Client, ID, Permission, Role, TablesDB } from 'appwrite'
+import { teams } from '../appwrite'
 import { deleteKanbanTask, getKanbanTasks } from './kanban-board-tasks/tasks'
 
 const client = new Client()
@@ -80,4 +81,14 @@ export const touchProject = async (projectId: string): Promise<Project> => {
 	})
 
 	return response as unknown as Project
+}
+
+export const getTeamMembersCount = async (teamId: string) => {
+	try {
+		const response = await teams.listMemberships(teamId)
+		return response.total
+	} catch (error) {
+		console.error('Failed to fetch team members count:', error)
+		return 1
+	}
 }
