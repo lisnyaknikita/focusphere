@@ -108,13 +108,16 @@ export const useChat = (project: Project | null) => {
 		setMessages(prev => [...prev, optimisticMessage])
 
 		try {
-			await sendMessage({
-				content,
-				channelId: activeChannel.$id,
-				senderId: userId,
-				senderName: userName,
-				senderAvatar: avatar,
-			})
+			await sendMessage(
+				{
+					content,
+					channelId: activeChannel.$id,
+					senderId: userId,
+					senderName: userName,
+					senderAvatar: avatar,
+				},
+				project.teamId
+			)
 			await refreshMessages(activeChannel.$id, true)
 		} catch (err) {
 			setMessages(prev => prev.filter(m => m.$id !== optimisticMessage.$id))

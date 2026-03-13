@@ -8,9 +8,10 @@ interface ChannelInfoModalProps {
 	channel: ChatChannel
 	onUpdate: (id: string, name: string) => Promise<void>
 	onDelete: (id: string) => Promise<void>
+	isOwner: boolean
 }
 
-export const ChannelInfoModal = ({ onClose, channel, onUpdate, onDelete }: ChannelInfoModalProps) => {
+export const ChannelInfoModal = ({ onClose, channel, onUpdate, onDelete, isOwner }: ChannelInfoModalProps) => {
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const [editName, setEditName] = useState(channel.name)
@@ -46,7 +47,12 @@ export const ChannelInfoModal = ({ onClose, channel, onUpdate, onDelete }: Chann
 						autoFocus
 					/>
 				) : (
-					<button className={classes.editButton} onClick={() => setIsEditing(true)}>
+					<button
+						className={classes.editButton}
+						onClick={() => setIsEditing(true)}
+						disabled={!isOwner}
+						title={!isOwner ? 'Only the owner can edit this channel' : 'Edit'}
+					>
 						<div className={classes.channelName}>
 							<p>Channel name</p>
 							<span>#{channel.name}</span>
@@ -54,8 +60,7 @@ export const ChannelInfoModal = ({ onClose, channel, onUpdate, onDelete }: Chann
 						<div className={classes.editText}>Edit</div>
 					</button>
 				)}
-
-				<button className={classes.deleteButton} onClick={() => setIsConfirmOpen(true)}>
+				<button className={classes.deleteButton} onClick={() => setIsConfirmOpen(true)} disabled={!isOwner}>
 					<svg width='18' height='18' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<path
 							d='M12.2493 2.33333H10.441C10.3056 1.67499 9.94741 1.08345 9.42675 0.658419C8.90608 0.233386 8.2548 0.000848473 7.58268 0L6.41602 0C5.7439 0.000848473 5.09262 0.233386 4.57195 0.658419C4.05129 1.08345 3.69307 1.67499 3.55768 2.33333H1.74935C1.59464 2.33333 1.44627 2.39479 1.33687 2.50419C1.22747 2.61358 1.16602 2.76196 1.16602 2.91667C1.16602 3.07138 1.22747 3.21975 1.33687 3.32915C1.44627 3.43854 1.59464 3.5 1.74935 3.5H2.33268V11.0833C2.33361 11.8566 2.6412 12.5979 3.18798 13.1447C3.73476 13.6915 4.47609 13.9991 5.24935 14H8.74935C9.52261 13.9991 10.2639 13.6915 10.8107 13.1447C11.3575 12.5979 11.6651 11.8566 11.666 11.0833V3.5H12.2493C12.4041 3.5 12.5524 3.43854 12.6618 3.32915C12.7712 3.21975 12.8327 3.07138 12.8327 2.91667C12.8327 2.76196 12.7712 2.61358 12.6618 2.50419C12.5524 2.39479 12.4041 2.33333 12.2493 2.33333ZM6.41602 1.16667H7.58268C7.94451 1.16711 8.29734 1.27947 8.59279 1.48834C8.88824 1.69721 9.11184 1.99237 9.23293 2.33333H4.76577C4.88686 1.99237 5.11046 1.69721 5.40591 1.48834C5.70136 1.27947 6.05419 1.16711 6.41602 1.16667ZM10.4993 11.0833C10.4993 11.5475 10.315 11.9926 9.98679 12.3208C9.6586 12.649 9.21348 12.8333 8.74935 12.8333H5.24935C4.78522 12.8333 4.3401 12.649 4.01191 12.3208C3.68372 11.9926 3.49935 11.5475 3.49935 11.0833V3.5H10.4993V11.0833Z'
@@ -72,6 +77,7 @@ export const ChannelInfoModal = ({ onClose, channel, onUpdate, onDelete }: Chann
 					</svg>
 					<span>Delete channel</span>
 				</button>
+
 				<button className={classes.closeButton} onClick={() => onClose()}>
 					<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
 						<circle cx='10' cy='10' r='10' fill='#262525' />

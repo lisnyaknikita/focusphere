@@ -40,12 +40,14 @@ export default function ChatPage() {
 				<ChatArea
 					activeChannel={chat.activeChannel}
 					messages={chat.messages}
+					teammates={chat.teammates}
 					onSendMessage={handleSendMessage}
 					onUpdateMessage={chat.updateMessage}
 					onDeleteMessage={chat.deleteMessage}
 					onUpdateChannel={chat.updateChannel}
 					onDeleteChannel={chat.deleteChannel}
 					currentUserId={user?.$id}
+					currentUserName={user?.name}
 					isLoading={chat.isLoadingMessages}
 				/>
 			</div>

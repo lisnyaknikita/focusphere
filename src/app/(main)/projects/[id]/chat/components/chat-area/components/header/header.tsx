@@ -10,10 +10,12 @@ interface HeaderProps {
 	activeChannel: ChatChannel | null
 	onUpdateChannel: (id: string, name: string) => Promise<void>
 	onDeleteChannel: (id: string) => Promise<void>
+	currentUserId: string | undefined
 }
 
-export const Header = ({ activeChannel, onUpdateChannel, onDeleteChannel }: HeaderProps) => {
+export const Header = ({ activeChannel, onUpdateChannel, onDeleteChannel, currentUserId }: HeaderProps) => {
 	const [isChannelInfoOpened, setIsChannelInfoOpened] = useState(false)
+	const isOwner = activeChannel?.ownerId === currentUserId
 
 	if (!activeChannel) return <header className={classes.header} />
 
@@ -42,6 +44,7 @@ export const Header = ({ activeChannel, onUpdateChannel, onDeleteChannel }: Head
 					onClose={() => setIsChannelInfoOpened(false)}
 					onUpdate={onUpdateChannel}
 					onDelete={onDeleteChannel}
+					isOwner={isOwner}
 				/>
 			</Modal>
 		</>

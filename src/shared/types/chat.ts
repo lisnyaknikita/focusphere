@@ -5,6 +5,7 @@ export interface ChatChannel extends Models.Document {
 	projectId: string
 	description?: string
 	type: 'private' | 'public'
+	ownerId: string
 }
 
 export interface CreateChannelPayload {
@@ -22,6 +23,7 @@ export interface ChatMessage extends Models.Document {
 	senderId: string
 	senderName: string
 	senderAvatar?: string
+	isEdited?: boolean
 }
 
 export interface CreateMessagePayload {
@@ -30,4 +32,5 @@ export interface CreateMessagePayload {
 	senderId: string
 	senderName: string
 	senderAvatar?: string
+	isEdited?: boolean
 }

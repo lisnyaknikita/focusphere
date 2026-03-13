@@ -1,6 +1,7 @@
 import { ChatMessage } from '@/shared/types/chat'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
+import { Models } from 'appwrite'
 import clsx from 'clsx'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -9,20 +10,36 @@ import classes from './message-item.module.scss'
 interface MessageItemProps {
 	isContinuation: boolean
 	message: ChatMessage
+	teammates?: Models.Membership[]
 	currentUserId: string | undefined
+	currentUserName?: string
 	onUpdate: (id: string, content: string) => void
 	onDelete: (id: string) => void
 }
 
-export const MessageItem = ({ isContinuation, message, currentUserId, onUpdate, onDelete }: MessageItemProps) => {
+export const MessageItem = ({
+	isContinuation,
+	message,
+	teammates = [],
+	currentUserId,
+	currentUserName,
+	onUpdate,
+	onDelete,
+}: MessageItemProps) => {
 	const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const [editValue, setEditValue] = useState(message.content)
 
+	const currentAuthor = teammates?.find?.(m => m.userId === message.senderId)
+
+	const displayAvatar = message.senderAvatar || '/avatar.jpg'
+
 	const isAuthor = currentUserId === message.senderId
-	const isEdited = message.$updatedAt !== message.$createdAt
+	const isEdited = message.isEdited
 	const canEdit = isAuthor
 	const canDelete = isAuthor
+
+	const displayName = isAuthor ? currentUserName || message.senderName : currentAuthor?.userName || message.senderName
 
 	const handleStartEditing = () => {
 		setEditValue(stripHtml(message.content))
@@ -56,7 +73,7 @@ export const MessageItem = ({ isContinuation, message, currentUserId, onUpdate, 
 			<div className={clsx(classes.message, isContinuation && 'continuation')} key={message.$id}>
 				{!isContinuation ? (
 					<div className={classes.authorAvatar}>
-						<Image src={message.senderAvatar || '/avatar.jpg'} alt='avatar' width={46} height={46} />
+						<Image src={displayAvatar} alt='avatar' width={46} height={46} />
 					</div>
 				) : (
 					<div className={classes.avatarPlaceholder} />
@@ -64,7 +81,7 @@ export const MessageItem = ({ isContinuation, message, currentUserId, onUpdate, 
 				<div className={classes.messageContent}>
 					{!isContinuation && (
 						<div className={classes.messageHeader}>
-							<div className={classes.name}>{message.senderName}</div>
+							<div className={classes.name}>{displayName}</div>
 							<time>
 								{new Date(message.$createdAt).toLocaleTimeString([], {
 									hour: '2-digit',

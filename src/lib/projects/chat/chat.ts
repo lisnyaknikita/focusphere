@@ -55,11 +55,35 @@ export const updateChannel = async (channelId: string, name: string) => {
 }
 
 export const deleteChannel = async (channelId: string) => {
-	return tablesDB.deleteRow({
-		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-		tableId: CHANNELS_TABLE,
-		rowId: channelId,
-	})
+	try {
+		const messages = await tablesDB.listRows({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: MESSAGES_TABLE,
+			queries: [Query.equal('channelId', channelId), Query.limit(1000)],
+		})
+
+		if (messages.total > 0) {
+			await Promise.all(
+				messages.rows.map(message =>
+					tablesDB.deleteRow({
+						databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+						tableId: MESSAGES_TABLE,
+						rowId: message.$id,
+					})
+				)
+			)
+			console.log(`Deleted ${messages.total} messages from channel ${channelId}`)
+		}
+
+		return tablesDB.deleteRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: CHANNELS_TABLE,
+			rowId: channelId,
+		})
+	} catch (error) {
+		console.error('Error during channel cascading delete:', error)
+		throw error
+	}
 }
 
 export const getMessages = async (channelId: string) => {
@@ -70,18 +94,25 @@ export const getMessages = async (channelId: string) => {
 	})
 }
 
-export const sendMessage = async (payload: CreateMessagePayload) => {
+export const sendMessage = async (payload: CreateMessagePayload, teamId?: string) => {
 	const permissions = [
 		Permission.read(Role.any()),
 		Permission.update(Role.user(payload.senderId)),
 		Permission.delete(Role.user(payload.senderId)),
 	]
 
+	if (teamId) {
+		permissions.push(Permission.delete(Role.team(teamId)))
+	}
+
 	return tablesDB.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: MESSAGES_TABLE,
 		rowId: ID.unique(),
-		data: payload,
+		data: {
+			...payload,
+			isEdited: false,
+		},
 		permissions,
 	})
 }
@@ -91,7 +122,10 @@ export const updateMessage = async (messageId: string, content: string) => {
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: MESSAGES_TABLE,
 		rowId: messageId,
-		data: { content },
+		data: {
+			content,
+			isEdited: true,
+		},
 	})
 }
 
@@ -101,4 +135,28 @@ export const deleteMessage = async (messageId: string) => {
 		tableId: MESSAGES_TABLE,
 		rowId: messageId,
 	})
+}
+
+export const updateLegacyNames = async (userId: string, newName: string) => {
+	try {
+		const messages = tablesDB.listRows({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: MESSAGES_TABLE,
+			queries: [Query.equal('senderId', userId), Query.limit(100)],
+		})
+
+		const promises = (await messages).rows.map(message =>
+			tablesDB.updateRow({
+				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+				tableId: MESSAGES_TABLE,
+				rowId: message.$id,
+				data: { senderName: newName },
+			})
+		)
+
+		await Promise.all(promises)
+		console.log('All legacy messages updated!')
+	} catch (err) {
+		console.error('Migration failed:', err)
+	}
 }
