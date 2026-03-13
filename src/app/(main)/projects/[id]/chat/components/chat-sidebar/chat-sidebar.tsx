@@ -4,7 +4,7 @@ import { ChatChannel } from '@/shared/types/chat'
 import { Modal } from '@/shared/ui/modal/modal'
 import { Models } from 'appwrite'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import classes from './chat-sidebar.module.scss'
 import { CreateChannelModal } from './components/create-channel-modal/create-channel-modal'
 
@@ -45,6 +45,14 @@ export const ChatSidebar = ({
 			console.error('Create channel UI error:', err)
 		}
 	}
+
+	useEffect(() => {
+		if (channels.length === 0) {
+			setIsChannelsOpened(false)
+		} else {
+			setIsChannelsOpened(true)
+		}
+	}, [channels])
 
 	return (
 		<>
