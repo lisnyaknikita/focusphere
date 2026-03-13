@@ -1,6 +1,7 @@
 'use client'
 
 import { NewNoteModal } from '@/app/(main)/notes/components/header/new-note-modal/new-note-modal'
+import { useProject } from '@/shared/context/project-context'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { Modal } from '@/shared/ui/modal/modal'
 import { usePathname } from 'next/navigation'
@@ -10,6 +11,7 @@ import classes from './project-header.module.scss'
 
 export const ProjectHeader = ({ projectId }: { projectId: string }) => {
 	const [isNewNoteModalOpened, setIsNewNoteModalOpened] = useState(false)
+	const { project } = useProject()
 
 	const pathName = usePathname()
 
@@ -18,7 +20,7 @@ export const ProjectHeader = ({ projectId }: { projectId: string }) => {
 	return (
 		<>
 			<header className={classes.header}>
-				<ProjectTabs projectId={projectId} />
+				<ProjectTabs projectId={projectId} projectType={project?.type} />
 				{isNotesTab && <CreateButton setIsModalVisible={setIsNewNoteModalOpened} text='New note' />}
 			</header>
 			<Modal isVisible={isNewNoteModalOpened} onClose={() => setIsNewNoteModalOpened(false)}>

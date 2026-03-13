@@ -9,7 +9,10 @@
 	font-size: 24px;
 	font-weight: 700;
 	color: var(--text);
-	margin-bottom: 40px;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid var(--hover);
+	text-align: center;
 }
 
 .channels {
@@ -22,6 +25,14 @@
 	justify-content: space-between;
 	cursor: pointer;
 	margin-bottom: 10px;
+
+	&:hover {
+		> .createButton {
+			opacity: 1;
+			visibility: visible;
+			pointer-events: all;
+		}
+	}
 }
 
 .triggerTitle {
@@ -56,12 +67,6 @@
 	&:hover {
 		background-color: var(--hover);
 	}
-
-	&:global(.onhover) {
-		opacity: 1;
-		visibility: visible;
-		pointer-events: all;
-	}
 }
 
 .list {
@@ -95,6 +100,10 @@
 		background-color: var(--hover);
 	}
 
+	&:global(.active) {
+		background-color: var(--hover);
+	}
+
 	> svg {
 		margin-top: 2px;
 	}
@@ -104,9 +113,6 @@
 		font-weight: 400;
 		color: var(--text);
 	}
-}
-
-.messages {
 }
 
 .rotated {

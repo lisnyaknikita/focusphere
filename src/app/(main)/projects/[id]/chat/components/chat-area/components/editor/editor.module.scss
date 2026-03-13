@@ -11,6 +11,15 @@
 	border-radius: 5px;
 	width: 100%;
 	overflow: hidden;
+
+	:global(.ql-container) {
+		padding-top: 0 !important;
+	}
+
+	:global(.ql-editor) {
+		word-break: break-word !important;
+		overflow-wrap: break-word !important;
+	}
 }
 
 .additionalButtons {
