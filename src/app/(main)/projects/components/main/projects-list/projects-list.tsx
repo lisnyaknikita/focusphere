@@ -10,6 +10,7 @@ interface ProjectsListProps {
 
 export const ProjectsList = ({ projects, isLoading }: ProjectsListProps) => {
 	if (isLoading) return <BeatLoader color='#aaa' size={10} className={classes.loader} />
+
 	if (!isLoading && projects.length === 0) return <p className={classes.noProjectsMessage}>No projects</p>
 
 	return (

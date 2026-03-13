@@ -17,7 +17,9 @@ const VIEW_KEY = 'projectsView'
 export default function Projects() {
 	const [view, setView] = useState<ProjectsView | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
-	const { projects, isLoading } = useProjects(view ?? 'solo', searchQuery)
+	const [currentPage, setCurrentPage] = useState(1)
+
+	const { projects, total, limit, isLoading } = useProjects(view ?? 'solo', searchQuery, currentPage)
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
@@ -27,6 +29,10 @@ export default function Projects() {
 	useEffect(() => {
 		if (view) localStorage.setItem(VIEW_KEY, view)
 	}, [view])
+
+	useEffect(() => {
+		setCurrentPage(1)
+	}, [view, searchQuery])
 
 	return (
 		<div className={classes.projectsPage}>
@@ -42,7 +48,11 @@ export default function Projects() {
 					<main className={classes.projects}>
 						<ProjectsList projects={projects} isLoading={isLoading} />
 					</main>
-					<footer className={classes.pagination}>{projects.length > 0 && <Pagination />}</footer>
+					<footer className={classes.pagination}>
+						{total > limit && (
+							<Pagination currentPage={currentPage} total={total} limit={limit} onChange={setCurrentPage} />
+						)}
+					</footer>
 				</>
 			)}
 		</div>

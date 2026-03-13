@@ -4,9 +4,12 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
 
-export const useProjects = (type: 'solo' | 'team', searchQuery: string = '') => {
+export const useProjects = (type: 'solo' | 'team', searchQuery: string = '', page: number = 1) => {
 	const [projects, setProjects] = useState<Project[]>([])
+	const [total, setTotal] = useState(0)
 	const [isLoading, setIsLoading] = useState(true)
+
+	const limit = 9
 
 	const getProjects = useCallback(async () => {
 		setIsLoading(true)
@@ -14,7 +17,13 @@ export const useProjects = (type: 'solo' | 'team', searchQuery: string = '') => 
 			const userId = await getCurrentUserId()
 			if (!userId) return
 
-			const queries = [Query.equal('type', type), Query.orderDesc('$createdAt')]
+			const offset = (page - 1) * limit
+			const queries = [
+				Query.equal('type', type),
+				Query.orderDesc('$createdAt'),
+				Query.limit(limit),
+				Query.offset(offset),
+			]
 
 			if (type === 'solo') {
 				queries.push(Query.equal('ownerId', userId))
@@ -31,12 +40,13 @@ export const useProjects = (type: 'solo' | 'team', searchQuery: string = '') => 
 			})
 
 			setProjects(response.rows as unknown as Project[])
+			setTotal(response.total)
 		} catch (error) {
 			console.error('Error fetching projects:', error)
 		} finally {
 			setIsLoading(false)
 		}
-	}, [type, searchQuery])
+	}, [type, searchQuery, page])
 
 	useEffect(() => {
 		getProjects()
@@ -44,6 +54,8 @@ export const useProjects = (type: 'solo' | 'team', searchQuery: string = '') => 
 
 	return {
 		projects,
+		total,
+		limit,
 		isLoading,
 		refreshProjects: getProjects,
 	}
