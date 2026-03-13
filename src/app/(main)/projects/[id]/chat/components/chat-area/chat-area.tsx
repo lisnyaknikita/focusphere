@@ -77,10 +77,6 @@ export const ChatArea = ({
 								{activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
 							</p>
 						</div>
-						{/* <div className={classes.divider}>
-							<hr />
-							<span>Tuesday, July 29</span>
-						</div> */}
 						<div className={classes.messages}>
 							{isLoading ? (
 								<div className={classes.loading}>Loading messages...</div>
