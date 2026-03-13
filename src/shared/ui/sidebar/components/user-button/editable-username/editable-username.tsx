@@ -1,6 +1,8 @@
 'use client'
 
 import { account } from '@/lib/appwrite'
+import { updateLegacyNames } from '@/lib/projects/chat/chat'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { useEffect, useRef, useState } from 'react'
 import classes from './editable-username.module.scss'
 
@@ -14,6 +16,8 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 	const [username, setUsername] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
 	const inputRef = useRef<HTMLInputElement | null>(null)
+
+	const { user } = useUser()
 
 	useEffect(() => {
 		setUsername(displayName)
@@ -37,6 +41,10 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 
 		try {
 			await account.updateName({ name: newName.trim() })
+
+			if (user?.$id) {
+				updateLegacyNames(user.$id, newName.trim())
+			}
 
 			setUsername(newName.trim())
 			onNameUpdated(newName.trim())
@@ -64,7 +72,7 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 	}
 
 	return (
-		<div className={classes.wrapper}>
+		<div className={classes.wrapper} title={username}>
 			{isEditing ? (
 				<input
 					ref={inputRef}

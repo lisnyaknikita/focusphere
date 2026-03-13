@@ -14,7 +14,11 @@ export const useProjects = (type: 'solo' | 'team', searchQuery: string = '') => 
 			const userId = await getCurrentUserId()
 			if (!userId) return
 
-			const queries = [Query.equal('ownerId', userId), Query.equal('type', type), Query.orderDesc('$createdAt')]
+			const queries = [Query.equal('type', type), Query.orderDesc('$createdAt')]
+
+			if (type === 'solo') {
+				queries.push(Query.equal('ownerId', userId))
+			}
 
 			if (searchQuery.trim()) {
 				queries.push(Query.contains('title', searchQuery))

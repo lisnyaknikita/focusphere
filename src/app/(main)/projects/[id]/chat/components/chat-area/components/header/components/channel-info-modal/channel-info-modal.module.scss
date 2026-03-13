@@ -44,6 +44,29 @@
 	padding: 10px 20px;
 	font-family: inherit;
 	margin-bottom: 30px;
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+
+		.editText {
+			pointer-events: none;
+			text-decoration: none;
+		}
+	}
+}
+
+.input {
+	width: 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	border-radius: 5px;
+	border: 1px solid var(--btn-border);
+	background-color: transparent;
+	padding: 20px 20px;
+	font-family: inherit;
+	margin-bottom: 30px;
 }
 
 .channelName {
@@ -89,5 +112,16 @@
 		font-size: 14px;
 		font-weight: 700;
 		color: var(--text);
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+		filter: grayscale(1);
+
+		&:hover {
+			background-color: transparent;
+			box-shadow: none;
+		}
 	}
 }

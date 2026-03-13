@@ -1,4 +1,4 @@
-import { Account, Client, Storage, TablesDB } from 'appwrite'
+import { Account, Client, Databases, Storage, TablesDB, Teams } from 'appwrite'
 
 export const client = new Client()
 
@@ -12,6 +12,9 @@ export const getUserAvatar = (name: string) => {
 
 export const account = new Account(client)
 export const storage = new Storage(client)
+export const teams = new Teams(client)
+export const databases = new Databases(client)
+
 export const db = new TablesDB(client)
 
-export { ID } from 'appwrite'
+export { ID, Permission, Role } from 'appwrite'

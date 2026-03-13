@@ -1,24 +1,41 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { inviteMembersToTeam } from '@/lib/projects/invite-service/invite-service'
+import { getProjectById } from '@/lib/projects/projects'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import classes from './team-invitation-form.module.scss'
 
 export const TeamInvitationForm = () => {
-	const [name, setName] = useState('')
-	const [members, setMembers] = useState<string[]>([])
+	const searchParams = useSearchParams()
+	const projectId = searchParams.get('projectId')
 	const router = useRouter()
 
+	const [name, setName] = useState('')
+	const [members, setMembers] = useState<string[]>([])
+	const [teamId, setTeamId] = useState<string | null>(null)
+	const [isSending, setIsSending] = useState(false)
+
 	const generateEmail = (input: string) => {
-		if (!input.trim()) return ''
-		return input.replace(/\s+/g, '').toLowerCase() + '@gmail.com'
+		const cleaned = input.trim().toLowerCase()
+		if (!cleaned) return ''
+
+		if (cleaned.includes('@')) {
+			return cleaned
+		}
+
+		return cleaned.replace(/\s+/g, '') + '@gmail.com'
 	}
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter' && name.trim()) {
+		if (e.key === 'Enter') {
 			e.preventDefault()
-			setMembers(prev => [...prev, generateEmail(name)])
-			setName('')
+			const email = generateEmail(name)
+
+			if (email && email.includes('.') && !members.includes(email)) {
+				setMembers(prev => [...prev, email])
+				setName('')
+			}
 		}
 	}
 
@@ -26,8 +43,48 @@ export const TeamInvitationForm = () => {
 		setMembers(prev => prev.filter((_, i) => i !== index))
 	}
 
+	useEffect(() => {
+		if (projectId) {
+			getProjectById(projectId).then(project => {
+				if (project.teamId) setTeamId(project.teamId)
+			})
+		}
+	}, [projectId])
+
+	const handleInviteAndContinue = async (e: React.FormEvent) => {
+		e.preventDefault()
+
+		const currentEmail = generateEmail(name)
+		let finalEmails = [...members]
+		if (currentEmail && !finalEmails.includes(currentEmail)) {
+			finalEmails.push(currentEmail)
+		}
+
+		finalEmails = finalEmails.map(m => m.trim()).filter(m => m.length > 0)
+
+		if (finalEmails.length === 0) {
+			router.push(`/projects/${projectId}/board`)
+			return
+		}
+
+		console.log('Sending invitations to:', finalEmails)
+
+		setIsSending(true)
+		try {
+			await inviteMembersToTeam(teamId!, finalEmails, projectId!)
+			router.push(`/projects/${projectId}/board`)
+		} catch (error: unknown) {
+			console.error('Invitation failed details:', error)
+			if (error instanceof Error) {
+				alert(`Error: ${error.message}.`)
+			}
+		} finally {
+			setIsSending(false)
+		}
+	}
+
 	return (
-		<form className={classes.teamInvitationForm}>
+		<form className={classes.teamInvitationForm} onSubmit={handleInviteAndContinue}>
 			<h3 className={classes.formTitle}>Bring the team with you</h3>
 			<p className={classes.formSubtitle}>Invite these teammates to your project and work together</p>
 			<div className={classes.titleLabel}>
@@ -73,11 +130,11 @@ export const TeamInvitationForm = () => {
 				</div>
 			</div>
 			<div className={classes.buttons}>
-				<button className={classes.skipButton} onClick={() => router.push('/projects/123/board')}>
+				<button className={classes.skipButton} onClick={() => router.push(`/projects/${projectId}/board`)}>
 					Skip
 				</button>
-				<button className={classes.continueButton} onClick={() => router.push('/projects/123/board')}>
-					Invite and continue
+				<button className={classes.continueButton} type='submit' disabled={isSending || !teamId}>
+					{isSending ? 'Sending...' : 'Invite and continue'}
 				</button>
 			</div>
 		</form>
