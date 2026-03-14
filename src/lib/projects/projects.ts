@@ -1,8 +1,9 @@
-import { KanbanTask } from '@/shared/types/kanban-task'
 import { CreateProjectPayload, Project } from '@/shared/types/project'
 import { Client, ID, Permission, Role, TablesDB } from 'appwrite'
 import { teams } from '../appwrite'
+import { deleteChannel, getChannels } from './chat/chat'
 import { deleteKanbanTask, getKanbanTasks } from './kanban-board-tasks/tasks'
+import { deleteProjectNote, getProjectNotes } from './project-notes/notes'
 
 const client = new Client()
 	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -56,21 +57,34 @@ export const updateProject = async (projectId: string, data: Partial<CreateProje
 }
 
 export const deleteProject = async (projectId: string): Promise<Project> => {
-	const tasksRes = await getKanbanTasks(projectId)
+	try {
+		const [tasksRes, notes, channelsRes] = await Promise.all([
+			getKanbanTasks(projectId),
+			getProjectNotes(projectId),
+			getChannels(projectId),
+		])
 
-	const tasks = tasksRes.rows as unknown as KanbanTask[]
+		const taskPromises = tasksRes.rows.map(task => deleteKanbanTask(task.$id))
 
-	const deleteTasksPromises = tasks.map(task => deleteKanbanTask(task.$id))
+		const notePromises = notes.map(note => deleteProjectNote(projectId, note.$id))
 
-	await Promise.all(deleteTasksPromises)
+		const channelPromises = channelsRes.rows.map(channel => deleteChannel(channel.$id))
 
-	const response = await tablesDB.deleteRow({
-		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
-		rowId: projectId,
-	})
+		await Promise.all([...taskPromises, ...notePromises, ...channelPromises])
 
-	return response as unknown as Project
+		console.log(`Cascade delete finished for project: ${projectId}`)
+
+		const response = await tablesDB.deleteRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
+			rowId: projectId,
+		})
+
+		return response as unknown as Project
+	} catch (error) {
+		console.error('Failed to perform cascade delete for project:', error)
+		throw error
+	}
 }
 
 export const touchProject = async (projectId: string): Promise<Project> => {
