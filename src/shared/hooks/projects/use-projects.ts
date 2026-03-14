@@ -4,7 +4,12 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
 
-export const useProjects = (type: 'solo' | 'team', searchQuery: string = '', page: number = 1) => {
+export const useProjects = (
+	type: 'solo' | 'team',
+	searchQuery: string = '',
+	page: number = 1,
+	favoritesOnly: boolean = false
+) => {
 	const [projects, setProjects] = useState<Project[]>([])
 	const [total, setTotal] = useState(0)
 	const [isLoading, setIsLoading] = useState(true)
@@ -33,6 +38,10 @@ export const useProjects = (type: 'solo' | 'team', searchQuery: string = '', pag
 				queries.push(Query.contains('title', searchQuery))
 			}
 
+			if (favoritesOnly) {
+				queries.push(Query.equal('isFavorite', true))
+			}
+
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
@@ -46,7 +55,7 @@ export const useProjects = (type: 'solo' | 'team', searchQuery: string = '', pag
 		} finally {
 			setIsLoading(false)
 		}
-	}, [type, searchQuery, page])
+	}, [type, searchQuery, page, favoritesOnly])
 
 	useEffect(() => {
 		getProjects()

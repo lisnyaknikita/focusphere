@@ -26,7 +26,10 @@ export const createProject = async (data: CreateProjectPayload) => {
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 		rowId: ID.unique(),
-		data,
+		data: {
+			...data,
+			isFavorite: false,
+		},
 		permissions,
 	})
 }
