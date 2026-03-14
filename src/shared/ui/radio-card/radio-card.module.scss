@@ -13,6 +13,24 @@
 	&:hover {
 		background-color: var(--hover);
 	}
+
+	&:global(.disabled) {
+		cursor: not-allowed;
+		opacity: 0.5;
+		filter: grayscale(0.4);
+
+		pointer-events: none;
+
+		.label,
+		.description {
+			color: var(--text-muted);
+		}
+
+		.customRadio {
+			background-color: transparent;
+			border-color: var(--btn-border);
+		}
+	}
 }
 
 .radio {

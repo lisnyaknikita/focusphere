@@ -5,6 +5,12 @@
 
 .settingsForm {
 	display: flex;
+	align-items: stretch;
+	gap: 20px;
+}
+
+.projectInfo {
+	display: flex;
 	flex-direction: column;
 }
 
@@ -35,6 +41,17 @@
 		font-size: 15px;
 		font-weight: 400;
 		font-family: inherit;
+
+		&:disabled {
+			opacity: 0.4;
+			cursor: not-allowed;
+			filter: grayscale(1);
+
+			&:hover {
+				background-color: transparent;
+				box-shadow: none;
+			}
+		}
 	}
 
 	> textarea {
@@ -49,6 +66,17 @@
 		font-family: inherit;
 		resize: none;
 		height: 100px;
+
+		&:disabled {
+			opacity: 0.4;
+			cursor: not-allowed;
+			filter: grayscale(1);
+
+			&:hover {
+				background-color: transparent;
+				box-shadow: none;
+			}
+		}
 	}
 
 	margin-bottom: 10px;
@@ -84,6 +112,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 20px;
+	margin-top: auto;
 }
 
 .saveButton {
@@ -115,4 +144,12 @@
 	&:hover {
 		background-color: #dc2a2a;
 	}
+}
+
+.invitationBlock {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+	padding-left: 20px;
+	border-left: 1px solid var(--btn-border);
 }
