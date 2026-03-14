@@ -109,3 +109,31 @@ export const getTeamMembersCount = async (teamId: string) => {
 		return 1
 	}
 }
+
+export const convertToTeamProject = async (projectId: string, ownerId: string, projectTitle: string) => {
+	try {
+		const team = await teams.create(ID.unique(), `${projectTitle} Team`)
+
+		const updatedProject = await tablesDB.updateRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
+			rowId: projectId,
+			data: {
+				type: 'team',
+				teamId: team.$id,
+			},
+			permissions: [
+				Permission.read(Role.user(ownerId)),
+				Permission.update(Role.user(ownerId)),
+				Permission.delete(Role.user(ownerId)),
+				Permission.read(Role.team(team.$id)),
+				Permission.update(Role.team(team.$id)),
+			],
+		})
+
+		return updatedProject
+	} catch (error) {
+		console.error('Conversion failed:', error)
+		throw error
+	}
+}
