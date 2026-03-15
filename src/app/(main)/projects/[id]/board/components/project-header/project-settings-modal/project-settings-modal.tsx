@@ -91,6 +91,21 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 							Close
 						</button>
 					)}
+					{project.type === 'solo' && isOwner && (
+						<div className={classes.buttons}>
+							<button className={classes.saveButton} disabled={isSubmitting}>
+								{isSubmitting ? 'Saving...' : 'Save Changes'}
+							</button>
+							<button
+								type='button'
+								className={classes.deleteButton}
+								onClick={() => setIsDeleteConfirmOpen(true)}
+								disabled={isDeleting || isSubmitting}
+							>
+								{isDeleting ? 'Deleting...' : 'Delete project'}
+							</button>
+						</div>
+					)}
 				</div>
 				{project.type === 'team' && project.teamId && isOwner && (
 					<div className={classes.invitationBlock}>
