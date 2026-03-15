@@ -3,6 +3,7 @@ import { ProjectFormValues, projectSchema } from '@/shared/schemas/project-schem
 import { RadioCard } from '@/shared/ui/radio-card/radio-card'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import classes from './new-project-form.module.scss'
 
@@ -14,6 +15,7 @@ export const NewProjectForm = () => {
 		register,
 		handleSubmit,
 		control,
+		setFocus,
 		formState: { errors },
 	} = useForm<ProjectFormValues>({
 		resolver: zodResolver(projectSchema),
@@ -32,6 +34,10 @@ export const NewProjectForm = () => {
 			}
 		})
 	}
+
+	useEffect(() => {
+		setFocus('title')
+	}, [setFocus])
 
 	return (
 		<form className={classes.newProjectForm} onSubmit={handleSubmit(onSubmit)}>

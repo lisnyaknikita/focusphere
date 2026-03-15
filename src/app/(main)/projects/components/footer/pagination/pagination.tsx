@@ -1,12 +1,28 @@
 import clsx from 'clsx'
 import classes from './pagination.module.scss'
 
-export const Pagination = () => {
+interface PaginationProps {
+	currentPage: number
+	total: number
+	limit: number
+	onChange: (page: number) => void
+}
+
+export const Pagination = ({ currentPage, total, limit, onChange }: PaginationProps) => {
+	const totalPages = Math.ceil(total / limit)
+	console.log(currentPage, total, limit)
+
 	return (
 		<div className={classes.paginationButtons}>
-			<button className={clsx(classes.button, 'active')}>1</button>
-			<button className={classes.button}>2</button>
-			<button className={classes.button}>3</button>
+			{Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+				<button
+					key={page}
+					className={clsx(classes.button, currentPage === page && 'active')}
+					onClick={() => onChange(page)}
+				>
+					{page}
+				</button>
+			))}
 		</div>
 	)
 }

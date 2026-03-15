@@ -1,0 +1,94 @@
+.formTitle {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--text);
+	margin-bottom: 21px;
+}
+
+.titleLabel {
+	display: flex;
+	flex-direction: column;
+
+	> span {
+		font-size: 14px;
+		font-weight: 400;
+		color: var(--text);
+		margin-bottom: 5px;
+	}
+}
+
+.inputWrapper {
+	width: 100%;
+
+	> input {
+		width: 100%;
+		font-size: 15px;
+		font-weight: 400;
+		color: var(--text);
+		padding: 10px 15px;
+		border-radius: 5px;
+		border: 1px solid var(--btn-border);
+		background-color: transparent;
+		font-family: inherit;
+		margin-bottom: 10px;
+	}
+}
+
+.suggestion {
+	height: 32px;
+	background-color: var(--secondary);
+	border-radius: 5px;
+	padding: 5px 10px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	margin-bottom: 20px;
+}
+
+.emailBlock {
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+	font-family: inherit;
+}
+
+.membersList {
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	max-height: 127px;
+	overflow-y: auto;
+	margin-bottom: 10px;
+}
+
+.membersItem {
+	padding: 2px 5px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	width: fit-content;
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.continueButton {
+	color: var(--text);
+	background-color: transparent;
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 14px;
+	font-family: inherit;
+	text-decoration: underline;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
