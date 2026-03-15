@@ -26,7 +26,7 @@ export const LoginForm = () => {
 		try {
 			await loginUser(data.email, data.password)
 
-			router.push('/')
+			router.push('/dashboard')
 		} catch (err) {
 			if (err instanceof Error) {
 				setErrorMessage(err.message)

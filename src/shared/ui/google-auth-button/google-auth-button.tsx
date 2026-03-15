@@ -17,7 +17,7 @@ export const GoogleAuthButton = () => {
 		try {
 			account.createOAuth2Session({
 				provider: OAuthProvider.Google,
-				success: `${baseUrl}/`,
+				success: `${baseUrl}/dashboard`,
 				failure: `${baseUrl}/login`,
 			})
 		} catch (error) {
