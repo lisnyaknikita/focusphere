@@ -1,0 +1,63 @@
+.socialProof {
+	padding: 32px 24px;
+	background-color: var(--secondary);
+	border-top: 1px solid var(--line);
+	border-bottom: 1px solid var(--line);
+}
+
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 48px;
+
+	@media (max-width: 600px) {
+		flex-direction: column;
+		gap: 24px;
+	}
+}
+
+.stat {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.number {
+	font-size: 28px;
+	font-weight: 700;
+	color: var(--text);
+
+	@media (max-width: 600px) {
+		font-size: 24px;
+	}
+}
+
+.starIcon {
+	display: flex;
+	align-items: center;
+	color: #facc15;
+
+	svg {
+		width: 20px;
+		height: 20px;
+	}
+}
+
+.label {
+	font-size: 15px;
+	color: var(--textSecondary);
+}
+
+.divider {
+	width: 1px;
+	height: 32px;
+	background-color: var(--line);
+
+	@media (max-width: 600px) {
+		width: 60px;
+		height: 1px;
+	}
+}

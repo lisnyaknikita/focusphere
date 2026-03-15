@@ -1,6 +1,6 @@
 .testimonials {
-	padding: 80px 24px;
-	background-color: var(--secondary);
+	padding: 100px 24px;
+	background-color: var(--primary);
 }
 
 .container {
@@ -18,20 +18,20 @@
 	font-size: 13px;
 	font-weight: 600;
 	text-transform: uppercase;
-	letter-spacing: 0.05em;
+	letter-spacing: 0.1em;
 	color: #3b82f6;
 	margin-bottom: 12px;
 }
 
 .title {
-	font-size: 40px;
+	font-size: 48px;
 	font-weight: 700;
-	line-height: 1.2;
+	line-height: 1.1;
 	letter-spacing: -0.02em;
 	color: var(--text);
 
 	@media (max-width: 768px) {
-		font-size: 28px;
+		font-size: 36px;
 	}
 }
 
@@ -41,30 +41,49 @@
 	gap: 24px;
 
 	@media (max-width: 900px) {
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	@media (max-width: 600px) {
 		grid-template-columns: 1fr;
+		gap: 20px;
 	}
 }
 
 .card {
-	background-color: var(--primary);
+	background-color: var(--secondary);
 	border-radius: 16px;
-	padding: 28px;
+	padding: 32px;
 	border: 1px solid var(--line);
+	transition: transform 0.2s, box-shadow 0.2s;
+
+	&:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+	}
+}
+
+.quoteIcon {
+	width: 40px;
+	height: 40px;
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 20px;
+	color: #3b82f6;
+	opacity: 0.3;
+
+	svg {
+		width: 32px;
+		height: 32px;
+	}
 }
 
 .quote {
-	font-size: 15px;
+	font-size: 17px;
 	line-height: 1.7;
 	color: var(--text);
-	margin-bottom: 24px;
-	flex: 1;
+	margin-bottom: 28px;
+
+	@media (max-width: 768px) {
+		font-size: 16px;
+	}
 }
 
 .author {
@@ -74,26 +93,34 @@
 }
 
 .avatar {
-	width: 44px;
-	height: 44px;
+	width: 48px;
+	height: 48px;
 	border-radius: 50%;
-	background-color: var(--secondary);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 14px;
 	font-weight: 600;
-	color: var(--text);
+	color: #fff;
+
+	&[data-color='purple'] {
+		background: linear-gradient(135deg, #8b5cf6, #a855f7);
+	}
+	&[data-color='blue'] {
+		background: linear-gradient(135deg, #3b82f6, #6366f1);
+	}
+	&[data-color='green'] {
+		background: linear-gradient(135deg, #22c55e, #10b981);
+	}
 }
 
 .authorInfo {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
 }
 
 .name {
-	font-size: 14px;
+	font-size: 15px;
 	font-weight: 600;
 	color: var(--text);
 }

@@ -4,82 +4,234 @@ import classes from './features.module.scss'
 
 const features = [
 	{
-		icon: (
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-				<rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-				<line x1="16" y1="2" x2="16" y2="6" />
-				<line x1="8" y1="2" x2="8" y2="6" />
-				<line x1="3" y1="10" x2="21" y2="10" />
-			</svg>
-		),
 		title: 'Calendar',
-		description: 'Plan your days with a smart calendar. Schedule events, set reminders, and never miss an important moment.',
+		description: 'Week view with time blocks and colored events. Schedule your days visually and never double-book again.',
+		visual: 'calendar',
+		reverse: false,
 	},
 	{
-		icon: (
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-				<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-			</svg>
-		),
 		title: 'Projects',
-		description: 'Organize your work with project boards. Track tasks, collaborate with teams, and hit every deadline.',
+		description: 'Kanban board with cards and team avatars. Drag, drop, and collaborate in real-time.',
+		visual: 'kanban',
+		reverse: true,
 	},
 	{
-		icon: (
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-				<circle cx="12" cy="12" r="10" />
-				<polyline points="12,6 12,12 16,14" />
-			</svg>
-		),
 		title: 'Focus Timer',
-		description: 'Deep work sessions with Pomodoro-style timers. Background sounds and stats to keep you in the zone.',
+		description: 'Beautiful timer with sound waves and ambient sounds. Rain, cafe, ocean, forest — find your flow.',
+		visual: 'timer',
+		reverse: false,
 	},
 	{
-		icon: (
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-				<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-				<polyline points="14,2 14,8 20,8" />
-				<line x1="16" y1="13" x2="8" y2="13" />
-				<line x1="16" y1="17" x2="8" y2="17" />
-				<line x1="10" y1="9" x2="8" y2="9" />
-			</svg>
-		),
 		title: 'Journal',
-		description: 'Reflect on your day with guided journal prompts. Track moods, gratitude, and personal growth over time.',
+		description: 'Entry pages with templates and warm lighting. Reflect on your day with guided prompts.',
+		visual: 'journal',
+		reverse: true,
 	},
 	{
-		icon: (
-			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-				<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-				<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-			</svg>
-		),
 		title: 'Notes',
-		description: 'Capture ideas instantly with a rich text editor. Organize with tags and find anything in seconds.',
+		description: 'Clean, minimalist editor. Capture ideas instantly, organize with tags, find anything in seconds.',
+		visual: 'notes',
+		reverse: false,
 	},
 ]
 
+const CalendarVisual = () => (
+	<div className={classes.calendarVisual}>
+		<div className={classes.calendarHeader}>
+			<span>Mon</span>
+			<span>Tue</span>
+			<span>Wed</span>
+			<span>Thu</span>
+			<span>Fri</span>
+		</div>
+		<div className={classes.calendarBody}>
+			{[...Array(5)].map((_, dayIndex) => (
+				<div key={dayIndex} className={classes.dayColumn}>
+					{[...Array(6)].map((_, hourIndex) => (
+						<div key={hourIndex} className={classes.timeSlot}>
+							{dayIndex === 0 && hourIndex === 1 && (
+								<div className={classes.eventBlock} data-color="blue" style={{ height: '60px' }}>
+									<span>Team standup</span>
+								</div>
+							)}
+							{dayIndex === 1 && hourIndex === 2 && (
+								<div className={classes.eventBlock} data-color="purple" style={{ height: '90px' }}>
+									<span>Deep work</span>
+								</div>
+							)}
+							{dayIndex === 2 && hourIndex === 0 && (
+								<div className={classes.eventBlock} data-color="green" style={{ height: '45px' }}>
+									<span>1:1 Meeting</span>
+								</div>
+							)}
+							{dayIndex === 3 && hourIndex === 3 && (
+								<div className={classes.eventBlock} data-color="orange" style={{ height: '60px' }}>
+									<span>Review</span>
+								</div>
+							)}
+							{dayIndex === 4 && hourIndex === 1 && (
+								<div className={classes.eventBlock} data-color="blue" style={{ height: '75px' }}>
+									<span>Planning</span>
+								</div>
+							)}
+						</div>
+					))}
+				</div>
+			))}
+		</div>
+	</div>
+)
+
+const KanbanVisual = () => (
+	<div className={classes.kanbanVisual}>
+		<div className={classes.kanbanColumn}>
+			<div className={classes.columnTitle}>To Do</div>
+			<div className={classes.kanbanCard}>
+				<div className={classes.cardTitle}>Design homepage</div>
+				<div className={classes.cardMeta}>
+					<span className={classes.tag} data-color="blue">Design</span>
+					<div className={classes.avatars}>
+						<span className={classes.avatar} data-color="orange">A</span>
+					</div>
+				</div>
+			</div>
+			<div className={classes.kanbanCard}>
+				<div className={classes.cardTitle}>Write docs</div>
+			</div>
+		</div>
+		<div className={classes.kanbanColumn}>
+			<div className={classes.columnTitle}>In Progress</div>
+			<div className={classes.kanbanCard}>
+				<div className={classes.cardTitle}>API integration</div>
+				<div className={classes.cardMeta}>
+					<span className={classes.tag} data-color="purple">Dev</span>
+					<div className={classes.avatars}>
+						<span className={classes.avatar} data-color="blue">M</span>
+						<span className={classes.avatar} data-color="green">S</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div className={classes.kanbanColumn}>
+			<div className={classes.columnTitle}>Done</div>
+			<div className={classes.kanbanCard} data-done="true">
+				<div className={classes.cardTitle}>Setup repo</div>
+			</div>
+		</div>
+	</div>
+)
+
+const TimerVisual = () => (
+	<div className={classes.timerVisual}>
+		<div className={classes.timerCircle}>
+			<svg viewBox="0 0 120 120" className={classes.timerRing}>
+				<circle cx="60" cy="60" r="54" className={classes.timerBg} />
+				<circle cx="60" cy="60" r="54" className={classes.timerProgress} />
+			</svg>
+			<div className={classes.timerInner}>
+				<span className={classes.timerTime}>25:00</span>
+				<span className={classes.timerStatus}>Focus</span>
+			</div>
+		</div>
+		<div className={classes.soundWaves}>
+			{[...Array(5)].map((_, i) => (
+				<span key={i} className={classes.wave} style={{ animationDelay: `${i * 0.1}s` }} />
+			))}
+		</div>
+		<div className={classes.ambientSounds}>
+			<span className={classes.soundChip} data-active="true">Rain</span>
+			<span className={classes.soundChip}>Cafe</span>
+			<span className={classes.soundChip}>Ocean</span>
+			<span className={classes.soundChip}>Forest</span>
+		</div>
+	</div>
+)
+
+const JournalVisual = () => (
+	<div className={classes.journalVisual}>
+		<div className={classes.journalHeader}>
+			<span className={classes.journalDate}>March 15, 2026</span>
+			<span className={classes.journalMood}>Feeling great</span>
+		</div>
+		<div className={classes.journalPrompt}>What are you grateful for today?</div>
+		<div className={classes.journalContent}>
+			<p>Today I finished the big project ahead of schedule. The team was really supportive and...</p>
+		</div>
+		<div className={classes.journalTemplate}>
+			<span>Morning Reflection</span>
+		</div>
+	</div>
+)
+
+const NotesVisual = () => (
+	<div className={classes.notesVisual}>
+		<div className={classes.notesToolbar}>
+			<span className={classes.toolbarBtn}>B</span>
+			<span className={classes.toolbarBtn}>I</span>
+			<span className={classes.toolbarBtn}>U</span>
+			<span className={classes.toolbarDivider} />
+			<span className={classes.toolbarBtn}>H1</span>
+			<span className={classes.toolbarBtn}>H2</span>
+		</div>
+		<div className={classes.notesContent}>
+			<h3 className={classes.noteTitle}>Product Ideas</h3>
+			<ul className={classes.noteList}>
+				<li>AI-powered suggestions</li>
+				<li>Team collaboration features</li>
+				<li>Mobile app improvements</li>
+			</ul>
+		</div>
+		<div className={classes.notesTags}>
+			<span className={classes.noteTag}>ideas</span>
+			<span className={classes.noteTag}>product</span>
+		</div>
+	</div>
+)
+
 export const Features = () => {
+	const renderVisual = (type: string) => {
+		switch (type) {
+			case 'calendar':
+				return <CalendarVisual />
+			case 'kanban':
+				return <KanbanVisual />
+			case 'timer':
+				return <TimerVisual />
+			case 'journal':
+				return <JournalVisual />
+			case 'notes':
+				return <NotesVisual />
+			default:
+				return null
+		}
+	}
+
 	return (
 		<section id="features" className={classes.features}>
 			<div className={classes.container}>
 				<div className={classes.header}>
 					<span className={classes.label}>Features</span>
-					<h2 className={classes.title}>Everything you need to stay productive</h2>
+					<h2 className={classes.title}>Everything in one place</h2>
 					<p className={classes.subtitle}>
-						Five powerful tools, one unified workspace. No more switching between apps.
+						Five powerful tools, unified in a single workspace. No more app switching.
 					</p>
 				</div>
 
-				<div className={classes.grid}>
-					{features.map((feature, index) => (
-						<div key={index} className={classes.card}>
-							<div className={classes.iconWrapper}>{feature.icon}</div>
-							<h3 className={classes.cardTitle}>{feature.title}</h3>
-							<p className={classes.cardDescription}>{feature.description}</p>
+				{features.map((feature, index) => (
+					<div
+						key={index}
+						className={classes.featureRow}
+						data-reverse={feature.reverse}
+					>
+						<div className={classes.featureContent}>
+							<h3 className={classes.featureTitle}>{feature.title}</h3>
+							<p className={classes.featureDescription}>{feature.description}</p>
 						</div>
-					))}
-				</div>
+						<div className={classes.featureVisual}>
+							{renderVisual(feature.visual)}
+						</div>
+					</div>
+				))}
 			</div>
 		</section>
 	)

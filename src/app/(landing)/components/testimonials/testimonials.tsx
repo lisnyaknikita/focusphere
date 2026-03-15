@@ -4,22 +4,25 @@ import classes from './testimonials.module.scss'
 
 const testimonials = [
 	{
-		quote: "Focusphere has completely transformed how I manage my work. The focus timer combined with the journal helps me stay accountable and reflective.",
-		name: 'Sarah Chen',
-		role: 'Product Designer',
-		avatar: 'SC',
+		quote: "I replaced Notion, Todoist, and a physical planner with Focusphere. My mornings are completely different now.",
+		name: 'Anna K.',
+		role: 'Freelance Designer',
+		avatar: 'AK',
+		color: 'purple',
 	},
 	{
-		quote: "Finally, an app that doesn't make me jump between 5 different tools. Everything I need is in one place. My team loves the project boards.",
-		name: 'Marcus Johnson',
-		role: 'Engineering Lead',
-		avatar: 'MJ',
+		quote: "The focus timer with ambient sounds changed everything. I used to struggle with deep work — now I look forward to it.",
+		name: 'Marcus Chen',
+		role: 'Software Engineer',
+		avatar: 'MC',
+		color: 'blue',
 	},
 	{
-		quote: "The calendar integration with focus timers is genius. I block time for deep work and actually get things done. Best productivity app I've used.",
-		name: 'Elena Rodriguez',
-		role: 'Freelance Writer',
-		avatar: 'ER',
+		quote: "Finally, one app for my whole team. We ditched 4 subscriptions and everyone's happier with the unified workspace.",
+		name: 'Sarah Rodriguez',
+		role: 'Product Manager',
+		avatar: 'SR',
+		color: 'green',
 	},
 ]
 
@@ -35,9 +38,16 @@ export const Testimonials = () => {
 				<div className={classes.grid}>
 					{testimonials.map((testimonial, index) => (
 						<div key={index} className={classes.card}>
-							<p className={classes.quote}>"{testimonial.quote}"</p>
+							<div className={classes.quoteIcon}>
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+								</svg>
+							</div>
+							<p className={classes.quote}>{testimonial.quote}</p>
 							<div className={classes.author}>
-								<div className={classes.avatar}>{testimonial.avatar}</div>
+								<div className={classes.avatar} data-color={testimonial.color}>
+									{testimonial.avatar}
+								</div>
 								<div className={classes.authorInfo}>
 									<span className={classes.name}>{testimonial.name}</span>
 									<span className={classes.role}>{testimonial.role}</span>
