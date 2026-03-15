@@ -1,6 +1,6 @@
 .backgroundSounds {
 	position: relative;
-
+	z-index: 3;
 	&:global(.opened) {
 		> .trigger svg {
 			transform: rotate(180deg);
@@ -58,5 +58,50 @@
 
 	&:hover {
 		background-color: var(--hover);
+	}
+
+	&:global(.activeSound) {
+		background-color: var(--hover);
+	}
+}
+
+.volumeRow {
+	margin-top: 5px;
+}
+
+.volumeSlider {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 3px;
+	background: var(--btn-border);
+	border-radius: 5px;
+	outline: none;
+	cursor: pointer;
+	margin-bottom: 10px;
+
+	&::-moz-range-track {
+		height: 3px;
+		background: var(--btn-border);
+		border-radius: 5px;
+	}
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: var(--text);
+		cursor: pointer;
+	}
+
+	&::-moz-range-thumb {
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: var(--text);
+		border: none;
+		cursor: pointer;
 	}
 }

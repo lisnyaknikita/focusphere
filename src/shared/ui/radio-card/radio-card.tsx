@@ -1,5 +1,6 @@
 'use client'
 
+import clsx from 'clsx'
 import classes from './radio-card.module.scss'
 
 interface RadioCardProps {
@@ -8,17 +9,19 @@ interface RadioCardProps {
 	description?: string
 	checked: boolean
 	name: string
+	disabled?: boolean
 	onChange: (value: string) => void
 }
 
-export function RadioCard({ value, label, description, checked, name, onChange }: RadioCardProps) {
+export function RadioCard({ value, label, description, checked, name, disabled, onChange }: RadioCardProps) {
 	return (
-		<label className={classes.card}>
+		<label className={clsx(classes.card, disabled && 'disabled')}>
 			<input
 				type='radio'
 				name={name}
 				value={value}
 				checked={checked}
+				disabled={disabled}
 				onChange={() => onChange(value)}
 				className={classes.radio}
 			/>

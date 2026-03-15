@@ -7,6 +7,7 @@ export interface Project extends Models.Document {
 	ownerId: string
 	teamId?: string
 	logo?: string
+	isFavorite?: boolean
 }
 
 export interface CreateProjectPayload {
@@ -16,4 +17,5 @@ export interface CreateProjectPayload {
 	ownerId: string
 	teamId?: string
 	logo?: string
+	isFavorite?: boolean
 }
