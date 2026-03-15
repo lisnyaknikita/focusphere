@@ -1,7 +1,6 @@
 'use client'
 
-import { inviteMembersToTeam } from '@/lib/projects/invite-service/invite-service'
-import { useState } from 'react'
+import { useInviteMembers } from '@/shared/hooks/projects/invitation/use-invite-members'
 import classes from './project-members-settings.module.scss'
 
 interface ProjectMembersSettingsProps {
@@ -10,57 +9,13 @@ interface ProjectMembersSettingsProps {
 }
 
 export const ProjectMembersSettings = ({ projectId, teamId }: ProjectMembersSettingsProps) => {
-	const [name, setName] = useState('')
-	const [members, setMembers] = useState<string[]>([])
-	const [isSending, setIsSending] = useState(false)
-
-	const generateEmail = (input: string) => {
-		const cleaned = input.trim().toLowerCase()
-		if (!cleaned) return ''
-		if (cleaned.includes('@')) return cleaned
-		return cleaned.replace(/\s+/g, '') + '@gmail.com'
-	}
+	const { inputValue, setInputValue, members, isSending, formatEmail, addMember, removeMember, sendInvites } =
+		useInviteMembers(teamId, projectId)
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			e.preventDefault()
-			const email = generateEmail(name)
-
-			if (email && email.includes('.') && !members.includes(email)) {
-				setMembers(prev => [...prev, email])
-				setName('')
-			}
-		}
-	}
-
-	const removeMember = (index: number) => {
-		setMembers(prev => prev.filter((_, i) => i !== index))
-	}
-
-	const handleSendInvites = async (e: React.FormEvent) => {
-		e.preventDefault()
-
-		const currentEmail = generateEmail(name)
-		let finalEmails = [...members]
-
-		if (currentEmail && !finalEmails.includes(currentEmail)) {
-			finalEmails.push(currentEmail)
-		}
-
-		finalEmails = finalEmails.map(m => m.trim()).filter(m => m.length > 0)
-
-		if (finalEmails.length === 0) return
-
-		setIsSending(true)
-		try {
-			await inviteMembersToTeam(teamId, finalEmails, projectId)
-			setMembers([])
-			setName('')
-			alert('Invitations sent successfully!')
-		} catch (error) {
-			console.error('Invitation failed:', error)
-		} finally {
-			setIsSending(false)
+			addMember()
 		}
 	}
 
@@ -73,12 +28,12 @@ export const ProjectMembersSettings = ({ projectId, teamId }: ProjectMembersSett
 					<input
 						type='text'
 						placeholder='John Smith'
-						value={name}
-						onChange={e => setName(e.target.value)}
+						value={inputValue}
+						onChange={e => setInputValue(e.target.value)}
 						onKeyDown={handleKeyDown}
 					/>
 					<div className={classes.suggestion}>
-						{name && (
+						{inputValue && (
 							<svg
 								className={classes.icon}
 								xmlns='http://www.w3.org/2000/svg'
@@ -92,7 +47,7 @@ export const ProjectMembersSettings = ({ projectId, teamId }: ProjectMembersSett
 								/>
 							</svg>
 						)}
-						<div className={classes.emailBlock}>{!name ? 'Enter an email address' : generateEmail(name)}</div>
+						<div className={classes.emailBlock}>{!inputValue ? 'Enter an email address' : formatEmail(inputValue)}</div>
 					</div>
 					{members.length > 0 && (
 						<div className={classes.membersList}>
@@ -112,8 +67,8 @@ export const ProjectMembersSettings = ({ projectId, teamId }: ProjectMembersSett
 				<button
 					className={classes.continueButton}
 					type='button'
-					onClick={handleSendInvites}
-					disabled={isSending || (members.length === 0 && !name)}
+					onClick={sendInvites}
+					disabled={isSending || (members.length === 0 && !inputValue)}
 				>
 					{isSending ? 'Sending...' : members.length > 1 ? 'Send Invitations' : 'Send Invitation'}
 				</button>

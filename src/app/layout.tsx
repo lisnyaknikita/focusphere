@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 import './globals.scss'
 
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${notoSans.variable}`}>{children}</body>
+			<body className={`${notoSans.variable}`}>
+				{children} <Toaster position='bottom-right' richColors />
+			</body>
 		</html>
 	)
 }
