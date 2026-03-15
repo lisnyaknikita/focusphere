@@ -108,7 +108,7 @@ export const navItems: NavItem[] = [
 	},
 	{
 		label: 'Dashboard',
-		href: '/',
+		href: '/dashboard',
 		iconSvg: DashboardIcon,
 		iconAlt: 'dashboard',
 	},

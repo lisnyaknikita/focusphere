@@ -14,7 +14,7 @@ export const QuickIdeaModalWrapper = () => {
 	const isOpen = searchParams.get('modal') === 'quick-idea'
 
 	const handleClose = () => {
-		router.push('/')
+		router.push('/dashboard')
 		const event = new CustomEvent('refresh-daily-tasks')
 		window.dispatchEvent(event)
 	}
