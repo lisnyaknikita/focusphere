@@ -1,0 +1,190 @@
+.header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	background-color: var(--primary);
+	border-bottom: 1px solid var(--line);
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 16px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 20px;
+	color: var(--text);
+	text-decoration: none;
+
+	svg {
+		width: 28px;
+		height: 28px;
+	}
+}
+
+.nav {
+	display: flex;
+	align-items: center;
+	gap: 32px;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
+.navLink {
+	color: var(--textSecondary);
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 500;
+	transition: color 0.2s;
+
+	&:hover {
+		color: var(--text);
+	}
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+
+	@media (max-width: 768px) {
+		display: none;
+	}
+}
+
+.loginBtn {
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--text);
+	text-decoration: none;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.signupBtn {
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	background-color: var(--save-button-bg);
+	color: var(--save-button-text);
+	text-decoration: none;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 0.9;
+	}
+}
+
+.mobileMenuBtn {
+	display: none;
+	width: 32px;
+	height: 32px;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
+	cursor: pointer;
+
+	@media (max-width: 768px) {
+		display: flex;
+	}
+}
+
+.hamburger {
+	position: relative;
+	width: 20px;
+	height: 2px;
+	background-color: var(--text);
+	transition: all 0.3s;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		width: 20px;
+		height: 2px;
+		background-color: var(--text);
+		transition: all 0.3s;
+	}
+
+	&::before {
+		top: -6px;
+	}
+
+	&::after {
+		top: 6px;
+	}
+
+	&.open {
+		background-color: transparent;
+
+		&::before {
+			top: 0;
+			transform: rotate(45deg);
+		}
+
+		&::after {
+			top: 0;
+			transform: rotate(-45deg);
+		}
+	}
+}
+
+.mobileMenu {
+	display: none;
+	background-color: var(--primary);
+	border-bottom: 1px solid var(--line);
+	padding: 20px 24px;
+
+	@media (max-width: 768px) {
+		display: block;
+	}
+}
+
+.mobileNav {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.mobileNavLink {
+	color: var(--textSecondary);
+	text-decoration: none;
+	font-size: 16px;
+	font-weight: 500;
+	padding: 8px 0;
+
+	&:hover {
+		color: var(--text);
+	}
+}
+
+.mobileActions {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	.loginBtn,
+	.signupBtn {
+		text-align: center;
+	}
+}

@@ -13,7 +13,7 @@ export const DailyTasksModalWrapper = () => {
 	const isOpen = searchParams.get('modal') === 'create-daily-task'
 
 	const handleClose = () => {
-		router.push('/')
+		router.push('/dashboard')
 		const event = new CustomEvent('refresh-daily-tasks')
 		window.dispatchEvent(event)
 		router.refresh()

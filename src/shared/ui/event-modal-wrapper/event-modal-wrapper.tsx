@@ -11,7 +11,7 @@ export const EventModalWrapper = () => {
 	const isOpen = searchParams.get('modal') === 'create-event'
 
 	const handleClose = () => {
-		router.push('/')
+		router.push('/dashboard')
 		const event = new CustomEvent('refresh-events')
 		window.dispatchEvent(event)
 		router.refresh()

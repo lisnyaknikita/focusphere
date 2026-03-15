@@ -26,7 +26,7 @@ function VerifyEmailContent() {
 				setStatus('success')
 
 				setTimeout(() => {
-					router.push('/')
+					router.push('/dashboard')
 				}, 2000)
 			} catch (err) {
 				console.error(err)
