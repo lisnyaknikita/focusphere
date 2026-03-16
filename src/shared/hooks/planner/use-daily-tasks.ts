@@ -114,6 +114,44 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		})
 	}, [tasks])
 
+	const cleanupOldTasks = useCallback(async () => {
+		const lastCleanup = localStorage.getItem('last_task_cleanup')
+		const today = new Date().toISOString().split('T')[0]
+
+		if (lastCleanup === today) return
+
+		try {
+			const userId = await getCurrentUserId()
+			const thirtyDaysAgo = new Date()
+			thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 21)
+			const thresholdDate = thirtyDaysAgo.toISOString().split('T')[0]
+
+			const response = await db.listRows({
+				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+				tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
+				queries: [
+					Query.equal('userId', userId),
+					Query.lessThan('date', thresholdDate),
+					Query.limit(100),
+					Query.select(['$id']),
+				],
+			})
+
+			if (response.rows.length > 0) {
+				await Promise.allSettled(response.rows.map(task => deleteDailyTask(task.$id)))
+				console.log(`[Auto-Cleanup] Removed ${response.rows.length} old tasks.`)
+			}
+
+			localStorage.setItem('last_task_cleanup', today)
+		} catch (error) {
+			console.error('[Auto-Cleanup] Error:', error)
+		}
+	}, [])
+
+	useEffect(() => {
+		cleanupOldTasks()
+	}, [])
+
 	useEffect(() => {
 		const handleRefresh = () => getDailyTasks()
 		window.addEventListener('refresh-daily-tasks', handleRefresh)
