@@ -1,76 +1,25 @@
+import { ArrowIcon } from '@/shared/ui/icons/landing/arrow-icon'
+import { ReflectIcon } from '@/shared/ui/icons/landing/reflect-icon'
+import { SmileIcon } from '@/shared/ui/icons/landing/smile-icon'
+import { SwitchingIcon } from '@/shared/ui/icons/landing/switching-icon'
+import { TeamIcon } from '@/shared/ui/icons/landing/team-icon'
 import classes from './problem.module.scss'
 
 const problems = [
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<rect x='3' y='3' width='7' height='7' />
-				<rect x='14' y='3' width='7' height='7' />
-				<rect x='14' y='14' width='7' height='7' />
-				<rect x='3' y='14' width='7' height='7' />
-			</svg>
-		),
+		icon: <SwitchingIcon />,
 		text: 'Switching between 5 different apps just to plan your day',
 	},
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<circle cx='12' cy='12' r='10' />
-				<path d='M8 15h8' />
-				<path d='M8 9h.01' />
-				<path d='M16 9h.01' />
-			</svg>
-		),
+		icon: <SmileIcon />,
 		text: 'Losing focus every 10 minutes',
 	},
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2' />
-				<circle cx='9' cy='7' r='4' />
-				<path d='M23 21v-2a4 4 0 0 0-3-3.87' />
-				<path d='M16 3.13a4 4 0 0 1 0 7.75' />
-			</svg>
-		),
+		icon: <TeamIcon />,
 		text: "Your team has no idea what's happening",
 	},
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' />
-				<polyline points='14,2 14,8 20,8' />
-				<line x1='16' y1='13' x2='8' y2='13' />
-				<line x1='16' y1='17' x2='8' y2='17' />
-			</svg>
-		),
+		icon: <ReflectIcon />,
 		text: 'You never find time to reflect',
 	},
 ]
@@ -91,17 +40,7 @@ export const Problem = () => {
 				<div className={classes.transition}>
 					<p className={classes.transitionText}>We built Focusphere to fix all of that.</p>
 					<div className={classes.arrow}>
-						<svg
-							viewBox='0 0 24 24'
-							fill='none'
-							stroke='currentColor'
-							strokeWidth='2'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-						>
-							<line x1='12' y1='5' x2='12' y2='19' />
-							<polyline points='19,12 12,19 5,12' />
-						</svg>
+						<ArrowIcon />
 					</div>
 				</div>
 			</div>
