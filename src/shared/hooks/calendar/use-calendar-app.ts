@@ -8,6 +8,7 @@ import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop'
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
+import { createResizePlugin } from '@schedule-x/resize'
 import { useState } from 'react'
 
 interface UseCalendarAppProps {
@@ -19,19 +20,20 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
 	const [eventModal] = useState(() => createEventModalPlugin())
 	const [dragAndDropPlugin] = useState(() => createDragAndDropPlugin())
+	const [resizePlugin] = useState(() => createResizePlugin(15))
 
 	const calendar = useNextCalendarApp({
 		views: [createViewMonthGrid(), createViewWeek(), createViewDay()],
 		defaultView: VIEW_TO_SX[defaultView],
 		events: [],
-		plugins: [eventsService, calendarControls, dragAndDropPlugin, createCurrentTimePlugin(), eventModal],
+		plugins: [eventsService, calendarControls, dragAndDropPlugin, resizePlugin, createCurrentTimePlugin(), eventModal],
 		callbacks: {
 			async onEventUpdate(updatedEvent: CalendarEvent) {
 				try {
 					const { id, start, end } = updatedEvent
 
 					const formatForAppwrite = (dateObj: string | { toString(): string }): string => {
-						const base = dateObj.toString().replace('T', ' ').substring(0, 16)
+						const base = dateObj.toString().replace(' ', 'T').substring(0, 16)
 						return `${base}:00`
 					}
 

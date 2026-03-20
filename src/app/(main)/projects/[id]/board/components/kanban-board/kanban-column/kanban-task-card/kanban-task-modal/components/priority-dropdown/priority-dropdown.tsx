@@ -1,5 +1,6 @@
 import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import { TaskPriority } from '@/shared/types/kanban-task'
+import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
@@ -25,15 +26,7 @@ export const PriorityDropdown = ({ value, onChange }: PriorityDropdownProps) => 
 		<div ref={dropdownRef} className={clsx(classes.dropdownContainer, open && 'opened')}>
 			<button className={clsx(classes.trigger, classes[value])} onClick={() => setOpen(prev => !prev)} type='button'>
 				<span>{value.charAt(0).toUpperCase() + value.slice(1)}</span>
-				<svg
-					width='11'
-					height='6'
-					viewBox='0 0 11 6'
-					fill='none'
-					style={{ transform: open ? 'rotate(180deg)' : 'none' }}
-				>
-					<path d='M10.7715 0.247421L5.5 6L0.228454 0.247421' fill='currentColor' />
-				</svg>
+				<ArrowBottomIcon />
 			</button>
 
 			<AnimatePresence>
