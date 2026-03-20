@@ -26,7 +26,7 @@ export const DateTime = <T extends EventForm | TimeBlockForm>({ form, setFormFie
 	return (
 		<div className={classes.dateTime}>
 			<div className={classes.icon}>
-				<DateTimeIcon />
+				<DateTimeIcon width={18} height={18} />
 			</div>
 			<div className={classes.info}>
 				<button className={classes.date} onClick={() => setIsDatePickerOpen(prev => !prev)} type='button'>

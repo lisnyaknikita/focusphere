@@ -1,5 +1,6 @@
 'use client'
 
+import { SendIcon } from '@/shared/ui/icons/send-icon'
 import Quill, { QuillOptions } from 'quill'
 import 'quill/dist/quill.snow.css'
 import { useEffect, useRef } from 'react'
@@ -80,9 +81,7 @@ export const Editor = ({ onSend, disabled }: EditorProps) => {
 				<div ref={containerRef} className='ql-chat-custom' />
 				<div className={classes.additionalButtons}>
 					<button className={classes.sendButton} onClick={handleSend} disabled={disabled}>
-						<svg width='20' height='20' viewBox='0 0 20 20' fill='none'>
-							<path d='M2.5 10L17.5 2.5L10 10L17.5 17.5L2.5 10Z' fill='var(--text)' />
-						</svg>
+						<SendIcon />
 					</button>
 				</div>
 			</div>
