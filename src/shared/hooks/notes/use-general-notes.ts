@@ -42,6 +42,9 @@ export const useGeneralNotes = (userId: string) => {
 
 	const handleTitleChange = useCallback(async (title: string, noteId: string) => {
 		setNotes(prev => prev.map(n => (n.$id === noteId ? { ...n, title } : n)))
+
+		setActiveNote(prev => (prev?.$id === noteId ? { ...prev, title } : prev))
+
 		try {
 			await updateGeneralNote(noteId, { title })
 		} catch (error) {

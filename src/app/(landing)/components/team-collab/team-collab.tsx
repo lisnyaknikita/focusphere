@@ -1,65 +1,27 @@
+import { ChatIcon } from '@/shared/ui/icons/landing/chat-icon'
+import { LinkIcon } from '@/shared/ui/icons/landing/link-icon'
+import { ProjectNotesIcon } from '@/shared/ui/icons/landing/project-notes-icon'
+import { RealTimeUpdatesIcon } from '@/shared/ui/icons/landing/real-time-updates-icon'
 import classes from './team-collab.module.scss'
 
 const features = [
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' />
-				<path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' />
-			</svg>
-		),
+		icon: <LinkIcon />,
 		title: 'Invite by link',
 		description: 'Share a link and onboard teammates instantly.',
 	},
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<polyline points='23,6 13.5,15.5 8.5,10.5 1,18' />
-				<polyline points='17,6 23,6 23,12' />
-			</svg>
-		),
+		icon: <RealTimeUpdatesIcon />,
 		title: 'Real-time updates',
 		description: 'See changes as they happen, no refresh needed.',
 	},
 	{
-		icon: (
-			<svg
-				viewBox='0 0 24 24'
-				fill='none'
-				stroke='currentColor'
-				strokeWidth='2'
-				strokeLinecap='round'
-				strokeLinejoin='round'
-			>
-				<path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' />
-			</svg>
-		),
+		icon: <ChatIcon />,
 		title: 'Project chat',
 		description: 'Discuss tasks without leaving the app.',
 	},
 	{
-		icon: (
-			<svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-				<rect x='4' y='3' width='16' height='18' rx='2' stroke='currentColor' strokeWidth='1.8' />
-				<line x1='7' y1='8' x2='17' y2='8' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' />
-				<line x1='7' y1='12' x2='17' y2='12' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' />
-				<line x1='7' y1='16' x2='13' y2='16' stroke='currentColor' strokeWidth='1.8' strokeLinecap='round' />
-			</svg>
-		),
+		icon: <ProjectNotesIcon />,
 		title: 'Project notes',
 		description: 'Capture ideas and important details directly inside each project.',
 	},

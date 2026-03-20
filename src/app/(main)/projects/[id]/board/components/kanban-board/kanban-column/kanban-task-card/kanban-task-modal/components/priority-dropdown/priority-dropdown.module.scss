@@ -1,3 +1,11 @@
+.dropdownContainer {
+	&:global(.open) {
+		> .trigger svg {
+			transform: rotate(180deg);
+		}
+	}
+}
+
 .trigger {
 	margin-top: 10px;
 	display: flex;
