@@ -28,6 +28,7 @@ export function CheckboxCard({
 }: CheckboxCardProps) {
 	return (
 		<label
+			title={label}
 			className={clsx(classes.card, checked && 'checked')}
 			style={withBorder ? { border: '1px solid var(--btn-border)' } : { border: 'none' }}
 		>

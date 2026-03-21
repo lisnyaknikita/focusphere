@@ -5,6 +5,7 @@ import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { formatModalDate } from '@/shared/utils/format-modal-date/format-modal-date'
+import clsx from 'clsx'
 import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import classes from './daily-tasks-modal.module.scss'
@@ -16,6 +17,8 @@ interface DailyTasksModalProps {
 
 export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 	const [taskToDelete, setTaskToDelete] = useState<DailyTask | null>(null)
+	const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+	const [editingTitle, setEditingTitle] = useState('')
 
 	const {
 		tasks,
@@ -28,6 +31,7 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 		handleAddTask,
 		handleToggleTask,
 		handleDeleteTask,
+		handleEditTask,
 	} = useDailyTasks({ date })
 
 	const confirmDelete = () => {
@@ -35,6 +39,19 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 			handleDeleteTask(taskToDelete.$id)
 			setTaskToDelete(null)
 		}
+	}
+
+	const startEditing = (task: DailyTask) => {
+		setEditingTaskId(task.$id)
+		setEditingTitle(task.title)
+	}
+
+	const commitEdit = async () => {
+		if (editingTaskId) {
+			await handleEditTask(editingTaskId, editingTitle)
+		}
+		setEditingTaskId(null)
+		setEditingTitle('')
 	}
 
 	return (
@@ -47,15 +64,34 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 					) : (
 						<ul className={classes.taskList}>
 							{tasks.map(task => (
-								<li key={task.$id}>
-									<CheckboxCard
-										label={task.title}
-										withBorder={true}
-										checked={task.isCompleted}
-										onCheck={checked => handleToggleTask(task.$id, checked)}
-										onDelete={() => setTaskToDelete(task)}
-										withRemoval
-									/>
+								<li key={task.$id} className={clsx(editingTaskId === task.$id && classes.newTaskItem)}>
+									{editingTaskId === task.$id ? (
+										<input
+											autoFocus
+											className={classes.inlineInput}
+											value={editingTitle}
+											onChange={e => setEditingTitle(e.target.value)}
+											onBlur={commitEdit}
+											onKeyDown={e => {
+												if (e.key === 'Enter') commitEdit()
+												if (e.key === 'Escape') {
+													setEditingTaskId(null)
+													setEditingTitle('')
+												}
+											}}
+										/>
+									) : (
+										<CheckboxCard
+											label={task.title}
+											withBorder={true}
+											checked={task.isCompleted}
+											onCheck={checked => handleToggleTask(task.$id, checked)}
+											onEdit={() => startEditing(task)}
+											onDelete={() => setTaskToDelete(task)}
+											withRemoval
+											withEditing
+										/>
+									)}
 								</li>
 							))}
 							{isCreating && (

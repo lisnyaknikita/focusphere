@@ -89,6 +89,22 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		}
 	}
 
+	const handleEditTask = async (taskId: string, newTitle: string) => {
+		const trimmed = newTitle.trim()
+		if (!trimmed) return
+
+		const previousTasks = [...tasks]
+
+		setTasks(prev => prev.map(item => (item.$id === taskId ? { ...item, title: trimmed } : item)))
+
+		try {
+			await updateDailyTask(taskId, { title: trimmed })
+		} catch (error) {
+			console.error('Failed to edit task:', error)
+			setTasks(previousTasks)
+		}
+	}
+
 	const handleDeleteTask = async (taskId: string) => {
 		const previousTasks = [...tasks]
 
@@ -169,5 +185,6 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		handleAddTask,
 		handleToggleTask,
 		handleDeleteTask,
+		handleEditTask,
 	}
 }
