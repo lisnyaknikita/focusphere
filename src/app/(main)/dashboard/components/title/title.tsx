@@ -8,7 +8,13 @@ export const Title = () => {
 
 	if (!today) return <h1 className={classes.title}>&nbsp;</h1>
 
-	const { weekday, day, month } = today
+	const { shortWeekday, day, shortMonth } = today
 
-	return <h1 className={classes.title}>{`${weekday}, ${month} ${day}`}</h1>
+	return (
+		<h1 className={classes.title}>
+			<span className={classes.todayWord}>Today</span>
+			<span className={classes.separator}>·</span>
+			<span className={classes.dateDetail}>{`${shortWeekday} ${day} ${shortMonth}`}</span>
+		</h1>
+	)
 }

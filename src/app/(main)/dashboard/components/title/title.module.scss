@@ -1,7 +1,9 @@
 .title {
-	font-size: 40px;
+	font-size: 36px;
 	font-weight: 400;
-	margin-bottom: 40px;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
 
 	@media screen and (max-width: 1120px) {
 		font-size: 32px;
@@ -11,4 +13,14 @@
 		font-size: 26px;
 		margin-bottom: 30px;
 	}
+}
+
+.separator {
+	margin: 0 0.35em;
+	opacity: 0.45;
+}
+
+.dateDetail {
+	font-weight: 400;
+	opacity: 0.65;
 }
