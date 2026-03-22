@@ -1,11 +1,13 @@
 'use client'
 
+import { CALENDAR_COLORS } from '@/lib/events/calendar-config'
 import { useDeleteProject } from '@/shared/hooks/projects/use-delete-project'
 import { useUpdateProject } from '@/shared/hooks/projects/use-update-project'
 import { Project } from '@/shared/types/project'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { RadioCard } from '@/shared/ui/radio-card/radio-card'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
@@ -59,6 +61,45 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 						/>
 					</label>
 					<div className={classes.radioField}>
+						<div className={classes.colorField}>
+							<label>Project color</label>
+							<Controller
+								name='color'
+								control={control}
+								render={({ field }) => (
+									<div className={classes.colorPickerContainer}>
+										{Object.values(CALENDAR_COLORS).map(color => (
+											<button
+												key={color}
+												type='button'
+												className={clsx(classes.colorOption, field.value === color && classes.active)}
+												style={{ backgroundColor: color }}
+												onClick={() => field.onChange(color)}
+												disabled={!isOwner}
+											>
+												{field.value === color && (
+													<svg
+														width='12'
+														height='12'
+														viewBox='0 0 12 12'
+														fill='none'
+														xmlns='http://www.w3.org/2000/svg'
+													>
+														<path
+															d='M2 6L5 9L10 3'
+															stroke='white'
+															strokeWidth='2'
+															strokeLinecap='round'
+															strokeLinejoin='round'
+														/>
+													</svg>
+												)}
+											</button>
+										))}
+									</div>
+								)}
+							/>
+						</div>
 						<label>Project type</label>
 						<Controller
 							name='type'

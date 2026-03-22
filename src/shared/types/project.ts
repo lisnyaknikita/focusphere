@@ -6,7 +6,7 @@ export interface Project extends Models.Document {
 	type: 'solo' | 'team'
 	ownerId: string
 	teamId?: string
-	logo?: string
+	color: string
 	isFavorite?: boolean
 }
 
@@ -16,6 +16,6 @@ export interface CreateProjectPayload {
 	type: 'solo' | 'team'
 	ownerId: string
 	teamId?: string
-	logo?: string
+	color?: string
 	isFavorite?: boolean
 }
