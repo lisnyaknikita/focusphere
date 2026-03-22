@@ -31,7 +31,7 @@ export const ChatSidebar = ({
 	currentUserId,
 }: ChatSidebarProps) => {
 	const [isChannelsOpened, setIsChannelsOpened] = useState(true)
-	const [isMessagesOpened, setIsMessagesOpened] = useState(false)
+	// const [isMessagesOpened, setIsMessagesOpened] = useState(false)
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 	const [newChannelName, setNewChannelName] = useState('')
 	console.log(teammates)
@@ -84,7 +84,7 @@ export const ChatSidebar = ({
 						))}
 					</ul>
 				</div>
-				<div className={classes.messages}>
+				{/* <div className={classes.messages}>
 					<div className={classes.trigger} onClick={() => setIsMessagesOpened(prev => !prev)}>
 						<button className={classes.triggerTitle}>
 							<ArrowBottomIcon className={clsx(!isMessagesOpened && 'rotated')} />
@@ -94,16 +94,16 @@ export const ChatSidebar = ({
 							<PlusIcon />
 						</button>
 					</div>
-					<ul className={clsx(classes.list, isMessagesOpened && 'opened')}>
-						{/* {teammates.map(mate => (
+					<ul className={clsx(classes.list, isMessagesOpened && 'opened')}> */}
+				{/* {teammates.map(mate => (
 						<li className={classes.listItem} key={mate.$id}>
 							<Image src={'/avatar.jpg'} alt='avatar' width={20} height={19} />
 							<span>{mate.userName}</span>
 						</li>
 					))} */}
-						<p>Soon...</p>
+				{/* <p>Soon...</p>
 					</ul>
-				</div>
+				</div> */}
 			</div>
 			<Modal isVisible={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
 				<CreateChannelModal

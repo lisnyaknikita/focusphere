@@ -1,7 +1,6 @@
 .sidebar {
-	padding: 10px 10px 10px 20px;
 	height: 100%;
-	border-right: 0.3px solid var(--line);
+	border-right: 0.3px solid var(--btn-border);
 	width: 30%;
 }
 
@@ -10,13 +9,16 @@
 	font-weight: 700;
 	color: var(--text);
 	margin-bottom: 20px;
-	padding-bottom: 20px;
-	border-bottom: 1px solid var(--hover);
+	padding-top: 5px;
+	padding-bottom: 3px;
+	border-bottom: 1px solid var(--btn-border);
 	text-align: center;
 }
 
 .channels {
 	margin-bottom: 20px;
+	height: 100%;
+	padding: 0 10px 20px 10px;
 }
 
 .trigger {
