@@ -51,7 +51,7 @@ export const ProjectCard = ({ project, onRefresh }: ProjectCardProps) => {
 					<ul className={classes.teamMembers}>
 						{isLoading && project.type === 'team' ? (
 							<li className={classes.avatar}>
-								<BeatLoader color='#aaa' size={10} />
+								<BeatLoader color='#aaa' size={10} style={{ height: 34.5 }} />
 							</li>
 						) : (
 							displayMembers.map((member, index) => (
@@ -59,6 +59,9 @@ export const ProjectCard = ({ project, onRefresh }: ProjectCardProps) => {
 									<OwnerAvatar userId={member.userId} size={30} />
 								</li>
 							))
+						)}
+						{!isLoading && project.type === 'team' && teammates.length > 3 && (
+							<li className={classes.moreCount}>+{teammates.length - 3}</li>
 						)}
 					</ul>
 					<div className={classes.updateDate}>Updated {getRelativeTime(project.$updatedAt)}</div>
