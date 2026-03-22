@@ -59,6 +59,7 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 							placeholder='Add a short description...'
 							disabled={!isOwner || isSubmitting || isDeleting}
 						/>
+						{errors.description && <p className={classes.errorText}>{errors.description.message}</p>}
 					</label>
 					<div className={classes.radioField}>
 						<div className={classes.colorField}>

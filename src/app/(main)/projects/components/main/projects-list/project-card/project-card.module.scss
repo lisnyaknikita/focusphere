@@ -120,6 +120,7 @@
 
 .teamMembers {
 	display: flex;
+	align-items: center;
 	padding-left: 5px;
 	min-height: 34.5px;
 
@@ -132,4 +133,9 @@
 			margin-left: 0;
 		}
 	}
+}
+
+.moreCount {
+	margin-left: 5px;
+	margin-bottom: 8px;
 }
