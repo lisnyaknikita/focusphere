@@ -26,6 +26,11 @@
 			visibility: visible;
 			pointer-events: all;
 		}
+
+		> .customCheckbox {
+			border-color: color-mix(in srgb, var(--text) 60%, transparent);
+			background-color: color-mix(in srgb, var(--checkbox-bg) 15%, transparent);
+		}
 	}
 }
 
@@ -37,22 +42,29 @@
 
 .customCheckbox {
 	width: 20px;
-	height: 18px;
-	background-color: var(--checkbox-bg);
+	height: 20px;
+	border: 1.5px solid color-mix(in srgb, var(--text) 30%, transparent);
 	border-radius: 5px;
 	margin-right: 6px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+	transition: all 0.2s;
+	background-color: transparent;
 
-	.checkbox:checked + &::after {
-		content: '';
-		width: 6px;
-		height: 10px;
-		border: solid var(--checkbox-icon);
-		border-width: 0 2px 2px 0;
-		transform: rotate(45deg) translateY(-2px) translateX(-1px);
+	.checkbox:checked + & {
+		background-color: var(--checkbox-bg);
+		border-color: var(--checkbox-bg);
+
+		&::after {
+			content: '';
+			width: 6px;
+			height: 12px;
+			border: solid var(--checkbox-icon);
+			border-width: 0 2px 2px 0;
+			transform: rotate(45deg) translateY(-2px) translateX(-2px);
+		}
 	}
 }
 

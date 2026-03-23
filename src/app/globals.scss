@@ -281,6 +281,19 @@ ul {
 	overflow: hidden !important;
 }
 
+.ql-snow .ql-picker-options {
+	background-color: var(--secondaryFull) !important;
+
+	> .ql-picker-item {
+		color: var(--text) !important;
+		transition: color 0.2s;
+
+		&:hover {
+			color: var(--line) !important;
+		}
+	}
+}
+
 .sx__calendar {
 	border: none !important;
 }

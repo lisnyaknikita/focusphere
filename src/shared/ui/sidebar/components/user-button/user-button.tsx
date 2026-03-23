@@ -107,7 +107,12 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						<AvatarUploader avatarUrl={avatarUrl} onUploaded={setAvatarUrl} />
 						<EditableUsername displayName={getDisplayName()} onNameUpdated={handleNameUpdate} />
 					</div>
-					<a type='email' href={`mailto:${user?.email || 'null'}`} className={classes.userEmail}>
+					<a
+						type='email'
+						href={`mailto:${user?.email || 'null'}`}
+						className={classes.userEmail}
+						title={user?.email || ''}
+					>
 						{user?.email || 'null'}
 					</a>
 					<button className={classes.saveButton} onClick={() => setIsVisible(false)}>
