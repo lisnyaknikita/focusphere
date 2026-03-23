@@ -5,6 +5,7 @@ export const projectSchema = z.object({
 	type: z.enum(['solo', 'team'], {
 		message: 'Please select a project type',
 	}),
+	color: z.string().optional(),
 	description: z.string().max(200, 'Description is too long').optional(),
 })
 
