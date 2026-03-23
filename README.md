@@ -1,33 +1,48 @@
 # Focusphere
 
-## Tech stack
+Focusphere is a productivity platform that combines personal planning and team collaboration in one web app.
 
-### Frontend
+It includes projects, Kanban board, team chat, notes, journal, calendar, planner, and focus timer in a single workflow.
 
-- [Next.js](https://nextjs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
+## Live & Repository
 
-### Backend
+- Live Demo: https://focusphere-test.vercel.app
+- Repository: `https://github.com/lisnyaknikita/focusphere`
 
-- [Python](https://www.python.org/)
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [SQLAlchemy](https://www.sqlalchemy.org/)
-- [SQLite](https://sqlite.org/)
+## Product Highlights
 
-## How to launch
+- End-to-end auth flow: email/password, Google OAuth, email verification, password recovery
+- Team project workspace: Kanban board, channels-based chat, project notes
+- Personal productivity stack: calendar, planner (time blocks/goals/tasks), journal, focus timer
+- Rich client UX: modals, autosave patterns, optimistic updates, drag-and-drop calendar interactions
 
-Clone the repository `git clone https://github.com/lisnyaknikita/focusphere.git`
+## Screenshots
 
-### Lunch the frontend
+### Dashboard
 
-1. Go to the frontend directory `cd front`
-2. Install the dependencies `npm install`
-3. Run the frontend `npm run dev`
+![Dashboard preview](public/dashboard.png)
 
-### Lunch the backend
+### Kanban Board
 
-1. Go to the backend directory `cd back`
-2. Create a virtual environment `python -m venv .venv`
-3. Install the dependencies `pip install -r pyproject.toml`
-4. Run the backend `uvicorn main:app --reload`
+![Kanban board preview](public/projects.png)
+
+## Tech Stack
+
+- Framework: [Next.js 15 (App Router)](https://nextjs.org/), [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+- Styling: [Sass / SCSS Modules](https://sass-lang.com/)
+- Forms and validation: [React Hook Form](https://react-hook-form.com/), [Zod](https://zod.dev/)
+- UI/UX libraries: [Framer Motion](https://www.framer.com/motion/), [dnd-kit](https://dndkit.com/)
+- Calendar engine: [Schedule-X](https://schedule-x.dev/)
+- Backend platform: [Appwrite](https://appwrite.io/) (Auth, Database, Storage, Teams)
+
+## Architecture Overview
+
+- `src/app`: route groups and pages (`(landing)`, `(auth)`, `(main)`)
+- `src/shared`: reusable UI, hooks, contexts, types, utils
+- `src/lib`: Appwrite integration and domain-level data access modules
+
+State approach:
+
+- Local state for view-level interactions
+- React Context for cross-screen domain/UI state
+- Custom hooks for orchestration and side effects

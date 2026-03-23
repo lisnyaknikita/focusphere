@@ -78,7 +78,7 @@ const CalendarVisual = () => (
 	</div>
 )
 
-const KanbanVisual = () => <Image src={'/projects.png'} alt='Projects' width={568} height={350} />
+const KanbanVisual = () => <Image src={'/projects.png'} alt='Projects' width={620} height={350} />
 
 const TimerVisual = () => <Image src={'/timer.png'} alt='Projects' width={568} height={298} />
 
