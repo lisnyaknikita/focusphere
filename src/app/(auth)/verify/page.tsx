@@ -1,6 +1,6 @@
 'use client'
 
-import { account } from '@/lib/appwrite'
+import { authService } from '@/shared/services/auth.service'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 
@@ -22,7 +22,7 @@ function VerifyEmailContent() {
 
 		const verify = async () => {
 			try {
-				await account.updateVerification(userId, secret)
+				await authService.verifyEmail(userId, secret)
 				setStatus('success')
 
 				setTimeout(() => {

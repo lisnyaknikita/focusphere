@@ -1,9 +1,11 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { forgotSchema, ForgotFormValues } from '@/shared/schemas/forgot-schema'
+import { authService } from '@/shared/services/auth.service'
 import classes from './forgot-form.module.scss'
-import { sendRecoveryEmail } from './send-recovery-service/send-recovery-service'
 
 export const ForgotForm = () => {
 	const [success, setSuccess] = useState(false)
@@ -11,11 +13,14 @@ export const ForgotForm = () => {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
-	} = useForm<{ email: string }>()
+	} = useForm<ForgotFormValues>({
+		resolver: zodResolver(forgotSchema),
+		mode: 'onBlur',
+	})
 
-	const onSubmit = async ({ email }: { email: string }) => {
+	const onSubmit = async ({ email }: ForgotFormValues) => {
 		try {
-			await sendRecoveryEmail(email)
+			await authService.sendRecoveryEmail(email)
 			setSuccess(true)
 		} catch (err) {
 			console.error(err)
@@ -33,9 +38,9 @@ export const ForgotForm = () => {
 	return (
 		<form className={classes.forgotForm} onSubmit={handleSubmit(onSubmit)}>
 			<label className={classes.formLabel}>
-				<input type='email' placeholder='Enter your email' {...register('email', { required: true })} />
+				<input type='email' placeholder='Enter your email' {...register('email')} />
 			</label>
-			{errors.email && <p className={classes.error}>Email is required</p>}
+			{errors.email && <p className={classes.error}>{errors.email.message}</p>}
 			<button className={classes.submitButton} disabled={isSubmitting}>
 				{isSubmitting ? 'Sending...' : 'Send reset link'}
 			</button>
