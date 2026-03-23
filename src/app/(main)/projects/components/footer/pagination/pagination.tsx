@@ -10,7 +10,6 @@ interface PaginationProps {
 
 export const Pagination = ({ currentPage, total, limit, onChange }: PaginationProps) => {
 	const totalPages = Math.ceil(total / limit)
-	console.log(currentPage, total, limit)
 
 	return (
 		<div className={classes.paginationButtons}>

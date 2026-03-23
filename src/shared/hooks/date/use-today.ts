@@ -9,6 +9,8 @@ interface TodayData {
 	day: number
 	weekday: string
 	month: string
+	shortWeekday: string
+	shortMonth: string
 }
 
 export const useToday = () => {
@@ -23,6 +25,8 @@ export const useToday = () => {
 			day: today.day,
 			weekday: today.toLocaleString('en-US', { weekday: 'long' }),
 			month: today.toLocaleString('en-US', { month: 'long' }),
+			shortWeekday: today.toLocaleString('en-US', { weekday: 'short' }),
+			shortMonth: today.toLocaleString('en-US', { month: 'short' }),
 		})
 	}, [])
 

@@ -1,28 +1,27 @@
 .tabs {
+	background-color: var(--secondaryFull);
+	border-radius: 5px;
+	padding: 3px;
 	display: flex;
 	align-items: center;
-	border-radius: 5px;
-	overflow: hidden;
+	gap: 2px;
 }
 
 .tab {
-	color: #fff;
-	background-color: var(--tab-bg);
+	color: var(--tab-bg);
+	border-radius: 5px;
 	font-size: 15px;
 	text-transform: capitalize;
 	padding: 5px 14px;
 	font-family: inherit;
 	transition: background-color 0.2s;
 
-	&:not(:last-child) {
-		border-right: 0.3px solid #fff;
+	&:hover {
+		color: var(--text);
 	}
 
 	&.active {
-		background: var(--tab-bg-active);
-	}
-
-	&:hover {
-		background: var(--tab-bg-active);
+		background-color: var(--tab-bg-active);
+		color: var(--text);
 	}
 }

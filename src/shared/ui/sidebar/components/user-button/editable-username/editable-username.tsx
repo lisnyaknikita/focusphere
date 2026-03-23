@@ -85,7 +85,9 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 				/>
 			) : (
 				<div className={classes.usernameWrapper} onClick={() => !isLoading && setIsEditing(true)}>
-					<span className={classes.username}>{isLoading ? 'Saving...' : username}</span>
+					<span className={classes.username} title={username}>
+						{isLoading ? 'Saving...' : username}
+					</span>
 					{!isLoading && <EditIcon className={classes.icon} />}
 				</div>
 			)}

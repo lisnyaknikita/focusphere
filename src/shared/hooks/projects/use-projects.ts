@@ -14,7 +14,7 @@ export const useProjects = (
 	const [total, setTotal] = useState(0)
 	const [isLoading, setIsLoading] = useState(true)
 
-	const limit = 9
+	const limit = 12
 
 	const getProjects = useCallback(async () => {
 		setIsLoading(true)

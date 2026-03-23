@@ -1,3 +1,4 @@
+import { CALENDAR_COLORS } from '@/lib/events/calendar-config'
 import { convertToTeamProject, updateProject } from '@/lib/projects/projects'
 import { useProject } from '@/shared/context/project-context'
 import { ProjectFormValues, projectSchema } from '@/shared/schemas/project-schema'
@@ -19,6 +20,7 @@ export const useUpdateProject = ({ project, onSuccess }: useUpdateProjectProps) 
 			title: project.title,
 			description: project.description ?? '',
 			type: project.type,
+			color: project.color || CALENDAR_COLORS.GOLD,
 		},
 	})
 
