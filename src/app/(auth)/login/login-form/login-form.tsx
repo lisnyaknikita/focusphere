@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import classes from './login-form.module.scss'
-import { loginUser } from './login-service/login-service'
+import { authService } from '@/shared/services/auth.service'
 
 export const LoginForm = () => {
 	const router = useRouter()
@@ -24,7 +24,7 @@ export const LoginForm = () => {
 		setErrorMessage('')
 
 		try {
-			await loginUser(data.email, data.password)
+			await authService.loginUser(data.email, data.password)
 
 			router.push('/dashboard')
 		} catch (err) {

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { signupUser } from './services/signup-service/signup-service'
+import { authService } from '@/shared/services/auth.service'
 import classes from './signup-form.module.scss'
 
 interface SignupFormProps {
@@ -26,7 +26,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 
 	const onSubmit = async (data: SignupFormValues) => {
 		try {
-			await signupUser(data)
+			await authService.signupUser(data)
 
 			onSuccess()
 		} catch (error) {
