@@ -16,7 +16,7 @@ export const useTimeBlocks = () => {
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
-				queries: [Query.equal('userId', userId)],
+				queries: [Query.equal('userId', userId), Query.limit(5000)],
 			})
 
 			setTimeBlocks(response.rows as unknown as TimeBlock[])

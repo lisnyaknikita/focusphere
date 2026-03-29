@@ -26,6 +26,7 @@ export const useEventsByToday = () => {
 					Query.lessThan('startDate', endOfDay),
 					Query.greaterThan('endDate', startOfDay),
 					Query.orderAsc('startDate'),
+					Query.limit(5000),
 				],
 			})
 
