@@ -12,7 +12,7 @@ export const useEvents = () => {
 	const getEvents = useCallback(async () => {
 		const userId = await getCurrentUserId()
 
-		const filters = [Query.equal('userId', userId)]
+		const filters = [Query.equal('userId', userId), Query.limit(5000)]
 
 		setIsLoading(true)
 
