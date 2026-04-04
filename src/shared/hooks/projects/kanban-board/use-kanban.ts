@@ -5,6 +5,7 @@ import {
 	updateKanbanTask,
 } from '@/lib/projects/kanban-board-tasks/tasks'
 import { touchProject } from '@/lib/projects/projects'
+import { Task } from '@/shared/types/kanban'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
 import { useEffect, useState } from 'react'
@@ -38,14 +39,36 @@ export const useKanban = (project: Project) => {
 		fetchTasks()
 	}, [project?.$id])
 
+	const reorderTasks = async (newTasks: KanbanTask[]) => {
+		const previousTasks = [...tasks]
+
+		setTasks(newTasks)
+
+		try {
+			const updatePromises = newTasks.map((task, index) => {
+				return updateKanbanTask(task.$id, { position: index } as unknown as Task)
+			})
+
+			await Promise.all(updatePromises)
+			triggerProjectUpdate()
+		} catch (error) {
+			console.error('Failed to reorder tasks:', error)
+			setTasks(previousTasks)
+		}
+	}
+
 	const addTask = async (title: string, status: TaskStatus) => {
 		try {
+			const tasksInColumn = tasks.filter(t => t.status === status)
+			const newPosition = tasksInColumn.length
+
 			const payload: CreateKanbanTaskPayload = {
 				title,
 				status,
 				priority: 'medium',
 				projectId: project.$id,
 				assigneeName: user?.name || 'Unknown user',
+				position: newPosition,
 			}
 
 			const res = await createKanbanTask(payload)
@@ -98,5 +121,5 @@ export const useKanban = (project: Project) => {
 		}
 	}
 
-	return { tasks, isLoading, addTask, moveTask, updateTask, deleteTask }
+	return { tasks, isLoading, addTask, moveTask, updateTask, deleteTask, reorderTasks }
 }
