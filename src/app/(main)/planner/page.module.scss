@@ -7,6 +7,36 @@
 	position: relative;
 }
 
+.pasteBanner {
+	position: absolute;
+	top: 0%;
+	left: 50%;
+	transform: translate(-50%);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 10px;
+	z-index: 2;
+	background-color: var(--secondaryFull);
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.cancelBtn {
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px 8px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--primary);
+	}
+}
+
 .header {
 	width: 100%;
 	display: flex;

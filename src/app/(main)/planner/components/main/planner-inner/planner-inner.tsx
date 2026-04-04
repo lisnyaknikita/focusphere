@@ -20,12 +20,14 @@ interface PlannerInnerProps {
 	eventsService: ReturnType<typeof createEventsServicePlugin>
 	eventModal: ReturnType<typeof createEventModalPlugin>
 	onDayClick: (date: string) => void
+	onCopyEvent: (event: SXEvent) => void
 	refreshTimeBlocks: () => void
 }
 
 export const PlannerInner = ({
 	timeBlocks,
 	onDayClick,
+	onCopyEvent,
 	dailyTasksCountByDate,
 	calendar,
 	eventsService,
@@ -54,6 +56,10 @@ export const PlannerInner = ({
 						refreshTimeBlocks()
 						eventModal.close()
 					}}
+					onCopy={() => {
+						onCopyEvent(calendarEvent)
+						eventModal.close()
+					}}
 					actions={{
 						create: createTimeBlock,
 						update: updateTimeBlock,
@@ -64,7 +70,7 @@ export const PlannerInner = ({
 				<WeekDayHeader date={date} onDayClick={onDayClick} incompleteTasksCount={dailyTasksCountByDate[date] ?? 0} />
 			),
 		}),
-		[, onDayClick, dailyTasksCountByDate, refreshTimeBlocks]
+		[onDayClick, dailyTasksCountByDate, refreshTimeBlocks, onCopyEvent]
 	)
 
 	return (
