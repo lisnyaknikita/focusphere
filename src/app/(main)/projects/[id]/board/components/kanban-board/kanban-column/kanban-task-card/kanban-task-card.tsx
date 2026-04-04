@@ -39,7 +39,7 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask }: KanbanTaskC
 					<p className={classes.taskDescription}>{task.description}</p>
 					<footer className={classes.taskCardFooter}>
 						<div className={classes.taskAssignee}>
-							<Image src={getUserAvatar(task.assigneeName)} alt={task.assigneeName} width={23} height={23} />
+							<Image src={getUserAvatar(task.assigneeName)} alt={task.assigneeName} width={20} height={20} />
 							<span>{task.assigneeName}</span>
 						</div>
 						<span
