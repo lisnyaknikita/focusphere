@@ -70,10 +70,11 @@ export default function Planner() {
 			<div className={classes.plannerPage}>
 				{copiedTimeBlock && (
 					<div className={classes.pasteBanner}>
-						<p>
-							Insert mode for <span className='highlight'>{copiedTimeBlock.title}</span> block. Click on a day to
-							duplicate.
-						</p>
+						<div className={classes.info}>
+							<span className={classes.label}>Copying:</span>
+							<strong className={classes.eventTitle}>{copiedTimeBlock.title}</strong>
+						</div>
+						<p className={classes.hint}>Click on any day in the calendar to paste</p>
 						<button onClick={() => setCopiedTimeBlock(null)} className={classes.cancelBtn}>
 							Cancel
 						</button>
