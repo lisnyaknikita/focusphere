@@ -7,6 +7,83 @@
 	position: relative;
 }
 
+.pasteBanner {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 24px;
+	background-color: var(--secondaryFull);
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 25px -5px rgba(0, 0, 0, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	animation: slideIn 0.3s ease-out;
+	min-width: 300px;
+}
+
+.info {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.95rem;
+}
+
+.label {
+	opacity: 0.7;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.eventTitle {
+	color: var(--text);
+	font-weight: 600;
+}
+
+.hint {
+	margin: 0;
+	font-size: 0.85rem;
+	opacity: 0.6;
+	text-align: center;
+}
+
+.cancelBtn {
+	margin-top: 4px;
+	padding: 6px 16px;
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 6px;
+	color: #ef4444;
+	cursor: pointer;
+	font-size: 0.8rem;
+	transition: all 0.2s;
+
+	&:hover {
+		background: rgba(239, 68, 68, 0.1);
+	}
+}
+
+.cancelBtn {
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px 8px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--primary);
+	}
+}
+
 .header {
 	width: 100%;
 	display: flex;
@@ -29,4 +106,15 @@
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -20px);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
 }

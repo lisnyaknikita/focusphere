@@ -39,7 +39,9 @@ export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
 									<span className={classes.number}>{number}</span>
 								</div>
 								<div className={classes.content}>
-									<h4 className={classes.noteTitle}>{note.title}</h4>
+									<h4 className={classes.noteTitle} title={note.title}>
+										{note.title}
+									</h4>
 									<h6 className={classes.noteSubtitle}>{stripHtml(note.content)}</h6>
 									<time className={classes.noteTime}>{time}</time>
 								</div>

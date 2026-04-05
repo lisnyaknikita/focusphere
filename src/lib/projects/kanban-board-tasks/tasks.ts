@@ -11,7 +11,7 @@ export const getKanbanTasks = async (projectId: string) => {
 	return tablesDB.listRows({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
-		queries: [Query.equal('projectId', projectId)],
+		queries: [Query.equal('projectId', projectId), Query.orderAsc('position')],
 	})
 }
 

@@ -9,16 +9,18 @@ import { DateTimeIcon } from '../icons/calendar/date-time-icon'
 import { DescriptionIcon } from '../icons/calendar/description-icon'
 import { DeleteIcon } from '../icons/delete-icon'
 import { EditIcon } from '../icons/edit-icon'
+import { CopyTimeBlockIcon } from '../icons/planner/copy-timeblock-icon'
 import classes from './event-info-modal.module.scss'
 
 interface EventInfoModalProps {
 	event: SXEvent
 	onConfirmDelete?: (eventId: string) => Promise<void> | void
 	onUpdated?: () => void
+	onCopy?: () => void
 	actions?: CalendarActions
 }
 
-export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, actions }: EventInfoModalProps) => {
+export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, actions }: EventInfoModalProps) => {
 	const [isEditing, setIsEditing] = useState(false)
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
@@ -71,6 +73,9 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, actions }: E
 			<div className={classes.modalButtons}>
 				{!isReadOnly && (
 					<>
+						<button type='button' className={classes.copyBtn} onClick={onCopy} title='Copy this time block'>
+							<CopyTimeBlockIcon />
+						</button>
 						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<EditIcon />
 						</button>

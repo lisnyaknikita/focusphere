@@ -4,7 +4,8 @@ import { getUserAvatar } from '@/lib/appwrite'
 import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
 import { DragHandleIcon } from '@/shared/ui/icons/projects/drag-handle-icon'
 import { Modal } from '@/shared/ui/modal/modal'
-import { useDraggable } from '@dnd-kit/core'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import Image from 'next/image'
 import { useState } from 'react'
 import classes from './kanban-task-card.module.scss'
@@ -19,17 +20,24 @@ const priorityColors = {
 
 interface KanbanTaskCardProps {
 	task: KanbanTask
+	isOverlay?: boolean
 	onUpdateTask: (taskId: string, data: Partial<CreateKanbanTaskPayload>) => Promise<void>
 	onDeleteTask: (taskId: string) => Promise<void>
 }
 
-export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask }: KanbanTaskCardProps) => {
-	const { attributes, listeners, setNodeRef, transform } = useDraggable({
-		id: task.$id,
-	})
+export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: KanbanTaskCardProps) => {
 	const [isTaskModalVisible, setIsTaskModalVisible] = useState(false)
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+		id: task.$id,
+		disabled: isTaskModalVisible,
+	})
 
-	const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px)` } : undefined
+	const style = {
+		transform: CSS.Translate.toString(transform),
+		transition,
+		opacity: isDragging && !isOverlay ? 0.3 : 1,
+		zIndex: isDragging ? 999 : undefined,
+	}
 
 	return (
 		<>
@@ -39,7 +47,7 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask }: KanbanTaskC
 					<p className={classes.taskDescription}>{task.description}</p>
 					<footer className={classes.taskCardFooter}>
 						<div className={classes.taskAssignee}>
-							<Image src={getUserAvatar(task.assigneeName)} alt={task.assigneeName} width={23} height={23} />
+							<Image src={getUserAvatar(task.assigneeName)} alt={task.assigneeName} width={20} height={20} />
 							<span>{task.assigneeName}</span>
 						</div>
 						<span
@@ -51,7 +59,7 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask }: KanbanTaskC
 						</div>
 					</footer>
 				</div>
-				<div className={classes.dragHandle} {...attributes} {...listeners}>
+				<div className={classes.dragHandle} {...attributes} {...listeners} onClick={e => e.stopPropagation()}>
 					<button>
 						<DragHandleIcon />
 					</button>

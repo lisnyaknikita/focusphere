@@ -5,7 +5,16 @@ import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
 import { useSectionHeight } from '@/shared/hooks/section-height/useSectionHeight'
 import { Column } from '@/shared/types/kanban'
 import { KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
-import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core'
+import {
+	closestCorners,
+	DndContext,
+	DragEndEvent,
+	DragOverlay,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import classes from './kanban-board.module.scss'
@@ -21,22 +30,48 @@ const COLUMNS: Column[] = [
 
 export const KanbanBoard = () => {
 	const { project } = useProject()
-	const { tasks, isLoading, addTask, moveTask, updateTask, deleteTask } = useKanban(project!)
+	const { tasks, isLoading, addTask, moveTask, updateTask, deleteTask, reorderTasks } = useKanban(project!)
 	const [activeTask, setActiveTask] = useState<KanbanTask | null>(null)
 	const { sectionRef, listHeight } = useSectionHeight(0.894)
 
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: { distance: 8 },
+		})
+	)
+
 	const handleDragEnd = (event: DragEndEvent) => {
 		const { active, over } = event
-
 		if (!over) {
 			setActiveTask(null)
 			return
 		}
 
-		const taskId = active.id as string
-		const newStatus = over.id as TaskStatus
+		const activeId = active.id as string
+		const overId = over.id as string
 
-		moveTask(taskId, newStatus)
+		if (activeId === overId) {
+			setActiveTask(null)
+			return
+		}
+
+		const activeTask = tasks.find(t => t.$id === activeId)
+		const overTask = tasks.find(t => t.$id === overId)
+
+		if (overTask) {
+			if (activeTask?.status !== overTask.status) {
+				moveTask(activeId, overTask.status as TaskStatus)
+			} else {
+				const oldIndex = tasks.findIndex(t => t.$id === activeId)
+				const newIndex = tasks.findIndex(t => t.$id === overId)
+
+				const newOrder = arrayMove(tasks, oldIndex, newIndex)
+				reorderTasks(newOrder)
+			}
+		} else {
+			moveTask(activeId, overId as TaskStatus)
+		}
+
 		setActiveTask(null)
 	}
 
@@ -45,11 +80,13 @@ export const KanbanBoard = () => {
 	return (
 		<div className={classes.kanbanWrapper} ref={sectionRef}>
 			<DndContext
+				sensors={sensors}
 				onDragEnd={handleDragEnd}
 				onDragStart={({ active }) => {
 					const current = tasks.find(t => t.$id === active.id)
 					setActiveTask(current ?? null)
 				}}
+				collisionDetection={closestCorners}
 			>
 				{COLUMNS.map(column => (
 					<KanbanColumn
@@ -62,8 +99,10 @@ export const KanbanBoard = () => {
 						onDeleteTask={deleteTask}
 					/>
 				))}
-				<DragOverlay>
-					{activeTask ? <KanbanTaskCard task={activeTask} onUpdateTask={updateTask} onDeleteTask={deleteTask} /> : null}
+				<DragOverlay adjustScale={false}>
+					{activeTask ? (
+						<KanbanTaskCard task={activeTask} isOverlay onUpdateTask={updateTask} onDeleteTask={deleteTask} />
+					) : null}
 				</DragOverlay>
 			</DndContext>
 		</div>

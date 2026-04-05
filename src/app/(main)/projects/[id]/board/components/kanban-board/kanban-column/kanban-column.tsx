@@ -3,6 +3,7 @@ import { Column } from '@/shared/types/kanban'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import classes from './kanban-column.module.scss'
 import { KanbanTaskCard } from './kanban-task-card/kanban-task-card'
 
@@ -27,6 +28,8 @@ export const KanbanColumn = ({
 
 	const { setNodeRef } = useDroppable({ id: column.id })
 
+	const taskIds = tasks.map(task => task.$id)
+
 	return (
 		<div className={classes.column} ref={setNodeRef}>
 			<header className={classes.columnHeader}>
@@ -35,35 +38,37 @@ export const KanbanColumn = ({
 				<div className={classes.tasksCounter}>{tasks.length}</div>
 			</header>
 			<div className={classes.scrollWrapper} style={{ maxHeight: `${listHeight}px` }}>
-				<ul className={classes.tasksList}>
-					{tasks.map(task => (
-						<KanbanTaskCard key={task.$id} task={task} onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} />
-					))}
-					{isAdding && (
-						<li className={classes.inlineItem}>
-							<textarea
-								autoFocus
-								placeholder='Task name...'
-								value={title}
-								onChange={e => setTitle(e.target.value)}
-								onKeyDown={e => {
-									if (e.key === 'Enter' && !e.shiftKey) {
-										e.preventDefault()
-										handleAddSubmit()
-									}
-									if (e.key === 'Escape') {
-										setIsAdding(false)
-										setTitle('')
-									}
-								}}
-								onBlur={() => {
-									if (!title.trim()) setIsAdding(false)
-								}}
-								disabled={isSubmitting}
-							/>
-						</li>
-					)}
-				</ul>
+				<SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
+					<ul className={classes.tasksList}>
+						{tasks.map(task => (
+							<KanbanTaskCard key={task.$id} task={task} onUpdateTask={onUpdateTask} onDeleteTask={onDeleteTask} />
+						))}
+						{isAdding && (
+							<li className={classes.inlineItem}>
+								<textarea
+									autoFocus
+									placeholder='Task name...'
+									value={title}
+									onChange={e => setTitle(e.target.value)}
+									onKeyDown={e => {
+										if (e.key === 'Enter' && !e.shiftKey) {
+											e.preventDefault()
+											handleAddSubmit()
+										}
+										if (e.key === 'Escape') {
+											setIsAdding(false)
+											setTitle('')
+										}
+									}}
+									onBlur={() => {
+										if (!title.trim()) setIsAdding(false)
+									}}
+									disabled={isSubmitting}
+								/>
+							</li>
+						)}
+					</ul>
+				</SortableContext>
 				{!isAdding && (
 					<button className={classes.createButton} onClick={() => setIsAdding(true)}>
 						<PlusIcon />

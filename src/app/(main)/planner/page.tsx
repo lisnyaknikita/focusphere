@@ -14,6 +14,7 @@ import { useCalendarApp } from '@/shared/hooks/planner/use-calendar-app'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
 import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { BeatLoader } from 'react-spinners'
 import classes from './page.module.scss'
 
@@ -23,8 +24,15 @@ export default function Planner() {
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
 	const { calendar, eventsService, eventModal } = useCalendarApp()
-
-	const { timeBlocks, isLoading: isBlocksLoading, refreshTimeBlocks } = useTimeBlocks()
+	const { user } = useUser()
+	const {
+		timeBlocks,
+		copiedTimeBlock,
+		isLoading: isBlocksLoading,
+		refreshTimeBlocks,
+		pasteTimeBlock,
+		setCopiedTimeBlock,
+	} = useTimeBlocks(user)
 	const { weeklyGoals, isLoading: isGoalsLoading, refreshWeeklyGoals } = useWeeklyGoals()
 	const { dailyTasksCountByDate, isLoading: isTasksLoading, refreshDailyTasksCounters } = useDailyTasksCounters()
 
@@ -40,10 +48,17 @@ export default function Planner() {
 		refreshTimeBlocks()
 	}, [refreshTimeBlocks])
 
-	const handleDayClick = useCallback((date: string) => {
-		setSelectedDate(date)
-		setIsDailyTasksModalVisible(true)
-	}, [])
+	const handleDayClick = useCallback(
+		async (date: string) => {
+			if (copiedTimeBlock) {
+				await pasteTimeBlock(date)
+				return
+			}
+			setSelectedDate(date)
+			setIsDailyTasksModalVisible(true)
+		},
+		[copiedTimeBlock, pasteTimeBlock]
+	)
 
 	const handleTaskModalClose = useCallback(() => {
 		setIsDailyTasksModalVisible(false)
@@ -53,6 +68,18 @@ export default function Planner() {
 	return (
 		<>
 			<div className={classes.plannerPage}>
+				{copiedTimeBlock && (
+					<div className={classes.pasteBanner}>
+						<div className={classes.info}>
+							<span className={classes.label}>Copying:</span>
+							<strong className={classes.eventTitle}>{copiedTimeBlock.title}</strong>
+						</div>
+						<p className={classes.hint}>Click on any day in the calendar to paste</p>
+						<button onClick={() => setCopiedTimeBlock(null)} className={classes.cancelBtn}>
+							Cancel
+						</button>
+					</div>
+				)}
 				<header className={classes.header}>
 					<WeeklyGoals goals={weeklyGoals} onGoalsChange={refreshWeeklyGoals} />
 					<AddTimeBlockButton setIsModalVisible={setIsTimeBlockModalVisible} />
@@ -68,6 +95,7 @@ export default function Planner() {
 							eventsService={eventsService}
 							eventModal={eventModal}
 							onDayClick={handleDayClick}
+							onCopyEvent={setCopiedTimeBlock}
 							refreshTimeBlocks={refreshTimeBlocks}
 						/>
 					)}
