@@ -1,65 +1,52 @@
 import { account } from '@/lib/appwrite'
 import { CustomUser } from '@/shared/types/custom-appwrite'
 import { ensureDefaultAvatar } from '@/shared/utils/ensure-default-avatar/ensure-default-avatar'
-import { AppwriteException } from 'appwrite'
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
 
-export const useUser = () => {
-	const [user, setUser] = useState<CustomUser | null>(null)
-	const [loading, setLoading] = useState(true)
+const fetchCurrentUser = async (): Promise<CustomUser | null> => {
+	try {
+		let currentUser = (await account.get()) as CustomUser
 
-	useEffect(() => {
-		const getUser = async () => {
-			try {
-				let currentUser = (await account.get()) as CustomUser
-
-				if (!currentUser.prefs?.avatarId) {
-					const avatarId = await ensureDefaultAvatar()
-
-					currentUser = {
-						...currentUser,
-						prefs: {
-							...currentUser.prefs,
-							avatarId: avatarId,
-						},
-					}
-				}
-
-				setUser(currentUser)
-			} catch (error: unknown) {
-				if (error instanceof AppwriteException) {
-					console.log('Appwrite Error during user retrieval:', error.message)
-				} else if (error instanceof Error) {
-					console.error('General Error during user retrieval:', error.message)
-				} else {
-					console.error('An unexpected error occurred.')
-				}
-
-				setUser(null)
-			} finally {
-				setLoading(false)
+		if (!currentUser.prefs?.avatarId) {
+			const avatarId = await ensureDefaultAvatar()
+			currentUser = {
+				...currentUser,
+				prefs: { ...currentUser.prefs, avatarId },
 			}
 		}
+		return currentUser
+	} catch (error) {
+		console.error(error)
+		return null
+	}
+}
 
-		getUser()
-	}, [])
+export const useUser = () => {
+	const queryClient = useQueryClient()
+	const router = useRouter()
+
+	const { data: user, isLoading } = useQuery({
+		queryKey: ['user'],
+		queryFn: fetchCurrentUser,
+		staleTime: 1000 * 60 * 60,
+		retry: false,
+	})
 
 	const updateUserData = (updatedFields: Partial<CustomUser>) => {
-		setUser(current => {
-			if (!current) return null
-			return { ...current, ...updatedFields }
+		queryClient.setQueryData(['user'], (old: CustomUser | null) => {
+			if (!old) return null
+			return { ...old, ...updatedFields }
 		})
 	}
 
-	const logout = async () => {
-		try {
-			await account.deleteSession({ sessionId: 'current' })
-			setUser(null)
-			window.location.href = '/login'
-		} catch (error) {
-			console.error('Logout error:', error)
-		}
-	}
+	const logoutMutation = useMutation({
+		mutationFn: () => account.deleteSession({ sessionId: 'current' }),
+		onSuccess: () => {
+			queryClient.setQueryData(['user'], null)
+			router.push('/login')
+		},
+	})
 
-	return { user, loading, logout, updateUserData }
+	return { user, loading: isLoading, logout: logoutMutation.mutate, updateUserData }
 }

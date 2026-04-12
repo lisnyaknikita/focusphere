@@ -10,23 +10,29 @@ import { createEvent, updateEvent } from '@/lib/events/events'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { CalendarView } from '../../../constants/calendar.constants'
 
 interface CalendarInnerProps {
 	events: CalendarEvent[]
 	view: CalendarView
-	getEvents: () => void
 }
 
-export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) => {
+export const CalendarInner = ({ events, view }: CalendarInnerProps) => {
+	const queryClient = useQueryClient()
 	const { calendar, eventsService, setView, eventModal } = useCalendarApp({ defaultView: view })
 	const { handleDelete } = useEventDeletion({ eventsService, eventModal })
 	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
 
+	const refreshData = () => {
+		queryClient.invalidateQueries({ queryKey: ['events'] })
+	}
+
 	const handleConfirmDelete = async () => {
 		if (eventToDelete) {
 			await handleDelete(String(eventToDelete.id))
+			refreshData()
 			setEventToDelete(null)
 		}
 	}
@@ -38,7 +44,7 @@ export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) =
 					event={calendarEvent}
 					onConfirmDelete={() => setEventToDelete(calendarEvent)}
 					onUpdated={() => {
-						getEvents()
+						refreshData()
 						eventModal.close()
 					}}
 					actions={{
@@ -48,7 +54,7 @@ export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) =
 				/>
 			),
 		}),
-		[getEvents]
+		[]
 	)
 
 	useEffect(() => {

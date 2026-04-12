@@ -11,12 +11,15 @@ import { CalendarInner } from './components/main/calendar/calendar'
 
 import { useEvents } from '@/shared/hooks/events/use-events'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
+import { useQueryClient } from '@tanstack/react-query'
 import { CalendarView } from './constants/calendar.constants'
 import classes from './page.module.scss'
 
 const VIEW_KEY = 'calendarView'
 
 export default function Calendar() {
+	const queryClient = useQueryClient()
+
 	const [view, setView] = useState<CalendarView>(() => {
 		if (typeof window !== 'undefined') {
 			return (localStorage.getItem(VIEW_KEY) as CalendarView) || 'week'
@@ -24,7 +27,7 @@ export default function Calendar() {
 		return 'week'
 	})
 	const [isModalVisible, setIsModalVisible] = useState(false)
-	const { events, getEvents, isLoading } = useEvents()
+	const { data: events = [], isLoading } = useEvents()
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as CalendarView | null
@@ -35,13 +38,9 @@ export default function Calendar() {
 		localStorage.setItem(VIEW_KEY, view)
 	}, [view])
 
-	useEffect(() => {
-		getEvents()
-	}, [getEvents])
-
-	const handleEventCreated = () => {
+	const handleRefresh = () => {
+		queryClient.invalidateQueries({ queryKey: ['events'] })
 		setIsModalVisible(false)
-		getEvents()
 	}
 
 	return (
@@ -56,13 +55,13 @@ export default function Calendar() {
 							<CreateButton setIsModalVisible={setIsModalVisible} text='Add event' />
 						</header>
 						<main className={classes.calendar}>
-							<CalendarInner events={events} view={view} getEvents={getEvents} />
+							<CalendarInner events={events} view={view} />
 						</main>
 					</>
 				)}
 			</div>
 			<Modal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)}>
-				<EventModal onClose={handleEventCreated} />
+				<EventModal onClose={handleRefresh} />
 			</Modal>
 		</>
 	)

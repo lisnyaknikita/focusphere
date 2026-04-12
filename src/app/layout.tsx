@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
 import { Toaster } from 'sonner'
 
+import { QueryProvider } from '@/shared/query-provider/query-provider'
 import './globals.scss'
 
 const notoSans = Noto_Sans({
@@ -22,7 +23,9 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={`${notoSans.variable}`}>
-				{children} <Toaster position='bottom-right' richColors />
+				<QueryProvider>
+					{children} <Toaster position='bottom-right' richColors />
+				</QueryProvider>
 			</body>
 		</html>
 	)
