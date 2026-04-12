@@ -32,7 +32,7 @@ export default function Planner() {
 		refreshTimeBlocks,
 		pasteTimeBlock,
 		setCopiedTimeBlock,
-	} = useTimeBlocks(user)
+	} = useTimeBlocks(user!)
 	const { weeklyGoals, isLoading: isGoalsLoading, refreshWeeklyGoals } = useWeeklyGoals()
 	const { dailyTasksCountByDate, isLoading: isTasksLoading, refreshDailyTasksCounters } = useDailyTasksCounters()
 
