@@ -1,6 +1,6 @@
 'use client'
 
-import { useTimer } from '@/shared/context/timer-context'
+import { useTimerStore } from '@/shared/stores/timer.store'
 import { PauseIcon } from '@/shared/ui/icons/focus/pause-icon'
 import { PlayIcon } from '@/shared/ui/icons/focus/play-icon'
 import { ResetIcon } from '@/shared/ui/icons/focus/reset-icon'
@@ -8,7 +8,14 @@ import clsx from 'clsx'
 import classes from './timer.module.scss'
 
 export const Timer = () => {
-	const { timeLeft, status, startTimer, pauseTimer, resetTimer, currentSession, settings } = useTimer()
+	const timeLeft = useTimerStore(s => s.timeLeft)
+	const status = useTimerStore(s => s.status)
+	const startTimer = useTimerStore(s => s.startTimer)
+	const pauseTimer = useTimerStore(s => s.pauseTimer)
+	const resetTimer = useTimerStore(s => s.resetTimer)
+	const currentSession = useTimerStore(s => s.currentSession)
+	const settings = useTimerStore(s => s.settings)
+	// const jumpToFinish = useTimerStore(s => s.jumpToFinish)
 
 	const minutes = Math.floor(timeLeft / 60)
 	const seconds = timeLeft % 60

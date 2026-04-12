@@ -1,6 +1,6 @@
 'use client'
 
-import { useTimer } from '@/shared/context/timer-context'
+import { useTimerStore } from '@/shared/stores/timer.store'
 import { MinusIcon } from '@/shared/ui/icons/focus/minus-icon'
 import { PlusIcon } from '@/shared/ui/icons/focus/plus-icon'
 import classes from './duration-picker.module.scss'
@@ -16,7 +16,8 @@ interface DurationPickerProps {
 }
 
 export const DurationPicker = ({ type }: DurationPickerProps) => {
-	const { settings, updateSettings } = useTimer()
+	const settings = useTimerStore(state => state.settings)
+	const updateSettings = useTimerStore(state => state.updateSettings)
 
 	const settingsMap = {
 		flow: 'flowDuration',
