@@ -1,5 +1,5 @@
 'use client'
 
-import { useBackgroundSound as useSoundContext } from '@/shared/context/background-sound-context'
+import { useBackgroundSoundStore } from '@/shared/stores/background-sound.store'
 
-export const useBackgroundSound = useSoundContext
+export const useBackgroundSound = useBackgroundSoundStore
