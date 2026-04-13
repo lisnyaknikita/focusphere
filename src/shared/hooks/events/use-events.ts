@@ -63,6 +63,7 @@ export const useEvents = () => {
 					$collectionId: '',
 					$databaseId: '',
 					$permissions: [],
+					$sequence: 0,
 					title: gEvent.summary || 'Google Event',
 					description: gEvent.description || '',
 					startDate,
