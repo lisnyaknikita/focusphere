@@ -1,5 +1,6 @@
 import { createEvent, updateEvent } from '@/lib/events/events'
 import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { CreateEventPayload } from '@/shared/types/event'
 import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
@@ -11,8 +12,25 @@ interface EventModalProps {
 }
 
 export const EventModal = ({ onClose }: EventModalProps) => {
+	const handleCreateEvent = async (data: CreateEventPayload) => {
+		const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+		const googleEvent = await googleCalendarService.createEvent({
+			summary: data.title,
+			description: data.description,
+			color: data.color,
+			start: data.startDate,
+			end: data.endDate,
+		})
+
+		if (googleEvent) {
+			return googleEvent
+		}
+
+		return createEvent(data)
+	}
+
 	const { form, setFormField, handleSubmit } = useEventForm(onClose, undefined, {
-		create: createEvent,
+		create: handleCreateEvent,
 		update: updateEvent,
 	})
 

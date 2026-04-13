@@ -13,7 +13,12 @@ export const useEventDeletion = ({ eventsService, eventModal }: DeletionDependen
 	const handleDelete = useCallback(
 		async (id: string) => {
 			try {
-				await deleteEvent(id)
+				if (id.startsWith('g_')) {
+					const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+					await googleCalendarService.deleteEvent(id)
+				} else {
+					await deleteEvent(id)
+				}
 
 				eventsService.remove(id)
 
