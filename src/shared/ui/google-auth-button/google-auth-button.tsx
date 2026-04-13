@@ -16,11 +16,12 @@ export const GoogleAuthButton = () => {
 			process.env.NODE_ENV === 'production' ? 'https://focusphere-test.vercel.app' : 'http://localhost:3000'
 
 		try {
-			account.createOAuth2Session({
-				provider: OAuthProvider.Google,
-				success: `${baseUrl}/dashboard`,
-				failure: `${baseUrl}/login`,
-			})
+			account.createOAuth2Session(
+				OAuthProvider.Google,
+				`${baseUrl}/dashboard`,
+				`${baseUrl}/login`,
+				['https://www.googleapis.com/auth/calendar']
+			)
 		} catch (error) {
 			console.error('Auth error:', error)
 			setIsLoading(false)

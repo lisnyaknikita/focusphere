@@ -1,6 +1,6 @@
 import { mapEventToScheduleX } from '@/lib/events/event-mapper'
 import { useCalendarApp } from '@/shared/hooks/calendar/use-calendar-app'
-import { CalendarEvent } from '@/shared/types/event'
+import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
 
@@ -31,6 +31,50 @@ export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) =
 		}
 	}
 
+	const handleUpdateEvent = async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>) => {
+		const { title, description, color, startDate, endDate, calendarId } = data
+		const payload: Partial<Omit<CreateEventPayload, 'userId'>> = {
+			...(title !== undefined && { title }),
+			...(description !== undefined && { description }),
+			...(color !== undefined && { color }),
+			...(startDate !== undefined && { startDate }),
+			...(endDate !== undefined && { endDate }),
+			...(calendarId !== undefined && { calendarId }),
+		}
+
+		if (eventId.startsWith('g_')) {
+			const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+
+			await googleCalendarService.updateEvent(eventId, {
+				summary: title,
+				description,
+				color,
+				start: startDate ?? new Date().toISOString(),
+				end: endDate ?? new Date().toISOString(),
+			})
+			return
+		} else {
+			return updateEvent(eventId, payload)
+		}
+	}
+
+	const handleCreateEvent = async (data: CreateEventPayload) => {
+		const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+		const googleEvent = await googleCalendarService.createEvent({
+			summary: data.title,
+			description: data.description,
+			color: data.color,
+			start: data.startDate,
+			end: data.endDate,
+		})
+
+		if (googleEvent) {
+			return googleEvent
+		}
+
+		return createEvent(data)
+	}
+
 	const customComponents = useMemo(
 		() => ({
 			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
@@ -42,8 +86,8 @@ export const CalendarInner = ({ events, view, getEvents }: CalendarInnerProps) =
 						eventModal.close()
 					}}
 					actions={{
-						create: createEvent,
-						update: updateEvent,
+						create: handleCreateEvent,
+						update: handleUpdateEvent,
 					}}
 				/>
 			),

@@ -73,9 +73,11 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 			<div className={classes.modalButtons}>
 				{!isReadOnly && (
 					<>
-						<button type='button' className={classes.copyBtn} onClick={onCopy} title='Copy this time block'>
-							<CopyTimeBlockIcon />
-						</button>
+						{onCopy && (
+							<button type='button' className={classes.copyBtn} onClick={onCopy} title='Copy this time block'>
+								<CopyTimeBlockIcon />
+							</button>
+						)}
 						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<EditIcon />
 						</button>
@@ -97,7 +99,7 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 					<p>{formattedDate}</p>
 				</div>
 				{event.description && event.description.trim() !== '' && (
-					<div className={classes.description}>
+					<div className={classes.description} title={event.description}>
 						<span>
 							<DescriptionIcon width={18} height={18} />
 						</span>
