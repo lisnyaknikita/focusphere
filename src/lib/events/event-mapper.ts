@@ -3,7 +3,10 @@ import { TimeBlock } from '@/shared/types/time-block'
 import { getCalendarIdByColor } from './calendar-config'
 
 export const mapEventToScheduleX = (event: CalendarEvent) => {
-	const toZDT = (iso: string) => Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
+	const toZDT = (iso: string) => {
+		if (!iso.includes('T') && iso.length <= 10) return Temporal.PlainDate.from(iso)
+		return Temporal.Instant.from(iso).toZonedDateTimeISO(Intl.DateTimeFormat().resolvedOptions().timeZone)
+	}
 
 	return {
 		id: event.$id,

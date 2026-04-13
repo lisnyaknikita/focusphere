@@ -30,24 +30,36 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 		callbacks: {
 			async onEventUpdate(updatedEvent: CalendarEvent) {
 				try {
-					const { id, start, end } = updatedEvent
+					const { id, start, end, title, description, color } = updatedEvent
+					const eventId = String(id)
 
 					const formatForAppwrite = (dateObj: string | { toString(): string }): string => {
-						const base = dateObj.toString().replace(' ', 'T').substring(0, 16)
+						const text = dateObj.toString().replace(' ', 'T')
+						if (text.length <= 10) return text
+						const base = text.substring(0, 16)
 						return `${base}:00`
 					}
 
 					const startDate = formatForAppwrite(start)
 					const endDate = formatForAppwrite(end)
 
-					console.log('Sending to Appwrite:', { startDate, endDate })
-
-					await updateEvent(id as string, {
-						startDate,
-						endDate,
-					})
+					if (eventId.startsWith('g_')) {
+						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+						await googleCalendarService.updateEvent(eventId, {
+							summary: title,
+							description: description as string | undefined,
+							color: color as string | undefined,
+							start: startDate,
+							end: endDate,
+						})
+					} else {
+						await updateEvent(eventId, {
+							startDate,
+							endDate,
+						})
+					}
 				} catch (error) {
-					console.error('Appwrite update failed:', error)
+					console.error('Event update failed:', error)
 				}
 			},
 		},
