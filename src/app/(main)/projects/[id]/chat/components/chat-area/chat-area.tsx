@@ -37,9 +37,15 @@ export const ChatArea = ({
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const hasScrolledRef = useRef<string | null>(null)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
+	const mainRef = useRef<HTMLElement>(null)
 
 	const scrollToBottom = (behavior: ScrollBehavior = 'instant') => {
-		messagesEndRef.current?.scrollIntoView({ behavior })
+		if (mainRef.current) {
+			mainRef.current.scrollTo({
+				top: mainRef.current.scrollHeight,
+				behavior,
+			})
+		}
 	}
 
 	useEffect(() => {
@@ -66,7 +72,7 @@ export const ChatArea = ({
 				onDeleteChannel={onDeleteChannel}
 				currentUserId={currentUserId}
 			/>
-			<main className={classes.main}>
+			<main className={classes.main} ref={mainRef}>
 				{!activeChannel ? (
 					<div className={classes.emptyState}>Select a channel to start a conversation, or create your first one</div>
 				) : (

@@ -23,7 +23,7 @@ export default function Projects() {
 	const [favoritesOnly, setFavoritesOnly] = useState(false)
 
 	const { projects, total, limit, isLoading, refreshProjects } = useProjects(
-		view ?? 'solo',
+		view,
 		searchQuery,
 		currentPage,
 		favoritesOnly

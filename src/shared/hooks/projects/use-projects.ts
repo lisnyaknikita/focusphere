@@ -5,7 +5,7 @@ import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
 
 export const useProjects = (
-	type: 'solo' | 'team',
+	type: 'solo' | 'team' | null,
 	searchQuery: string = '',
 	page: number = 1,
 	favoritesOnly: boolean = false
@@ -17,6 +17,8 @@ export const useProjects = (
 	const limit = 12
 
 	const getProjects = useCallback(async () => {
+		if (!type) return
+
 		setIsLoading(true)
 		try {
 			const userId = await getCurrentUserId()
