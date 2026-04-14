@@ -5,10 +5,13 @@ import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { formatModalDate } from '@/shared/utils/format-modal-date/format-modal-date'
+import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import clsx from 'clsx'
 import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import classes from './daily-tasks-modal.module.scss'
+import { SortableTaskItem } from './sortable-task-item/sortable-task-item'
 
 interface DailyTasksModalProps {
 	date: string
@@ -32,7 +35,25 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 		handleToggleTask,
 		handleDeleteTask,
 		handleEditTask,
+		handleReorder,
 	} = useDailyTasks({ date })
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: { distance: 8 },
+		})
+	)
+
+	const handleDragEnd = (event: DragEndEvent) => {
+		const { active, over } = event
+		if (over && active.id !== over.id) {
+			const oldIndex = tasks.findIndex(t => t.$id === active.id)
+			const newIndex = tasks.findIndex(t => t.$id === over.id)
+
+			const newTasks = arrayMove(tasks, oldIndex, newIndex)
+			handleReorder(newTasks)
+		}
+	}
 
 	const confirmDelete = () => {
 		if (taskToDelete) {
@@ -62,53 +83,59 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 					{isLoading ? (
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
-						<ul className={classes.taskList}>
-							{tasks.map(task => (
-								<li key={task.$id} className={clsx(editingTaskId === task.$id && classes.newTaskItem)}>
-									{editingTaskId === task.$id ? (
-										<input
-											autoFocus
-											className={classes.inlineInput}
-											value={editingTitle}
-											onChange={e => setEditingTitle(e.target.value)}
-											onBlur={commitEdit}
-											onKeyDown={e => {
-												if (e.key === 'Enter') commitEdit()
-												if (e.key === 'Escape') {
-													setEditingTaskId(null)
-													setEditingTitle('')
-												}
-											}}
-										/>
-									) : (
-										<CheckboxCard
-											label={task.title}
-											withBorder={true}
-											checked={task.isCompleted}
-											onCheck={checked => handleToggleTask(task.$id, checked)}
-											onEdit={() => startEditing(task)}
-											onDelete={() => setTaskToDelete(task)}
-											withRemoval
-											withEditing
-										/>
+						<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+							<SortableContext items={tasks.map(task => task.$id)} strategy={verticalListSortingStrategy}>
+								<ul className={classes.taskList}>
+									{tasks.map(task => (
+										<SortableTaskItem key={task.$id} task={task} editingTaskId={editingTaskId}>
+											<div className={clsx(editingTaskId === task.$id && classes.newTaskItem)}>
+												{editingTaskId === task.$id ? (
+													<input
+														autoFocus
+														className={classes.inlineInput}
+														value={editingTitle}
+														onChange={e => setEditingTitle(e.target.value)}
+														onBlur={commitEdit}
+														onKeyDown={e => {
+															if (e.key === 'Enter') commitEdit()
+															if (e.key === 'Escape') {
+																setEditingTaskId(null)
+																setEditingTitle('')
+															}
+														}}
+													/>
+												) : (
+													<CheckboxCard
+														label={task.title}
+														withBorder={true}
+														checked={task.isCompleted}
+														onCheck={checked => handleToggleTask(task.$id, checked)}
+														onEdit={() => startEditing(task)}
+														onDelete={() => setTaskToDelete(task)}
+														withRemoval
+														withEditing
+													/>
+												)}
+											</div>
+										</SortableTaskItem>
+									))}
+									{isCreating && (
+										<li className={classes.newTaskItem}>
+											<input
+												autoFocus
+												className={classes.inlineInput}
+												placeholder='What needs to be done?'
+												value={newTaskTitle}
+												onChange={e => setNewTaskTitle(e.target.value)}
+												onBlur={handleAddTask}
+												onKeyDown={e => e.key === 'Enter' && handleAddTask()}
+												disabled={isSaving}
+											/>
+										</li>
 									)}
-								</li>
-							))}
-							{isCreating && (
-								<li className={classes.newTaskItem}>
-									<input
-										autoFocus
-										className={classes.inlineInput}
-										placeholder='What needs to be done?'
-										value={newTaskTitle}
-										onChange={e => setNewTaskTitle(e.target.value)}
-										onBlur={handleAddTask}
-										onKeyDown={e => e.key === 'Enter' && handleAddTask()}
-										disabled={isSaving}
-									/>
-								</li>
-							)}
-						</ul>
+								</ul>
+							</SortableContext>
+						</DndContext>
 					)}
 
 					{!isLoading && tasks.length === 0 && !isCreating && <p className={classes.emptyMessage}>No tasks</p>}
