@@ -34,7 +34,7 @@ class GoogleCalendarService {
 					])
 				},
 			},
-			duration: 15000,
+			duration: 5000,
 		})
 
 		setTimeout(() => {

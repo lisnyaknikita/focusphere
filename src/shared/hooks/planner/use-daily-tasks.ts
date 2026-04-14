@@ -32,7 +32,6 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 			const typedDailyTasks = response.rows as unknown as DailyTask[]
 
 			setTasks(typedDailyTasks)
-			console.log(typedDailyTasks)
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error(error)
@@ -121,14 +120,28 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 	const sortedTasks = useMemo(() => {
 		if (!tasks) return []
 
-		return [...tasks].sort((a, b) => {
-			if (a.isCompleted !== b.isCompleted) {
-				return a.isCompleted ? 1 : -1
-			}
-
-			return a.order - b.order
-		})
+		return [...tasks].sort((a, b) => a.order - b.order)
 	}, [tasks])
+
+	const handleReorder = async (newTasks: DailyTask[]) => {
+		const tasksWithNewOrder = newTasks.map((task, index) => ({
+			...task,
+			order: index,
+		}))
+
+		setTasks(tasksWithNewOrder)
+
+		try {
+			const updatePromises = tasksWithNewOrder.map(task => {
+				return updateDailyTask(task.$id, { order: task.order })
+			})
+
+			await Promise.all(updatePromises)
+		} catch (error) {
+			console.error('Failed to save new order:', error)
+			await getDailyTasks()
+		}
+	}
 
 	const cleanupOldTasks = useCallback(async () => {
 		const lastCleanup = localStorage.getItem('last_task_cleanup')
@@ -186,5 +199,6 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		handleToggleTask,
 		handleDeleteTask,
 		handleEditTask,
+		handleReorder,
 	}
 }
