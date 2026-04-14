@@ -1,0 +1,16 @@
+.sortableItem {
+	list-style: none;
+	cursor: grab;
+	width: 100%;
+
+	&:active {
+		cursor: grabbing;
+	}
+
+	&:global(.isDragging) {
+		> * {
+			pointer-events: none !important;
+			user-select: none;
+		}
+	}
+}
