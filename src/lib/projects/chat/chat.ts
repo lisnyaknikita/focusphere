@@ -32,6 +32,7 @@ export const createChannel = async (payload: CreateChannelPayload) => {
 
 	if (payload.teamId) {
 		permissions.push(Permission.read(Role.team(payload.teamId)))
+		permissions.push(Permission.delete(Role.team(payload.teamId)))
 	}
 
 	const { ...data } = payload
