@@ -2,6 +2,7 @@ import { createNewProject } from '@/app/(main)/projects/new/components/main/new-
 import { ProjectFormValues } from '@/shared/schemas/project-schema'
 import { AppwriteException } from 'appwrite'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const useCreateProject = () => {
 	const [isLoading, setIsLoading] = useState(false)
@@ -11,8 +12,16 @@ export const useCreateProject = () => {
 		setIsLoading(true)
 		setError(null)
 
+		const createPromise = createNewProject(data)
+
+		toast.promise(createPromise, {
+			loading: 'Creating your project...',
+			success: 'Project created!',
+			error: err => err?.message || 'Failed to create project',
+		})
+
 		try {
-			const project = await createNewProject(data)
+			const project = await createPromise
 			onSuccess(project.$id)
 		} catch (err) {
 			if (err instanceof AppwriteException || err instanceof Error) {

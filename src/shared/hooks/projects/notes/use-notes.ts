@@ -58,7 +58,6 @@ export const useNotes = (project: Project) => {
 			console.error(error)
 		}
 	}
-
 	const deleteNote = async (noteId: string) => {
 		try {
 			await deleteProjectNote(project?.$id, noteId)

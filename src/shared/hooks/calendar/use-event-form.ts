@@ -4,6 +4,7 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { formatDate, formatTime, toJSDate } from '@/shared/utils/temporal-adapter/temporal-adapter'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export interface CalendarActions {
 	create: (data: CreateEventPayload) => Promise<unknown>
@@ -98,9 +99,21 @@ export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent, acti
 					calendarId: eventData.calendarId,
 				}
 
-				await actions.update(String(initialEvent.id), updateData)
+				const updatePromise = actions.update(String(initialEvent.id), updateData)
+				toast.promise(updatePromise, {
+					loading: 'Updating event...',
+					success: 'Event updated',
+					error: 'Failed to update event',
+				})
+				await updatePromise
 			} else {
-				await actions.create(eventData)
+				const createPromise = actions.create(eventData)
+				toast.promise(createPromise, {
+					loading: 'Creating event...',
+					success: 'Event created',
+					error: 'Failed to create event',
+				})
+				await createPromise
 			}
 			onSuccess()
 		} catch (error) {

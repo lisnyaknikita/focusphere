@@ -1,6 +1,7 @@
 import { deleteProject } from '@/lib/projects/projects'
 import { AppwriteException } from 'appwrite'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const useDeleteProject = () => {
 	const [isDeleting, setIsDeleting] = useState(false)
@@ -10,8 +11,16 @@ export const useDeleteProject = () => {
 		setIsDeleting(true)
 		setError(null)
 
+		const deletePromise = deleteProject(projectId)
+
+		toast.promise(deletePromise, {
+			loading: 'Deleting project...',
+			success: 'Project removed',
+			error: 'Could not delete project',
+		})
+
 		try {
-			await deleteProject(projectId)
+			await deletePromise
 			if (onSuccess) onSuccess()
 		} catch (err) {
 			if (err instanceof AppwriteException || err instanceof Error) {
