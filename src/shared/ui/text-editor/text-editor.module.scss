@@ -13,26 +13,59 @@
 .editor {
 	display: flex;
 	flex-direction: column;
-	// padding: 10px 15px;
 	width: 100%;
 	height: 100%;
 	flex: 1;
+	position: relative;
+	min-width: 0;
+	overflow: hidden;
 }
 
-.editorInner {
+.scrollContainer {
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: flex;
+	justify-content: center;
+}
+
+.contentWrapper {
+	min-width: 0;
+	width: 100%;
+	max-width: 850px;
+	padding: 40px 0;
 	display: flex;
 	flex-direction: column;
-	// border: 1px solid var(--btn-border);
-	border-radius: 5px;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-	position: relative;
+	word-wrap: break-word;
+	word-break: break-word;
+}
+
+.saveStatus {
+	height: 20px;
+	margin-bottom: 10px;
+	display: flex;
+	justify-content: flex-end;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--btn-border);
+	transition: opacity 0.3s ease;
+	position: absolute;
+	left: 50%;
+	top: 2%;
+	transform: translateX(-50%);
+}
+
+.saving {
+	color: var(--text);
+	opacity: 0.7;
+}
+
+.saved {
+	opacity: 1;
 }
 
 .titleInput {
-	position: absolute;
-	top: 45px;
 	width: 100%;
 	font-size: 32px;
 	font-weight: 700;
@@ -40,7 +73,12 @@
 	outline: none;
 	background: transparent;
 	color: var(--text);
-	padding: 0 10px;
+	padding: 0 50px;
+
+	&::placeholder {
+		color: var(--btn-border);
+		opacity: 0.3;
+	}
 }
 
 .additionalButtons {
@@ -76,4 +114,102 @@
 
 .emptyBySearchEditor {
 	width: 0;
+}
+
+.bnWrapper {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	cursor: text;
+	min-width: 0;
+	max-width: 100%;
+
+	:global {
+		.bn-container {
+			height: 100%;
+			max-width: 100%;
+			display: flex;
+			flex-direction: column;
+
+			> div {
+				padding: 0 20px 0 50px !important;
+				max-width: 100% !important;
+				box-sizing: border-box;
+			}
+		}
+
+		.bn-editor {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			width: 100%;
+			max-width: 100% !important;
+			overflow-wrap: break-word;
+			height: 100%;
+			min-height: 100%;
+			padding-bottom: 20px !important;
+			overflow-x: hidden;
+
+			img {
+				max-width: 100% !important;
+				height: auto !important;
+				object-fit: contain;
+			}
+		}
+
+		.bn-block-content {
+			max-width: 100% !important;
+			min-width: 0;
+
+			&[data-content-type='heading'] {
+				--level: 32px !important;
+			}
+
+			&[data-content-type='heading'][data-level='2'] {
+				--level: 26px !important;
+			}
+
+			&[data-content-type='heading'][data-level='3'] {
+				--level: 22px !important;
+			}
+
+			&[data-content-type='image'],
+			&[data-file-block] {
+				width: 100% !important;
+				max-width: 100% !important;
+				min-width: 0 !important;
+
+				.bn-visual-media-wrapper {
+					max-width: 100% !important;
+					min-width: 0 !important;
+				}
+
+				.bn-visual-media {
+					max-width: 100% !important;
+					min-width: 0 !important;
+				}
+
+				img,
+				video,
+				iframe {
+					max-width: 100% !important;
+					min-width: 0 !important;
+				}
+			}
+		}
+
+		.bn-block-group {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			height: 100% !important;
+			max-width: 100%;
+			min-width: 0;
+		}
+
+		.bn-block {
+			max-width: 100%;
+			min-width: 0;
+		}
+	}
 }

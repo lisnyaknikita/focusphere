@@ -1,68 +1,74 @@
 'use client'
 
 import { useNotesContext } from '@/shared/context/notes-context'
-import Quill, { QuillOptions } from 'quill'
-import 'quill/dist/quill.snow.css'
-import { useEffect, useRef } from 'react'
+import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
+import { PartialBlock } from '@blocknote/core'
+import '@blocknote/core/fonts/inter.css'
+import { BlockNoteView } from '@blocknote/mantine'
+import '@blocknote/mantine/style.css'
+import { useCreateBlockNote } from '@blocknote/react'
+import { useEffect, useRef, useState } from 'react'
 import { EmptyIcon } from '../icons/empty-icon'
 import classes from './text-editor.module.scss'
 
 export const TextEditor = () => {
 	const { activeNote, handleContentChange, handleTitleChange, searchQuery } = useNotesContext()
-	const containerRef = useRef<HTMLDivElement>(null)
-	const quillRef = useRef<Quill | null>(null)
+	const { isDark } = useThemeToggle()
+	const [isSaving, setIsSaving] = useState(false)
+	const [showSaved, setShowSaved] = useState(false)
+
+	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+	const editor = useCreateBlockNote({
+		initialContent: activeNote?.content ? (JSON.parse(activeNote.content) as PartialBlock[]) : undefined,
+	})
 
 	useEffect(() => {
-		if (!containerRef.current) return
+		if (!activeNote || !editor) return
 
-		containerRef.current.innerHTML = ''
-		const editorContainer = document.createElement('div')
-		containerRef.current.appendChild(editorContainer)
-
-		const options: QuillOptions = {
-			placeholder: 'Start writing...',
-			theme: 'snow',
-			modules: {
-				toolbar: [
-					[{ header: [1, 2, 3, false] }],
-					['bold', 'italic', 'underline', 'strike'],
-					[{ list: 'ordered' }, { list: 'bullet' }],
-					['link', 'blockquote', 'code-block'],
-					['clean'],
-				],
-			},
-		}
-
-		const quill = new Quill(editorContainer, options)
-		quillRef.current = quill
-
-		if (activeNote) {
-			quill.root.innerHTML = activeNote.content || ''
-		}
-
-		const handleTextChange = (_delta: unknown, _oldDelta: unknown, source: string) => {
-			if (source === 'user' && activeNote?.$id) {
-				const html = quill.root.innerHTML
-				handleContentChange(html, activeNote.$id)
+		const unsubscribe = editor.onChange(() => {
+			if (saveTimeoutRef.current) {
+				clearTimeout(saveTimeoutRef.current)
 			}
-		}
 
-		quill.on('text-change', handleTextChange)
+			saveTimeoutRef.current = setTimeout(async () => {
+				const jsonContent = JSON.stringify(editor.document)
+
+				if (jsonContent === activeNote.content) {
+					return
+				}
+
+				setIsSaving(true)
+				setShowSaved(false)
+
+				try {
+					await handleContentChange(jsonContent, activeNote.$id)
+
+					setIsSaving(false)
+					setShowSaved(true)
+
+					setTimeout(() => {
+						setShowSaved(false)
+					}, 2000)
+				} catch (error) {
+					console.error('Saving error:', error)
+					setIsSaving(false)
+				}
+			}, 1000)
+		})
 
 		return () => {
-			quill.off('text-change', handleTextChange)
-			if (containerRef.current) {
-				containerRef.current.innerHTML = ''
+			unsubscribe()
+			if (saveTimeoutRef.current) {
+				clearTimeout(saveTimeoutRef.current)
 			}
-			quillRef.current = null
 		}
-	}, [activeNote?.$id])
+	}, [editor, activeNote?.$id, activeNote?.content, handleContentChange])
 
 	if (!activeNote) {
 		if (searchQuery && searchQuery.trim() !== '') {
 			return <div className={classes.emptyBySearchEditor} />
 		}
-
 		return (
 			<div className={classes.emptyEditor}>
 				<div className={classes.emptyContent}>
@@ -78,21 +84,23 @@ export const TextEditor = () => {
 
 	return (
 		<div className={classes.editor}>
-			<div className={classes.editorInner}>
-				<div ref={containerRef} style={{ height: '100%' }} className='ql-custom' />
-				<input
-					type='text'
-					className={classes.titleInput}
-					value={activeNote.title}
-					onChange={e => handleTitleChange(e.target.value, activeNote.$id)}
-					onBlur={e => {
-						if (e.target.value.trim() === '') {
-							handleTitleChange('Untitled Note', activeNote.$id)
-						}
-					}}
-					placeholder='Note Title'
-				/>
-				<div className={classes.additionalButtons}></div>
+			<div className={classes.scrollContainer}>
+				<div className={classes.contentWrapper}>
+					<div className={classes.saveStatus}>
+						{isSaving && <span className={classes.saving}>Saving...</span>}
+						{!isSaving && showSaved && <span className={classes.saved}>✓ Saved</span>}
+					</div>
+					<input
+						type='text'
+						className={classes.titleInput}
+						value={activeNote.title}
+						onChange={e => handleTitleChange(e.target.value, activeNote.$id)}
+						placeholder='Title'
+					/>
+					<div className={classes.bnWrapper}>
+						<BlockNoteView editor={editor} theme={isDark ? 'dark' : 'light'} sideMenu={true} formattingToolbar={true} />
+					</div>
+				</div>
 			</div>
 		</div>
 	)
