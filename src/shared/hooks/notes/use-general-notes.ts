@@ -2,6 +2,7 @@
 
 import { createGeneralNote, deleteGeneralNote, getGeneralNotes, updateGeneralNote } from '@/lib/notes/notes'
 import { BaseNote } from '@/shared/types/project-note'
+import { getBlockNotePreview } from '@/shared/utils/get-blocknote-preview/get-blocknote-preview'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDebounce } from '../use-debounce/use-debounce'
 
@@ -80,7 +81,10 @@ export const useGeneralNotes = (userId: string) => {
 		const query = debouncedSearch.toLowerCase().trim()
 		if (!query) return notes
 
-		return notes.filter(note => note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query))
+		return notes.filter(note => {
+			const plainText = getBlockNotePreview(note.content).toLowerCase()
+			return note.title.toLowerCase().includes(query) || plainText.includes(query)
+		})
 	}, [notes, debouncedSearch])
 
 	useEffect(() => {

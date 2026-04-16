@@ -345,7 +345,10 @@ ul {
 	min-width: 40px !important;
 }
 
-//TODO: header's border bottom
+.bn-root[data-color-scheme='dark'],
+.bn-root[data-color-scheme='light'] {
+	--bn-colors-editor-background: transparent !important;
+}
 
 @media (prefers-color-scheme: dark) {
 	html {
