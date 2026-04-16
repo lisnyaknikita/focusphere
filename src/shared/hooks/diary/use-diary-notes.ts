@@ -33,11 +33,20 @@ export const useDiaryNotes = (userId: string) => {
 	const createNote = async (templateKey: TemplateKey = 'empty') => {
 		if (!userId) return
 
-		const template = templateKey !== 'empty' ? JOURNAL_TEMPLATES[templateKey] : null
+		const template = templateKey !== 'empty' ? JOURNAL_TEMPLATES[templateKey as keyof typeof JOURNAL_TEMPLATES] : null
+
+		const initialBlocks = template?.content || [{ type: 'paragraph', content: [] }]
+		const contentString = JSON.stringify(initialBlocks)
+
+		const defaultTitle = new Date().toLocaleDateString('en-US', {
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric',
+		})
 
 		const payload = {
-			title: template?.title || 'Untitled Entry',
-			content: template?.content || '',
+			title: template?.title || `Entry - ${defaultTitle}`,
+			content: contentString,
 			templateKey,
 			userId,
 		}

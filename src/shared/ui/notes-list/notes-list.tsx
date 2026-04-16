@@ -1,5 +1,5 @@
 import { useNotesContext } from '@/shared/context/notes-context'
-import { stripHtml } from '@/shared/utils/strip-html/strip-html'
+import { getBlockNotePreview } from '@/shared/utils/get-blocknote-preview/get-blocknote-preview'
 import clsx from 'clsx'
 import classes from './notes-list.module.scss'
 
@@ -27,6 +27,7 @@ export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
 				{!isLoading && notes.length === 0 && <p className={classes.noNotesMessage}>No entries here</p>}
 				{notes.map(note => {
 					const { day, number, time } = formatDate(note.$createdAt)
+					const previewText = getBlockNotePreview(note.content)
 					return (
 						<li
 							key={note.$id}
@@ -42,7 +43,7 @@ export const NotesList = ({ withTitle, withTags }: NotesListProps) => {
 									<h4 className={classes.noteTitle} title={note.title}>
 										{note.title}
 									</h4>
-									<h6 className={classes.noteSubtitle}>{stripHtml(note.content)}</h6>
+									<h6 className={classes.noteSubtitle}>{previewText}</h6>
 									<time className={classes.noteTime}>{time}</time>
 								</div>
 							</a>
