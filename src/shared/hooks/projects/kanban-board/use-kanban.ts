@@ -9,6 +9,7 @@ import { Task } from '@/shared/types/kanban'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useUser } from '../../use-user/use-user'
 
 export const useKanban = (project: Project) => {
@@ -54,6 +55,7 @@ export const useKanban = (project: Project) => {
 		} catch (error) {
 			console.error('Failed to reorder tasks:', error)
 			setTasks(previousTasks)
+			toast.error('Failed to save tasks order')
 		}
 	}
 
@@ -76,6 +78,7 @@ export const useKanban = (project: Project) => {
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to add task:', error)
+			toast.error('Failed to add task')
 		}
 	}
 
@@ -90,6 +93,7 @@ export const useKanban = (project: Project) => {
 		} catch (error) {
 			console.error('Failed to move task:', error)
 			setTasks(previousTasks)
+			toast.error('Failed to move task')
 		}
 	}
 
@@ -103,6 +107,7 @@ export const useKanban = (project: Project) => {
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to update task:', error)
+			toast.error('Failed to update task')
 			setTasks(previousTasks)
 		}
 	}
@@ -112,8 +117,16 @@ export const useKanban = (project: Project) => {
 
 		setTasks(prev => prev.filter(t => t.$id !== taskId))
 
+		const deletePromise = deleteKanbanTask(taskId)
+
+		toast.promise(deletePromise, {
+			loading: 'Deleting task...',
+			success: 'Task deleted successfully',
+			error: 'Failed to delete task',
+		})
+
 		try {
-			await deleteKanbanTask(taskId)
+			await deletePromise
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to delete task:', error)

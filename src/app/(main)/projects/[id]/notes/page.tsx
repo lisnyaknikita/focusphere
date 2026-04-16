@@ -22,7 +22,7 @@ export default function NotesPage() {
 					) : (
 						<>
 							<NotesList withTitle={true} withTags={true} />
-							<TextEditor />
+							<TextEditor key={activeNote?.$id} />
 							{activeNote && (
 								<button className={classes.deleteButton} onClick={() => setIsConfirmOpen(true)} disabled={!activeNote}>
 									<DeleteIcon />

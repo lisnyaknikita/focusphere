@@ -4,6 +4,7 @@ import { createGeneralNote, deleteGeneralNote, getGeneralNotes, updateGeneralNot
 import { BaseNote } from '@/shared/types/project-note'
 import { getBlockNotePreview } from '@/shared/utils/get-blocknote-preview/get-blocknote-preview'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import { useDebounce } from '../use-debounce/use-debounce'
 
 export const useGeneralNotes = (userId: string) => {
@@ -55,6 +56,7 @@ export const useGeneralNotes = (userId: string) => {
 
 	const handleContentChange = useCallback(async (content: string, noteId: string) => {
 		setNotes(prev => prev.map(n => (n.$id === noteId ? { ...n, content } : n)))
+		setActiveNote(prev => (prev?.$id === noteId ? { ...prev, content } : prev))
 		try {
 			await updateGeneralNote(noteId, { content })
 		} catch (error) {
@@ -63,8 +65,16 @@ export const useGeneralNotes = (userId: string) => {
 	}, [])
 
 	const handleDelete = async (noteId: string) => {
+		const deletePromise = deleteGeneralNote(noteId)
+
+		toast.promise(deletePromise, {
+			loading: 'Deleting note...',
+			success: 'Note deleted successfully',
+			error: 'Failed to delete note',
+		})
+
 		try {
-			await deleteGeneralNote(noteId)
+			await deletePromise
 			setNotes(prev => {
 				const filtered = prev.filter(n => n.$id !== noteId)
 				if (activeNote?.$id === noteId) {

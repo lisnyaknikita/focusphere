@@ -1,6 +1,7 @@
 'use client'
 
 import { ChangeEvent, FormEvent, KeyboardEvent, useState } from 'react'
+import { toast } from 'sonner'
 import classes from './quick-idea-modal.module.scss'
 
 interface QuickIdeaModalProps {
@@ -18,8 +19,17 @@ export const QuickIdeaModal = ({ onSave, onClose }: QuickIdeaModalProps) => {
 		if (!content.trim() || isSubmitting) return
 
 		setIsSubmitting(true)
+
+		const savePromise = onSave(content.trim())
+
+		toast.promise(savePromise, {
+			loading: 'Capturing your idea...',
+			success: 'Idea captured successfully!',
+			error: 'Failed to save your idea',
+		})
+
 		try {
-			await onSave(content.trim())
+			await savePromise
 			onClose()
 		} catch (error) {
 			console.error('Failed to quick-save note:', error)

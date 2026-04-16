@@ -13,6 +13,7 @@ import { ChatChannel, ChatMessage, CreateChannelPayload } from '@/shared/types/c
 import { Project } from '@/shared/types/project'
 import { Models } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export const useChat = (project: Project | null) => {
 	const [teammates, setTeammates] = useState<Models.Membership[]>([])
@@ -84,6 +85,7 @@ export const useChat = (project: Project | null) => {
 			console.log('New channel created and set as active:', newChannel.name)
 		} catch (err) {
 			console.error('Failed to create channel:', err)
+			toast.error('Failed to create channel')
 		}
 	}
 
@@ -122,6 +124,7 @@ export const useChat = (project: Project | null) => {
 		} catch (err) {
 			setMessages(prev => prev.filter(m => m.$id !== optimisticMessage.$id))
 			console.error('Failed to send message:', err)
+			toast.error('Failed to send message')
 		}
 	}
 
@@ -136,6 +139,7 @@ export const useChat = (project: Project | null) => {
 		} catch (err) {
 			setMessages(oldMessages)
 			console.error('Failed to update message:', err)
+			toast.error('Failed to edit message')
 		}
 	}
 
@@ -148,6 +152,7 @@ export const useChat = (project: Project | null) => {
 		} catch (err) {
 			setMessages(oldMessages)
 			console.error('Failed to delete message:', err)
+			toast.error('Failed to delete message')
 		}
 	}
 
@@ -160,12 +165,21 @@ export const useChat = (project: Project | null) => {
 			}
 		} catch (err) {
 			console.error('Failed to update channel:', err)
+			toast.error('Failed to rename channel')
 		}
 	}
 
 	const handleDeleteChannel = async (id: string) => {
+		const deletePromise = deleteChannel(id)
+
+		toast.promise(deletePromise, {
+			loading: 'Deleting channel...',
+			success: 'Channel deleted successfully',
+			error: 'Failed to delete channel',
+		})
+
 		try {
-			await deleteChannel(id)
+			await deletePromise
 			const updatedChannels = channels.filter(ch => ch.$id !== id)
 			setChannels(updatedChannels)
 
