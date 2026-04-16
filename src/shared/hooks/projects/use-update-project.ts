@@ -5,6 +5,7 @@ import { ProjectFormValues, projectSchema } from '@/shared/schemas/project-schem
 import { Project } from '@/shared/types/project'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 interface useUpdateProjectProps {
 	project: Project
@@ -25,17 +26,28 @@ export const useUpdateProject = ({ project, onSuccess }: useUpdateProjectProps) 
 	})
 
 	const onSubmit = async (data: ProjectFormValues) => {
-		try {
+		const updateAction = (async () => {
 			if (data.type === 'team' && project.type === 'solo') {
 				const updatedDoc = await convertToTeamProject(project.$id, project.ownerId, data.title)
 				updateProjectState(updatedDoc as unknown as Project)
+				return updatedDoc
 			} else {
 				await updateProject(project.$id, data)
 				updateProjectState(data)
 			}
+		})()
+
+		toast.promise(updateAction, {
+			loading: 'Updating project settings...',
+			success: 'Changes saved',
+			error: 'Failed to update project',
+		})
+
+		try {
+			await updateAction
 			onSuccess()
 		} catch (error) {
-			console.error('Failed to update project:', error)
+			console.error('Update failed:', error)
 		}
 	}
 

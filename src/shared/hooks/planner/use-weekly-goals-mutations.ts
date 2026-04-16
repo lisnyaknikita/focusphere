@@ -2,6 +2,7 @@ import { createWeeklyGoal, deleteWeeklyGoal, updateWeeklyGoal } from '@/lib/plan
 import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 interface UseWeeklyGoalsMutationsProps {
 	goals: WeeklyGoal[]
@@ -61,18 +62,31 @@ export const useWeeklyGoalsMutations = ({ goals, onSuccess }: UseWeeklyGoalsMuta
 		const completed = goals.filter(g => g.isCompleted)
 		const pending = goals.filter(g => !g.isCompleted)
 
-		await Promise.all(completed.map(goal => deleteWeeklyGoal(goal.$id)))
+		const resetPromise = (async () => {
+			await Promise.all(completed.map(goal => deleteWeeklyGoal(goal.$id)))
 
-		await Promise.all(
-			pending.map((goal, index) =>
-				updateWeeklyGoal(goal.$id, {
-					index,
-					isCompleted: false,
-				})
+			await Promise.all(
+				pending.map((goal, index) =>
+					updateWeeklyGoal(goal.$id, {
+						index,
+						isCompleted: false,
+					})
+				)
 			)
-		)
+		})()
 
-		onSuccess()
+		toast.promise(resetPromise, {
+			loading: 'Resetting week...',
+			success: 'Week reset successfully',
+			error: 'Failed to reset week',
+		})
+
+		try {
+			await resetPromise
+			onSuccess()
+		} catch (error) {
+			console.error('Reset error:', error)
+		}
 	}
 
 	return {

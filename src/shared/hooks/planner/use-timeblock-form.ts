@@ -5,6 +5,7 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { formatDate, formatTime, toJSDate } from '@/shared/utils/temporal-adapter/temporal-adapter'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 const getInitialTimeRange = () => {
 	const now = new Date()
@@ -81,9 +82,21 @@ export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) 
 
 		try {
 			if (initialEvent?.id) {
-				await updateTimeBlock(String(initialEvent.id), timeBlockData)
+				const updatePromise = updateTimeBlock(String(initialEvent.id), timeBlockData)
+				toast.promise(updatePromise, {
+					loading: 'Updating time block...',
+					success: 'Time block updated',
+					error: 'Failed to update time block',
+				})
+				await updatePromise
 			} else {
-				await createTimeBlock(timeBlockData)
+				const createPromise = createTimeBlock(timeBlockData)
+				toast.promise(createPromise, {
+					loading: 'Creating time block...',
+					success: 'Time block created',
+					error: 'Failed to create time block',
+				})
+				await createPromise
 			}
 			onSuccess()
 		} catch (error) {
