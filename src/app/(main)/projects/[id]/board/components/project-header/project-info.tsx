@@ -7,6 +7,7 @@ import { MembersIcon } from '@/shared/ui/icons/projects/members-icon'
 import { ProjectSettingsIcon } from '@/shared/ui/icons/projects/project-settings-icon'
 import { TasksIcon } from '@/shared/ui/icons/projects/tasks-icon'
 import { Modal } from '@/shared/ui/modal/modal'
+import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { useState } from 'react'
 import classes from './project-info.module.scss'
 import { ProjectSettingsModal } from './project-settings-modal/project-settings-modal'
@@ -17,9 +18,22 @@ interface ProjectInfoProps {
 
 export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 	const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false)
+	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+
 	const { tasks, isLoading } = useKanban(project!)
 
 	const membersCount = useTeamCount(project.teamId, project.type)
+
+	const { refs, floatingStyles, context } = useFloating({
+		open: isTooltipOpen,
+		onOpenChange: setIsTooltipOpen,
+		placement: 'top',
+		whileElementsMounted: autoUpdate,
+		middleware: [offset(10), flip(), shift()],
+	})
+
+	const hover = useHover(context)
+	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	return (
 		<>
@@ -40,9 +54,33 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 						</div>
 					</div>
 				</div>
-				<button className={classes.settingsButton} onClick={() => setIsProjectSettingsModalOpen(true)}>
+				<button
+					ref={refs.setReference}
+					className={classes.settingsButton}
+					onClick={() => setIsProjectSettingsModalOpen(true)}
+					{...getReferenceProps()}
+				>
 					<ProjectSettingsIcon />
 				</button>
+				{isTooltipOpen && (
+					<div
+						ref={refs.setFloating}
+						style={{
+							...floatingStyles,
+							background: 'var(--save-button-bg)',
+							color: 'var(--save-button-text)',
+							padding: '4px 8px',
+							borderRadius: '5px',
+							fontSize: '13px',
+							fontWeight: 700,
+							zIndex: 1000,
+							whiteSpace: 'nowrap',
+						}}
+						{...getFloatingProps()}
+					>
+						Project settings
+					</div>
+				)}
 			</div>
 			<Modal isVisible={isProjectSettingsModalOpen} onClose={() => setIsProjectSettingsModalOpen(false)}>
 				<ProjectSettingsModal project={project} onClose={() => setIsProjectSettingsModalOpen(false)} />
