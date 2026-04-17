@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 
 export const useUser = () => {
 	const [user, setUser] = useState<CustomUser | null>(null)
+	const [isGoogleConnected, setIsGoogleConnected] = useState(false)
 	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
@@ -24,6 +25,10 @@ export const useUser = () => {
 						},
 					}
 				}
+
+				const session = await account.getSession('current')
+
+				setIsGoogleConnected(session.provider === 'google')
 
 				setUser(currentUser)
 			} catch (error: unknown) {
@@ -61,5 +66,5 @@ export const useUser = () => {
 		}
 	}
 
-	return { user, loading, logout, updateUserData }
+	return { user, loading, logout, updateUserData, isGoogleConnected }
 }
