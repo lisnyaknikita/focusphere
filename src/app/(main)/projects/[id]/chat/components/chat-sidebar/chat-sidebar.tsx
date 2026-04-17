@@ -5,6 +5,7 @@ import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { ChannelIcon } from '@/shared/ui/icons/projects/channel-icon'
 import { Modal } from '@/shared/ui/modal/modal'
+import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { Models } from 'appwrite'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
@@ -20,7 +21,7 @@ interface ChatSidebarProps {
 	onCreateChannel: (name: string, ownerId: string) => Promise<void>
 	currentUserId?: string
 }
-
+//TODO: continue adding tooltips for chat page
 export const ChatSidebar = ({
 	teammates,
 	projectTitle,
@@ -34,7 +35,19 @@ export const ChatSidebar = ({
 	// const [isMessagesOpened, setIsMessagesOpened] = useState(false)
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 	const [newChannelName, setNewChannelName] = useState('')
+	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 	console.log(teammates)
+
+	const { refs, floatingStyles, context } = useFloating({
+		open: isTooltipOpen,
+		onOpenChange: setIsTooltipOpen,
+		placement: 'top',
+		whileElementsMounted: autoUpdate,
+		middleware: [offset(10), flip(), shift()],
+	})
+
+	const hover = useHover(context)
+	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	const handleCreateSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -47,6 +60,11 @@ export const ChatSidebar = ({
 		} catch (err) {
 			console.error('Create channel UI error:', err)
 		}
+	}
+
+	const handleOpenCreateModal = () => {
+		setIsCreateModalOpen(true)
+		setIsTooltipOpen(false)
 	}
 
 	useEffect(() => {
@@ -67,8 +85,32 @@ export const ChatSidebar = ({
 							<ArrowBottomIcon className={clsx(!isChannelsOpened && 'rotated')} />
 							<span>Channels</span>
 						</button>
-						<button className={classes.createButton} onClick={() => setIsCreateModalOpen(true)}>
+						<button
+							ref={refs.setReference}
+							className={classes.createButton}
+							onClick={handleOpenCreateModal}
+							{...getReferenceProps()}
+						>
 							<PlusIcon />
+							{isTooltipOpen && (
+								<div
+									ref={refs.setFloating}
+									style={{
+										...floatingStyles,
+										background: 'var(--save-button-bg)',
+										color: 'var(--save-button-text)',
+										padding: '4px 8px',
+										borderRadius: '5px',
+										fontSize: '13px',
+										fontWeight: 700,
+										zIndex: 1000,
+										whiteSpace: 'nowrap',
+									}}
+									{...getFloatingProps()}
+								>
+									Create channel
+								</div>
+							)}
 						</button>
 					</div>
 					<ul className={clsx(classes.list, isChannelsOpened && 'opened')}>

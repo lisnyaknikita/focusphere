@@ -3,6 +3,7 @@
 import { useProjects } from '@/shared/hooks/projects/use-projects'
 import { Tabs } from '@/shared/tabs/tabs'
 import { FavoriteIcon } from '@/shared/ui/icons/projects/favorite-icon'
+import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
@@ -21,6 +22,18 @@ export default function Projects() {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [favoritesOnly, setFavoritesOnly] = useState(false)
+	const [isFavTooltipOpen, setIsFavTooltipOpen] = useState(false)
+
+	const { refs, floatingStyles, context } = useFloating({
+		open: isFavTooltipOpen,
+		onOpenChange: setIsFavTooltipOpen,
+		placement: 'bottom',
+		whileElementsMounted: autoUpdate,
+		middleware: [offset(10), flip(), shift()],
+	})
+
+	const hover = useHover(context)
+	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	const { projects, total, limit, isLoading, refreshProjects } = useProjects(
 		view,
@@ -52,10 +65,33 @@ export default function Projects() {
 						<Tabs tabs={['solo', 'team']} activeTab={view} onChange={setView} />
 						<Search value={searchQuery} onChange={setSearchQuery} />
 						<button
+							ref={refs.setReference}
 							className={clsx(classes.favoriteButton, favoritesOnly && 'active')}
 							onClick={() => setFavoritesOnly(!favoritesOnly)}
+							{...getReferenceProps()}
+							onMouseEnter={() => setIsFavTooltipOpen(true)}
+							onMouseLeave={() => setIsFavTooltipOpen(false)}
 						>
 							<FavoriteIcon />
+							{isFavTooltipOpen && (
+								<div
+									ref={refs.setFloating}
+									style={{
+										...floatingStyles,
+										background: 'var(--save-button-bg)',
+										color: 'var(--save-button-text)',
+										padding: '4px 8px',
+										borderRadius: '5px',
+										fontSize: '13px',
+										fontWeight: 700,
+										zIndex: 1000,
+										whiteSpace: 'nowrap',
+									}}
+									{...getFloatingProps()}
+								>
+									{favoritesOnly ? 'Show all projects' : 'Show favorites only'}
+								</div>
+							)}
 						</button>
 						<CreateButton />
 					</header>

@@ -122,11 +122,11 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						className={classes.signOutButton}
 						ref={signOutRefs.setReference}
 						onClick={logout}
-						onMouseEnter={() => isCollapsed && setIsSignOutTooltipOpen(true)}
+						onMouseEnter={() => setIsSignOutTooltipOpen(true)}
 						onMouseLeave={() => setIsSignOutTooltipOpen(false)}
 					>
 						<SignOutIcon />
-						{isSignOutTooltipOpen && isCollapsed && (
+						{isSignOutTooltipOpen && (
 							<div
 								ref={signOutRefs.setFloating}
 								style={{
