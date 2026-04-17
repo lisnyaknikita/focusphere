@@ -1,6 +1,7 @@
 'use client'
 
 import { account } from '@/lib/appwrite'
+import { APP_URL } from '@/shared/constants/app'
 import { OAuthProvider } from 'appwrite'
 import { useState } from 'react'
 import { GoogleIcon } from '../icons/google-icon'
@@ -12,16 +13,10 @@ export const GoogleAuthButton = () => {
 	const loginWithGoogle = async () => {
 		setIsLoading(true)
 
-		const baseUrl =
-			process.env.NODE_ENV === 'production' ? 'https://focusphere-test.vercel.app' : 'http://localhost:3000'
-
 		try {
-			account.createOAuth2Session(
-				OAuthProvider.Google,
-				`${baseUrl}/dashboard`,
-				`${baseUrl}/login`,
-				['https://www.googleapis.com/auth/calendar']
-			)
+			account.createOAuth2Session(OAuthProvider.Google, `${APP_URL}/dashboard`, `${APP_URL}/login`, [
+				'https://www.googleapis.com/auth/calendar',
+			])
 		} catch (error) {
 			console.error('Auth error:', error)
 			setIsLoading(false)

@@ -1,6 +1,7 @@
 import { account } from '@/lib/appwrite'
 import { OAuthProvider } from 'appwrite'
 import { toast } from 'sonner'
+import { APP_URL } from '../constants/app'
 
 type GoogleDate = { date: string } | { dateTime: string; timeZone?: string }
 
@@ -27,9 +28,7 @@ class GoogleCalendarService {
 			action: {
 				label: 'Reconnect',
 				onClick: () => {
-					const baseUrl =
-						process.env.NODE_ENV === 'production' ? 'https://focusphere-test.vercel.app' : 'http://localhost:3000'
-					account.createOAuth2Session(OAuthProvider.Google, `${baseUrl}/dashboard`, `${baseUrl}/login`, [
+					account.createOAuth2Session(OAuthProvider.Google, `${APP_URL}/dashboard`, `${APP_URL}/login`, [
 						'https://www.googleapis.com/auth/calendar',
 					])
 				},
