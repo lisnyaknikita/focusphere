@@ -22,9 +22,24 @@ export const QuickIdeaModalWrapper = () => {
 	const handleSave = async (content: string) => {
 		if (!user) return
 
+		const blockNoteContent = [
+			{
+				type: 'paragraph',
+				content: [
+					{
+						type: 'text',
+						text: content,
+						styles: {},
+					},
+				],
+			},
+		]
+
+		const jsonContent = JSON.stringify(blockNoteContent)
+
 		await createGeneralNote({
 			title: 'Quick note',
-			content,
+			content: jsonContent,
 			userId: user.$id,
 		})
 
