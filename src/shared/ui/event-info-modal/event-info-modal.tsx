@@ -3,6 +3,7 @@ import { DateTime } from '@/app/(main)/calendar/components/event-modal/component
 import { Description } from '@/app/(main)/calendar/components/event-modal/components/description/description'
 import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
+import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
 import { DateTimeIcon } from '../icons/calendar/date-time-icon'
@@ -22,6 +23,8 @@ interface EventInfoModalProps {
 
 export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, actions }: EventInfoModalProps) => {
 	const [isEditing, setIsEditing] = useState(false)
+	const [isCopyTooltipOpen, setIsCopyTooltipOpen] = useState(false)
+
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
 			setIsEditing(false)
@@ -40,6 +43,17 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 			onConfirmDelete(String(event.id))
 		}
 	}
+
+	const { refs, floatingStyles, context } = useFloating({
+		open: isCopyTooltipOpen,
+		onOpenChange: setIsCopyTooltipOpen,
+		placement: 'top',
+		whileElementsMounted: autoUpdate,
+		middleware: [offset(8), flip(), shift()],
+	})
+
+	const hover = useHover(context)
+	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	if (isEditing) {
 		return (
@@ -74,9 +88,37 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 				{!isReadOnly && (
 					<>
 						{onCopy && (
-							<button type='button' className={classes.copyBtn} onClick={onCopy} title='Copy this time block'>
-								<CopyTimeBlockIcon />
-							</button>
+							<div style={{ display: 'inline-block' }}>
+								<button
+									ref={refs.setReference}
+									type='button'
+									className={classes.copyBtn}
+									onClick={onCopy}
+									{...getReferenceProps()}
+								>
+									<CopyTimeBlockIcon />
+								</button>
+
+								{isCopyTooltipOpen && (
+									<div
+										ref={refs.setFloating}
+										style={{
+											...floatingStyles,
+											background: 'var(--save-button-bg)',
+											color: 'var(--save-button-text)',
+											padding: '4px 8px',
+											borderRadius: '5px',
+											fontSize: '12px',
+											fontWeight: 700,
+											zIndex: 1000,
+											whiteSpace: 'nowrap',
+										}}
+										{...getFloatingProps()}
+									>
+										Copy this time block
+									</div>
+								)}
+							</div>
 						)}
 						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<EditIcon />
