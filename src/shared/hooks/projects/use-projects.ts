@@ -1,8 +1,33 @@
 import { db } from '@/lib/appwrite'
 import { Project } from '@/shared/types/project'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import { useQuery } from '@tanstack/react-query'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useState } from 'react'
+
+const LIMIT = 12
+
+const fetchProjects = async (type: 'solo' | 'team', searchQuery: string, page: number, favoritesOnly: boolean) => {
+	const userId = await getCurrentUserId()
+	if (!userId) return { rows: [], total: 0 }
+
+	const offset = (page - 1) * LIMIT
+	const queries = [Query.equal('type', type), Query.orderDesc('$createdAt'), Query.limit(LIMIT), Query.offset(offset)]
+
+	if (type === 'solo') queries.push(Query.equal('ownerId', userId))
+	if (searchQuery.trim()) queries.push(Query.contains('title', searchQuery))
+	if (favoritesOnly) queries.push(Query.equal('isFavorite', true))
+
+	const response = await db.listRows({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
+		queries,
+	})
+
+	return {
+		rows: response.rows as unknown as Project[],
+		total: response.total,
+	}
+}
 
 export const useProjects = (
 	type: 'solo' | 'team' | null,
@@ -10,64 +35,20 @@ export const useProjects = (
 	page: number = 1,
 	favoritesOnly: boolean = false
 ) => {
-	const [projects, setProjects] = useState<Project[]>([])
-	const [total, setTotal] = useState(0)
-	const [isLoading, setIsLoading] = useState(true)
-
-	const limit = 12
-
-	const getProjects = useCallback(async () => {
-		if (!type) return
-
-		setIsLoading(true)
-		try {
-			const userId = await getCurrentUserId()
-			if (!userId) return
-
-			const offset = (page - 1) * limit
-			const queries = [
-				Query.equal('type', type),
-				Query.orderDesc('$createdAt'),
-				Query.limit(limit),
-				Query.offset(offset),
-			]
-
-			if (type === 'solo') {
-				queries.push(Query.equal('ownerId', userId))
-			}
-
-			if (searchQuery.trim()) {
-				queries.push(Query.contains('title', searchQuery))
-			}
-
-			if (favoritesOnly) {
-				queries.push(Query.equal('isFavorite', true))
-			}
-
-			const response = await db.listRows({
-				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-				tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
-				queries: queries,
-			})
-
-			setProjects(response.rows as unknown as Project[])
-			setTotal(response.total)
-		} catch (error) {
-			console.error('Error fetching projects:', error)
-		} finally {
-			setIsLoading(false)
-		}
-	}, [type, searchQuery, page, favoritesOnly])
-
-	useEffect(() => {
-		getProjects()
-	}, [getProjects])
+	const { data, isLoading, refetch } = useQuery({
+		queryKey: ['projects', type, searchQuery, page, favoritesOnly],
+		queryFn: () => fetchProjects(type!, searchQuery, page, favoritesOnly),
+		enabled: !!type,
+		placeholderData: previousData => previousData,
+	})
 
 	return {
-		projects,
-		total,
-		limit,
+		projects: data?.rows ?? [],
+		total: data?.total ?? 0,
+		limit: LIMIT,
 		isLoading,
-		refreshProjects: getProjects,
+		refreshProjects: async () => {
+			await refetch()
+		},
 	}
 }

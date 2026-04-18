@@ -35,12 +35,7 @@ export default function Projects() {
 	const hover = useHover(context)
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
-	const { projects, total, limit, isLoading, refreshProjects } = useProjects(
-		view,
-		searchQuery,
-		currentPage,
-		favoritesOnly
-	)
+	const { projects, total, limit, isLoading } = useProjects(view, searchQuery, currentPage, favoritesOnly)
 
 	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
@@ -96,7 +91,7 @@ export default function Projects() {
 						<CreateButton />
 					</header>
 					<main className={classes.projects}>
-						<ProjectsList projects={projects} isLoading={isLoading} onRefresh={refreshProjects} />
+						<ProjectsList projects={projects} isLoading={isLoading} />
 					</main>
 					<footer className={classes.pagination}>
 						{total > limit && (

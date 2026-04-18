@@ -1,37 +1,34 @@
 import { deleteProject } from '@/lib/projects/projects'
-import { AppwriteException } from 'appwrite'
-import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 export const useDeleteProject = () => {
-	const [isDeleting, setIsDeleting] = useState(false)
-	const [error, setError] = useState<string | null>(null)
+	const queryClient = useQueryClient()
 
-	const remove = async (projectId: string, onSuccess?: () => void) => {
-		setIsDeleting(true)
-		setError(null)
+	const { mutate, isPending, error } = useMutation({
+		mutationFn: (projectId: string) => deleteProject(projectId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['projects'] })
+		},
+	})
 
-		const deletePromise = deleteProject(projectId)
+	const remove = (projectId: string, onSuccess?: () => void) => {
+		const deletePromise = new Promise<void>((resolve, reject) => {
+			mutate(projectId, {
+				onSuccess: () => {
+					onSuccess?.()
+					resolve()
+				},
+				onError: reject,
+			})
+		})
 
 		toast.promise(deletePromise, {
 			loading: 'Deleting project...',
 			success: 'Project removed',
 			error: 'Could not delete project',
 		})
-
-		try {
-			await deletePromise
-			if (onSuccess) onSuccess()
-		} catch (err) {
-			if (err instanceof AppwriteException || err instanceof Error) {
-				setError(err.message)
-			} else {
-				setError('An unexpected error occurred during deletion')
-			}
-		} finally {
-			setIsDeleting(false)
-		}
 	}
 
-	return { remove, isDeleting, error }
+	return { remove, isDeleting: isPending, error: error?.message ?? null }
 }

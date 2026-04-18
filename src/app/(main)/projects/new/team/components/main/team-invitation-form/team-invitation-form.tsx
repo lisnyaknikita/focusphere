@@ -3,8 +3,10 @@
 import { inviteMembersToTeam } from '@/lib/projects/invite-service/invite-service'
 import { getProjectById } from '@/lib/projects/projects'
 import { SuggestionIcon } from '@/shared/ui/icons/projects/suggestion-icon'
+import { useMutation } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import classes from './team-invitation-form.module.scss'
 
 export const TeamInvitationForm = () => {
@@ -15,16 +17,18 @@ export const TeamInvitationForm = () => {
 	const [name, setName] = useState('')
 	const [members, setMembers] = useState<string[]>([])
 	const [teamId, setTeamId] = useState<string | null>(null)
-	const [isSending, setIsSending] = useState(false)
+
+	const { mutate: sendInvites, isPending: isSending } = useMutation({
+		mutationFn: ({ teamId, emails }: { teamId: string; emails: string[] }) =>
+			inviteMembersToTeam(teamId, emails, projectId!),
+		onSuccess: () => router.push(`/projects/${projectId}/board`),
+		onError: err => toast.error(err instanceof Error ? err.message : 'Invitation failed'),
+	})
 
 	const generateEmail = (input: string) => {
 		const cleaned = input.trim().toLowerCase()
 		if (!cleaned) return ''
-
-		if (cleaned.includes('@')) {
-			return cleaned
-		}
-
+		if (cleaned.includes('@')) return cleaned
 		return cleaned.replace(/\s+/g, '') + '@gmail.com'
 	}
 
@@ -52,7 +56,7 @@ export const TeamInvitationForm = () => {
 		}
 	}, [projectId])
 
-	const handleInviteAndContinue = async (e: React.FormEvent) => {
+	const handleInviteAndContinue = (e: React.FormEvent) => {
 		e.preventDefault()
 
 		const currentEmail = generateEmail(name)
@@ -60,7 +64,6 @@ export const TeamInvitationForm = () => {
 		if (currentEmail && !finalEmails.includes(currentEmail)) {
 			finalEmails.push(currentEmail)
 		}
-
 		finalEmails = finalEmails.map(m => m.trim()).filter(m => m.length > 0)
 
 		if (finalEmails.length === 0) {
@@ -68,20 +71,23 @@ export const TeamInvitationForm = () => {
 			return
 		}
 
-		console.log('Sending invitations to:', finalEmails)
+		if (!teamId) return
 
-		setIsSending(true)
-		try {
-			await inviteMembersToTeam(teamId!, finalEmails, projectId!)
-			router.push(`/projects/${projectId}/board`)
-		} catch (error: unknown) {
-			console.error('Invitation failed details:', error)
-			if (error instanceof Error) {
-				alert(`Error: ${error.message}.`)
-			}
-		} finally {
-			setIsSending(false)
-		}
+		const invitePromise = new Promise<void>((resolve, reject) => {
+			sendInvites(
+				{ teamId, emails: finalEmails },
+				{
+					onSuccess: () => resolve(),
+					onError: reject,
+				}
+			)
+		})
+
+		toast.promise(invitePromise, {
+			loading: 'Sending invitations...',
+			success: 'Invitations sent!',
+			error: () => '',
+		})
 	}
 
 	return (
