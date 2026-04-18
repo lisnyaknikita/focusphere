@@ -6,10 +6,9 @@ import classes from './projects-list.module.scss'
 interface ProjectsListProps {
 	projects: Project[]
 	isLoading: boolean
-	onRefresh: () => Promise<void>
 }
 
-export const ProjectsList = ({ projects, isLoading, onRefresh }: ProjectsListProps) => {
+export const ProjectsList = ({ projects, isLoading }: ProjectsListProps) => {
 	if (isLoading) return <BeatLoader color='#aaa' size={10} className={classes.loader} />
 
 	if (!isLoading && projects.length === 0) return <p className={classes.noProjectsMessage}>No projects</p>
@@ -17,7 +16,7 @@ export const ProjectsList = ({ projects, isLoading, onRefresh }: ProjectsListPro
 	return (
 		<ul className={classes.projectsList}>
 			{projects.map(project => (
-				<ProjectCard key={project.$id} project={project} onRefresh={onRefresh} />
+				<ProjectCard key={project.$id} project={project} />
 			))}
 		</ul>
 	)

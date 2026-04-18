@@ -9,7 +9,7 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import 'temporal-polyfill/global'
 import { WeekDayHeader } from './components/week-day-header/week-day-header'
 
@@ -24,69 +24,73 @@ interface PlannerInnerProps {
 	refreshTimeBlocks: () => void
 }
 
-export const PlannerInner = ({
-	timeBlocks,
-	onDayClick,
-	onCopyEvent,
-	dailyTasksCountByDate,
-	calendar,
-	eventsService,
-	eventModal,
-	refreshTimeBlocks,
-}: PlannerInnerProps) => {
-	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
-	const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
+export const PlannerInner = memo(
+	({
+		timeBlocks,
+		onDayClick,
+		onCopyEvent,
+		dailyTasksCountByDate,
+		calendar,
+		eventsService,
+		eventModal,
+		refreshTimeBlocks,
+	}: PlannerInnerProps) => {
+		const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
+		const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
 
-	useCalendarScroll([timeBlocks])
+		useCalendarScroll([timeBlocks])
 
-	const handleConfirmDelete = async () => {
-		if (eventToDelete) {
-			await handleDelete(String(eventToDelete.id))
-			setEventToDelete(null)
+		const handleConfirmDelete = async () => {
+			if (eventToDelete) {
+				await handleDelete(String(eventToDelete.id))
+				setEventToDelete(null)
+			}
 		}
-	}
 
-	const customComponents = useMemo(
-		() => ({
-			eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
-				<EventInfoModal
-					event={calendarEvent}
-					onConfirmDelete={() => setEventToDelete(calendarEvent)}
-					onUpdated={() => {
-						refreshTimeBlocks()
-						eventModal.close()
-					}}
-					onCopy={() => {
-						onCopyEvent(calendarEvent)
-						eventModal.close()
-					}}
-					actions={{
-						create: createTimeBlock,
-						update: updateTimeBlock,
-					}}
+		const customComponents = useMemo(
+			() => ({
+				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
+					<EventInfoModal
+						event={calendarEvent}
+						onConfirmDelete={() => setEventToDelete(calendarEvent)}
+						onUpdated={() => {
+							refreshTimeBlocks()
+							eventModal.close()
+						}}
+						onCopy={() => {
+							onCopyEvent(calendarEvent)
+							eventModal.close()
+						}}
+						actions={{
+							create: createTimeBlock,
+							update: updateTimeBlock,
+						}}
+					/>
+				),
+				weekGridDate: ({ date }: { date: string }) => (
+					<WeekDayHeader date={date} onDayClick={onDayClick} incompleteTasksCount={dailyTasksCountByDate[date] ?? 0} />
+				),
+			}),
+			[onDayClick, dailyTasksCountByDate, refreshTimeBlocks, onCopyEvent]
+		)
+
+		return (
+			<>
+				<ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
+				<ConfirmModal
+					isVisible={!!eventToDelete}
+					onClose={() => setEventToDelete(null)}
+					onConfirm={handleConfirmDelete}
+					title='Delete Time Block'
+					message={
+						<>
+							Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
+						</>
+					}
 				/>
-			),
-			weekGridDate: ({ date }: { date: string }) => (
-				<WeekDayHeader date={date} onDayClick={onDayClick} incompleteTasksCount={dailyTasksCountByDate[date] ?? 0} />
-			),
-		}),
-		[onDayClick, dailyTasksCountByDate, refreshTimeBlocks, onCopyEvent]
-	)
+			</>
+		)
+	}
+)
 
-	return (
-		<>
-			<ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
-			<ConfirmModal
-				isVisible={!!eventToDelete}
-				onClose={() => setEventToDelete(null)}
-				onConfirm={handleConfirmDelete}
-				title='Delete Time Block'
-				message={
-					<>
-						Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
-					</>
-				}
-			/>
-		</>
-	)
-}
+PlannerInner.displayName = 'PlannerInner'

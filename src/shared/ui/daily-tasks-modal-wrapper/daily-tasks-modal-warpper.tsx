@@ -16,7 +16,6 @@ export const DailyTasksModalWrapper = () => {
 		router.push('/dashboard')
 		const event = new CustomEvent('refresh-daily-tasks')
 		window.dispatchEvent(event)
-		router.refresh()
 	}
 
 	return (
