@@ -27,7 +27,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 	const { refs, floatingStyles, context } = useFloating({
 		open: isTooltipOpen,
 		onOpenChange: setIsTooltipOpen,
-		placement: 'top',
+		placement: 'left',
 		whileElementsMounted: autoUpdate,
 		middleware: [offset(10), flip(), shift()],
 	})

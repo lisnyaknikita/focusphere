@@ -12,7 +12,6 @@ import classes from './project-card.module.scss'
 
 interface ProjectCardProps {
 	project: Project
-	onRefresh: () => Promise<void>
 }
 
 export const getRelativeTime = (date: string | Date) => {
@@ -21,8 +20,8 @@ export const getRelativeTime = (date: string | Date) => {
 	})
 }
 
-export const ProjectCard = ({ project, onRefresh }: ProjectCardProps) => {
-	const { handleToggleFavorite } = useToggleFavorite({ onRefresh, project })
+export const ProjectCard = ({ project }: ProjectCardProps) => {
+	const { handleToggleFavorite } = useToggleFavorite(project)
 	const { data: teammates = [], isLoading } = useTeamMembers(project.teamId)
 
 	const projectColor = project.color || CALENDAR_COLORS.GOLD

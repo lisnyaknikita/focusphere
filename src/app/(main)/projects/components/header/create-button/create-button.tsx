@@ -6,7 +6,7 @@ import classes from './create-button.module.scss'
 
 export const CreateButton = () => {
 	return (
-		<Link href='/projects/new' className={classes.createButton} onClick={() => {}}>
+		<Link href='/projects/new' className={classes.createButton}>
 			<PlusIcon />
 			<span>New project</span>
 		</Link>
