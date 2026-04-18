@@ -1,7 +1,7 @@
 'use client'
 
-import { inviteMembersToTeam } from '@/lib/projects/invite-service/invite-service'
-import { getProjectById } from '@/lib/projects/projects'
+import { useTeamInvitation } from '@/shared/hooks/projects/use-team-invitation'
+import { TeamInvitationValues, teamInvitationSchema } from '@/shared/schemas/team-invitation-schema'
 import { SuggestionIcon } from '@/shared/ui/icons/projects/suggestion-icon'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -66,10 +66,11 @@ export const TeamInvitationForm = () => {
 		}
 		finalEmails = finalEmails.map(m => m.trim()).filter(m => m.length > 0)
 
-		if (finalEmails.length === 0) {
-			router.push(`/projects/${projectId}/board`)
-			return
+		if (generatedEmail && isValidEmail(generatedEmail) && !isDuplicate) {
+			append({ email: generatedEmail })
+			setValue('currentInput', '')
 		}
+	}
 
 		if (!teamId) return
 
@@ -91,43 +92,43 @@ export const TeamInvitationForm = () => {
 	}
 
 	return (
-		<form className={classes.teamInvitationForm} onSubmit={handleInviteAndContinue}>
+		<form className={classes.teamInvitationForm} onSubmit={handleSubmit(data => onSubmit(data, currentInput))}>
 			<h3 className={classes.formTitle}>Bring the team with you</h3>
 			<p className={classes.formSubtitle}>Invite these teammates to your project and work together</p>
 			<div className={classes.titleLabel}>
 				<span>Enter names or emails</span>
 				<div className={classes.inputWrapper}>
-					<input
-						type='text'
-						placeholder='John Smith'
-						value={name}
-						onChange={e => setName(e.target.value)}
-						onKeyDown={handleKeyDown}
-					/>
+					<input type='text' placeholder='John Smith' {...register('currentInput')} onKeyDown={handleKeyDown} />
 					<div className={classes.suggestion}>
-						{name && <SuggestionIcon className={classes.icon} />}
-						<div className={classes.emailBlock}>{!name ? 'Enter an email address' : generateEmail(name)}</div>
+						{currentInput && <SuggestionIcon className={classes.icon} />}
+						<span className={classes.emailBlock}>{currentInput ? generatedEmail : 'Enter an email address'}</span>
 					</div>
-					{members.length > 0 && (
-						<div className={classes.membersList}>
-							{members.map((member, i) => (
-								<div key={i} className={classes.membersItem}>
-									{member}
-									<button type='button' className={classes.removeBtn} onClick={() => removeMember(i)}>
+					{fields.length > 0 && (
+						<ul className={classes.membersList}>
+							{fields.map((field, i) => (
+								<li key={field.id} className={classes.membersItem}>
+									{field.email}
+									<button
+										type='button'
+										className={classes.removeBtn}
+										onClick={() => remove(i)}
+										aria-label={`Remove ${field.email}`}
+									>
 										×
 									</button>
-								</div>
+								</li>
 							))}
-						</div>
+						</ul>
 					)}
 				</div>
 			</div>
+			{submitError && <p className={classes.errorMessage}>{submitError}</p>}
 			<div className={classes.buttons}>
-				<button className={classes.skipButton} onClick={() => router.push(`/projects/${projectId}/board`)}>
+				<button type='button' className={classes.skipButton} onClick={redirectToBoard}>
 					Skip
 				</button>
-				<button className={classes.continueButton} type='submit' disabled={isSending || !teamId}>
-					{isSending ? 'Sending...' : 'Invite and continue'}
+				<button className={classes.continueButton} type='submit' disabled={isSubmitting || !teamId}>
+					{isSubmitting ? 'Sending...' : 'Invite and continue'}
 				</button>
 			</div>
 		</form>
