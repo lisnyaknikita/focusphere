@@ -47,6 +47,7 @@
 	--line: #c7c7c7;
 	--date-bg: #b5b5b5;
 	--sx-color-background: #f2f2f2;
+	--sx-color-primary: #1c1b1b;
 	--sx-internal-color-text: #1c1b1b;
 	--sx-color-neutral: #1c1b1ba7;
 	--sx-border: 0.3px solid #c7c7c7;
@@ -74,6 +75,7 @@
 	--line: #c7c7c7;
 	--date-bg: #474747;
 	--sx-color-background: #0e0e0e;
+	--sx-color-primary: #ffffff;
 	--sx-internal-color-text: #ffffff;
 	--sx-color-neutral: #ffffffa1;
 	--sx-border: 0.3px solid #c7c7c7;
@@ -102,6 +104,7 @@
 		--line: #c7c7c7;
 		--date-bg: #474747;
 		--sx-color-background: #0e0e0e;
+		--sx-color-primary: #ffffff;
 		--sx-internal-color-text: #ffffff;
 		--sx-color-neutral: #ffffffa1;
 		--sx-border: 0.3px solid #c7c7c7;
@@ -332,6 +335,7 @@ ul {
 }
 
 .sx__week-grid__date {
+	padding: 0 !important;
 	> div {
 		width: 100%;
 		display: flex;
@@ -343,6 +347,10 @@ ul {
 	width: fit-content !important;
 	min-height: 40px !important;
 	min-width: 40px !important;
+}
+
+.sx__month-grid-day__header-date.sx__is-today {
+	background-color: var(--btn-border) !important;
 }
 
 .bn-root[data-color-scheme='dark'],
