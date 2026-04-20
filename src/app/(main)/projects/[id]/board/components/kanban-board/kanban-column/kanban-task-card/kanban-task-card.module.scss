@@ -6,7 +6,6 @@
 	overflow: hidden;
 	display: flex;
 	cursor: grab;
-	transition: all 0.2s;
 
 	&:hover {
 		background-color: var(--hover);

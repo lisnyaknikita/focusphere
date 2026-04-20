@@ -39,7 +39,7 @@ export default function NotesPage() {
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
 						<>
-							<NotesList withTitle={true} withTags={true} />
+							<NotesList withTitle={false} withTags={true} />
 							<TextEditor key={activeNote?.$id} />
 							{activeNote && (
 								<button

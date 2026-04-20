@@ -33,7 +33,6 @@ export default function ChatPage() {
 					channels={chat.channels}
 					activeChannelId={chat.activeChannel?.$id}
 					onSelectChannel={chat.setActiveChannel}
-					projectTitle={project.title}
 					onCreateChannel={chat.createChannel}
 					currentUserId={user?.$id}
 				/>
