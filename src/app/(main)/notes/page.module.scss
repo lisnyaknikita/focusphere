@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	padding: 23px 0px 20px 30px;
+	padding: 10px 0px 10px 20px;
 	height: 100%;
 	position: relative;
 }
@@ -13,6 +13,10 @@
 	display: flex;
 	justify-content: flex-end;
 	gap: 10px;
+
+	> button {
+		margin-right: 0;
+	}
 }
 
 .notes {
