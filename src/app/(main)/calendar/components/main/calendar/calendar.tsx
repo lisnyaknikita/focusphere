@@ -6,6 +6,7 @@ import { ScheduleXCalendar } from '@schedule-x/react'
 
 import '@schedule-x/theme-default/dist/index.css'
 
+import { WeekDayHeader } from '@/app/(main)/planner/components/main/planner-inner/components/week-day-header/week-day-header'
 import { createEvent, updateEvent } from '@/lib/events/events'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
@@ -90,6 +91,7 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 					}}
 				/>
 			),
+			weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} />,
 		}),
 		[getEvents]
 	)
