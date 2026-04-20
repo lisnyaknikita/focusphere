@@ -2,7 +2,6 @@
 
 import { getUserAvatar } from '@/lib/appwrite'
 import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
-import { DragHandleIcon } from '@/shared/ui/icons/projects/drag-handle-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -37,11 +36,19 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 		transition,
 		opacity: isDragging && !isOverlay ? 0.3 : 1,
 		zIndex: isDragging ? 999 : undefined,
+		cursor: isDragging ? 'grabbing' : 'grab',
 	}
 
 	return (
 		<>
-			<li ref={setNodeRef} style={style} className={classes.taskCard} onClick={() => setIsTaskModalVisible(true)}>
+			<li
+				ref={setNodeRef}
+				style={style}
+				className={classes.taskCard}
+				onClick={() => setIsTaskModalVisible(true)}
+				{...attributes}
+				{...listeners}
+			>
 				<div className={classes.taskContent}>
 					<h4 className={classes.taskTitle}>{task.title}</h4>
 					<p className={classes.taskDescription}>{task.description}</p>
@@ -58,11 +65,6 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 							{new Date(task.$createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
 						</div>
 					</footer>
-				</div>
-				<div className={classes.dragHandle} {...attributes} {...listeners} onClick={e => e.stopPropagation()}>
-					<button>
-						<DragHandleIcon />
-					</button>
 				</div>
 			</li>
 			<Modal isVisible={isTaskModalVisible} onClose={() => setIsTaskModalVisible(false)}>
