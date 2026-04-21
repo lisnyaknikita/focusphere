@@ -1,4 +1,3 @@
-import { QuoteIcon } from '@/shared/ui/icons/landing/quote-icon'
 import classes from './testimonials.module.scss'
 
 const testimonials = [
@@ -28,6 +27,16 @@ const testimonials = [
 	},
 ]
 
+const Stars = () => (
+	<div className={classes.stars}>
+		{[...Array(5)].map((_, i) => (
+			<svg key={i} width='16' height='16' viewBox='0 0 16 16' fill='#f59e0b'>
+				<path d='M8 1.2l1.8 3.6 4 .6-2.9 2.8.7 4L8 10.1l-3.6 1.9.7-4L2.2 5.4l4-.6z' />
+			</svg>
+		))}
+	</div>
+)
+
 export const Testimonials = () => {
 	return (
 		<section id='testimonials' className={classes.testimonials}>
@@ -39,9 +48,7 @@ export const Testimonials = () => {
 				<div className={classes.grid}>
 					{testimonials.map((testimonial, index) => (
 						<div key={index} className={classes.card}>
-							<div className={classes.quoteIcon}>
-								<QuoteIcon />
-							</div>
+							<Stars />
 							<p className={classes.quote}>{testimonial.quote}</p>
 							<div className={classes.author}>
 								<div className={classes.avatar} data-color={testimonial.color}>
