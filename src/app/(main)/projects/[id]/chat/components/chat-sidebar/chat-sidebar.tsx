@@ -14,17 +14,15 @@ import { CreateChannelModal } from './components/create-channel-modal/create-cha
 
 interface ChatSidebarProps {
 	teammates: Models.Membership[]
-	projectTitle: string
 	channels: ChatChannel[]
 	activeChannelId?: string
 	onSelectChannel: (channel: ChatChannel) => void
 	onCreateChannel: (name: string, ownerId: string) => Promise<void>
 	currentUserId?: string
 }
-//TODO: continue adding tooltips for chat page
+
 export const ChatSidebar = ({
 	teammates,
-	projectTitle,
 	channels,
 	activeChannelId,
 	onSelectChannel,
@@ -78,7 +76,6 @@ export const ChatSidebar = ({
 	return (
 		<>
 			<div className={classes.sidebar}>
-				<h3 className={classes.title}>{projectTitle}</h3>
 				<div className={classes.channels}>
 					<div className={classes.trigger}>
 						<button className={classes.triggerTitle} onClick={() => setIsChannelsOpened(prev => !prev)}>

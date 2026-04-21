@@ -5,11 +5,9 @@ import { useNotesContext } from '@/shared/context/notes-context'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
-import { DeleteIcon } from '@/shared/ui/icons/delete-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
-import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
@@ -18,25 +16,12 @@ import classes from './page.module.scss'
 
 const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v: boolean) => void }) => {
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
-	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 	const { activeNote, isLoading, deleteNote, notes, searchQuery } = useNotesContext()
 	const isSearchEmpty = searchQuery && searchQuery.trim().length > 0 && notes.length === 0
-
-	const { refs, floatingStyles, context } = useFloating({
-		open: isTooltipOpen,
-		onOpenChange: setIsTooltipOpen,
-		placement: 'left',
-		whileElementsMounted: autoUpdate,
-		middleware: [offset(10), flip(), shift()],
-	})
-
-	const hover = useHover(context)
-	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	const handleDeleteClick = () => {
 		if (activeNote) {
 			setIsDeleteConfirmOpen(true)
-			setIsTooltipOpen(false)
 		}
 	}
 
@@ -53,7 +38,6 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 					<SearchInput />
 					<CreateButton setIsModalVisible={setIsNewNoteModalOpened} text='New note' />
 				</header>
-
 				<main className={classes.notes}>
 					{isLoading ? (
 						<div className={classes.loaderWrapper}>
@@ -63,34 +47,9 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 						<>
 							{isSearchEmpty ? <div className={classes.emptySearch}>No notes found</div> : <NotesList />}
 							<TextEditor key={activeNote?.$id} />
-
 							{activeNote && (
-								<button
-									ref={refs.setReference}
-									className={classes.deleteButton}
-									onClick={handleDeleteClick}
-									{...getReferenceProps()}
-								>
-									<DeleteIcon />
-									{isTooltipOpen && (
-										<div
-											ref={refs.setFloating}
-											style={{
-												...floatingStyles,
-												background: 'var(--save-button-bg)',
-												color: 'var(--save-button-text)',
-												padding: '4px 8px',
-												borderRadius: '5px',
-												fontSize: '13px',
-												fontWeight: 700,
-												zIndex: 1000,
-												whiteSpace: 'nowrap',
-											}}
-											{...getFloatingProps()}
-										>
-											Delete note
-										</div>
-									)}
+								<button className={classes.deleteButton} onClick={handleDeleteClick}>
+									Delete
 								</button>
 							)}
 						</>
