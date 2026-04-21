@@ -5,31 +5,21 @@
 	border: 1px solid var(--btn-border);
 	overflow: hidden;
 	display: flex;
-}
-
-.taskContent {
-	flex-basis: 90%;
-	padding: 10px;
-	min-width: 0;
-}
-
-.dragHandle {
-	flex-basis: 10%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	cursor: grab;
-	padding: 10px;
-	border-left: 0.3px solid var(--btn-border);
-	transition: background-color 0.2s;
 
 	&:hover {
 		background-color: var(--hover);
 	}
 
-	> button {
-		cursor: grab;
+	&:active {
+		cursor: grabbing;
 	}
+}
+
+.taskContent {
+	width: 100%;
+	padding: 10px;
+	min-width: 0;
 }
 
 .taskTitle {

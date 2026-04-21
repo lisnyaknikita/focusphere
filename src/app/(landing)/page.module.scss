@@ -1,0 +1,25 @@
+.landing {
+	--primary: #ffffff;
+	--secondary: #f2f2f2e5;
+	--secondaryFull: #f2f2f2;
+	--text: #1c1b1b;
+	--textSecondary: #1c1b1ba7;
+	--logo-icon: #1c1b1b;
+	--hover: #ececec;
+	--checkbox-bg: #101010;
+	--checkbox-icon: #ffffff;
+	--close-button-bg: #ebebeb;
+	--close-button-fill: rgba(28, 27, 27, 0.6);
+	--save-button-bg: #1c1b1b;
+	--save-button-text: #f2f2f2;
+	--theme-toggler-bg: #d9d9d9;
+	--theme-toggler-circle: #ffffff;
+	--tab-bg: #999;
+	--tab-bg-active: #fff;
+	--btn-border: #3b3a3a;
+	--line: #c7c7c7;
+	--date-bg: #b5b5b5;
+
+	background-color: var(--primary);
+	color: var(--text);
+}

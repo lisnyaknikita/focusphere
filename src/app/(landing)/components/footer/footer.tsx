@@ -16,8 +16,8 @@ const footerLinks = {
 	],
 	company: [
 		{ label: 'About', href: '#' },
-		{ label: 'Careers', href: '#' },
-		{ label: 'Contact', href: '#' },
+		{ label: 'Careers', href: 'mailto:lisnyaknikita@gmail.com' },
+		{ label: 'Contact', href: 'mailto:lisnyaknikita@gmail.com' },
 	],
 }
 

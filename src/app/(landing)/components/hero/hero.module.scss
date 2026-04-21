@@ -3,11 +3,37 @@
 	text-align: center;
 	position: relative;
 	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 800px;
+		height: 500px;
+		background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+		pointer-events: none;
+	}
 }
 
 .container {
 	max-width: 1200px;
 	margin: 0 auto;
+	position: relative;
+}
+
+.badge {
+	display: inline-block;
+	font-size: 13px;
+	font-weight: 600;
+	color: #6366f1;
+	background-color: rgba(99, 102, 241, 0.1);
+	border: 1px solid rgba(99, 102, 241, 0.25);
+	border-radius: 100px;
+	padding: 5px 14px;
+	margin-bottom: 28px;
+	letter-spacing: 0.02em;
 }
 
 .title {
@@ -36,9 +62,9 @@
 
 .subtitle {
 	font-size: 20px;
-	line-height: 1.6;
+	line-height: 1.65;
 	color: var(--textSecondary);
-	max-width: 640px;
+	max-width: 580px;
 	margin: 0 auto 40px;
 
 	@media (max-width: 768px) {
@@ -46,18 +72,12 @@
 	}
 }
 
-.heroImage {
-	border-radius: 12px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
-}
-
 .cta {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 16px;
-	margin-bottom: 80px;
+	margin-bottom: 72px;
 
 	@media (max-width: 480px) {
 		flex-direction: column;
@@ -66,7 +86,7 @@
 }
 
 .primaryBtn {
-	padding: 16px 36px;
+	padding: 15px 32px;
 	border-radius: 12px;
 	font-size: 16px;
 	font-weight: 600;
@@ -74,15 +94,60 @@
 	color: #ffffff;
 	text-decoration: none;
 	transition: transform 0.2s, box-shadow 0.2s;
-	box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+	box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
 
 	&:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 6px 30px rgba(59, 130, 246, 0.4);
+		box-shadow: 0 8px 32px rgba(59, 130, 246, 0.45);
 	}
 
 	@media (max-width: 480px) {
 		width: 100%;
 		text-align: center;
 	}
+}
+
+.secondaryBtn {
+	padding: 15px 24px;
+	border-radius: 12px;
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--textSecondary);
+	text-decoration: none;
+	transition: color 0.2s;
+
+	&:hover {
+		color: var(--text);
+	}
+
+	@media (max-width: 480px) {
+		width: 100%;
+		text-align: center;
+	}
+}
+
+.imageWrapper {
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		bottom: -40px;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 70%;
+		height: 80px;
+		background: rgba(99, 102, 241, 0.12);
+		filter: blur(40px);
+		border-radius: 50%;
+		pointer-events: none;
+	}
+}
+
+.heroImage {
+	border-radius: 14px;
+	border: 1px solid var(--line);
+	box-shadow: 0 16px 60px rgba(0, 0, 0, 0.1), 0 4px 20px rgba(0, 0, 0, 0.06);
+	width: 100%;
+	height: auto;
 }

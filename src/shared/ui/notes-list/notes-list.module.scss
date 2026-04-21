@@ -1,9 +1,47 @@
 .listWrapper {
 	width: 35%;
 	height: 100%;
+	position: relative;
+	transition: all 0.2s;
 
 	&:global(.withTags) {
 		width: 25%;
+	}
+
+	&:global(.collapsed) {
+		width: 88px;
+		min-width: 88px;
+	}
+
+	&:global(.empty) {
+		width: 0;
+		min-width: 0;
+
+		> .notesList {
+			border-right: none;
+		}
+	}
+}
+
+.sidebarButton {
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translateX(100%);
+	z-index: 1;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 0 0 0 5px;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	> svg {
+		width: 20px;
+		height: 20px;
+		display: block;
 	}
 }
 
