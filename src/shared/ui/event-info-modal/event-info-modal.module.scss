@@ -13,6 +13,18 @@
 	gap: 10px;
 	justify-content: flex-end;
 	margin-bottom: 20px;
+
+	button {
+		> svg {
+			transition: transform 0.2s;
+		}
+
+		&:hover {
+			> svg {
+				transform: scale(1.1);
+			}
+		}
+	}
 }
 
 .editButton {
