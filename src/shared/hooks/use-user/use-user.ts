@@ -49,11 +49,21 @@ export const useUser = () => {
 		getUser()
 	}, [])
 
+	useEffect(() => {
+		const handleUserUpdate = (e: Event) => {
+			const customEvent = e as CustomEvent<Partial<CustomUser>>
+			setUser(current => {
+				if (!current) return null
+				return { ...current, ...customEvent.detail }
+			})
+		}
+
+		window.addEventListener('user-updated', handleUserUpdate)
+		return () => window.removeEventListener('user-updated', handleUserUpdate)
+	}, [])
+
 	const updateUserData = (updatedFields: Partial<CustomUser>) => {
-		setUser(current => {
-			if (!current) return null
-			return { ...current, ...updatedFields }
-		})
+		window.dispatchEvent(new CustomEvent('user-updated', { detail: updatedFields }))
 	}
 
 	const logout = async () => {

@@ -2,6 +2,7 @@
 
 import { account } from '@/lib/appwrite'
 import { updateLegacyNames } from '@/lib/projects/chat/chat'
+import { updateLegacyTaskNames } from '@/lib/projects/kanban-board-tasks/tasks'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { EditIcon } from '@/shared/ui/icons/edit-icon'
 import { useEffect, useRef, useState } from 'react'
@@ -46,6 +47,8 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 			if (user?.$id) {
 				updateLegacyNames(user.$id, newName.trim())
 			}
+
+			updateLegacyTaskNames(previousName, newName.trim())
 
 			setUsername(newName.trim())
 			onNameUpdated(newName.trim())
