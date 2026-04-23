@@ -25,7 +25,7 @@ export const ResetPasswordForm = ({ userId, secret }: { userId: string; secret: 
 
 		try {
 			await authService.updatePassword(userId, secret, data.password)
-			router.push('/login')
+			router.push(`/login${window.location.search}`)
 		} catch (err) {
 			if (err instanceof Error) setError(err.message)
 		}

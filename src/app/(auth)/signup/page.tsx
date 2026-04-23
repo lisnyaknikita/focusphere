@@ -3,12 +3,19 @@
 import { GoogleAuthButton } from '@/shared/ui/google-auth-button/google-auth-button'
 import { Logo } from '@/shared/ui/sidebar/components/logo/logo'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import classes from './page.module.scss'
 import { SignupForm } from './signup-form/signup-form'
 
 export default function SignupPage() {
 	const [isSuccess, setIsSuccess] = useState(false)
+	const [loginUrl, setLoginUrl] = useState('/login')
+
+	useEffect(() => {
+		if (window.location.search) {
+			setLoginUrl(`/login${window.location.search}`)
+		}
+	}, [])
 
 	return (
 		<div className={classes.signupPage}>
@@ -36,7 +43,7 @@ export default function SignupPage() {
 			</div>
 			<div className={classes.authPrompt}>
 				<span>Already have an account?</span>
-				<Link href={'/login'} className={classes.button}>
+				<Link href={loginUrl} className={classes.button}>
 					Login
 				</Link>
 			</div>
