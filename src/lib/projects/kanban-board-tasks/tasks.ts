@@ -40,3 +40,27 @@ export const deleteKanbanTask = async (taskId: string): Promise<void> => {
 		rowId: taskId,
 	})
 }
+
+export const updateLegacyTaskNames = async (oldName: string, newName: string) => {
+	try {
+		const tasks = await tablesDB.listRows({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
+			queries: [Query.equal('assigneeName', oldName), Query.limit(100)],
+		})
+
+		const promises = tasks.rows.map(task =>
+			tablesDB.updateRow({
+				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+				tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
+				rowId: task.$id,
+				data: { assigneeName: newName },
+			})
+		)
+
+		await Promise.all(promises)
+		console.log('All legacy task names updated!')
+	} catch (err) {
+		console.error('Task legacy name migration failed:', err)
+	}
+}
