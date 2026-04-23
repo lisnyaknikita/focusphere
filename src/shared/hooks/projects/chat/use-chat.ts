@@ -1,3 +1,4 @@
+import { client } from '@/lib/appwrite'
 import {
 	createChannel,
 	deleteChannel,
@@ -205,12 +206,29 @@ export const useChat = (project: Project | null) => {
 
 		refreshMessages(activeChannel.$id)
 
-		const interval = setInterval(() => {
-			refreshMessages(activeChannel.$id, true)
-		}, 2000)
+		const unsubscribe = client.subscribe(
+			`databases.${process.env.NEXT_PUBLIC_DB_ID}.collections.${process.env.NEXT_PUBLIC_TABLE_PROJECT_MESSAGES}.documents`,
+			response => {
+				const events = response.events
+				const payload = response.payload as unknown as ChatMessage
 
-		return () => clearInterval(interval)
-	}, [activeChannel?.$id, project?.$id])
+				if (payload.channelId !== activeChannel.$id) return
+
+				if (events.some(e => e.includes('.create'))) {
+					setMessages(prev => {
+						if (prev.some(m => m.$id === payload.$id)) return prev
+						return [...prev, payload]
+					})
+				} else if (events.some(e => e.includes('.update'))) {
+					setMessages(prev => prev.map(m => (m.$id === payload.$id ? payload : m)))
+				} else if (events.some(e => e.includes('.delete'))) {
+					setMessages(prev => prev.filter(m => m.$id !== payload.$id))
+				}
+			}
+		)
+
+		return () => unsubscribe()
+	}, [activeChannel?.$id, project?.$id, refreshMessages])
 
 	return {
 		teammates,
