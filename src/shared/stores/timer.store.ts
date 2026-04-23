@@ -187,11 +187,11 @@ if (typeof window !== 'undefined') {
 		}
 
 		if (status === 'idle') {
-			document.title = 'Focusphere'
+			document.title = 'Focus & Timer - Focusphere'
 			return
 		}
 		if (status === 'completed') {
-			document.title = 'Done! 🏆 | Focusphere'
+			document.title = 'Done! 🏆 - Focusphere'
 			return
 		}
 
@@ -208,7 +208,7 @@ if (typeof window !== 'undefined') {
 		const emoji = currentMode === 'work' ? '🚀' : '☕'
 		const pauseSign = status === 'paused' ? '⏸️ ' : ''
 
-		document.title = `${pauseSign}${emoji} ${mins}:${secs} | Focusphere`
+		document.title = `${pauseSign}${emoji} ${mins}:${secs} - Focusphere`
 	})
 
 	const state = useTimerStore.getState()

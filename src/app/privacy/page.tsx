@@ -1,4 +1,10 @@
+import { Metadata } from 'next'
 import classes from './privacy.module.scss'
+
+export const metadata: Metadata = {
+	title: 'Privacy Policy - Focusphere',
+	description: 'Learn how Focusphere handles your data and ensures your privacy.',
+}
 
 export default function PrivacyPage() {
 	const privacyHtml = `<style>
