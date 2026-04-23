@@ -72,10 +72,10 @@ export const Footer = () => {
 				<div className={classes.bottom}>
 					<p className={classes.copyright}>2026 Focusphere. All rights reserved.</p>
 					<div className={classes.legal}>
-						<a href='#' className={classes.legalLink}>
+						<a href='/privacy' className={classes.legalLink}>
 							Privacy Policy
 						</a>
-						<a href='#' className={classes.legalLink}>
+						<a href='/terms' className={classes.legalLink}>
 							Terms of Service
 						</a>
 					</div>

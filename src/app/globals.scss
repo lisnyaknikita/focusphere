@@ -353,6 +353,10 @@ ul {
 	background-color: var(--btn-border) !important;
 }
 
+.sx__event-modal {
+	top: calc(var(--sx-event-modal-top) - 140px) !important;
+}
+
 .bn-root[data-color-scheme='dark'],
 .bn-root[data-color-scheme='light'] {
 	--bn-colors-editor-background: transparent !important;
