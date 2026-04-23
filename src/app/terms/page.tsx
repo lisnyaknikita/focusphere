@@ -1,15 +1,14 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import { Metadata } from 'next'
+import { TermsContent } from './terms-content/terms-content'
 import classes from './terms.module.scss'
 
+export const metadata: Metadata = {
+	title: 'Terms of Service - Focusphere',
+	description:
+		'Read the Terms of Service for Focusphere. Understand the rules, responsibilities, and legal agreements for using our productivity platform.',
+}
+
 export default function TermsOfServicePage() {
-	const [mounted, setMounted] = useState(false)
-
-	useEffect(() => {
-		setMounted(true)
-	}, [])
-
 	const privacyHtml = `<style>
   [data-custom-class='body'], [data-custom-class='body'] * {
           background: transparent !important;
@@ -150,11 +149,7 @@ Calibri;color:#595959;mso-themecolor:text1;mso-themetint:166;"><strong><bdt clas
 
 	return (
 		<main className={classes.container}>
-			{mounted ? (
-				<div dangerouslySetInnerHTML={{ __html: privacyHtml }} />
-			) : (
-				<div className='py-20 text-center'>Loading...</div>
-			)}
+			<TermsContent html={privacyHtml} />
 		</main>
 	)
 }
