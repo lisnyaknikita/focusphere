@@ -1,5 +1,6 @@
 import { account, ID } from '@/lib/appwrite'
 import { SignupFormValues } from '@/shared/schemas/signup-schema'
+import { AppwriteException } from 'appwrite'
 
 const VERIFICATION_REDIRECT_URL = '/verify'
 
@@ -20,15 +21,33 @@ export const authService = {
 	async signupUser(data: SignupFormValues): Promise<void> {
 		const { fullName, email, password } = data
 
-		const verificationUrl = `${location.origin}${VERIFICATION_REDIRECT_URL}`
+		const searchParams = new URLSearchParams(window.location.search)
+		const callbackUrl = searchParams.get('callbackUrl')
 
-		await account.create(ID.unique(), email, password, fullName)
-		await account.createEmailPasswordSession(email, password)
-		await account.createVerification(verificationUrl)
+		const verificationUrl = `${location.origin}${VERIFICATION_REDIRECT_URL}${
+			callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''
+		}`
+
+		try {
+			await account.create(ID.unique(), email, password, fullName)
+			await account.createEmailPasswordSession(email, password)
+			await account.createVerification(verificationUrl)
+		} catch (error) {
+			if (error instanceof AppwriteException && error.code === 409) {
+				throw new Error(
+					'An account with this email already exists. If you were invited, please use the Login page and click "Forgot password?" to set your password.'
+				)
+			}
+			throw error
+		}
 	},
 
 	async sendRecoveryEmail(email: string) {
-		const redirectUrl = `${location.origin}/reset-password`
+		const searchParams = new URLSearchParams(window.location.search)
+		const callbackUrl = searchParams.get('callbackUrl')
+		const redirectUrl = `${location.origin}/reset-password${
+			callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''
+		}`
 		await account.createRecovery(email, redirectUrl)
 	},
 

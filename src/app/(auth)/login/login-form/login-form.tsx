@@ -26,7 +26,10 @@ export const LoginForm = () => {
 		try {
 			await authService.loginUser(data.email, data.password)
 
-			router.push('/dashboard')
+			const searchParams = new URLSearchParams(window.location.search)
+			const callbackUrl = searchParams.get('callbackUrl')
+
+			router.push(callbackUrl || '/dashboard')
 		} catch (err) {
 			if (err instanceof Error) {
 				setErrorMessage(err.message)
@@ -57,7 +60,7 @@ export const LoginForm = () => {
 						className={clsx({ [classes.errorInput]: errors.password })}
 						disabled={isSubmitting}
 					/>
-					<button className={classes.forgotButton} onClick={() => router.push('/forgot')}>
+					<button className={classes.forgotButton} type="button" onClick={() => router.push(`/forgot${window.location.search}`)}>
 						Forgot password?
 					</button>
 				</div>

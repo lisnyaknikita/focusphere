@@ -41,7 +41,7 @@
 	> svg {
 		transition: transform 0.2s;
 		&:global(.rotated) {
-			transform: rotate(180deg);
+			transform: rotate(-90deg);
 		}
 	}
 }
