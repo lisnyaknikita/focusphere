@@ -103,6 +103,7 @@ export const TeamInvitationForm = () => {
 						value={name}
 						onChange={e => setName(e.target.value)}
 						onKeyDown={handleKeyDown}
+						autoFocus
 					/>
 					<div className={classes.suggestion}>
 						{name && <SuggestionIcon className={classes.icon} />}

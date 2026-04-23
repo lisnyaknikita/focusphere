@@ -14,7 +14,11 @@ export const GoogleAuthButton = () => {
 		setIsLoading(true)
 
 		try {
-			account.createOAuth2Session(OAuthProvider.Google, `${APP_URL}/dashboard`, `${APP_URL}/login`, [
+			const searchParams = new URLSearchParams(window.location.search)
+			const callbackUrl = searchParams.get('callbackUrl')
+			const successRedirect = callbackUrl ? `${APP_URL}${callbackUrl}` : `${APP_URL}/dashboard`
+
+			account.createOAuth2Session(OAuthProvider.Google, successRedirect, `${APP_URL}/login`, [
 				'https://www.googleapis.com/auth/calendar',
 			])
 		} catch (error) {

@@ -24,7 +24,10 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 		mode: 'onBlur',
 	})
 
+	const [errorMessage, setErrorMessage] = useState('')
+
 	const onSubmit = async (data: SignupFormValues) => {
+		setErrorMessage('')
 		try {
 			await authService.signupUser(data)
 
@@ -32,6 +35,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error('Registration failed:', error)
+				setErrorMessage(error.message)
 			}
 		}
 	}
@@ -81,6 +85,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 				</div>
 				{errors.password && <p className={classes.errorMessage}>{errors.password.message}</p>}
 			</label>
+			{errorMessage && <p className={classes.errorMessage} style={{ marginBottom: '15px' }}>{errorMessage}</p>}
 			<button type='submit' className={classes.submitButton} disabled={isSubmitting || !isValid}>
 				{isSubmitting ? 'Registering...' : 'Continue'}
 			</button>

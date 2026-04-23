@@ -25,8 +25,10 @@ function VerifyEmailContent() {
 				await authService.verifyEmail(userId, secret)
 				setStatus('success')
 
+				const callbackUrl = searchParams.get('callbackUrl')
+
 				setTimeout(() => {
-					router.push('/dashboard')
+					router.push(callbackUrl || '/dashboard')
 				}, 2000)
 			} catch (err) {
 				console.error(err)
