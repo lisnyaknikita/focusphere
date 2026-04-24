@@ -18,7 +18,7 @@ Projects, Kanban, team chat, notes, journal, calendar, time blocks, and a focus 
 Most teams juggle 5+ tools: a task tracker, a calendar, a chat app, a note app, and a timer. Focusphere collapses all of that into one coherent experience — without sacrificing depth.
 
 - 🔐 **Complete auth flow** — email/password, Google OAuth, email verification, and password recovery, all out of the box
-- 🗂️ **Team project workspace** — Kanban board with drag-and-drop columns & cards, channels-based chat, and shared project notes with a block-based rich text editor
+- 🗂️ **Team project workspace** — Kanban board with drag-and-drop, real-time channels-based chat, and shared project notes with a block-based rich text editor
 - 🗓️ **Personal productivity stack** — full calendar with drag-to-create & resize, daily planner with time blocks, goals & tasks, a private journal, and a Pomodoro-style focus timer
 - ⚡ **Polished client UX** — optimistic updates, autosave, smooth animations, smart modals, toast notifications, and instant feedback on every action
 
@@ -33,15 +33,16 @@ Most teams juggle 5+ tools: a task tracker, a calendar, a chat app, a note app, 
 | Framework | [Next.js 15](https://nextjs.org/) (App Router) + [React 19](https://react.dev/) |
 | Language  | [TypeScript](https://www.typescriptlang.org/)                                   |
 | Styling   | [Sass / SCSS Modules](https://sass-lang.com/)                                   |
-| Backend   | [Appwrite](https://appwrite.io/) — Auth, Database, Storage, Teams               |
+| Backend   | [Appwrite](https://appwrite.io/) — Auth, Realtime, Database, Storage, Teams     |
 
 ### State & Data
 
-| Layer        | Technology                                                                                     |
-| ------------ | ---------------------------------------------------------------------------------------------- |
-| Server state | [TanStack Query v5](https://tanstack.com/query) — caching, background sync, optimistic updates |
-| Client state | [Zustand](https://zustand-demo.pmnd.rs/) — lightweight global store                            |
-| Forms        | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)                      |
+| Layer        | Technology                                                                                                                              |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Server state | [TanStack Query v5](https://tanstack.com/query) — caching, background sync, optimistic updates                                          |
+| Real-time    | [Appwrite Subscriptions](https://appwrite.io/docs/apis/realtime/subscribe) — WebSocket-based instant updates for chat and collaboration |
+| Client state | [Zustand](https://zustand-demo.pmnd.rs/) — lightweight global store                                                                     |
+| Forms        | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)                                                               |
 
 ### UI & Interaction
 
