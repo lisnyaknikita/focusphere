@@ -46,88 +46,116 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 		<>
 			<form className={classes.settingsForm} onSubmit={onSubmit}>
 				<div className={classes.projectInfo}>
-					<h3 className={classes.title}>Project Settings</h3>
-					<label className={classes.field}>
-						<span>Project title</span>
-						<input type='text' {...register('title')} disabled={!isOwner || isSubmitting || isDeleting} />
-						{errors.title && <p className={classes.errorText}>{errors.title.message}</p>}
-					</label>
-					<label className={classes.field}>
-						<span>Description</span>
-						<textarea
-							{...register('description')}
-							placeholder='Add a short description...'
-							disabled={!isOwner || isSubmitting || isDeleting}
-						/>
-						{errors.description && <p className={classes.errorText}>{errors.description.message}</p>}
-					</label>
-					<div className={classes.radioField}>
-						<div className={classes.colorField}>
-							<label>Project color</label>
-							<Controller
-								name='color'
-								control={control}
-								render={({ field }) => (
-									<div className={classes.colorPickerContainer}>
-										{Object.values(CALENDAR_COLORS).map(color => (
-											<button
-												key={color}
-												type='button'
-												className={clsx(classes.colorOption, field.value === color && classes.active)}
-												style={{ backgroundColor: color }}
-												onClick={() => field.onChange(color)}
-												disabled={!isOwner}
-											>
-												{field.value === color && (
-													<svg
-														width='12'
-														height='12'
-														viewBox='0 0 12 12'
-														fill='none'
-														xmlns='http://www.w3.org/2000/svg'
+					{isOwner && <h3 className={classes.title}>Project Settings</h3>}
+					{isOwner ? (
+						<>
+							<label className={classes.field}>
+								<span>Project title</span>
+								<input type='text' {...register('title')} disabled={isSubmitting || isDeleting} />
+								{errors.title && <p className={classes.errorText}>{errors.title.message}</p>}
+							</label>
+							<label className={classes.field}>
+								<span>Description</span>
+								<textarea
+									{...register('description')}
+									placeholder='Add a short description...'
+									disabled={isSubmitting || isDeleting}
+								/>
+								{errors.description && <p className={classes.errorText}>{errors.description.message}</p>}
+							</label>
+							<div className={classes.radioField}>
+								<div className={classes.colorField}>
+									<label>Project color</label>
+									<Controller
+										name='color'
+										control={control}
+										render={({ field }) => (
+											<div className={classes.colorPickerContainer}>
+												{Object.values(CALENDAR_COLORS).map(color => (
+													<button
+														key={color}
+														type='button'
+														className={clsx(classes.colorOption, field.value === color && classes.active)}
+														style={{ backgroundColor: color }}
+														onClick={() => field.onChange(color)}
 													>
-														<path
-															d='M2 6L5 9L10 3'
-															stroke='white'
-															strokeWidth='2'
-															strokeLinecap='round'
-															strokeLinejoin='round'
-														/>
-													</svg>
-												)}
-											</button>
-										))}
-									</div>
-								)}
-							/>
-						</div>
-						<label>Project type</label>
-						<Controller
-							name='type'
-							control={control}
-							render={({ field }) => (
-								<div className={classes.radioButtons}>
-									<RadioCard
-										value='solo'
-										label='Solo project'
-										checked={field.value === 'solo'}
-										name='projectType'
-										disabled={!isOwner}
-										onChange={() => field.onChange('solo')}
-									/>
-									<RadioCard
-										value='team'
-										label='Team project'
-										checked={field.value === 'team'}
-										name='projectType'
-										disabled={!isOwner}
-										onChange={() => field.onChange('team')}
+														{field.value === color && (
+															<svg
+																width='12'
+																height='12'
+																viewBox='0 0 12 12'
+																fill='none'
+																xmlns='http://www.w3.org/2000/svg'
+															>
+																<path
+																	d='M2 6L5 9L10 3'
+																	stroke='white'
+																	strokeWidth='2'
+																	strokeLinecap='round'
+																	strokeLinejoin='round'
+																/>
+															</svg>
+														)}
+													</button>
+												))}
+											</div>
+										)}
 									/>
 								</div>
-							)}
-						/>
-						{errors.type && <p className={classes.errorText}>{errors.type.message}</p>}
-					</div>
+								<label>Project type</label>
+								<Controller
+									name='type'
+									control={control}
+									render={({ field }) => (
+										<div className={classes.radioButtons}>
+											<RadioCard
+												value='solo'
+												label='Solo project'
+												checked={field.value === 'solo'}
+												name='projectType'
+												onChange={() => field.onChange('solo')}
+											/>
+											<RadioCard
+												value='team'
+												label='Team project'
+												checked={field.value === 'team'}
+												name='projectType'
+												onChange={() => field.onChange('team')}
+											/>
+										</div>
+									)}
+								/>
+								{errors.type && <p className={classes.errorText}>{errors.type.message}</p>}
+							</div>
+						</>
+					) : (
+						<div className={classes.readOnlyContainer}>
+							<div className={classes.readOnlyRow}>
+								<span className={classes.readOnlyLabel}>Title</span>
+								<span className={classes.readOnlyValue}>{project.title}</span>
+							</div>
+							<div className={classes.readOnlyDescriptionBlock}>
+								<span className={classes.readOnlyLabel}>Description</span>
+								<div className={classes.descriptionText}>
+									{project.description ? (
+										project.description
+									) : (
+										<span className={classes.readOnlyEmpty}>No description provided</span>
+									)}
+								</div>
+							</div>
+							<div className={classes.readOnlyRow}>
+								<span className={classes.readOnlyLabel}>Color</span>
+								<div className={classes.readOnlyColor} style={{ backgroundColor: project.color }} />
+							</div>
+							<div className={classes.readOnlyRow} style={{ borderBottom: 'none' }}>
+								<span className={classes.readOnlyLabel}>Type</span>
+								<span className={classes.readOnlyValue}>
+									{project.type === 'team' ? 'Team project' : 'Solo project'}
+								</span>
+							</div>
+						</div>
+					)}
 					{!isOwner && (
 						<button type='button' className={classes.saveButton} onClick={onClose} style={{ marginLeft: 'auto' }}>
 							Close

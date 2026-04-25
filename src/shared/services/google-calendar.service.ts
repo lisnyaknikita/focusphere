@@ -44,17 +44,42 @@ class GoogleCalendarService {
 	private async getProviderToken(): Promise<string | null> {
 		try {
 			const session = await account.getSession('current')
-			if (session.provider === 'google' && session.providerAccessToken) {
-				const expiryDate = new Date(session.providerAccessTokenExpiry)
-				if (expiryDate < new Date()) {
-					this.showAuthError()
-					return null
-				}
-				return session.providerAccessToken
+			if (session.provider !== 'google') return null
+
+			const expiryDate = new Date(session.providerAccessTokenExpiry)
+			const isExpired = expiryDate < new Date()
+
+			if (isExpired) {
+				const newToken = await this.refreshProviderToken(session.userId)
+				if (newToken) return newToken
+
+				this.showAuthError()
+				return null
 			}
-			return null
+
+			return session.providerAccessToken
 		} catch (error) {
 			console.error('Failed to get session token for Google Calendar', error)
+			return null
+		}
+	}
+
+	private async refreshProviderToken(userId: string): Promise<string | null> {
+		try {
+			const { Functions } = await import('appwrite')
+			const { client } = await import('@/lib/appwrite')
+
+			const functions = new Functions(client)
+			const execution = await functions.createExecution(
+				process.env.NEXT_PUBLIC_FUNCTION_ID!,
+				JSON.stringify({ userId }),
+				false
+			)
+
+			const result = JSON.parse(execution.responseBody)
+			return result.accessToken ?? null
+		} catch (err) {
+			console.error('refreshProviderToken error:', err)
 			return null
 		}
 	}

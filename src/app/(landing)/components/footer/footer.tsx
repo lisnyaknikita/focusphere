@@ -5,17 +5,10 @@ const footerLinks = {
 	product: [
 		{ label: 'Features', href: '#features' },
 		{ label: 'Problems', href: '#problems' },
-		{ label: 'Pricing', href: '#' },
-		{ label: 'Changelog', href: '#' },
-	],
-	resources: [
-		{ label: 'Documentation', href: '#' },
-		{ label: 'Help Center', href: '#' },
-		{ label: 'Blog', href: '#' },
-		{ label: 'API', href: '#' },
+		{ label: 'Testimonials', href: '#testimonials' },
 	],
 	company: [
-		{ label: 'About', href: '#' },
+		{ label: 'Help Center', href: 'mailto:lisnyaknikita@gmail.com' },
 		{ label: 'Careers', href: 'mailto:lisnyaknikita@gmail.com' },
 		{ label: 'Contact', href: 'mailto:lisnyaknikita@gmail.com' },
 	],
@@ -35,18 +28,6 @@ export const Footer = () => {
 							<h4 className={classes.linkGroupTitle}>Product</h4>
 							<ul className={classes.linkList}>
 								{footerLinks.product.map(link => (
-									<li key={link.label}>
-										<a href={link.href} className={classes.link}>
-											{link.label}
-										</a>
-									</li>
-								))}
-							</ul>
-						</div>
-						<div className={classes.linkGroup}>
-							<h4 className={classes.linkGroupTitle}>Resources</h4>
-							<ul className={classes.linkList}>
-								{footerLinks.resources.map(link => (
 									<li key={link.label}>
 										<a href={link.href} className={classes.link}>
 											{link.label}
