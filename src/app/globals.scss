@@ -302,3 +302,26 @@ ul {
 		color-scheme: dark;
 	}
 }
+
+@media screen and (max-width: 768px) {
+	.sx__month-grid-event {
+		width: 6px !important;
+		height: 6px !important;
+		border-radius: 50% !important;
+		margin: 2px auto !important;
+		color: transparent !important;
+		overflow: hidden;
+		padding: 0 !important;
+		min-height: unset !important;
+	}
+
+	.sx__month-grid-day__events {
+		display: flex !important;
+		flex-direction: row !important;
+		flex-wrap: wrap !important;
+		justify-content: center !important;
+		align-items: flex-start !important;
+		gap: 3px !important;
+		padding-top: 5px !important;
+	}
+}
