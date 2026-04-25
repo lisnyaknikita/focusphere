@@ -19,16 +19,44 @@ const VIEW_KEY = 'calendarView'
 export default function Calendar() {
 	const [view, setView] = useState<CalendarView>(() => {
 		if (typeof window !== 'undefined') {
-			return (localStorage.getItem(VIEW_KEY) as CalendarView) || 'week'
+			const saved = localStorage.getItem(VIEW_KEY) as CalendarView
+			if (saved) {
+				if (window.innerWidth <= 768 && saved === 'week') return 'day'
+				return saved
+			}
+			if (window.innerWidth <= 768) return 'day'
 		}
 		return 'week'
 	})
 	const [isModalVisible, setIsModalVisible] = useState(false)
+	const [isMobile, setIsMobile] = useState(false)
 	const { events, getEvents, isLoading } = useEvents()
 
 	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth <= 768)
+		}
+		
+		checkMobile()
+		window.addEventListener('resize', checkMobile)
+		return () => window.removeEventListener('resize', checkMobile)
+	}, [])
+
+	useEffect(() => {
+		if (isMobile && view === 'week') {
+			setView('day')
+		}
+	}, [isMobile, view])
+
+	useEffect(() => {
 		const saved = localStorage.getItem(VIEW_KEY) as CalendarView | null
-		if (saved) setView(saved)
+		if (saved) {
+			if (typeof window !== 'undefined' && window.innerWidth <= 768 && saved === 'week') {
+				setView('day')
+			} else {
+				setView(saved)
+			}
+		}
 	}, [])
 
 	useEffect(() => {
@@ -52,7 +80,7 @@ export default function Calendar() {
 				) : (
 					<>
 						<header className={classes.header}>
-							<Tabs tabs={['month', 'week', 'day']} activeTab={view} onChange={setView} />
+							<Tabs tabs={isMobile ? ['month', 'day'] : ['month', 'week', 'day']} activeTab={view} onChange={setView} />
 							<CreateButton setIsModalVisible={setIsModalVisible} text='Add event' />
 						</header>
 						<main className={classes.calendar}>

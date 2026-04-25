@@ -5,6 +5,7 @@ import { Logo } from './components/logo/logo'
 
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { MenuIcon } from '../icons/menu-icon'
 import { NavigationItem } from './components/navigation-item/navigation-item'
 import { UserButton } from './components/user-button/user-button'
 import { navItems } from './navigation-items'
@@ -21,6 +22,8 @@ export const Sidebar = () => {
 
 	const pathname = usePathname()
 
+	const [isMobileOpen, setIsMobileOpen] = useState(false)
+
 	useEffect(() => {
 		const savedState = localStorage.getItem('sidebar-collapsed')
 		if (savedState !== null) {
@@ -32,12 +35,43 @@ export const Sidebar = () => {
 		localStorage.setItem('sidebar-collapsed', String(isCollapsed))
 	}, [isCollapsed])
 
+	useEffect(() => {
+		setIsMobileOpen(false)
+	}, [pathname])
+
+	useEffect(() => {
+		if (isMobileOpen) {
+			document.body.style.overflow = 'hidden'
+		} else {
+			document.body.style.overflow = ''
+		}
+		return () => {
+			document.body.style.overflow = ''
+		}
+	}, [isMobileOpen])
+
 	const onHideClick = () => {
-		setIsCollapsed(prev => !prev)
+		if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+			setIsMobileOpen(false)
+		} else {
+			setIsCollapsed(prev => !prev)
+		}
 	}
 
 	return (
-		<div className={clsx(classes.sidebar, isCollapsed && 'collapsed')}>
+		<>
+			<button
+				className={classes.mobileToggle}
+				onClick={() => setIsMobileOpen(true)}
+				aria-label='Open menu'
+			>
+				<MenuIcon />
+			</button>
+			<div
+				className={clsx(classes.mobileOverlay, isMobileOpen && classes.mobileOpen)}
+				onClick={() => setIsMobileOpen(false)}
+			/>
+			<div className={clsx(classes.sidebar, isCollapsed && 'collapsed', isMobileOpen && classes.mobileOpen)}>
 			<Logo isCollapsed={isCollapsed} />
 			<nav className={classes.navigation}>
 				<ul className={classes.navigationList}>
@@ -53,6 +87,7 @@ export const Sidebar = () => {
 				</ul>
 			</nav>
 			<UserButton isCollapsed={isCollapsed} />
-		</div>
+			</div>
+		</>
 	)
 }

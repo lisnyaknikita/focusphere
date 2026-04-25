@@ -208,3 +208,74 @@
 	text-align: center;
 	color: #e85c5c;
 }
+
+.readOnlyContainer {
+	margin-bottom: 20px;
+	border: 0.5px solid var(--btn-border);
+	border-radius: 8px;
+	overflow: hidden;
+	width: 450px;
+}
+
+.readOnlyDescriptionBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 14px;
+	border-bottom: 0.5px solid var(--btn-border);
+
+	.readOnlyLabel {
+		font-size: 12px;
+		opacity: 1;
+	}
+}
+
+.descriptionText {
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--text);
+	white-space: pre-wrap;
+	word-break: break-word;
+	max-height: 150px;
+	overflow-y: auto;
+	padding-right: 5px;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--btn-border);
+		border-radius: 10px;
+	}
+}
+
+.readOnlyRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 14px;
+	border-bottom: 0.5px solid var(--btn-border);
+}
+
+.readOnlyLabel {
+	font-size: 13px;
+	color: var(--textSecondary);
+}
+
+.readOnlyValue {
+	font-size: 13px;
+	color: var(--text);
+	text-align: right;
+	max-width: 60%;
+}
+
+.readOnlyEmpty {
+	color: var(--textSecondary);
+	font-style: italic;
+}
+
+.readOnlyColor {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+}
