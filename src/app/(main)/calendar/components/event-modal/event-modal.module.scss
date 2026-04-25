@@ -64,4 +64,9 @@
 			fill: var(--hover);
 		}
 	}
+
+	@media screen and (max-width: 768px) {
+		right: -5px;
+		top: -5px;
+	}
 }
