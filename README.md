@@ -8,7 +8,7 @@ Projects, Kanban, team chat, notes, journal, calendar, time blocks, and a focus 
 
 ## 🔗 Links
 
-- 🌐 **Live Demo**: [focusphere-beta.vercel.app](https://focusphere-beta.vercel.app)
+- 🌐 **Live Demo**: [focusphere.org](https://focusphere.org)
 - 📦 **Repository**: [github.com/lisnyaknikita/focusphere](https://github.com/lisnyaknikita/focusphere)
 
 ---
