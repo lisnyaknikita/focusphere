@@ -5,9 +5,15 @@ const nextConfig: NextConfig = {
 		remotePatterns: [
 			{
 				protocol: 'https',
+				hostname: 'api.focusphere.org',
+				port: '',
+				pathname: '/v1/**',
+			},
+			{
+				protocol: 'https',
 				hostname: 'fra.cloud.appwrite.io',
 				port: '',
-				pathname: '/v1/storage/buckets/**/files/**/view',
+				pathname: '/v1/**',
 			},
 			{
 				protocol: 'https',
