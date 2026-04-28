@@ -26,6 +26,16 @@
 		background-color: var(--hover);
 		border-radius: 10px;
 	}
+
+	@media screen and (max-width: 768px) {
+		gap: 8px;
+	}
+
+	@media screen and (max-width: 430px) {
+		> li > label {
+			padding: 4px;
+		}
+	}
 }
 
 .loader {

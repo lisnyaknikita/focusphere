@@ -21,6 +21,11 @@
 	@media screen and (max-width: 630px) {
 		font-size: 22px;
 	}
+
+	@media screen and (max-width: 430px) {
+		transform: translate(50px, 10px);
+		padding-left: 0;
+	}
 }
 
 .separator {
