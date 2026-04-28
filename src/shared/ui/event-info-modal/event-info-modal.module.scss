@@ -114,6 +114,12 @@
 	gap: 10px;
 }
 
+.copyBtn {
+	@media screen and (max-width: 768px) {
+		display: none;
+	}
+}
+
 .saveBtn {
 	font-size: 18px;
 	font-weight: 400;

@@ -1,6 +1,6 @@
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateTimeBlock } from '@/lib/planner/planner'
-import { CalendarEvent, createViewWeek } from '@schedule-x/calendar'
+import { CalendarEvent, createViewDay, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import { createCurrentTimePlugin } from '@schedule-x/current-time'
 import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop'
@@ -8,7 +8,7 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const useCalendarApp = () => {
 	const [eventsService] = useState(() => createEventsServicePlugin())
@@ -17,9 +17,12 @@ export const useCalendarApp = () => {
 	const [dragAndDropPlugin] = useState(() => createDragAndDropPlugin())
 	const [resizePlugin] = useState(() => createResizePlugin(15))
 
+	const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+	const defaultView = isMobile ? 'day' : 'week'
+
 	const calendar = useNextCalendarApp({
-		views: [createViewWeek()],
-		defaultView: 'week',
+		views: [createViewWeek(), createViewDay()],
+		defaultView,
 		events: [],
 		plugins: [eventsService, calendarControls, createCurrentTimePlugin(), dragAndDropPlugin, resizePlugin, eventModal],
 		callbacks: {
@@ -50,6 +53,16 @@ export const useCalendarApp = () => {
 		//@ts-expect-error timezone type ignored
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 	})
+
+	useEffect(() => {
+		const handleResize = () => {
+			const view = window.innerWidth < 768 ? 'day' : 'week'
+			calendarControls.setView(view)
+		}
+
+		window.addEventListener('resize', handleResize)
+		return () => window.removeEventListener('resize', handleResize)
+	}, [calendarControls])
 
 	return { calendar, eventsService, eventModal }
 }

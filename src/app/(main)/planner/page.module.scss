@@ -5,6 +5,10 @@
 	padding: 10px 0px 10px 20px;
 	height: 100%;
 	position: relative;
+
+	@media screen and (max-width: 430px) {
+		padding: 10px 0 0 0;
+	}
 }
 
 .pasteBanner {
@@ -90,6 +94,10 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 430px) {
+		margin-bottom: 20px;
+	}
 }
 
 .planner {
