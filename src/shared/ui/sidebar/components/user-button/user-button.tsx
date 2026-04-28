@@ -73,7 +73,14 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 				onMouseLeave={() => setIsSettingsTooltipOpen(false)}
 			>
 				{avatarUrl ? (
-					<Image src={avatarUrl} alt='Avatar' width={60} height={60} objectFit='cover' style={{ borderRadius: 5 }} />
+					<Image
+						src={avatarUrl}
+						alt='Avatar'
+						width={60}
+						height={60}
+						objectFit='cover'
+						style={{ borderRadius: 5, objectFit: 'cover' }}
+					/>
 				) : (
 					<Image
 						src='/avatar.jpg'
@@ -81,7 +88,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						width={60}
 						height={60}
 						objectFit='cover'
-						style={{ borderRadius: 5 }}
+						style={{ borderRadius: 5, objectFit: 'cover' }}
 					/>
 				)}
 
