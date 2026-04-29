@@ -9,6 +9,9 @@
 	@media screen and (max-width: 1024px) {
 		order: 0;
 	}
+
+	@media screen and (max-width: 430px) {
+	}
 }
 
 .eventsList {
@@ -26,6 +29,10 @@
 	&::-webkit-scrollbar-thumb {
 		background-color: var(--hover);
 		border-radius: 10px;
+	}
+
+	@media screen and (max-width: 768px) {
+		gap: 8px;
 	}
 }
 
@@ -47,6 +54,11 @@
 
 		&:hover {
 			background-color: var(--hover);
+		}
+
+		@media screen and (max-width: 430px) {
+			font-size: 14px;
+			padding: 4px;
 		}
 	}
 }

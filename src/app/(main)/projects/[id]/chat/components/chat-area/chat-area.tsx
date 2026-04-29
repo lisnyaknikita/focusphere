@@ -19,6 +19,7 @@ interface ChatAreaProps {
 	currentUserId: string | undefined
 	currentUserName?: string
 	isLoading: boolean
+	onOpenChatSidebar: () => void
 }
 
 export const ChatArea = ({
@@ -33,6 +34,7 @@ export const ChatArea = ({
 	currentUserId,
 	currentUserName,
 	isLoading,
+	onOpenChatSidebar,
 }: ChatAreaProps) => {
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const hasScrolledRef = useRef<string | null>(null)
@@ -71,6 +73,7 @@ export const ChatArea = ({
 				onUpdateChannel={onUpdateChannel}
 				onDeleteChannel={onDeleteChannel}
 				currentUserId={currentUserId}
+				onOpenChatSidebar={onOpenChatSidebar}
 			/>
 			<main className={classes.main} ref={mainRef}>
 				{!activeChannel ? (

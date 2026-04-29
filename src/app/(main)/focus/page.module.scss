@@ -5,6 +5,10 @@
 	padding: 10px 0px 10px 20px;
 	height: 100%;
 	position: relative;
+
+	@media screen and (max-width: 768px) {
+		padding: 0;
+	}
 }
 
 .header {
@@ -13,6 +17,11 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 768px) {
+		transform: translate(50px, 8px);
+		margin-bottom: 10px;
+	}
 }
 
 .timer {
@@ -34,5 +43,9 @@
 
 	&:hover {
 		background-color: var(--secondary);
+	}
+
+	@media screen and (max-width: 768px) {
+		transform: translateX(-50px);
 	}
 }

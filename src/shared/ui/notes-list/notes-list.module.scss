@@ -1,12 +1,12 @@
 .listWrapper {
-	width: 35%;
+	width: 30%;
 	height: 100%;
 	position: relative;
 	transition: all 0.2s;
 
-	&:global(.withTags) {
-		width: 25%;
-	}
+	// &:global(.withTags) {
+	// 	width: 25%;
+	// }
 
 	&:global(.collapsed) {
 		width: 88px;
@@ -20,6 +20,16 @@
 		> .notesList {
 			border-right: none;
 		}
+	}
+
+	@media screen and (max-width: 630px) {
+		width: 88px;
+		min-width: 88px;
+	}
+
+	@media screen and (max-width: 430px) {
+		width: 63px;
+		min-width: 63px;
 	}
 }
 
@@ -42,6 +52,10 @@
 		width: 20px;
 		height: 20px;
 		display: block;
+	}
+
+	@media screen and (max-width: 630px) {
+		display: none;
 	}
 }
 
@@ -109,6 +123,11 @@
 	display: flex;
 	gap: 10px;
 	padding: 10px;
+
+	@media screen and (max-width: 430px) {
+		gap: 5px;
+		padding: 5px;
+	}
 }
 
 .date {
@@ -130,12 +149,20 @@
 .number {
 	font-size: 40px;
 	font-weight: 400;
+
+	@media screen and (max-width: 430px) {
+		font-size: 28px;
+	}
 }
 
 .content {
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
+
+	@media screen and (max-width: 630px) {
+		display: none;
+	}
 }
 
 .noteTitle {

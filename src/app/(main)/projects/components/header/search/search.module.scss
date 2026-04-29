@@ -18,6 +18,10 @@
 	&:hover {
 		border-color: var(--text);
 	}
+
+	@media screen and (max-width: 730px) {
+		display: none;
+	}
 }
 
 .searchIcon {

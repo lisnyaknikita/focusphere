@@ -3,6 +3,11 @@
 	padding: 30px;
 	width: 400px;
 	border-radius: 5px;
+
+	@media screen and (max-width: 430px) {
+		width: 330px;
+		padding: 15px;
+	}
 }
 
 .formTitle {
@@ -10,6 +15,11 @@
 	font-weight: 700;
 	color: var(--text);
 	margin-bottom: 5px;
+
+	@media screen and (max-width: 430px) {
+		font-size: 26px;
+		text-align: center;
+	}
 }
 
 .formSubtitle {
@@ -17,6 +27,13 @@
 	font-weight: 400;
 	color: var(--text);
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 430px) {
+		font-size: 16px;
+		text-align: center;
+		margin-bottom: 20px;
+		color: var(--textSecondary);
+	}
 }
 
 .titleLabel {
@@ -29,6 +46,10 @@
 		font-weight: 400;
 		color: var(--text);
 		margin-bottom: 5px;
+
+		@media screen and (max-width: 430px) {
+			font-size: 16px;
+		}
 	}
 
 	> input {
@@ -53,6 +74,10 @@
 		font-size: 18px;
 		font-weight: 400;
 		color: var(--text);
+
+		@media screen and (max-width: 430px) {
+			font-size: 16px;
+		}
 	}
 
 	> .radioButtons {

@@ -41,6 +41,10 @@
 			background-color: var(--secondary);
 		}
 	}
+
+	@media screen and (max-width: 430px) {
+		gap: 0;
+	}
 }
 
 .labelWrapper {

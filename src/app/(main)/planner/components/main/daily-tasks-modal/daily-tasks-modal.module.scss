@@ -7,6 +7,10 @@
 			max-width: 320px !important;
 		}
 	}
+
+	@media screen and (max-width: 430px) {
+		width: 330px;
+	}
 }
 
 .title {
@@ -69,6 +73,11 @@
 		> svg circle {
 			fill: var(--hover);
 		}
+	}
+
+	@media screen and (max-width: 430px) {
+		right: -8px;
+		top: -8px;
 	}
 }
 

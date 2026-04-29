@@ -298,19 +298,13 @@ ul {
 	}
 }
 
-.sx__is-calendar-small .sx__forward-backward-navigation,
-.is-list-view .sx__forward-backward-navigation {
-	display: flex !important;
-	padding-left: 30px !important;
-}
-
 .sx__calendar-header {
 	@media screen and (max-width: 768px) {
 		padding: 8px !important;
 	}
 
 	@media screen and (max-width: 430px) {
-		justify-content: center !important;
+		padding: 3px !important;
 	}
 }
 
@@ -358,5 +352,25 @@ ul {
 		gap: 4px !important;
 		padding-top: 5px !important;
 		padding-bottom: 5px !important;
+	}
+
+	.sx__week-grid__date-axis {
+		padding-left: 0 !important;
+	}
+
+	.sx__is-calendar-small .sx__forward-backward-navigation,
+	.is-list-view .sx__forward-backward-navigation {
+		display: flex !important;
+		padding-left: 0px !important;
+	}
+}
+
+@media screen and (max-width: 430px) {
+	.sx__week-grid__time-axis {
+		width: calc(100% - 48px) !important;
+	}
+
+	.sx__week-grid {
+		padding-left: 55px !important;
 	}
 }

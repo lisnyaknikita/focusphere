@@ -4,4 +4,14 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 20px;
+
+	> button {
+		@media screen and (max-width: 768px) {
+			transform: translateY(8px);
+
+			> span {
+				display: none;
+			}
+		}
+	}
 }

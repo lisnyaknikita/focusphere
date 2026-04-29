@@ -5,6 +5,10 @@
 	padding: 10px 0px 10px 20px;
 	height: 100%;
 	position: relative;
+
+	@media screen and (max-width: 768px) {
+		padding: 0;
+	}
 }
 
 .header {
@@ -13,6 +17,12 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+
+	@media screen and (max-width: 768px) {
+		transform: translateY(9px);
+		position: relative;
+		z-index: 1;
+	}
 }
 
 .journal {
