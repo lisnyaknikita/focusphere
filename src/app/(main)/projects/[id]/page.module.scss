@@ -7,6 +7,10 @@
 	position: relative;
 	overflow-x: auto;
 	overflow-y: hidden;
+
+	@media screen and (max-width: 430px) {
+		padding: 0;
+	}
 }
 
 .main {

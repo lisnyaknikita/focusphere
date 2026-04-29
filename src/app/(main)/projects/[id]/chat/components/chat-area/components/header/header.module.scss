@@ -1,16 +1,50 @@
 .header {
 	padding: 10px 15px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border-bottom: 0.3px solid var(--btn-border);
+	min-height: 49px;
+	flex-shrink: 0;
+
+	@media screen and (max-width: 630px) {
+		padding: 10px;
+	}
+}
+
+.sidebarToggle {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 6px;
+	color: var(--text);
+	flex-shrink: 0;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	@media screen and (max-width: 630px) {
+		display: flex;
+	}
 }
 
 .channelTrigger {
 	display: flex;
 	align-items: center;
 	font-family: inherit;
+	min-width: 0;
 
 	> span {
 		font-size: 18px;
 		font-weight: 400;
 		color: var(--text);
 		margin: 0 10px 0 5px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
