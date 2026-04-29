@@ -5,6 +5,10 @@
 	padding: 10px 0px 10px 20px;
 	height: 100%;
 	position: relative;
+
+	@media screen and (max-width: 768px) {
+		padding: 0;
+	}
 }
 
 .teamInvitation {
@@ -24,5 +28,9 @@
 
 	&:hover {
 		background-color: var(--secondary);
+	}
+
+	@media screen and (max-width: 768px) {
+		transform: translate(50px, 10px);
 	}
 }

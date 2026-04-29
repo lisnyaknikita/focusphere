@@ -14,4 +14,12 @@
 	&:hover {
 		background-color: var(--secondary);
 	}
+
+	@media screen and (max-width: 430px) {
+		padding: 7px 10px;
+
+		> span {
+			display: none;
+		}
+	}
 }

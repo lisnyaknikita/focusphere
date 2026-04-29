@@ -91,4 +91,8 @@
 	&:hover {
 		background-color: var(--secondary);
 	}
+
+	@media screen and (max-width: 768px) {
+		margin-bottom: 10px;
+	}
 }
