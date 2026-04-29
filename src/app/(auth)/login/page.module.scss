@@ -11,6 +11,12 @@
 	position: absolute;
 	left: 30px;
 	top: 30px;
+
+	@media screen and (max-width: 600px) {
+		left: 50%;
+		top: 15px;
+		transform: translateX(-50%);
+	}
 }
 
 .authPrompt {
@@ -42,6 +48,15 @@
 			background-color: var(--secondary);
 		}
 	}
+
+	@media screen and (max-width: 600px) {
+		right: auto;
+		left: 50%;
+		top: 70px;
+		transform: translateX(-50%);
+		width: max-content;
+		white-space: nowrap;
+	}
 }
 
 .loginBlock {
@@ -50,6 +65,11 @@
 	padding: 20px 40px;
 	background-color: var(--secondary);
 	color: var(--text);
+
+	@media screen and (max-width: 500px) {
+		width: 330px;
+		padding: 20px;
+	}
 }
 
 .title {
@@ -58,6 +78,10 @@
 	font-family: inherit;
 	margin-bottom: 10px;
 	text-align: center;
+
+	@media screen and (max-width: 500px) {
+		font-size: 28px;
+	}
 }
 
 .divider {

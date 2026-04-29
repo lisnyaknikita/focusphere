@@ -4,6 +4,7 @@ import { useProject } from '@/shared/context/project-context'
 import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
 import { useChat } from '@/shared/hooks/projects/chat/use-chat'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { useState } from 'react'
 import { ChatArea } from './components/chat-area/chat-area'
 import { ChatSidebar } from './components/chat-sidebar/chat-sidebar'
 import classes from './page.module.scss'
@@ -15,6 +16,8 @@ export default function ChatPage() {
 	const { avatarUrl } = useAvatarUrl(user)
 
 	const chat = useChat(project!)
+
+	const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(false)
 
 	if (userLoading || projectLoading) return <div>Loading...</div>
 	if (!project) return <div>Project not found</div>
@@ -32,9 +35,14 @@ export default function ChatPage() {
 					teammates={chat.teammates}
 					channels={chat.channels}
 					activeChannelId={chat.activeChannel?.$id}
-					onSelectChannel={chat.setActiveChannel}
+					onSelectChannel={channel => {
+						chat.setActiveChannel(channel)
+						setIsChatSidebarOpen(false)
+					}}
 					onCreateChannel={chat.createChannel}
 					currentUserId={user?.$id}
+					isMobileOpen={isChatSidebarOpen}
+					onMobileClose={() => setIsChatSidebarOpen(false)}
 				/>
 				<ChatArea
 					activeChannel={chat.activeChannel}
@@ -48,6 +56,7 @@ export default function ChatPage() {
 					currentUserId={user?.$id}
 					currentUserName={user?.name}
 					isLoading={chat.isLoadingMessages}
+					onOpenChatSidebar={() => setIsChatSidebarOpen(true)}
 				/>
 			</div>
 		</div>

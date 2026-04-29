@@ -19,6 +19,8 @@ interface ChatSidebarProps {
 	onSelectChannel: (channel: ChatChannel) => void
 	onCreateChannel: (name: string, ownerId: string) => Promise<void>
 	currentUserId?: string
+	isMobileOpen: boolean
+	onMobileClose: () => void
 }
 
 export const ChatSidebar = ({
@@ -28,6 +30,8 @@ export const ChatSidebar = ({
 	onSelectChannel,
 	onCreateChannel,
 	currentUserId,
+	isMobileOpen,
+	onMobileClose,
 }: ChatSidebarProps) => {
 	const [isChannelsOpened, setIsChannelsOpened] = useState(true)
 	// const [isMessagesOpened, setIsMessagesOpened] = useState(false)
@@ -75,7 +79,11 @@ export const ChatSidebar = ({
 
 	return (
 		<>
-			<div className={classes.sidebar}>
+			<div
+				className={clsx(classes.mobileOverlay, isMobileOpen && classes.mobileOverlayVisible)}
+				onClick={onMobileClose}
+			/>
+			<div className={clsx(classes.sidebar, isMobileOpen && classes.mobileOpen)}>
 				<div className={classes.channels}>
 					<div className={classes.trigger}>
 						<button className={classes.triggerTitle} onClick={() => setIsChannelsOpened(prev => !prev)}>
@@ -135,11 +143,11 @@ export const ChatSidebar = ({
 					</div>
 					<ul className={clsx(classes.list, isMessagesOpened && 'opened')}> */}
 				{/* {teammates.map(mate => (
-						<li className={classes.listItem} key={mate.$id}>
-							<Image src={'/avatar.jpg'} alt='avatar' width={20} height={19} />
-							<span>{mate.userName}</span>
-						</li>
-					))} */}
+					<li className={classes.listItem} key={mate.$id}>
+						<Image src={'/avatar.jpg'} alt='avatar' width={20} height={19} />
+						<span>{mate.userName}</span>
+					</li>
+				))} */}
 				{/* <p>Soon...</p>
 					</ul>
 				</div> */}

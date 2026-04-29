@@ -3,6 +3,19 @@
 	padding: 30px;
 	width: 600px;
 	border-radius: 5px;
+
+	@media screen and (max-width: 620px) {
+		width: 500px;
+		padding: 15px;
+	}
+
+	@media screen and (max-width: 530px) {
+		width: 400px;
+	}
+
+	@media screen and (max-width: 430px) {
+		width: 330px;
+	}
 }
 
 .formTitle {
@@ -10,6 +23,11 @@
 	font-weight: 700;
 	color: var(--text);
 	margin-bottom: 10px;
+
+	@media screen and (max-width: 430px) {
+		font-size: 24px;
+		text-align: center;
+	}
 }
 
 .formSubtitle {
@@ -17,6 +35,13 @@
 	font-weight: 400;
 	color: var(--text);
 	margin-bottom: 40px;
+
+	@media screen and (max-width: 430px) {
+		font-size: 16px;
+		text-align: center;
+		margin-bottom: 20px;
+		color: var(--textSecondary);
+	}
 }
 
 .titleLabel {
@@ -29,6 +54,10 @@
 		font-weight: 400;
 		color: var(--text);
 		margin-bottom: 5px;
+
+		@media screen and (max-width: 430px) {
+			font-size: 16px;
+		}
 	}
 }
 

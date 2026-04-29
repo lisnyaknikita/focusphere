@@ -1,6 +1,10 @@
 .modalInner {
 	width: 375px;
 	position: relative;
+
+	@media screen and (max-width: 430px) {
+		width: 330px;
+	}
 }
 
 .title {

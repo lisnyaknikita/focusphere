@@ -20,11 +20,23 @@
 			@media screen and (max-width: 1120px) {
 				font-size: 21px;
 			}
+
+			@media screen and (max-width: 430px) {
+				font-size: 16px;
+			}
 		}
 	}
 
 	@media (max-width: 1024px) {
 		display: flex;
 		flex-direction: column;
+		min-height: 0;
+	}
+
+	@media screen and (max-width: 768px) {
+		> section {
+			padding: 10px;
+			flex-basis: 49%;
+		}
 	}
 }

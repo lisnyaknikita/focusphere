@@ -60,11 +60,7 @@ export const Sidebar = () => {
 
 	return (
 		<>
-			<button
-				className={classes.mobileToggle}
-				onClick={() => setIsMobileOpen(true)}
-				aria-label='Open menu'
-			>
+			<button className={classes.mobileToggle} onClick={() => setIsMobileOpen(true)} aria-label='Open menu'>
 				<MenuIcon />
 			</button>
 			<div
@@ -72,21 +68,21 @@ export const Sidebar = () => {
 				onClick={() => setIsMobileOpen(false)}
 			/>
 			<div className={clsx(classes.sidebar, isCollapsed && 'collapsed', isMobileOpen && classes.mobileOpen)}>
-			<Logo isCollapsed={isCollapsed} />
-			<nav className={classes.navigation}>
-				<ul className={classes.navigationList}>
-					{navItems.map(item => (
-						<NavigationItem
-							key={item.label}
-							item={item}
-							isCollapsed={isCollapsed}
-							isActive={(!item.isButton && item.href === pathname) || pathname.startsWith(`${item.href}/`)}
-							onHideClick={onHideClick}
-						/>
-					))}
-				</ul>
-			</nav>
-			<UserButton isCollapsed={isCollapsed} />
+				<Logo isCollapsed={isCollapsed} />
+				<nav className={classes.navigation}>
+					<ul className={classes.navigationList}>
+						{navItems.map(item => (
+							<NavigationItem
+								key={item.label}
+								item={item}
+								isCollapsed={isCollapsed}
+								isActive={(!item.isButton && item.href === pathname) || pathname.startsWith(`${item.href}/`)}
+								onHideClick={onHideClick}
+							/>
+						))}
+					</ul>
+				</nav>
+				<UserButton isCollapsed={isCollapsed} />
 			</div>
 		</>
 	)

@@ -62,4 +62,9 @@
 	&:hover {
 		background-color: var(--hover);
 	}
+
+	@media screen and (max-width: 430px) {
+		font-size: 14px;
+		padding: 5px;
+	}
 }

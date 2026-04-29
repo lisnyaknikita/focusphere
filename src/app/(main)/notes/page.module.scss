@@ -5,6 +5,10 @@
 	padding: 10px 0px 10px 20px;
 	height: 100%;
 	position: relative;
+
+	@media screen and (max-width: 768px) {
+		padding: 0;
+	}
 }
 
 .header {
@@ -16,6 +20,10 @@
 
 	> button {
 		margin-right: 0;
+	}
+
+	@media screen and (max-width: 768px) {
+		transform: translateY(9px);
 	}
 }
 
