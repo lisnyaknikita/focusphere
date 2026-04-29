@@ -106,12 +106,34 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
-			const el = document.querySelector('.sx__current-time-indicator')
+			const el = document.querySelector('.sx__current-time-indicator') as HTMLElement | null
 			if (el) {
-				el.scrollIntoView({
-					behavior: 'smooth',
-					block: 'center',
-				})
+				let scrollParent: HTMLElement | null = null
+				let parent = el.parentElement
+
+				while (parent && parent !== document.body && parent !== document.documentElement) {
+					const style = window.getComputedStyle(parent)
+					if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflowY === 'overlay') {
+						scrollParent = parent
+						break
+					}
+					parent = parent.parentElement
+				}
+
+				if (scrollParent) {
+					const parentRect = scrollParent.getBoundingClientRect()
+					const indicatorRect = el.getBoundingClientRect()
+					const scrollTop = scrollParent.scrollTop + (indicatorRect.top - parentRect.top) - parentRect.height / 2
+					scrollParent.scrollTo({
+						top: scrollTop,
+						behavior: 'smooth',
+					})
+				} else {
+					el.scrollIntoView({
+						behavior: 'smooth',
+						block: 'center',
+					})
+				}
 			}
 		}, 50)
 
