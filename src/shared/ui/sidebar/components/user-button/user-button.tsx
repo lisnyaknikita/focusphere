@@ -5,6 +5,7 @@ import { APP_URL } from '@/shared/constants/app'
 import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { FeedbackSection } from '@/shared/ui/feedback-section/feedback-section'
 import { SignOutIcon } from '@/shared/ui/icons/sign-out-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
@@ -140,6 +141,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 					>
 						{user?.email || 'null'}
 					</a>
+					<FeedbackSection />
 					<button className={classes.saveButton} onClick={() => setIsVisible(false)}>
 						Save
 					</button>
