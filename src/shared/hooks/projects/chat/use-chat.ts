@@ -93,8 +93,10 @@ export const useChat = (project: Project | null) => {
 	const handleSendMessage = async (content: string, userId: string, userName: string, avatar?: string) => {
 		if (!activeChannel || !project) return
 
+		const optimisticId = `temp-${Date.now()}`
+
 		const optimisticMessage: ChatMessage = {
-			$id: `temp-${Date.now()}`,
+			$id: optimisticId,
 			$createdAt: new Date().toISOString(),
 			$updatedAt: new Date().toISOString(),
 			$permissions: [],
@@ -121,7 +123,6 @@ export const useChat = (project: Project | null) => {
 				},
 				project.teamId
 			)
-			await refreshMessages(activeChannel.$id, true)
 		} catch (err) {
 			setMessages(prev => prev.filter(m => m.$id !== optimisticMessage.$id))
 			console.error('Failed to send message:', err)
@@ -217,12 +218,19 @@ export const useChat = (project: Project | null) => {
 				if (events.some(e => e.includes('.create'))) {
 					setMessages(prev => {
 						if (prev.some(m => m.$id === payload.$id)) return prev
+
+						const tempMessageIndex = prev.findIndex(
+							m => m.$id.startsWith('temp-') && m.senderId === payload.senderId && m.content === payload.content
+						)
+
+						if (tempMessageIndex !== -1) {
+							const updatedMessages = [...prev]
+							updatedMessages[tempMessageIndex] = payload
+							return updatedMessages
+						}
+
 						return [...prev, payload]
 					})
-				} else if (events.some(e => e.includes('.update'))) {
-					setMessages(prev => prev.map(m => (m.$id === payload.$id ? payload : m)))
-				} else if (events.some(e => e.includes('.delete'))) {
-					setMessages(prev => prev.filter(m => m.$id !== payload.$id))
 				}
 			}
 		)
