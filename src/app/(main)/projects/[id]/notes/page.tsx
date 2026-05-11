@@ -24,7 +24,7 @@ export default function NotesPage() {
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
 						<>
-							<NotesList withTitle={false} withTags={true} />
+							<NotesList withTitle={false} withTags={true} storageKey='project-notes-collapsed' />
 							<TextEditor key={activeNote?.$id} />
 							{activeNote && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>

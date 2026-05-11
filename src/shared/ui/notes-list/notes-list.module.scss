@@ -3,34 +3,43 @@
 	height: 100%;
 	position: relative;
 	transition: all 0.2s;
-
-	// &:global(.withTags) {
-	// 	width: 25%;
-	// }
+	z-index: 10;
 
 	&:global(.collapsed) {
-		width: 88px;
-		min-width: 88px;
-	}
-
-	&:global(.empty) {
 		width: 0;
 		min-width: 0;
 
-		> .notesList {
+		.notesList {
 			border-right: none;
+		}
+
+		.title {
+			display: none;
 		}
 	}
 
 	@media screen and (max-width: 630px) {
-		width: 88px;
-		min-width: 88px;
-	}
+		width: 0;
+		min-width: 0;
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
 
-	@media screen and (max-width: 430px) {
-		width: 63px;
-		min-width: 63px;
+		&:not(:global(.collapsed)) {
+			width: 280px;
+			box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+		}
 	}
+}
+
+.drawerContent {
+	width: 100%;
+	height: 100%;
+	background-color: var(--secondaryFull);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 .sidebarButton {
@@ -53,10 +62,6 @@
 		height: 20px;
 		display: block;
 	}
-
-	@media screen and (max-width: 630px) {
-		display: none;
-	}
 }
 
 .title {
@@ -76,6 +81,10 @@
 
 	&:global(.withTitle) {
 		height: calc(100% - 53px);
+	}
+
+	&:global(.collapsed) {
+		display: none;
 	}
 }
 
@@ -159,10 +168,6 @@
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
-
-	@media screen and (max-width: 630px) {
-		display: none;
-	}
 }
 
 .noteTitle {
