@@ -16,7 +16,7 @@ import { SortableTaskItem } from './sortable-task-item/sortable-task-item'
 interface DailyTasksModalProps {
 	date: string
 	onClose: () => void
-	onTasksChanged: () => void
+	onTasksChanged?: () => void
 }
 
 export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksModalProps) => {
@@ -53,7 +53,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 
 			const newTasks = arrayMove(tasks, oldIndex, newIndex)
 			handleReorder(newTasks)
-			onTasksChanged()
+			onTasksChanged?.()
 		}
 	}
 
@@ -61,7 +61,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 		if (taskToDelete) {
 			handleDeleteTask(taskToDelete.$id)
 			setTaskToDelete(null)
-			onTasksChanged()
+			onTasksChanged?.()
 		}
 	}
 
@@ -76,7 +76,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 			const nextTitle = editingTitle.trim()
 			await handleEditTask(editingTaskId, editingTitle)
 			if (nextTitle && previousTitle !== nextTitle) {
-				onTasksChanged()
+				onTasksChanged?.()
 			}
 		}
 		setEditingTaskId(null)
@@ -120,7 +120,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 														onCheck={async checked => {
 															if (task.isCompleted === checked) return
 															await handleToggleTask(task.$id, checked)
-															onTasksChanged()
+															onTasksChanged?.()
 														}}
 														onEdit={() => startEditing(task)}
 														onDelete={() => setTaskToDelete(task)}
@@ -143,7 +143,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 													const hasTitle = !!newTaskTitle.trim()
 													await handleAddTask()
 													if (hasTitle) {
-														onTasksChanged()
+														onTasksChanged?.()
 													}
 												}}
 												onKeyDown={async e => {
@@ -151,7 +151,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 													const hasTitle = !!newTaskTitle.trim()
 													await handleAddTask()
 													if (hasTitle) {
-														onTasksChanged()
+														onTasksChanged?.()
 													}
 												}}
 												disabled={isSaving}
