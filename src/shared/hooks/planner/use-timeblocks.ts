@@ -6,12 +6,18 @@ import { TimeBlock } from '@/shared/types/time-block'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const useTimeBlocks = (user: CustomUser | null) => {
 	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([])
 	const [isLoading, setIsLoading] = useState(true)
 	const [copiedTimeBlock, setCopiedTimeBlock] = useState<SXEvent | null>(null)
+	const userId = user?.$id
+	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
+
+	useEffect(() => {
+		copiedTimeBlockRef.current = copiedTimeBlock
+	}, [copiedTimeBlock])
 
 	const getTimeBlocks = useCallback(async () => {
 		try {
@@ -33,11 +39,12 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 
 	const pasteTimeBlock = useCallback(
 		async (date: string) => {
-			if (!copiedTimeBlock || !user?.$id) return
+			const copiedEvent = copiedTimeBlockRef.current
+			if (!copiedEvent || !userId) return
 
 			try {
-				const startStr = copiedTimeBlock.start.toString()
-				const endStr = copiedTimeBlock.end.toString()
+				const startStr = copiedEvent.start.toString()
+				const endStr = copiedEvent.end.toString()
 
 				const startTime = startStr.match(/(\d{2}:\d{2})/)?.[1] || '09:00'
 				const endTime = endStr.match(/(\d{2}:\d{2})/)?.[1] || '10:00'
@@ -46,12 +53,12 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				const newEndDate = `${date}T${endTime}:00`
 
 				await createTimeBlock({
-					title: copiedTimeBlock.title!,
+					title: copiedEvent.title!,
 					startDate: newStartDate,
 					endDate: newEndDate,
-					color: copiedTimeBlock.color,
-					calendarId: getCalendarIdByColor(copiedTimeBlock.color),
-					userId: user.$id,
+					color: copiedEvent.color,
+					calendarId: getCalendarIdByColor(copiedEvent.color),
+					userId,
 				})
 
 				await getTimeBlocks()
@@ -60,7 +67,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				console.error('Failed to paste time block:', error)
 			}
 		},
-		[copiedTimeBlock, user, getTimeBlocks]
+		[userId, getTimeBlocks]
 	)
 
 	const cleanupOldTimeBlocks = useCallback(async () => {

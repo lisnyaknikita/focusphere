@@ -1,3 +1,4 @@
+import { useDailyTasksCountForDate } from '@/app/(main)/planner/daily-tasks-count-context'
 import clsx from 'clsx'
 import { useMemo } from 'react'
 import classes from './week-day-header.module.scss'
@@ -8,7 +9,11 @@ interface WeekDayHeaderProps {
 	onDayClick?: (date: string) => void
 }
 
-export const WeekDayHeader = ({ date, onDayClick, incompleteTasksCount = 0 }: WeekDayHeaderProps) => {
+export const WeekDayHeader = ({ date, onDayClick, incompleteTasksCount }: WeekDayHeaderProps) => {
+	const incompleteFromContext = useDailyTasksCountForDate(date)
+
+	const incompleteTasksDisplay = incompleteTasksCount ?? incompleteFromContext
+
 	const { weekday, day, isToday } = useMemo(() => {
 		const plainDate = Temporal.PlainDate.from(date)
 		const today = Temporal.Now.plainDateISO()
@@ -30,7 +35,7 @@ export const WeekDayHeader = ({ date, onDayClick, incompleteTasksCount = 0 }: We
 		>
 			<div className={classes.labelWrapper}>
 				<span className={classes.weekdayText}>{weekday}</span>
-				{incompleteTasksCount > 0 && <span className={classes.counter}>{incompleteTasksCount}</span>}
+				{incompleteTasksDisplay > 0 && <span className={classes.counter}>{incompleteTasksDisplay}</span>}
 			</div>
 			<span className={classes.day}>{day}</span>
 		</button>

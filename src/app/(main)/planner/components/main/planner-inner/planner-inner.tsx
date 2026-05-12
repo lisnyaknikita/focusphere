@@ -15,7 +15,6 @@ import { WeekDayHeader } from './components/week-day-header/week-day-header'
 
 interface PlannerInnerProps {
 	timeBlocks: TimeBlock[]
-	dailyTasksCountByDate: Record<string, number>
 	calendar: ReturnType<typeof useNextCalendarApp>
 	eventsService: ReturnType<typeof createEventsServicePlugin>
 	eventModal: ReturnType<typeof createEventModalPlugin>
@@ -29,7 +28,6 @@ export const PlannerInner = memo(
 		timeBlocks,
 		onDayClick,
 		onCopyEvent,
-		dailyTasksCountByDate,
 		calendar,
 		eventsService,
 		eventModal,
@@ -67,11 +65,9 @@ export const PlannerInner = memo(
 						}}
 					/>
 				),
-				weekGridDate: ({ date }: { date: string }) => (
-					<WeekDayHeader date={date} onDayClick={onDayClick} incompleteTasksCount={dailyTasksCountByDate[date] ?? 0} />
-				),
+				weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} onDayClick={onDayClick} />,
 			}),
-			[onDayClick, dailyTasksCountByDate, refreshTimeBlocks, onCopyEvent]
+			[onDayClick, refreshTimeBlocks, onCopyEvent]
 		)
 
 		return (

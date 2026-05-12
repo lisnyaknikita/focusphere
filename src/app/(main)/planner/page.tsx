@@ -1,13 +1,14 @@
 'use client'
 
 import { Modal } from '@/shared/ui/modal/modal'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import 'temporal-polyfill/global'
 import { AddTimeBlockButton } from './components/header/create-button/create-button'
 import { TimeBlockModal } from './components/header/time-block-modal/time-block-modal'
 import { WeeklyGoals } from './components/header/weekly-goals/weekly-goals'
 import { DailyTasksModal } from './components/main/daily-tasks-modal/daily-tasks-modal'
 import { PlannerInner } from './components/main/planner-inner/planner-inner'
+import { DailyTasksCountByDateContext } from './daily-tasks-count-context'
 
 import { mapTimeBlockToScheduleX } from '@/lib/events/event-mapper'
 import { useCalendarApp } from '@/shared/hooks/planner/use-calendar-app'
@@ -15,6 +16,7 @@ import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-co
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
 import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { BeatLoader } from 'react-spinners'
 import classes from './page.module.scss'
 
@@ -22,6 +24,8 @@ export default function Planner() {
 	const [isTimeBlockModalVisible, setIsTimeBlockModalVisible] = useState(false)
 	const [isDailyTasksModalVisible, setIsDailyTasksModalVisible] = useState(false)
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
+	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
+	const hasDailyTasksChangesRef = useRef(false)
 
 	const { calendar, eventsService, eventModal } = useCalendarApp()
 	const { user } = useUser()
@@ -39,6 +43,14 @@ export default function Planner() {
 	const isPageLoading = isBlocksLoading || isGoalsLoading || isTasksLoading
 
 	useEffect(() => {
+		copiedTimeBlockRef.current = copiedTimeBlock
+	}, [copiedTimeBlock])
+
+	const handleDailyTasksChanged = useCallback(() => {
+		hasDailyTasksChangesRef.current = true
+	}, [])
+
+	useEffect(() => {
 		if (!eventsService) return
 		eventsService.set(timeBlocks.map(mapTimeBlockToScheduleX))
 	}, [timeBlocks, eventsService])
@@ -50,19 +62,23 @@ export default function Planner() {
 
 	const handleDayClick = useCallback(
 		async (date: string) => {
-			if (copiedTimeBlock) {
+			if (copiedTimeBlockRef.current) {
 				await pasteTimeBlock(date)
 				return
 			}
+			hasDailyTasksChangesRef.current = false
 			setSelectedDate(date)
 			setIsDailyTasksModalVisible(true)
 		},
-		[copiedTimeBlock, pasteTimeBlock]
+		[pasteTimeBlock]
 	)
 
 	const handleTaskModalClose = useCallback(() => {
 		setIsDailyTasksModalVisible(false)
-		refreshDailyTasksCounters()
+		if (hasDailyTasksChangesRef.current) {
+			refreshDailyTasksCounters()
+			hasDailyTasksChangesRef.current = false
+		}
 	}, [refreshDailyTasksCounters])
 
 	return (
@@ -88,16 +104,17 @@ export default function Planner() {
 					{isPageLoading ? (
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
-						<PlannerInner
-							timeBlocks={timeBlocks}
-							dailyTasksCountByDate={dailyTasksCountByDate}
-							calendar={calendar}
-							eventsService={eventsService}
-							eventModal={eventModal}
-							onDayClick={handleDayClick}
-							onCopyEvent={setCopiedTimeBlock}
-							refreshTimeBlocks={refreshTimeBlocks}
-						/>
+						<DailyTasksCountByDateContext.Provider value={dailyTasksCountByDate}>
+							<PlannerInner
+								timeBlocks={timeBlocks}
+								calendar={calendar}
+								eventsService={eventsService}
+								eventModal={eventModal}
+								onDayClick={handleDayClick}
+								onCopyEvent={setCopiedTimeBlock}
+								refreshTimeBlocks={refreshTimeBlocks}
+							/>
+						</DailyTasksCountByDateContext.Provider>
 					)}
 				</main>
 			</div>
@@ -105,7 +122,13 @@ export default function Planner() {
 				<TimeBlockModal onClose={handleTimeBlockCreated} />
 			</Modal>
 			<Modal isVisible={isDailyTasksModalVisible} onClose={handleTaskModalClose}>
-				{selectedDate && <DailyTasksModal date={selectedDate} onClose={handleTaskModalClose} />}
+				{selectedDate && (
+					<DailyTasksModal
+						date={selectedDate}
+						onClose={handleTaskModalClose}
+						onTasksChanged={handleDailyTasksChanged}
+					/>
+				)}
 			</Modal>
 		</>
 	)
