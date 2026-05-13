@@ -313,6 +313,12 @@ ul {
 	--bn-colors-editor-background: transparent !important;
 }
 
+.bn-inline-content {
+	> a {
+		cursor: pointer !important;
+	}
+}
+
 @media (prefers-color-scheme: dark) {
 	html {
 		color-scheme: dark;

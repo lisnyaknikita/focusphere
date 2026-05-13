@@ -37,7 +37,7 @@ const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened
 						</div>
 					) : (
 						<>
-							<NotesList />
+							<NotesList storageKey='journal-notes-collapsed' />
 							<TextEditor key={activeNote?.$id || 'empty'} />
 							{activeNote && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>
