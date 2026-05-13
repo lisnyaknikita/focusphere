@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { BetaWelcomeContent } from '../ui/beta-welcome-content/beta-welcome-content'
 import { Modal } from '../ui/modal/modal'
+import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
 import classes from './client-layout.module.scss'
 
 export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
@@ -44,6 +45,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<QueryClientProvider client={queryClient}>
+			<TimeBlockTracker />
 			<div className={classes.wrapper}>
 				{children}
 				{isLoading && (

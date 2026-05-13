@@ -5,6 +5,7 @@ import { APP_URL } from '@/shared/constants/app'
 import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { useTimeBlockUIStore } from '@/shared/stores/time-block-ui-store'
 import { FeedbackModal } from '@/shared/ui/feedback-section/feedback-modal/feedback-modal'
 import { FeedbackSection } from '@/shared/ui/feedback-section/feedback-section'
 import { SignOutIcon } from '@/shared/ui/icons/sign-out-icon'
@@ -27,6 +28,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
 	const [isSettingsTooltipOpen, setIsSettingsTooltipOpen] = useState(false)
 	const { user, logout, updateUserData, isGoogleConnected } = useUser()
+	const { isEnabled, setEnabled } = useTimeBlockUIStore()
 
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
 
@@ -79,7 +81,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						style={{ borderRadius: 5, objectFit: 'cover' }}
 					/>
 				)}
-
 				{isSettingsTooltipOpen && isCollapsed && (
 					<div
 						ref={settingsRefs.setFloating}
@@ -99,7 +100,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 					</div>
 				)}
 			</button>
-
 			<Modal isVisible={isVisible} onClose={() => setIsVisible(false)}>
 				<div className={classes.modalInner}>
 					<div className={classes.modalHeader}>
@@ -108,7 +108,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 							✕
 						</button>
 					</div>
-
 					<div className={classes.modalContent}>
 						<section className={classes.section}>
 							<div className={classes.profileRow}>
@@ -119,19 +118,23 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								</div>
 							</div>
 						</section>
-
 						<hr className={classes.divider} />
-
 						<section className={classes.section}>
 							<span className={classes.sectionLabel}>APPEARANCE</span>
-							<div className={classes.settingsCard}>
-								<div className={classes.cardLeft}>
+							<div className={classes.settingsStack}>
+								<div className={classes.settingsCard}>
 									<span>Dark mode</span>
+									<div className={clsx(classes.toggle, isDark && classes.active)} onClick={handleToggle}></div>
 								</div>
-								<div className={clsx(classes.toggle, isDark && classes.active)} onClick={handleToggle}></div>
+								<div className={classes.settingsCard}>
+									<span>Time block bar</span>
+									<div
+										className={clsx(classes.toggle, isEnabled && classes.active)}
+										onClick={() => setEnabled(!isEnabled)}
+									></div>
+								</div>
 							</div>
 						</section>
-
 						{!isGoogleConnected && (
 							<>
 								<hr className={classes.divider} />
@@ -146,15 +149,12 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								</section>
 							</>
 						)}
-
 						<hr className={classes.divider} />
-
 						<section className={classes.section}>
 							<span className={classes.sectionLabel}>SUPPORT</span>
 							<FeedbackSection onOpenModal={() => setIsFeedbackOpen(true)} />
 						</section>
 					</div>
-
 					<div className={classes.modalFooter}>
 						<button className={classes.mainSaveButton} onClick={() => setIsVisible(false)}>
 							Save changes
