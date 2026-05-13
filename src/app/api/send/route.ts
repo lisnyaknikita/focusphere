@@ -1,8 +1,13 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 export async function POST(req: Request) {
+	if (!resend) {
+		console.error('RESEND_API_KEY is missing in environment variables.')
+		return Response.json({ error: 'Mail service is not configured' }, { status: 500 })
+	}
+
 	try {
 		const { type, message, userEmail, userName } = await req.json()
 
@@ -22,7 +27,10 @@ export async function POST(req: Request) {
 		})
 
 		return Response.json(data)
-	} catch (error) {
-		return Response.json({ error }, { status: 500 })
+	} catch (error: unknown) {
+		const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+		console.error('[FEEDBACK_API_ERROR]:', errorMessage)
+
+		return Response.json({ error: errorMessage }, { status: 500 })
 	}
 }
