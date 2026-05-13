@@ -1,7 +1,7 @@
 .wrapper {
 	display: flex;
 	align-items: center;
-	max-width: 170px;
+	max-width: 250px;
 }
 
 .usernameWrapper {
@@ -29,13 +29,14 @@
 }
 
 .usernameInput {
-	max-width: 150px;
+	width: 100%;
 	font-size: 20px;
 	font-weight: 400;
 	color: var(--text);
 	background: transparent;
 	border: none;
 	outline: none;
+	font-family: inherit;
 }
 
 .icon {

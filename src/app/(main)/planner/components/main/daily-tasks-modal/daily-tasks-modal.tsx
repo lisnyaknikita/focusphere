@@ -16,9 +16,10 @@ import { SortableTaskItem } from './sortable-task-item/sortable-task-item'
 interface DailyTasksModalProps {
 	date: string
 	onClose: () => void
+	onTasksChanged?: () => void
 }
 
-export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
+export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksModalProps) => {
 	const [taskToDelete, setTaskToDelete] = useState<DailyTask | null>(null)
 	const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 	const [editingTitle, setEditingTitle] = useState('')
@@ -52,6 +53,7 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 
 			const newTasks = arrayMove(tasks, oldIndex, newIndex)
 			handleReorder(newTasks)
+			onTasksChanged?.()
 		}
 	}
 
@@ -59,6 +61,7 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 		if (taskToDelete) {
 			handleDeleteTask(taskToDelete.$id)
 			setTaskToDelete(null)
+			onTasksChanged?.()
 		}
 	}
 
@@ -69,7 +72,12 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 
 	const commitEdit = async () => {
 		if (editingTaskId) {
+			const previousTitle = tasks.find(task => task.$id === editingTaskId)?.title
+			const nextTitle = editingTitle.trim()
 			await handleEditTask(editingTaskId, editingTitle)
+			if (nextTitle && previousTitle !== nextTitle) {
+				onTasksChanged?.()
+			}
 		}
 		setEditingTaskId(null)
 		setEditingTitle('')
@@ -109,7 +117,11 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 														label={task.title}
 														withBorder={true}
 														checked={task.isCompleted}
-														onCheck={checked => handleToggleTask(task.$id, checked)}
+														onCheck={async checked => {
+															if (task.isCompleted === checked) return
+															await handleToggleTask(task.$id, checked)
+															onTasksChanged?.()
+														}}
 														onEdit={() => startEditing(task)}
 														onDelete={() => setTaskToDelete(task)}
 														withRemoval
@@ -127,8 +139,21 @@ export const DailyTasksModal = ({ onClose, date }: DailyTasksModalProps) => {
 												placeholder='What needs to be done?'
 												value={newTaskTitle}
 												onChange={e => setNewTaskTitle(e.target.value)}
-												onBlur={handleAddTask}
-												onKeyDown={e => e.key === 'Enter' && handleAddTask()}
+												onBlur={async () => {
+													const hasTitle = !!newTaskTitle.trim()
+													await handleAddTask()
+													if (hasTitle) {
+														onTasksChanged?.()
+													}
+												}}
+												onKeyDown={async e => {
+													if (e.key !== 'Enter') return
+													const hasTitle = !!newTaskTitle.trim()
+													await handleAddTask()
+													if (hasTitle) {
+														onTasksChanged?.()
+													}
+												}}
 												disabled={isSaving}
 											/>
 										</li>

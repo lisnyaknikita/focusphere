@@ -45,7 +45,11 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 						</div>
 					) : (
 						<>
-							{isSearchEmpty ? <div className={classes.emptySearch}>No notes found</div> : <NotesList />}
+							{isSearchEmpty ? (
+								<div className={classes.emptySearch}>No notes found</div>
+							) : (
+								<NotesList storageKey='global-notes-collapsed' />
+							)}
 							<TextEditor key={activeNote?.$id} />
 							{activeNote && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick}>
