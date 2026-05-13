@@ -5,7 +5,15 @@ import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { formatModalDate } from '@/shared/utils/format-modal-date/format-modal-date'
-import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+	closestCenter,
+	DndContext,
+	DragEndEvent,
+	PointerSensor,
+	TouchSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import clsx from 'clsx'
 import { useState } from 'react'
@@ -41,7 +49,15 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
-			activationConstraint: { distance: 8 },
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				delay: 250,
+				tolerance: 5,
+			},
 		})
 	)
 

@@ -93,3 +93,29 @@
 	transition: background-color 0.2s;
 	pointer-events: none;
 }
+
+.copyMode {
+	cursor: copy;
+
+	.day {
+		border: 1.5px dashed var(--sx-color-neutral);
+		border-radius: 6px;
+		opacity: 0.7;
+		transition: opacity 0.2s, border-color 0.2s, background-color 0.2s;
+	}
+
+	&:hover {
+		background-color: transparent;
+
+		.day {
+			opacity: 1;
+			border-color: var(--sx-color-primary);
+			border-style: solid;
+			background-color: var(--primary);
+		}
+
+		.weekdayText {
+			color: var(--sx-color-primary);
+		}
+	}
+}
