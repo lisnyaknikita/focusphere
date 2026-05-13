@@ -27,7 +27,7 @@ export const TimeBlockTracker = () => {
 	const hover = useHover(context)
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
-	if (!isEnabled || isLoading || !activeBlock) return null
+	if (!isEnabled || isLoading) return null
 
 	return (
 		<>
@@ -36,7 +36,7 @@ export const TimeBlockTracker = () => {
 					className={classes.progressLine}
 					style={{
 						width: `${progress}%`,
-						backgroundColor: activeBlock.color,
+						backgroundColor: activeBlock?.color ?? 'transparent',
 					}}
 				/>
 			</div>
@@ -57,9 +57,15 @@ export const TimeBlockTracker = () => {
 					className={classes.tooltip}
 					{...getFloatingProps()}
 				>
-					<span className={classes.tooltipLabel}>Current session:</span>
-					<span className={classes.tooltipTitle}>{activeBlock.title}</span>
-					<span className={classes.tooltipProgress}>· {Math.round(progress)}% completed</span>
+					{activeBlock ? (
+						<>
+							<span className={classes.tooltipLabel}>Current session:</span>
+							<span className={classes.tooltipTitle}>{activeBlock.title}</span>
+							<span className={classes.tooltipProgress}>· {Math.round(progress)}% completed</span>
+						</>
+					) : (
+						<span>No active sessions</span>
+					)}
 				</div>
 			)}
 		</>

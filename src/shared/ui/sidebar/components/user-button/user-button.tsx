@@ -81,7 +81,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						style={{ borderRadius: 5, objectFit: 'cover' }}
 					/>
 				)}
-
 				{isSettingsTooltipOpen && isCollapsed && (
 					<div
 						ref={settingsRefs.setFloating}
@@ -101,7 +100,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 					</div>
 				)}
 			</button>
-
 			<Modal isVisible={isVisible} onClose={() => setIsVisible(false)}>
 				<div className={classes.modalInner}>
 					<div className={classes.modalHeader}>
@@ -110,7 +108,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 							✕
 						</button>
 					</div>
-
 					<div className={classes.modalContent}>
 						<section className={classes.section}>
 							<div className={classes.profileRow}>
@@ -121,9 +118,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								</div>
 							</div>
 						</section>
-
 						<hr className={classes.divider} />
-
 						<section className={classes.section}>
 							<span className={classes.sectionLabel}>APPEARANCE</span>
 							<div className={classes.settingsStack}>
@@ -131,7 +126,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 									<span>Dark mode</span>
 									<div className={clsx(classes.toggle, isDark && classes.active)} onClick={handleToggle}></div>
 								</div>
-
 								<div className={classes.settingsCard}>
 									<span>Time block bar</span>
 									<div
@@ -141,7 +135,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								</div>
 							</div>
 						</section>
-
 						{!isGoogleConnected && (
 							<>
 								<hr className={classes.divider} />
@@ -156,15 +149,12 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								</section>
 							</>
 						)}
-
 						<hr className={classes.divider} />
-
 						<section className={classes.section}>
 							<span className={classes.sectionLabel}>SUPPORT</span>
 							<FeedbackSection onOpenModal={() => setIsFeedbackOpen(true)} />
 						</section>
 					</div>
-
 					<div className={classes.modalFooter}>
 						<button className={classes.mainSaveButton} onClick={() => setIsVisible(false)}>
 							Save changes
