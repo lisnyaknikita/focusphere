@@ -59,9 +59,9 @@ export const TimeBlockTracker = () => {
 				>
 					{activeBlock ? (
 						<>
-							<span className={classes.tooltipLabel}>Current session:</span>
+							<span className={classes.tooltipLabel}>Current session: </span>
 							<span className={classes.tooltipTitle}>{activeBlock.title}</span>
-							<span className={classes.tooltipProgress}>· {Math.round(progress)}% completed</span>
+							<span className={classes.tooltipProgress}> · {Math.round(progress)}% completed</span>
 						</>
 					) : (
 						<span>No active sessions</span>

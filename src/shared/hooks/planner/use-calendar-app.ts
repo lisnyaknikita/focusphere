@@ -8,14 +8,21 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export const useCalendarApp = () => {
+interface CalendarAppProps {
+	onQuickCreate?: (dateTime: Temporal.ZonedDateTime) => void
+}
+
+export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
 	const [eventModal] = useState(() => createEventModalPlugin())
 	const [dragAndDropPlugin] = useState(() => createDragAndDropPlugin())
 	const [resizePlugin] = useState(() => createResizePlugin(15))
+
+	const quickCreateRef = useRef(onQuickCreate)
+	quickCreateRef.current = onQuickCreate
 
 	const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 	const defaultView = isMobile ? 'day' : 'week'
@@ -46,6 +53,11 @@ export const useCalendarApp = () => {
 					})
 				} catch (error) {
 					console.error('Appwrite update failed:', error)
+				}
+			},
+			onClickDateTime(dateTime: Temporal.ZonedDateTime) {
+				if (quickCreateRef.current) {
+					quickCreateRef.current(dateTime)
 				}
 			},
 		},

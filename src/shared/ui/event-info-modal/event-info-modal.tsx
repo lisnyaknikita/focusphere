@@ -19,10 +19,12 @@ interface EventInfoModalProps {
 	onUpdated?: () => void
 	onCopy?: () => void
 	actions?: CalendarActions
+	initialEditing?: boolean
+	onCancelCreate?: () => void
 }
 
-export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, actions }: EventInfoModalProps) => {
-	const [isEditing, setIsEditing] = useState(false)
+export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, actions, initialEditing, onCancelCreate }: EventInfoModalProps) => {
+	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
 	const [isCopyTooltipOpen, setIsCopyTooltipOpen] = useState(false)
 
 	const { form, setFormField, handleSubmit } = useEventForm(
@@ -62,6 +64,7 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 					<input
 						className={classes.titleInput}
 						value={form.title}
+						placeholder='Title...'
 						onChange={e => setFormField('title', e.target.value)}
 						autoFocus
 					/>
@@ -73,7 +76,17 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 						<button type='submit' className={classes.saveBtn}>
 							Save
 						</button>
-						<button type='button' className={classes.cancelBtn} onClick={() => setIsEditing(false)}>
+						<button
+							type='button'
+							className={classes.cancelBtn}
+							onClick={() => {
+								if (initialEditing && onCancelCreate) {
+									onCancelCreate()
+								} else {
+									setIsEditing(false)
+								}
+							}}
+						>
 							Cancel
 						</button>
 					</div>

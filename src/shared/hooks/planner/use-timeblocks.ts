@@ -14,6 +14,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 	const [copiedTimeBlock, setCopiedTimeBlock] = useState<SXEvent | null>(null)
 	const userId = user?.$id
 	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
+	const isCreatingRef = useRef(false)
 
 	useEffect(() => {
 		copiedTimeBlockRef.current = copiedTimeBlock
@@ -106,6 +107,54 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		}
 	}, [])
 
+	const createQuickBlock = useCallback(
+		async (dateTime: Temporal.ZonedDateTime) => {
+			if (!userId) return null
+			if (isCreatingRef.current) return null
+
+			isCreatingRef.current = true
+			try {
+				const roundedMinutes = Math.round(dateTime.minute / 15) * 15
+
+				const startZoned = dateTime.with({ minute: 0, second: 0, millisecond: 0 }).add({ minutes: roundedMinutes })
+
+				const endZoned = startZoned.add({ minutes: 30 })
+
+				const start = startZoned.toInstant().toString()
+				const end = endZoned.toInstant().toString()
+
+				const created = await createTimeBlock({
+					title: 'New Block',
+					startDate: start,
+					endDate: end,
+					color: 'blue',
+					calendarId: getCalendarIdByColor('blue'),
+					userId,
+				})
+
+				await getTimeBlocks()
+
+				const toZDT = (iso: string) =>
+					Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
+
+				return {
+					id: created.$id,
+					title: 'New Block',
+					start: toZDT(start),
+					end: toZDT(end),
+					color: 'blue',
+					calendarId: getCalendarIdByColor('blue'),
+				}
+			} catch (error) {
+				console.error('Failed to create quick block:', error)
+				return null
+			} finally {
+				isCreatingRef.current = false
+			}
+		},
+		[userId, getTimeBlocks]
+	)
+
 	useEffect(() => {
 		cleanupOldTimeBlocks()
 	}, [cleanupOldTimeBlocks])
@@ -121,5 +170,6 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		isLoading,
 		refreshTimeBlocks: getTimeBlocks,
 		pasteTimeBlock,
+		createQuickBlock,
 	}
 }
