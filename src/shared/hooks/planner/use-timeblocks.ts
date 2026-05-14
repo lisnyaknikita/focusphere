@@ -14,6 +14,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 	const [copiedTimeBlock, setCopiedTimeBlock] = useState<SXEvent | null>(null)
 	const userId = user?.$id
 	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
+	const isCreatingRef = useRef(false)
 
 	useEffect(() => {
 		copiedTimeBlockRef.current = copiedTimeBlock
@@ -109,7 +110,9 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 	const createQuickBlock = useCallback(
 		async (dateTime: Temporal.ZonedDateTime) => {
 			if (!userId) return null
+			if (isCreatingRef.current) return null
 
+			isCreatingRef.current = true
 			try {
 				const roundedMinutes = Math.round(dateTime.minute / 15) * 15
 
@@ -145,6 +148,8 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 			} catch (error) {
 				console.error('Failed to create quick block:', error)
 				return null
+			} finally {
+				isCreatingRef.current = false
 			}
 		},
 		[userId, getTimeBlocks]
