@@ -1,5 +1,7 @@
 'use client'
 
+import { createTimeBlock, deleteTimeBlock, updateTimeBlock } from '@/lib/planner/planner'
+import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import 'temporal-polyfill/global'
@@ -25,11 +27,11 @@ export default function Planner() {
 	const [isTimeBlockModalVisible, setIsTimeBlockModalVisible] = useState(false)
 	const [isDailyTasksModalVisible, setIsDailyTasksModalVisible] = useState(false)
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
+	const [quickCreatedEvent, setQuickCreatedEvent] = useState<import('@schedule-x/calendar').CalendarEvent | null>(null)
 	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
 	const hasDailyTasksChangesRef = useRef(false)
 	const isCopyModeRef = useRef(false)
 
-	const { calendar, eventsService, eventModal } = useCalendarApp()
 	const { user } = useUser()
 	const {
 		timeBlocks,
@@ -38,7 +40,14 @@ export default function Planner() {
 		refreshTimeBlocks,
 		pasteTimeBlock,
 		setCopiedTimeBlock,
+		createQuickBlock,
 	} = useTimeBlocks(user)
+	const { calendar, eventsService, eventModal } = useCalendarApp({
+		onQuickCreate: async dateTime => {
+			const event = await createQuickBlock(dateTime)
+			if (event) setQuickCreatedEvent(event)
+		},
+	})
 	const { weeklyGoals, isLoading: isGoalsLoading, refreshWeeklyGoals } = useWeeklyGoals()
 	const { dailyTasksCountByDate, isLoading: isTasksLoading, refreshDailyTasksCounters } = useDailyTasksCounters()
 
@@ -135,6 +144,38 @@ export default function Planner() {
 						date={selectedDate}
 						onClose={handleTaskModalClose}
 						onTasksChanged={handleDailyTasksChanged}
+					/>
+				)}
+			</Modal>
+			<Modal
+				isVisible={!!quickCreatedEvent}
+				onClose={() => {
+					setQuickCreatedEvent(null)
+					refreshTimeBlocks()
+				}}
+			>
+				{quickCreatedEvent && (
+					<EventInfoModal
+						event={quickCreatedEvent}
+						initialEditing
+						onUpdated={() => {
+							setQuickCreatedEvent(null)
+							refreshTimeBlocks()
+						}}
+						onCancelCreate={async () => {
+							await deleteTimeBlock(String(quickCreatedEvent.id))
+							setQuickCreatedEvent(null)
+							refreshTimeBlocks()
+						}}
+						onConfirmDelete={async id => {
+							await deleteTimeBlock(id)
+							setQuickCreatedEvent(null)
+							refreshTimeBlocks()
+						}}
+						actions={{
+							create: createTimeBlock,
+							update: updateTimeBlock,
+						}}
 					/>
 				)}
 			</Modal>
