@@ -153,10 +153,12 @@ export default function Planner() {
 					setQuickCreatedEvent(null)
 					refreshTimeBlocks()
 				}}
+				className='forQuickTimeBlock'
 			>
 				{quickCreatedEvent && (
 					<EventInfoModal
 						event={quickCreatedEvent}
+						isTimeBlock
 						initialEditing
 						onUpdated={() => {
 							setQuickCreatedEvent(null)

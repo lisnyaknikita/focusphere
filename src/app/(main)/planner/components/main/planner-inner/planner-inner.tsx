@@ -50,6 +50,7 @@ export const PlannerInner = memo(
 				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
 					<EventInfoModal
 						event={calendarEvent}
+						isTimeBlock
 						onConfirmDelete={() => setEventToDelete(calendarEvent)}
 						onUpdated={() => {
 							refreshTimeBlocks()

@@ -21,9 +21,19 @@ interface EventInfoModalProps {
 	actions?: CalendarActions
 	initialEditing?: boolean
 	onCancelCreate?: () => void
+	isTimeBlock?: boolean
 }
 
-export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, actions, initialEditing, onCancelCreate }: EventInfoModalProps) => {
+export const EventInfoModal = ({
+	event,
+	onConfirmDelete,
+	onUpdated,
+	onCopy,
+	actions,
+	initialEditing,
+	onCancelCreate,
+	isTimeBlock,
+}: EventInfoModalProps) => {
 	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
 	const [isCopyTooltipOpen, setIsCopyTooltipOpen] = useState(false)
 
@@ -69,7 +79,7 @@ export const EventInfoModal = ({ event, onConfirmDelete, onUpdated, onCopy, acti
 						autoFocus
 					/>
 					<DateTime form={form} setFormField={setFormField} />
-					<Description form={form} setFormField={setFormField} />
+					{!isTimeBlock && <Description form={form} setFormField={setFormField} />}
 					<ColorPicker form={form} setFormField={setFormField} />
 
 					<div className={classes.actions}>
