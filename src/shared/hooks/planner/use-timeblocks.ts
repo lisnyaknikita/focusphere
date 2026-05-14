@@ -108,7 +108,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 
 	const createQuickBlock = useCallback(
 		async (dateTime: Temporal.ZonedDateTime) => {
-			if (!userId) return
+			if (!userId) return null
 
 			try {
 				const roundedMinutes = Math.round(dateTime.minute / 15) * 15
@@ -120,8 +120,8 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				const start = startZoned.toInstant().toString()
 				const end = endZoned.toInstant().toString()
 
-				await createTimeBlock({
-					title: 'New Event',
+				const created = await createTimeBlock({
+					title: 'New Block',
 					startDate: start,
 					endDate: end,
 					color: 'blue',
@@ -130,8 +130,21 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				})
 
 				await getTimeBlocks()
+
+				const toZDT = (iso: string) =>
+					Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
+
+				return {
+					id: created.$id,
+					title: 'New Block',
+					start: toZDT(start),
+					end: toZDT(end),
+					color: 'blue',
+					calendarId: getCalendarIdByColor('blue'),
+				}
 			} catch (error) {
 				console.error('Failed to create quick block:', error)
+				return null
 			}
 		},
 		[userId, getTimeBlocks]
