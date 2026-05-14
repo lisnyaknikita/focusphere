@@ -106,6 +106,37 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		}
 	}, [])
 
+	const createQuickBlock = useCallback(
+		async (dateTime: Temporal.ZonedDateTime) => {
+			if (!userId) return
+
+			try {
+				const roundedMinutes = Math.round(dateTime.minute / 15) * 15
+
+				const startZoned = dateTime.with({ minute: 0, second: 0, millisecond: 0 }).add({ minutes: roundedMinutes })
+
+				const endZoned = startZoned.add({ minutes: 30 })
+
+				const start = startZoned.toInstant().toString()
+				const end = endZoned.toInstant().toString()
+
+				await createTimeBlock({
+					title: 'New Event',
+					startDate: start,
+					endDate: end,
+					color: 'blue',
+					calendarId: getCalendarIdByColor('blue'),
+					userId,
+				})
+
+				await getTimeBlocks()
+			} catch (error) {
+				console.error('Failed to create quick block:', error)
+			}
+		},
+		[userId, getTimeBlocks]
+	)
+
 	useEffect(() => {
 		cleanupOldTimeBlocks()
 	}, [cleanupOldTimeBlocks])
@@ -121,5 +152,6 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		isLoading,
 		refreshTimeBlocks: getTimeBlocks,
 		pasteTimeBlock,
+		createQuickBlock,
 	}
 }

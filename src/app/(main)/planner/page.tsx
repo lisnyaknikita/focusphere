@@ -29,7 +29,6 @@ export default function Planner() {
 	const hasDailyTasksChangesRef = useRef(false)
 	const isCopyModeRef = useRef(false)
 
-	const { calendar, eventsService, eventModal } = useCalendarApp()
 	const { user } = useUser()
 	const {
 		timeBlocks,
@@ -38,7 +37,9 @@ export default function Planner() {
 		refreshTimeBlocks,
 		pasteTimeBlock,
 		setCopiedTimeBlock,
+		createQuickBlock,
 	} = useTimeBlocks(user)
+	const { calendar, eventsService, eventModal } = useCalendarApp({ onQuickCreate: createQuickBlock })
 	const { weeklyGoals, isLoading: isGoalsLoading, refreshWeeklyGoals } = useWeeklyGoals()
 	const { dailyTasksCountByDate, isLoading: isTasksLoading, refreshDailyTasksCounters } = useDailyTasksCounters()
 
