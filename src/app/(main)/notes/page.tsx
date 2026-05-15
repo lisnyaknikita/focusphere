@@ -2,13 +2,18 @@
 
 import { GeneralNotesProvider } from '@/shared/context/general-notes-context'
 import { useNotesContext } from '@/shared/context/notes-context'
+import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
+import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
+import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
-import { useState } from 'react'
+import clsx from 'clsx'
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
 import { SearchInput } from './components/header/search-input/search-input'
@@ -16,7 +21,11 @@ import classes from './page.module.scss'
 
 const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v: boolean) => void }) => {
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+	const [isHydrated, setIsHydrated] = useState(false)
+
+	const { isFocusMode, toggleFocusMode } = useFocusMode('generalNotes')
 	const { activeNote, isLoading, deleteNote, notes, searchQuery } = useNotesContext()
+
 	const isSearchEmpty = searchQuery && searchQuery.trim().length > 0 && notes.length === 0
 
 	const handleDeleteClick = () => {
@@ -31,13 +40,32 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 		}
 	}
 
+	useEffect(() => {
+		setIsHydrated(true)
+	}, [])
+
+	if (!isHydrated)
+		return (
+			<div className={classes.notesPage}>
+				<div className={classes.loaderWrapper}>
+					<BeatLoader color='#aaa' size={10} />
+				</div>
+			</div>
+		)
+
 	return (
 		<>
-			<div className={classes.notesPage}>
-				<header className={classes.header}>
-					<SearchInput />
-					<CreateButton setIsModalVisible={setIsNewNoteModalOpened} text='New note' />
-				</header>
+			<motion.div
+				className={clsx(classes.notesPage, isFocusMode && classes.focusMode)}
+				layout
+				transition={{ duration: 0.2, ease: 'linear' }}
+			>
+				{!isFocusMode && (
+					<header className={classes.header}>
+						<SearchInput />
+						<CreateButton setIsModalVisible={setIsNewNoteModalOpened} text='New note' />
+					</header>
+				)}
 				<main className={classes.notes}>
 					{isLoading ? (
 						<div className={classes.loaderWrapper}>
@@ -45,21 +73,31 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 						</div>
 					) : (
 						<>
-							{isSearchEmpty ? (
-								<div className={classes.emptySearch}>No notes found</div>
-							) : (
-								<NotesList storageKey='global-notes-collapsed' />
-							)}
+							{!isFocusMode &&
+								(isSearchEmpty ? (
+									<div className={classes.emptySearch}>No notes found</div>
+								) : (
+									<NotesList storageKey='global-notes-collapsed' />
+								))}
 							<TextEditor key={activeNote?.$id} />
-							{activeNote && (
+							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick}>
 									Delete
+								</button>
+							)}
+							{activeNote && (
+								<button
+									className={clsx(classes.focusButton, isFocusMode && classes.focusButtonActive)}
+									onClick={() => toggleFocusMode('generalNotes')}
+									title={isFocusMode ? 'Exit focus mode (Esc)' : 'Focus mode (Ctrl+Shift+F)'}
+								>
+									{isFocusMode ? <MinimizeIcon /> : <ExpandIcon />}
 								</button>
 							)}
 						</>
 					)}
 				</main>
-			</div>
+			</motion.div>
 			<ConfirmModal
 				isVisible={isDeleteConfirmOpen}
 				message={

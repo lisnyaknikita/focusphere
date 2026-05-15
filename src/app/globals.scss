@@ -319,6 +319,14 @@ ul {
 	}
 }
 
+.bn-editor,
+.bn-menu,
+.bn-toolbar,
+[data-radix-popper-content-wrapper],
+[data-floating-ui-portal] {
+	z-index: 11 !important;
+}
+
 @media (prefers-color-scheme: dark) {
 	html {
 		color-scheme: dark;
