@@ -46,7 +46,7 @@
 
 .deleteButton {
 	position: absolute;
-	right: 5px;
+	right: 45px;
 	top: 5px;
 	z-index: 2;
 	opacity: 0;
@@ -71,4 +71,57 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+
+.focusMode {
+	position: fixed;
+	inset: 0;
+	z-index: 10;
+	padding: 0;
+	background-color: var(--primary);
+
+	.journal {
+		border-radius: 0;
+		border: none;
+	}
+}
+
+.focusButton {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	z-index: 2;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	color: var(--textSecondary);
+	background-color: var(--secondaryFull);
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 3px 6px;
+	font-size: 14px;
+	font-family: inherit;
+	transition: all 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&:hover {
+		color: var(--text);
+		background-color: var(--primary);
+	}
+}
+
+.focusButtonActive {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: all;
+}
+
+.journal:hover {
+	.focusButton {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: all;
+	}
 }
