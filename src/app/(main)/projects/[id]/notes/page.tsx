@@ -1,40 +1,74 @@
 'use client'
 
 import { useDeleteNote } from '@/shared/hooks/projects/notes/use-delete-note'
+import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
+import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
+import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
-import { useState } from 'react'
+import clsx from 'clsx'
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import classes from './page.module.scss'
 
 export default function NotesPage() {
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+	const [isHydrated, setIsHydrated] = useState(false)
+
+	const { isFocusMode, toggleFocusMode } = useFocusMode('projectNotes')
 	const { activeNote, isNotesLoading, handleDelete } = useDeleteNote()
 
 	const handleDeleteClick = () => {
 		setIsConfirmOpen(true)
 	}
 
+	useEffect(() => {
+		setIsHydrated(true)
+	}, [])
+
+	if (!isHydrated)
+		return (
+			<div className={classes.notesPage}>
+				<div className={classes.inner}>
+					<BeatLoader color='#aaa' size={10} className={classes.loader} />
+				</div>
+			</div>
+		)
+
 	return (
 		<>
-			<div className={classes.notesPage}>
+			<motion.div
+				className={clsx(classes.notesPage, isFocusMode && classes.focusMode)}
+				layout
+				transition={{ duration: 0.2, ease: 'linear' }}
+			>
 				<div className={classes.inner}>
 					{isNotesLoading ? (
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
 						<>
-							<NotesList withTitle={false} withTags={true} storageKey='project-notes-collapsed' />
+							{!isFocusMode && <NotesList withTitle={false} withTags={true} storageKey='project-notes-collapsed' />}
 							<TextEditor key={activeNote?.$id} />
-							{activeNote && (
+							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>
 									Delete
+								</button>
+							)}
+							{activeNote && (
+								<button
+									className={clsx(classes.focusButton, isFocusMode && classes.focusButtonActive)}
+									onClick={() => toggleFocusMode('projectNotes')}
+									title={isFocusMode ? 'Exit focus mode (Esc)' : 'Focus mode (Ctrl+Shift+F)'}
+								>
+									{isFocusMode ? <MinimizeIcon /> : <ExpandIcon />}
 								</button>
 							)}
 						</>
 					)}
 				</div>
-			</div>
+			</motion.div>
 			<ConfirmModal
 				isVisible={isConfirmOpen}
 				onClose={() => setIsConfirmOpen(false)}
