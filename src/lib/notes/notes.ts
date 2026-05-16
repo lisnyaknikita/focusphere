@@ -14,7 +14,7 @@ export const getGeneralNotes = async (userId: string): Promise<BaseNote[]> => {
 	const response = await tablesDB.listRows({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
-		queries: [Query.equal('userId', userId), Query.orderDesc('$createdAt')],
+		queries: [Query.equal('userId', userId), Query.orderDesc('$updatedAt')],
 	})
 
 	return response.rows as unknown as BaseNote[]

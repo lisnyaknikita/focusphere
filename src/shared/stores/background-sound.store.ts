@@ -1,12 +1,41 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type SoundOption = 'pink-noise' | 'brown-noise' | 'lofi' | null
+export type SoundOption = 'white-noise' | 'pink-noise' | 'brown-noise' | 'lofi' | null
 
-export const SOUND_FILES: Record<NonNullable<SoundOption>, string> = {
-	'pink-noise': '/pink.webm',
-	'brown-noise': '/brown.webm',
+export const SOUND_FILES: Partial<Record<NonNullable<SoundOption>, string>> = {
 	lofi: '/lofi.webm',
+}
+
+function generateNoiseBuffer(ctx: AudioContext, type: 'white-noise' | 'pink-noise' | 'brown-noise'): AudioBuffer {
+	const bufferSize = ctx.sampleRate * 5 // 5 seconds loop
+	const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
+	const output = buffer.getChannelData(0)
+
+	let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0
+	let lastOut = 0
+
+	for (let i = 0; i < bufferSize; i++) {
+		const white = Math.random() * 2 - 1
+
+		if (type === 'white-noise') {
+			output[i] = white * 0.1
+		} else if (type === 'pink-noise') {
+			b0 = 0.99886 * b0 + white * 0.0555179
+			b1 = 0.99332 * b1 + white * 0.0750759
+			b2 = 0.969 * b2 + white * 0.153852
+			b3 = 0.8665 * b3 + white * 0.3104856
+			b4 = 0.55 * b4 + white * 0.5329522
+			b5 = -0.7616 * b5 - white * 0.016898
+			output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362
+			output[i] *= 0.11 
+			b6 = white * 0.115926
+		} else if (type === 'brown-noise') {
+			lastOut = (lastOut + 0.02 * white) / 1.02
+			output[i] = lastOut * 3.5 
+		}
+	}
+	return buffer
 }
 
 interface BackgroundSoundState {
@@ -76,13 +105,22 @@ export const useBackgroundSoundStore = create<BackgroundSoundState & BackgroundS
 
 				let buffer = buffers[sound]
 				if (!buffer) {
-					const res = await fetch(SOUND_FILES[sound])
-					const arrayBuffer = await res.arrayBuffer()
-					buffer = await ctx.decodeAudioData(arrayBuffer)
-					buffers[sound] = buffer
+					if (sound === 'white-noise' || sound === 'pink-noise' || sound === 'brown-noise') {
+						buffer = generateNoiseBuffer(ctx, sound)
+						buffers[sound] = buffer
+					} else {
+						const url = SOUND_FILES[sound]
+						if (url) {
+							const res = await fetch(url)
+							const arrayBuffer = await res.arrayBuffer()
+							buffer = await ctx.decodeAudioData(arrayBuffer)
+							buffers[sound] = buffer
+						}
+					}
 				}
 
 				if (get().activeSound !== sound) return
+				if (!buffer) return
 
 				const source = ctx.createBufferSource()
 				source.buffer = buffer

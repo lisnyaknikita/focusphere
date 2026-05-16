@@ -9,6 +9,7 @@ import { useState } from 'react'
 import classes from './background-sounds-dropdown.module.scss'
 
 const SOUNDS = [
+	{ id: 'white-noise' as const, label: 'White noise' },
 	{ id: 'pink-noise' as const, label: 'Pink noise' },
 	{ id: 'brown-noise' as const, label: 'Brown noise' },
 	{ id: 'lofi' as const, label: 'Lofi' },

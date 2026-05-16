@@ -62,7 +62,14 @@ export const useDiaryNotes = (userId: string) => {
 
 	const handleTitleChange = useCallback(
 		async (title: string, noteId: string) => {
-			setNotes(prev => prev.map(n => (n.$id === noteId ? { ...n, title } : n)))
+			setNotes(prev => {
+				const noteIndex = prev.findIndex(n => n.$id === noteId)
+				if (noteIndex === -1) return prev
+				const updatedNote = { ...prev[noteIndex], title }
+				const newNotes = [...prev]
+				newNotes.splice(noteIndex, 1)
+				return [updatedNote, ...newNotes]
+			})
 			if (activeNote?.$id === noteId) {
 				setActiveNote(prev => (prev ? { ...prev, title } : null))
 			}
@@ -78,7 +85,14 @@ export const useDiaryNotes = (userId: string) => {
 
 	const handleContentChange = useCallback(
 		async (content: string, noteId: string) => {
-			setNotes(prev => prev.map(n => (n.$id === noteId ? { ...n, content } : n)))
+			setNotes(prev => {
+				const noteIndex = prev.findIndex(n => n.$id === noteId)
+				if (noteIndex === -1) return prev
+				const updatedNote = { ...prev[noteIndex], content }
+				const newNotes = [...prev]
+				newNotes.splice(noteIndex, 1)
+				return [updatedNote, ...newNotes]
+			})
 
 			if (activeNote?.$id === noteId) {
 				setActiveNote(prev => (prev ? { ...prev, content } : null))

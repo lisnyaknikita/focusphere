@@ -14,7 +14,7 @@ export const getDiaryEntries = async (userId: string): Promise<JournalEntry[]> =
 	const response = await tablesDB.listRows({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
-		queries: [Query.equal('userId', userId), Query.orderDesc('$createdAt')],
+		queries: [Query.equal('userId', userId), Query.orderDesc('$updatedAt')],
 	})
 
 	return response.rows as unknown as JournalEntry[]
