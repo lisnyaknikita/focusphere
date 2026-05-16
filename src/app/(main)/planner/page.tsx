@@ -149,7 +149,10 @@ export default function Planner() {
 			</Modal>
 			<Modal
 				isVisible={!!quickCreatedEvent}
-				onClose={() => {
+				onClose={async () => {
+					if (quickCreatedEvent) {
+						await deleteTimeBlock(String(quickCreatedEvent.id))
+					}
 					setQuickCreatedEvent(null)
 					refreshTimeBlocks()
 				}}
