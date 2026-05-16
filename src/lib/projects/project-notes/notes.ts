@@ -15,7 +15,7 @@ export const getProjectNotes = async (projectId: string): Promise<ProjectNote[]>
 	const response = await tablesDB.listRows({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
-		queries: [Query.equal('projectId', projectId), Query.orderDesc('$createdAt')],
+		queries: [Query.equal('projectId', projectId), Query.orderDesc('$updatedAt')],
 	})
 
 	return response.rows as unknown as ProjectNote[]
