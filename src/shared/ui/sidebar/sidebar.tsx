@@ -6,6 +6,7 @@ import { Logo } from './components/logo/logo'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { MenuIcon } from '../icons/menu-icon'
+import { useFocusModeStore } from '@/shared/stores/focus-mode.store'
 import { NavigationItem } from './components/navigation-item/navigation-item'
 import { UserButton } from './components/user-button/user-button'
 import { navItems } from './navigation-items'
@@ -21,6 +22,9 @@ export const Sidebar = () => {
 	})
 
 	const pathname = usePathname()
+
+	const focusModes = useFocusModeStore(s => s.focusModes)
+	const isAnyFocusModeActive = Object.values(focusModes).some(Boolean)
 
 	const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -60,9 +64,11 @@ export const Sidebar = () => {
 
 	return (
 		<>
-			<button className={classes.mobileToggle} onClick={() => setIsMobileOpen(true)} aria-label='Open menu'>
-				<MenuIcon />
-			</button>
+			{!isAnyFocusModeActive && (
+				<button className={classes.mobileToggle} onClick={() => setIsMobileOpen(true)} aria-label='Open menu'>
+					<MenuIcon />
+				</button>
+			)}
 			<div
 				className={clsx(classes.mobileOverlay, isMobileOpen && classes.mobileOpen)}
 				onClick={() => setIsMobileOpen(false)}
