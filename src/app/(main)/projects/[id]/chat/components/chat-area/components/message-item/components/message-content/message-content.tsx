@@ -1,4 +1,5 @@
 import { ChatMessage } from '@/shared/types/chat'
+import { stripHtml } from '@/shared/utils/strip-html/strip-html'
 import { Dispatch, SetStateAction } from 'react'
 import classes from './message-content.module.scss'
 
@@ -12,6 +13,7 @@ interface MessageContentProps {
 	onUpdate: (id: string, content: string) => void
 	setEditValue: Dispatch<SetStateAction<string>>
 	setIsEditing: Dispatch<SetStateAction<boolean>>
+	repliedToMessage?: ChatMessage
 }
 
 export const MessageContent = ({
@@ -24,6 +26,7 @@ export const MessageContent = ({
 	onUpdate,
 	setEditValue,
 	setIsEditing,
+	repliedToMessage,
 }: MessageContentProps) => {
 	const handleUpdate = () => {
 		if (editValue.trim() !== '' && editValue !== message.content) {
@@ -54,6 +57,12 @@ export const MessageContent = ({
 						})}
 					</time>
 					{isEdited && <span className={classes.editedMessage}>(edited)</span>}
+				</div>
+			)}
+			{repliedToMessage && (
+				<div className={classes.replyQuote}>
+					<div className={classes.replyQuoteName}>{repliedToMessage.senderName}</div>
+					<div className={classes.replyQuoteText}>{stripHtml(repliedToMessage.content)}</div>
 				</div>
 			)}
 			<div className={classes.messageText}>

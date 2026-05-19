@@ -29,6 +29,32 @@
 	color: var(--text);
 }
 
+.replyQuote {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	border-left: 2px solid var(--save-button-bg);
+	padding: 0 100px 0 10px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	opacity: 0.6;
+}
+
+.replyQuoteName {
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--text);
+}
+
+.replyQuoteText {
+	font-size: 12px;
+	color: var(--text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}
+
 .messageText {
 	font-size: 16px;
 	font-weight: 400;
@@ -37,7 +63,7 @@
 	overflow-wrap: break-word;
 	white-space: pre-wrap;
 	width: 100%;
-	padding-right: 70px;
+	padding-right: 100px;
 
 	> ul,
 	ol {

@@ -4,7 +4,6 @@
 	pointer-events: none;
 	display: flex;
 	align-items: center;
-	gap: 10px;
 	position: absolute;
 	right: 1%;
 	top: 50%;
@@ -12,6 +11,7 @@
 	border-radius: 5px;
 
 	> button {
+		padding: 0 5px;
 		> svg path {
 			transition: all 0.2s;
 		}
@@ -20,6 +20,10 @@
 				fill: var(--tab-bg);
 			}
 		}
+	}
+
+	> button:not(:last-child) {
+		border-right: 0.3px solid var(--btn-border);
 	}
 }
 
@@ -42,6 +46,27 @@
 	&:hover {
 		> svg path {
 			fill: #dc2a2a !important;
+		}
+	}
+}
+
+.replyButton {
+	> svg {
+		width: 17px;
+		height: 20px;
+		color: #fff;
+		opacity: 1;
+		transition: opacity 0.2s;
+		transform: translateY(2px);
+	}
+
+	&:hover {
+		> svg path {
+			fill: transparent !important;
+		}
+
+		> svg {
+			stroke: var(--tab-bg);
 		}
 	}
 }

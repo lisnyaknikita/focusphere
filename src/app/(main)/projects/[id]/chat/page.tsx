@@ -22,10 +22,10 @@ export default function ChatPage() {
 	if (userLoading || projectLoading) return <div>Loading...</div>
 	if (!project) return <div>Project not found</div>
 
-	const handleSendMessage = (content: string) => {
+	const handleSendMessage = (content: string, replyToMessageId?: string) => {
 		if (!user) return
 
-		chat.sendMessage(content, user.$id, user.name, avatarUrl || undefined)
+		chat.sendMessage(content, user.$id, user.name, avatarUrl || undefined, replyToMessageId)
 	}
 
 	return (

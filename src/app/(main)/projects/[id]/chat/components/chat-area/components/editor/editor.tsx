@@ -4,7 +4,7 @@ import { SendIcon } from '@/shared/ui/icons/send-icon'
 import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import Quill, { QuillOptions } from 'quill'
 import 'quill/dist/quill.snow.css'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import classes from './editor.module.scss'
 
 interface EditorProps {
@@ -12,13 +12,25 @@ interface EditorProps {
 	disabled?: boolean
 }
 
-export const Editor = ({ onSend, disabled }: EditorProps) => {
+export interface EditorRef {
+	focus: () => void
+}
+
+export const Editor = forwardRef<EditorRef, EditorProps>(({ onSend, disabled }, ref) => {
 	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const quillRef = useRef<Quill | null>(null)
 
 	const onSendRef = useRef(onSend)
 	onSendRef.current = onSend
+
+	useImperativeHandle(ref, () => ({
+		focus: () => {
+			if (quillRef.current) {
+				quillRef.current.focus()
+			}
+		},
+	}))
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isTooltipOpen,
@@ -126,4 +138,6 @@ export const Editor = ({ onSend, disabled }: EditorProps) => {
 			</div>
 		</div>
 	)
-}
+})
+
+Editor.displayName = 'Editor'

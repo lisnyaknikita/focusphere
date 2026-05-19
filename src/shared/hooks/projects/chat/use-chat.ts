@@ -90,7 +90,13 @@ export const useChat = (project: Project | null) => {
 		}
 	}
 
-	const handleSendMessage = async (content: string, userId: string, userName: string, avatar?: string) => {
+	const handleSendMessage = async (
+		content: string,
+		userId: string,
+		userName: string,
+		avatar?: string,
+		replyToMessageId?: string
+	) => {
 		if (!activeChannel || !project) return
 
 		const optimisticId = `temp-${Date.now()}`
@@ -108,6 +114,7 @@ export const useChat = (project: Project | null) => {
 			senderId: userId,
 			senderName: userName,
 			senderAvatar: avatar,
+			replyToMessageId,
 		}
 
 		setMessages(prev => [...prev, optimisticMessage])
@@ -120,6 +127,7 @@ export const useChat = (project: Project | null) => {
 					senderId: userId,
 					senderName: userName,
 					senderAvatar: avatar,
+					replyToMessageId,
 				},
 				project.teamId
 			)

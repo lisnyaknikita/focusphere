@@ -13,9 +13,11 @@ interface MessageItemProps {
 	message: ChatMessage
 	teammates?: Models.Membership[]
 	currentUserId: string | undefined
-	currentUserName?: string
+	currentUserName: string | undefined
 	onUpdate: (id: string, content: string) => void
 	onDelete: (id: string) => void
+	onReply: (message: ChatMessage) => void
+	repliedToMessage?: ChatMessage
 }
 
 export const MessageItem = ({
@@ -26,6 +28,8 @@ export const MessageItem = ({
 	currentUserName,
 	onUpdate,
 	onDelete,
+	onReply,
+	repliedToMessage,
 }: MessageItemProps) => {
 	const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
@@ -65,6 +69,7 @@ export const MessageItem = ({
 					onUpdate={onUpdate}
 					setEditValue={setEditValue}
 					setIsEditing={setIsEditing}
+					repliedToMessage={repliedToMessage}
 				/>
 				<ActionButtons
 					message={message}
@@ -73,6 +78,7 @@ export const MessageItem = ({
 					setIsEditing={setIsEditing}
 					setEditValue={setEditValue}
 					setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+					onReply={onReply}
 				/>
 			</div>
 			<ConfirmModal

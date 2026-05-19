@@ -24,6 +24,7 @@ export interface ChatMessage extends Models.Document {
 	senderName: string
 	senderAvatar?: string
 	isEdited?: boolean
+	replyToMessageId?: string
 }
 
 export interface CreateMessagePayload {
@@ -33,4 +34,5 @@ export interface CreateMessagePayload {
 	senderName: string
 	senderAvatar?: string
 	isEdited?: boolean
+	replyToMessageId?: string
 }
