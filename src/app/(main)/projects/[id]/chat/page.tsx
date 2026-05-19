@@ -34,6 +34,7 @@ export default function ChatPage() {
 				<ChatSidebar
 					teammates={chat.teammates}
 					channels={chat.channels}
+					dmChannels={chat.dmChannels}
 					activeChannelId={chat.activeChannel?.$id}
 					onSelectChannel={channel => {
 						chat.setActiveChannel(channel)
@@ -43,6 +44,10 @@ export default function ChatPage() {
 					currentUserId={user?.$id}
 					isMobileOpen={isChatSidebarOpen}
 					onMobileClose={() => setIsChatSidebarOpen(false)}
+					onOpenDM={(currentUserId, targetMember) => {
+						chat.openDM(currentUserId, targetMember)
+						setIsChatSidebarOpen(false)
+					}}
 				/>
 				<ChatArea
 					activeChannel={chat.activeChannel}

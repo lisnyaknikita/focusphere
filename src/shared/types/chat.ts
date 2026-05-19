@@ -4,17 +4,19 @@ export interface ChatChannel extends Models.Document {
 	name: string
 	projectId: string
 	description?: string
-	type: 'private' | 'public'
+	type: 'private' | 'public' | 'dm'
 	ownerId: string
+	dmParticipants?: string[]
 }
 
 export interface CreateChannelPayload {
 	name: string
 	projectId: string
 	description?: string
-	type: 'private' | 'public'
+	type: 'private' | 'public' | 'dm'
 	ownerId: string
 	teamId?: string
+	dmParticipants?: string[]
 }
 
 export interface ChatMessage extends Models.Document {
@@ -35,4 +37,12 @@ export interface CreateMessagePayload {
 	senderAvatar?: string
 	isEdited?: boolean
 	replyToMessageId?: string
+}
+
+export interface TeamMember {
+	$id: string
+	userId: string
+	userName: string
+	userEmail: string
+	roles: string[]
 }

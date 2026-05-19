@@ -15,33 +15,38 @@ interface HeaderProps {
 	onDeleteChannel: (id: string) => Promise<void>
 	currentUserId: string | undefined
 	onOpenChatSidebar: () => void
+	displayName?: string
 }
 
-export const Header = ({ activeChannel, onUpdateChannel, onDeleteChannel, currentUserId, onOpenChatSidebar }: HeaderProps) => {
+export const Header = ({
+	activeChannel,
+	onUpdateChannel,
+	onDeleteChannel,
+	currentUserId,
+	onOpenChatSidebar,
+	displayName,
+}: HeaderProps) => {
 	const [isChannelInfoOpened, setIsChannelInfoOpened] = useState(false)
 	const isOwner = activeChannel?.ownerId === currentUserId
+	const isDM = activeChannel?.type === 'dm'
 
 	return (
 		<>
 			<header className={classes.header}>
-				<button
-					className={classes.sidebarToggle}
-					onClick={onOpenChatSidebar}
-					aria-label='Open channels sidebar'
-				>
+				<button className={classes.sidebarToggle} onClick={onOpenChatSidebar} aria-label='Open channels sidebar'>
 					<SidebarIcon />
 				</button>
 
 				{activeChannel && (
-					<button className={classes.channelTrigger} onClick={() => setIsChannelInfoOpened(true)}>
+					<button className={classes.channelTrigger} onClick={() => !isDM && setIsChannelInfoOpened(true)}>
 						<ChannelIcon />
-						<span>{activeChannel.name}</span>
-						<ArrowBottomIcon />
+						<span>{displayName ?? activeChannel.name}</span>
+						{!isDM && <ArrowBottomIcon />}
 					</button>
 				)}
 			</header>
 
-			{activeChannel && (
+			{activeChannel && !isDM && (
 				<Modal isVisible={isChannelInfoOpened} onClose={() => setIsChannelInfoOpened(false)}>
 					<ChannelInfoModal
 						channel={activeChannel}

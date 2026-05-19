@@ -1,6 +1,5 @@
-import { ChatMessage } from '@/shared/types/chat'
+import { ChatMessage, TeamMember } from '@/shared/types/chat'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
-import { Models } from 'appwrite'
 import clsx from 'clsx'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -11,7 +10,7 @@ import classes from './message-item.module.scss'
 interface MessageItemProps {
 	isContinuation: boolean
 	message: ChatMessage
-	teammates?: Models.Membership[]
+	teammates?: TeamMember[]
 	currentUserId: string | undefined
 	currentUserName: string | undefined
 	onUpdate: (id: string, content: string) => void

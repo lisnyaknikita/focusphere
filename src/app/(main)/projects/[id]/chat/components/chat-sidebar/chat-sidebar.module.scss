@@ -50,7 +50,6 @@
 
 .channels {
 	margin-bottom: 20px;
-	height: 100%;
 	padding: 10px;
 }
 
@@ -152,4 +151,9 @@
 
 .rotated {
 	transform: rotate(180deg);
+}
+
+.messages {
+	padding: 10px;
+	margin-bottom: 20px;
 }

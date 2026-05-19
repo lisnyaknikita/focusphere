@@ -1,8 +1,7 @@
-import { ChatChannel, ChatMessage } from '@/shared/types/chat'
+import { ChatChannel, ChatMessage, TeamMember } from '@/shared/types/chat'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { formatDividerDate } from '@/shared/utils/format-divider-date/format-divider-date'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
-import { Models } from 'appwrite'
 import { useEffect, useRef, useState } from 'react'
 import classes from './chat-area.module.scss'
 import { Editor, EditorRef } from './components/editor/editor'
@@ -12,7 +11,7 @@ import { MessageItem } from './components/message-item/message-item'
 interface ChatAreaProps {
 	activeChannel: ChatChannel | null
 	messages: ChatMessage[]
-	teammates?: Models.Membership[]
+	teammates?: TeamMember[]
 	onSendMessage: (content: string, replyToMessageId?: string) => void
 	onUpdateMessage: (id: string, content: string) => void
 	onDeleteMessage: (id: string) => void
@@ -77,6 +76,14 @@ export const ChatArea = ({
 		}, 10)
 	}
 
+	const getDisplayName = () => {
+		if (!activeChannel || activeChannel.type !== 'dm') return undefined
+
+		const otherUserId = activeChannel.dmParticipants?.find(id => id !== currentUserId)
+		const otherUser = teammates.find(m => m.userId === otherUserId)
+		return otherUser?.userName ?? 'Direct Message'
+	}
+
 	return (
 		<div className={classes.chatArea}>
 			<Header
@@ -85,6 +92,7 @@ export const ChatArea = ({
 				onDeleteChannel={onDeleteChannel}
 				currentUserId={currentUserId}
 				onOpenChatSidebar={onOpenChatSidebar}
+				displayName={getDisplayName()}
 			/>
 			<main className={classes.main} ref={mainRef}>
 				{!activeChannel ? (
@@ -92,9 +100,11 @@ export const ChatArea = ({
 				) : (
 					<>
 						<div className={classes.chatInfo}>
-							<h5 className={classes.title}>{activeChannel?.name}</h5>
+							<h5 className={classes.title}>{activeChannel.type === 'dm' ? getDisplayName() : activeChannel.name}</h5>
 							<p className={classes.subtitle}>
-								{activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
+								{activeChannel.type === 'dm'
+									? `Direct message with ${getDisplayName()}`
+									: activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
 							</p>
 						</div>
 						<div className={classes.messages}>
@@ -106,9 +116,15 @@ export const ChatArea = ({
 										const currentDate = new Date(message.$createdAt).toDateString()
 										const prevDate = index > 0 ? new Date(messages[index - 1].$createdAt).toDateString() : null
 										const isNewDay = currentDate !== prevDate
-										const isContinuation = !isNewDay && index > 0 && messages[index - 1].senderId === message.senderId && !message.replyToMessageId
+										const isContinuation =
+											!isNewDay &&
+											index > 0 &&
+											messages[index - 1].senderId === message.senderId &&
+											!message.replyToMessageId
 
-										const repliedToMessage = message.replyToMessageId ? messages.find(m => m.$id === message.replyToMessageId) : undefined
+										const repliedToMessage = message.replyToMessageId
+											? messages.find(m => m.$id === message.replyToMessageId)
+											: undefined
 
 										return (
 											<div key={message.$id}>
