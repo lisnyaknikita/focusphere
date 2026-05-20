@@ -1,9 +1,7 @@
 'use client'
 
 import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
-import { useTeamCount } from '@/shared/hooks/projects/use-team-count'
 import { Project } from '@/shared/types/project'
-import { MembersIcon } from '@/shared/ui/icons/projects/members-icon'
 import { ProjectSettingsIcon } from '@/shared/ui/icons/projects/project-settings-icon'
 import { TasksIcon } from '@/shared/ui/icons/projects/tasks-icon'
 import { Modal } from '@/shared/ui/modal/modal'
@@ -11,6 +9,7 @@ import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions
 import { useState } from 'react'
 import classes from './project-info.module.scss'
 import { ProjectSettingsModal } from './project-settings-modal/project-settings-modal'
+import { TeamMembersCounter } from './team-members-counter/team-members-counter'
 
 interface ProjectInfoProps {
 	project: Project
@@ -22,7 +21,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 
 	const { tasks, isLoading } = useKanban(project!)
 
-	const membersCount = useTeamCount(project.teamId, project.type)
+	// const membersCount = useTeamCount(project.teamId, project.type)
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isTooltipOpen,
@@ -42,12 +41,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 					<h3 className={classes.projectTitle}>{project?.title}</h3>
 					<p className={classes.projectSubtitle}>{project?.description}</p>
 					<div className={classes.infoWithIcons}>
-						<div className={classes.members}>
-							<MembersIcon />
-							<span>
-								{membersCount} {membersCount === 1 ? 'team member' : 'team members'}
-							</span>
-						</div>
+						<TeamMembersCounter teamId={project.teamId} projectType={project.type} />
 						<div className={classes.tasks}>
 							<TasksIcon />
 							<span>{isLoading ? '' : `${tasks.length} ${tasks.length > 1 ? 'tasks' : 'task'}`}</span>
