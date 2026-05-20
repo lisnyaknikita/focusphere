@@ -126,6 +126,7 @@ export const ChatSidebar = ({
 								className={clsx(classes.listItem, channel.$id === activeChannelId && 'active')}
 								key={channel.$id}
 								onClick={() => onSelectChannel(channel)}
+								title={channel.name}
 							>
 								<ChannelIcon />
 								<span>{channel.name}</span>

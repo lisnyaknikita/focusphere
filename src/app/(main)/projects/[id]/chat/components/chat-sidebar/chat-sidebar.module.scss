@@ -2,7 +2,7 @@
 	height: 100%;
 	border-right: 0.3px solid var(--btn-border);
 	width: 30%;
-	min-width: 180px;
+	min-width: 200px;
 	max-width: 240px;
 	flex-shrink: 0;
 	transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -128,6 +128,7 @@
 	cursor: pointer;
 	padding: 2px 5px;
 	border-radius: 5px;
+	min-width: 0;
 	transition: background-color 0.2s;
 
 	&:hover {
@@ -146,6 +147,11 @@
 		font-size: 14px;
 		font-weight: 400;
 		color: var(--text);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex-grow: 1;
+		min-width: 0;
 	}
 }
 

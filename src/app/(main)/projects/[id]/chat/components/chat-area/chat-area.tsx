@@ -20,7 +20,7 @@ interface ChatAreaProps {
 	currentUserId: string | undefined
 	currentUserName?: string
 	isLoading: boolean
-	onOpenChatSidebar: () => void
+	onToggleChatSidebar: () => void
 }
 
 export const ChatArea = ({
@@ -35,7 +35,7 @@ export const ChatArea = ({
 	currentUserId,
 	currentUserName,
 	isLoading,
-	onOpenChatSidebar,
+	onToggleChatSidebar,
 }: ChatAreaProps) => {
 	const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 	const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -91,7 +91,7 @@ export const ChatArea = ({
 				onUpdateChannel={onUpdateChannel}
 				onDeleteChannel={onDeleteChannel}
 				currentUserId={currentUserId}
-				onOpenChatSidebar={onOpenChatSidebar}
+				onToggleChatSidebar={onToggleChatSidebar}
 				displayName={getDisplayName()}
 			/>
 			<main className={classes.main} ref={mainRef}>

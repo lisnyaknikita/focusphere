@@ -14,7 +14,7 @@ interface HeaderProps {
 	onUpdateChannel: (id: string, name: string) => Promise<void>
 	onDeleteChannel: (id: string) => Promise<void>
 	currentUserId: string | undefined
-	onOpenChatSidebar: () => void
+	onToggleChatSidebar: () => void
 	displayName?: string
 }
 
@@ -23,7 +23,7 @@ export const Header = ({
 	onUpdateChannel,
 	onDeleteChannel,
 	currentUserId,
-	onOpenChatSidebar,
+	onToggleChatSidebar,
 	displayName,
 }: HeaderProps) => {
 	const [isChannelInfoOpened, setIsChannelInfoOpened] = useState(false)
@@ -33,7 +33,7 @@ export const Header = ({
 	return (
 		<>
 			<header className={classes.header}>
-				<button className={classes.sidebarToggle} onClick={onOpenChatSidebar} aria-label='Open channels sidebar'>
+				<button className={classes.sidebarToggle} onClick={onToggleChatSidebar} aria-label='Open channels sidebar'>
 					<SidebarIcon />
 				</button>
 
