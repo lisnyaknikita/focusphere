@@ -1,9 +1,14 @@
+'use client'
+
 import { useProject } from '@/shared/context/project-context'
+import { useSubtasks } from '@/shared/hooks/projects/kanban-board/use-subtasks'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
+import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { useState } from 'react'
 import { AssigneeSelect } from './components/assignee-select/assignee-select'
 import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
+import { SubtaskTable } from './components/subtask-table/subtask-table'
 import classes from './kanban-task-modal.module.scss'
 
 interface KanbanTaskModalProps {
@@ -15,9 +20,11 @@ interface KanbanTaskModalProps {
 export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalProps) => {
 	const [title, setTitle] = useState(task?.title)
 	const [description, setDescription] = useState(task?.description || '')
+	const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 
 	const { project } = useProject()
+	const { subtasks, addSubtask, updateSubtask, deleteSubtask } = useSubtasks(task.$id)
 
 	if (!task) return null
 
@@ -25,6 +32,13 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 		if (value !== task[field]) {
 			onUpdate(task.$id, { [field]: value })
 		}
+	}
+
+	const handleAddSubtaskSubmit = (e: React.FormEvent) => {
+		e.preventDefault()
+		if (newSubtaskTitle.trim() === '') return
+		addSubtask(newSubtaskTitle.trim())
+		setNewSubtaskTitle('')
 	}
 
 	const handleDeleteConfirm = async () => {
@@ -41,9 +55,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 						value={title}
 						onChange={e => setTitle(e.target.value)}
 						onKeyDown={e => {
-							if (e.key === 'Enter') {
-								e.currentTarget.blur()
-							}
+							if (e.key === 'Enter') e.currentTarget.blur()
 						}}
 						onBlur={() => handleBlur('title', title)}
 					/>
@@ -63,7 +75,38 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 							onBlur={() => handleBlur('description', description)}
 						/>
 					</label>
+
+					<div className={classes.subtasksSection}>
+						<div className={classes.subtasksHeader}>
+							<h5>Subtasks</h5>
+							<form onSubmit={handleAddSubtaskSubmit} className={classes.subtaskForm}>
+								<input
+									type='text'
+									placeholder='Add a subtask...'
+									value={newSubtaskTitle}
+									onChange={e => setNewSubtaskTitle(e.target.value)}
+								/>
+								<button type='submit' aria-label='Add subtask'>
+									<PlusIcon />
+								</button>
+							</form>
+						</div>
+
+						{subtasks.length > 0 ? (
+							<SubtaskTable
+								subtasks={subtasks}
+								project={project}
+								updateSubtask={updateSubtask}
+								deleteSubtask={deleteSubtask}
+							/>
+						) : (
+							<div className={classes.emptySubtasks}>
+								<span>No subtasks created yet. Type above to add one.</span>
+							</div>
+						)}
+					</div>
 				</div>
+
 				<div className={classes.taskDetails}>
 					<div className={classes.detailItem}>
 						<span className={classes.label}>Assignee</span>
@@ -93,6 +136,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 					</button>
 				</div>
 			</div>
+
 			<ConfirmModal
 				isVisible={isDeleteConfirmOpen}
 				onClose={() => setIsDeleteConfirmOpen(false)}

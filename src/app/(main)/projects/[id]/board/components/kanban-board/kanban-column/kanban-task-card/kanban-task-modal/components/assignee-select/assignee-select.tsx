@@ -12,6 +12,7 @@ import {
 	useFloating,
 	useInteractions,
 	useRole,
+	FloatingPortal,
 } from '@floating-ui/react'
 import clsx from 'clsx'
 import { useState } from 'react'
@@ -67,31 +68,33 @@ export const AssigneeSelect = ({
 			</button>
 
 			{isOpen && teamId && (
-				<div ref={refs.setFloating} style={floatingStyles} className={classes.dropdown} {...getFloatingProps()}>
-					<div className={classes.dropdownTitle}>Assign task to</div>
+				<FloatingPortal>
+					<div ref={refs.setFloating} style={floatingStyles} className={classes.dropdown} {...getFloatingProps()}>
+						<div className={classes.dropdownTitle}>Assign task to</div>
 
-					{isLoading ? (
-						<div className={classes.loaderWrapper}>
-							<BeatLoader color='#aaa' size={6} />
-						</div>
-					) : (
-						<ul className={classes.membersList}>
-							{teammates.map(member => (
-								<li
-									key={member.$id}
-									className={classes.memberOption}
-									onClick={() => handleSelect(member.userId, member.userName)}
-								>
-									<OwnerAvatar userId={member.userId} size={28} />
-									<div className={classes.memberText}>
-										<span className={classes.name}>{member.userName}</span>
-										{member.userEmail && <span className={classes.email}>{member.userEmail}</span>}
-									</div>
-								</li>
-							))}
-						</ul>
-					)}
-				</div>
+						{isLoading ? (
+							<div className={classes.loaderWrapper}>
+								<BeatLoader color='#aaa' size={6} />
+							</div>
+						) : (
+							<ul className={classes.membersList}>
+								{teammates.map(member => (
+									<li
+										key={member.$id}
+										className={classes.memberOption}
+										onClick={() => handleSelect(member.userId, member.userName)}
+									>
+										<OwnerAvatar userId={member.userId} size={28} />
+										<div className={classes.memberText}>
+											<span className={classes.name}>{member.userName}</span>
+											{member.userEmail && <span className={classes.email}>{member.userEmail}</span>}
+										</div>
+									</li>
+								))}
+							</ul>
+						)}
+					</div>
+				</FloatingPortal>
 			)}
 		</div>
 	)

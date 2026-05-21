@@ -13,14 +13,9 @@
 	font-family: inherit;
 	padding: 5px 0;
 	border-bottom: 1px solid transparent;
-	transition: background-color, border 0.2s;
 
 	img {
 		border-radius: 5px;
-	}
-
-	&:hover:not(.disabled) {
-		border-bottom: 1px solid var(--btn-border);
 	}
 
 	&.disabled {
