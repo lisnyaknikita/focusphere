@@ -68,18 +68,6 @@
 	display: inline-block;
 	margin-bottom: 20px;
 
-	> .assignee {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: 14px;
-		margin-top: 5px;
-
-		img {
-			border-radius: 5px;
-		}
-	}
-
 	> .prioritySelect {
 		width: 100%;
 		padding: 5px;

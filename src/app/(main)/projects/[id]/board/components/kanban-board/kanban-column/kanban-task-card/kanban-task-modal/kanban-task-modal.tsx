@@ -1,8 +1,8 @@
-import { getUserAvatar } from '@/lib/appwrite'
+import { useProject } from '@/shared/context/project-context'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
-import Image from 'next/image'
 import { useState } from 'react'
+import { AssigneeSelect } from './components/assignee-select/assignee-select'
 import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
 import classes from './kanban-task-modal.module.scss'
 
@@ -16,6 +16,8 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 	const [title, setTitle] = useState(task?.title)
 	const [description, setDescription] = useState(task?.description || '')
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+
+	const { project } = useProject()
 
 	if (!task) return null
 
@@ -65,25 +67,21 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 				<div className={classes.taskDetails}>
 					<div className={classes.detailItem}>
 						<span className={classes.label}>Assignee</span>
-						<div className={classes.assignee}>
-							<Image src={getUserAvatar(task.assigneeName)} alt='avatar' width={24} height={24} />
-							<span>{task.assigneeName}</span>
-						</div>
+						<AssigneeSelect
+							teamId={project?.teamId}
+							currentAssigneeId={task.assigneeId}
+							currentAssigneeName={task.assigneeName}
+							onAssigneeChange={(newUserId, newUserName) => {
+								onUpdate(task.$id, {
+									assigneeId: newUserId,
+									assigneeName: newUserName,
+								})
+							}}
+						/>
 					</div>
 
 					<div className={classes.detailItem}>
 						<span className={classes.label}>Priority</span>
-						{/* <select
-							className={classes.prioritySelect}
-							value={task.priority || 'medium'}
-							onChange={e => onUpdate(task.$id, { priority: e.target.value as TaskPriority })}
-						>
-							{PRIORITIES.map(p => (
-								<option key={p} value={p}>
-									{p.charAt(0).toUpperCase() + p.slice(1)}
-								</option>
-							))}
-						</select> */}
 						<PriorityDropdown
 							value={task.priority || 'medium'}
 							onChange={newPriority => onUpdate(task.$id, { priority: newPriority })}

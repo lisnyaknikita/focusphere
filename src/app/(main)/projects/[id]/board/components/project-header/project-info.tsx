@@ -21,8 +21,6 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 
 	const { tasks, isLoading } = useKanban(project!)
 
-	// const membersCount = useTeamCount(project.teamId, project.type)
-
 	const { refs, floatingStyles, context } = useFloating({
 		open: isTooltipOpen,
 		onOpenChange: setIsTooltipOpen,

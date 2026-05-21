@@ -69,6 +69,7 @@ export const useKanban = (project: Project) => {
 				status,
 				priority: 'medium',
 				projectId: project.$id,
+				assigneeId: user?.$id || '',
 				assigneeName: user?.name || 'Unknown user',
 				position: newPosition,
 			}

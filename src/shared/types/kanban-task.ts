@@ -10,6 +10,7 @@ export interface KanbanTask extends Models.Document {
 	priority: TaskPriority
 	projectId: string
 	assigneeName: string
+	assigneeId?: string
 	position: number
 }
 
@@ -20,5 +21,6 @@ export interface CreateKanbanTaskPayload {
 	priority: TaskPriority
 	projectId: string
 	assigneeName: string
+	assigneeId?: string
 	position: number
 }
