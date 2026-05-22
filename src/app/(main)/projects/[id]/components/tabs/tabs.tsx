@@ -14,6 +14,7 @@ export const ProjectTabs = ({
 	const pathname = usePathname()
 
 	const tabs = [
+		{ key: 'backlog', label: 'Backlog' },
 		{ key: 'board', label: 'Board' },
 		projectType === 'team' && { key: 'chat', label: 'Chat' },
 		{ key: 'notes', label: 'Notes' },

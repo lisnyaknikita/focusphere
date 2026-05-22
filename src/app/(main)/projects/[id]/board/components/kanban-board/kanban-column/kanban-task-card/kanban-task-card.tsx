@@ -3,6 +3,7 @@
 import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
 import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
 import { Modal } from '@/shared/ui/modal/modal'
+import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
@@ -50,7 +51,24 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 			>
 				<div className={classes.taskContent}>
 					<h4 className={classes.taskTitle}>{task.title}</h4>
-					<p className={classes.taskDescription}>{task.description}</p>
+					{task.labels && task.labels.length > 0 && (
+						<ul className={classes.taskLabels}>
+							{task.labels.map(label => {
+								const color = getLabelColor(label)
+								return (
+									<li
+										key={label}
+										className={classes.labelTag}
+										style={{
+											borderColor: color,
+										}}
+									>
+										{label}
+									</li>
+								)
+							})}
+						</ul>
+					)}
 					<footer className={classes.taskCardFooter}>
 						<div className={classes.taskAssignee}>
 							<OwnerAvatar userId={task.assigneeId || ''} size={20} />

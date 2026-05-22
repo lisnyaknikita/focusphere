@@ -5,6 +5,7 @@ import { useSubtasks } from '@/shared/hooks/projects/kanban-board/use-subtasks'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
+import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
 import { useState } from 'react'
 import { AssigneeSelect } from './components/assignee-select/assignee-select'
 import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
@@ -21,6 +22,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 	const [title, setTitle] = useState(task?.title)
 	const [description, setDescription] = useState(task?.description || '')
 	const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
+	const [newLabelInput, setNewLabelInput] = useState('')
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 
 	const { project } = useProject()
@@ -39,6 +41,27 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 		if (newSubtaskTitle.trim() === '') return
 		addSubtask(newSubtaskTitle.trim())
 		setNewSubtaskTitle('')
+	}
+
+	const handleLabelKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter' || e.key === ',') {
+			e.preventDefault()
+			const val = newLabelInput.trim().replace(/,/g, '')
+			if (val) {
+				const currentLabels = task.labels || []
+				if (!currentLabels.includes(val)) {
+					const updatedLabels = [...currentLabels, val]
+					onUpdate(task.$id, { labels: updatedLabels as string[] })
+				}
+			}
+			setNewLabelInput('')
+		}
+	}
+
+	const handleRemoveLabel = (labelToRemove: string) => {
+		const currentLabels = task.labels || []
+		const updatedLabels = currentLabels.filter(l => l !== labelToRemove)
+		onUpdate(task.$id, { labels: updatedLabels as string[] })
 	}
 
 	const handleDeleteConfirm = async () => {
@@ -129,6 +152,50 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 							value={task.priority || 'medium'}
 							onChange={newPriority => onUpdate(task.$id, { priority: newPriority })}
 						/>
+					</div>
+
+					<div className={classes.detailItem}>
+						<span className={classes.label}>Labels</span>
+						<div className={classes.labelsEditor}>
+							{(!task.labels || task.labels.length === 0) && (
+								<span className={classes.emptyLabelsText}>No labels yet</span>
+							)}
+							{task.labels && task.labels.length > 0 && (
+								<div className={classes.labelsList}>
+									{(task.labels || []).map(label => {
+										const color = getLabelColor(label)
+										return (
+											<span
+												key={label}
+												className={classes.modalLabelTag}
+												style={{
+													borderColor: color,
+												}}
+											>
+												{label}
+												<button
+													type='button'
+													onClick={() => handleRemoveLabel(label)}
+													className={classes.removeLabelBtn}
+													title='Remove label'
+												>
+													&times;
+												</button>
+											</span>
+										)
+									})}
+								</div>
+							)}
+
+							<input
+								type='text'
+								placeholder='Add label...'
+								value={newLabelInput}
+								onChange={e => setNewLabelInput(e.target.value)}
+								onKeyDown={handleLabelKeyDown}
+								className={classes.labelInput}
+							/>
+						</div>
 					</div>
 
 					<button className={classes.deleteButton} onClick={() => setIsDeleteConfirmOpen(true)}>
