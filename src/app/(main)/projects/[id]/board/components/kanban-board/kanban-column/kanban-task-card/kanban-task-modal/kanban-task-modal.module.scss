@@ -86,8 +86,35 @@
 	}
 }
 
-.deleteButton {
+.modalActions {
 	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+}
+
+.backlogButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text);
+	border: 0.3px solid var(--btn-border);
+	background-color: transparent;
+	border-radius: 5px;
+	padding: 3px 6px;
+	font-size: 14px;
+	font-weight: 400;
+	font-family: inherit;
+	transition: background-color 0.2s;
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
+
+.deleteButton {
 	display: flex;
 	align-items: center;
 	justify-content: center;

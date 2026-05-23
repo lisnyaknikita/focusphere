@@ -85,11 +85,13 @@ export const useKanban = (project: Project) => {
 
 	const moveTask = async (taskId: string, newStatus: TaskStatus) => {
 		const previousTasks = [...tasks]
+		const targetTasks = tasks.filter(t => t.status === newStatus)
+		const newPosition = targetTasks.length > 0 ? Math.max(...targetTasks.map(t => t.position || 0)) + 1 : 0
 
-		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, status: newStatus } : t)))
+		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, status: newStatus, position: newPosition } : t)))
 
 		try {
-			await updateKanbanTask(taskId, { status: newStatus })
+			await updateKanbanTask(taskId, { status: newStatus, position: newPosition })
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to move task:', error)

@@ -1,0 +1,169 @@
+.row {
+	display: grid;
+	grid-template-columns: 2.5fr 1.5fr 1fr 120px;
+	align-items: center;
+	padding: 14px 18px;
+	border-bottom: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
+	transition: background-color 0.2s;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
+
+		.moveToTodoBtn {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		.deleteTaskBtn {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 768px) {
+		min-width: 540px;
+	}
+}
+
+.colTask {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	overflow: hidden;
+}
+
+.circleIcon {
+	color: var(--textSecondary);
+	flex-shrink: 0;
+	opacity: 0.6;
+}
+
+.taskTitleText {
+	color: var(--text);
+	font-size: 14px;
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+	padding: 2px 4px;
+	border-radius: 4px;
+	transition: background-color 0.15s;
+	width: 100%;
+	display: inline-block;
+}
+
+.inlineTaskInput {
+	width: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: var(--text);
+	font-size: 14px;
+	font-family: inherit;
+	padding: 2px 4px;
+	margin: 0;
+}
+
+.colTags {
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+}
+
+.labelsList {
+	display: flex;
+	gap: 6px;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.labelTag {
+	font-size: 11px;
+	padding: 2px 8px;
+	border-radius: 4px;
+	border: 1px solid;
+	background-color: transparent;
+	font-weight: 500;
+	text-transform: lowercase;
+}
+
+.emptyValue {
+	color: var(--textSecondary);
+	opacity: 0.5;
+}
+
+.colAdded {
+	display: flex;
+	align-items: center;
+}
+
+.dateText {
+	color: var(--textSecondary);
+	font-size: 13px;
+}
+
+.colAction {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+}
+
+.moveToTodoBtn {
+	background-color: var(--save-button-bg);
+	color: var(--save-button-text);
+	border: none;
+	padding: 6px 12px;
+	border-radius: 6px;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s;
+	opacity: 0;
+	transform: translateX(5px);
+	white-space: nowrap;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--save-button-bg) 85%, var(--primary));
+	}
+
+	&:active {
+		transform: scale(0.97);
+	}
+
+	@media (max-width: 768px) {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.deleteTaskBtn {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 6px;
+	border-radius: 5px;
+	color: var(--textSecondary);
+	opacity: 0;
+	transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+	flex-shrink: 0;
+
+	&:hover {
+		color: #dc2626;
+		background-color: rgba(220, 38, 38, 0.109);
+	}
+
+	@media (max-width: 768px) {
+		opacity: 1;
+	}
+}

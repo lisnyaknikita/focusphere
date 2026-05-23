@@ -1,6 +1,6 @@
 import { Models } from 'appwrite'
 
-export type TaskStatus = 'todo' | 'inprogress' | 'done'
+export type TaskStatus = 'todo' | 'inprogress' | 'done' | 'backlog'
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export interface KanbanTask extends Models.Document {

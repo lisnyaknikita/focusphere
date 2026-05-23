@@ -24,6 +24,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 	const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
 	const [newLabelInput, setNewLabelInput] = useState('')
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+	const [isBacklogConfirmOpen, setIsBacklogConfirmOpen] = useState(false)
 
 	const { project } = useProject()
 	const { subtasks, addSubtask, updateSubtask, deleteSubtask } = useSubtasks(task.$id)
@@ -67,6 +68,11 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 	const handleDeleteConfirm = async () => {
 		await onDelete(task.$id)
 		setIsDeleteConfirmOpen(false)
+	}
+
+	const handleBacklogConfirm = async () => {
+		await onUpdate(task.$id, { status: 'backlog' })
+		setIsBacklogConfirmOpen(false)
 	}
 
 	return (
@@ -198,9 +204,14 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 						</div>
 					</div>
 
-					<button className={classes.deleteButton} onClick={() => setIsDeleteConfirmOpen(true)}>
-						Delete Task
-					</button>
+					<div className={classes.modalActions}>
+						<button type='button' className={classes.backlogButton} onClick={() => setIsBacklogConfirmOpen(true)}>
+							Move to Backlog
+						</button>
+						<button type='button' className={classes.deleteButton} onClick={() => setIsDeleteConfirmOpen(true)}>
+							Delete Task
+						</button>
+					</div>
 				</div>
 			</div>
 
@@ -212,6 +223,17 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 				message={
 					<>
 						Are you sure you want to delete task &quot;<span className='highlight'>{task.title}</span>&quot;?
+					</>
+				}
+			/>
+			<ConfirmModal
+				isVisible={isBacklogConfirmOpen}
+				onClose={() => setIsBacklogConfirmOpen(false)}
+				onConfirm={handleBacklogConfirm}
+				title='Move to Backlog'
+				message={
+					<>
+						Are you sure you want to move task &quot;<span className='highlight'>{task.title}</span>&quot; to backlog?
 					</>
 				}
 			/>
