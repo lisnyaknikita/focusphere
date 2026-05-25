@@ -4,7 +4,7 @@ import {
 	getKanbanTasks,
 	updateKanbanTask,
 } from '@/lib/projects/kanban-board-tasks/tasks'
-import { touchProject } from '@/lib/projects/projects'
+import { touchProject, updateProject } from '@/lib/projects/projects'
 import { Task } from '@/shared/types/kanban'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
@@ -64,11 +64,19 @@ export const useKanban = (project: Project) => {
 			const tasksInColumn = tasks.filter(t => t.status === status)
 			const newPosition = tasksInColumn.length
 
+			const currentCounter = project.taskCounter || 0
+			const newCounter = currentCounter + 1
+
+			const taskCode = `${project.prefix || 'TSK'}-${newCounter}`
+
+			await updateProject(project.$id, { taskCounter: newCounter })
+
 			const payload: CreateKanbanTaskPayload = {
 				title,
 				status,
 				priority: 'medium',
 				projectId: project.$id,
+				taskCode,
 				assigneeId: user?.$id || '',
 				assigneeName: user?.name || 'Unknown user',
 				position: newPosition,
@@ -76,6 +84,9 @@ export const useKanban = (project: Project) => {
 
 			const res = await createKanbanTask(payload)
 			setTasks(prev => [...prev, res as unknown as KanbanTask])
+
+			project.taskCounter = newCounter
+
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to add task:', error)

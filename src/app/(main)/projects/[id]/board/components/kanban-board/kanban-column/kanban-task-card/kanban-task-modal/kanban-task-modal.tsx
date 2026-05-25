@@ -6,6 +6,7 @@ import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { AssigneeSelect } from './components/assignee-select/assignee-select'
 import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
@@ -26,8 +27,9 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 	const [isBacklogConfirmOpen, setIsBacklogConfirmOpen] = useState(false)
 
-	const { project } = useProject()
+	const { project, createNote } = useProject()
 	const { subtasks, addSubtask, updateSubtask, deleteSubtask } = useSubtasks(task.$id)
+	const router = useRouter()
 
 	if (!task) return null
 
@@ -75,10 +77,22 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 		setIsBacklogConfirmOpen(false)
 	}
 
+	const handleCreateNote = async () => {
+		const noteTitle = task.taskCode ? `${task.taskCode}: ${task.title}` : `Note: ${task.title}`
+
+		try {
+			await createNote(noteTitle, task.taskCode)
+			router.push(`/projects/${project?.$id}/notes`)
+		} catch (error) {
+			console.error('Failed to create note from task:', error)
+		}
+	}
+
 	return (
 		<>
 			<div className={classes.modalInner}>
 				<div className={classes.taskContent}>
+					{task.taskCode && <span className={classes.taskCodeBadge}>{task.taskCode}</span>}
 					<input
 						className={classes.titleInput}
 						value={title}
@@ -205,6 +219,9 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 					</div>
 
 					<div className={classes.modalActions}>
+						<button type='button' className={classes.noteButton} onClick={handleCreateNote}>
+							Create Note
+						</button>
 						<button type='button' className={classes.backlogButton} onClick={() => setIsBacklogConfirmOpen(true)}>
 							Move to Backlog
 						</button>

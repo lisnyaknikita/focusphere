@@ -24,6 +24,15 @@ export const TextEditor = () => {
 	})
 
 	useEffect(() => {
+		if (editor) {
+			const timer = setTimeout(() => {
+				editor.focus()
+			}, 150)
+			return () => clearTimeout(timer)
+		}
+	}, [editor])
+
+	useEffect(() => {
 		if (!activeNote || !editor) return
 
 		const unsubscribe = editor.onChange(() => {

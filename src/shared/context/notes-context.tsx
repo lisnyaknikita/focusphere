@@ -9,7 +9,7 @@ interface NotesContextType<T extends BaseNote = BaseNote> {
 	setActiveNote: (note: T | null) => void
 	handleContentChange: (content: string, noteId: string) => void
 	handleTitleChange: (title: string, noteId: string) => void
-	createNote: (hint?: string) => Promise<void>
+	createNote: (hint?: string, linkedTaskCode?: string) => Promise<void>
 	deleteNote: (noteId: string) => Promise<void>
 	isLoading: boolean
 	headerTitle?: string

@@ -12,25 +12,32 @@ import { useUser } from '../../use-user/use-user'
 
 export const useNotes = (project: Project) => {
 	const [notes, setNotes] = useState<ProjectNote[]>([])
-	const [isLoading, setIsLoading] = useState(false)
+	const [isLoading, setIsLoading] = useState(true)
 	const [activeNote, setActiveNote] = useState<ProjectNote | null>(null)
 
-	const { user } = useUser()
+	const { user, loading: isUserLoading } = useUser()
 	const saveTimeoutRef = useRef<Record<string, NodeJS.Timeout>>({})
 
-	const triggerProjectUpdate = () => {
-		touchProject(project.$id).catch(console.error)
-	}
+	const triggerProjectUpdate = useCallback(() => {
+		if (project?.$id) {
+			touchProject(project.$id).catch(console.error)
+		}
+	}, [project?.$id])
 
 	useEffect(() => {
-		if (!project?.$id) return
+		if (!project?.$id || isUserLoading) return
 
 		const fetchNotes = async () => {
 			try {
 				setIsLoading(true)
 				const data = await getProjectNotes(project.$id)
-				setNotes(data)
-				if (data.length > 0) setActiveNote(data[0])
+				const filteredData = data.filter(note => !note.linkedTaskCode || note.userId === user?.$id)
+				setNotes(filteredData)
+				if (filteredData.length > 0) {
+					setActiveNote(filteredData[0])
+				} else {
+					setActiveNote(null)
+				}
 			} catch (error) {
 				console.error(error)
 			} finally {
@@ -39,35 +46,51 @@ export const useNotes = (project: Project) => {
 		}
 
 		fetchNotes()
-	}, [project?.$id])
+	}, [project?.$id, user?.$id, isUserLoading])
 
-	const createNote = async (title: string = 'New Note') => {
-		try {
-			const payload: CreateProjectNotePayload = {
-				title,
-				content: '',
-				projectId: project?.$id,
-				userId: user?.$id || '',
+	const createNote = useCallback(
+		async (title: string = 'New Note', linkedTaskCode?: string) => {
+			try {
+				const payload: CreateProjectNotePayload = {
+					title,
+					content: '',
+					projectId: project?.$id,
+					userId: user?.$id || '',
+					linkedTaskCode,
+				}
+
+				const newNote = await createProjectNote(payload)
+				setNotes(prev => [newNote, ...prev])
+				setActiveNote(newNote)
+				triggerProjectUpdate()
+			} catch (error) {
+				console.error(error)
 			}
+		},
+		[project?.$id, user?.$id, triggerProjectUpdate]
+	)
 
-			const newNote = await createProjectNote(payload)
-			setNotes(prev => [newNote, ...prev])
-			setActiveNote(newNote)
-			triggerProjectUpdate()
-		} catch (error) {
-			console.error(error)
-		}
-	}
-	const deleteNote = async (noteId: string) => {
-		try {
-			await deleteProjectNote(project?.$id, noteId)
-			setNotes(prev => prev.filter(item => item.$id !== noteId))
-			if (activeNote?.$id === noteId) setActiveNote(notes[0] || null)
-			triggerProjectUpdate()
-		} catch (error) {
-			console.error(error)
-		}
-	}
+	const deleteNote = useCallback(
+		async (noteId: string) => {
+			try {
+				await deleteProjectNote(project?.$id, noteId)
+				setNotes(prev => {
+					const filtered = prev.filter(item => item.$id !== noteId)
+					setActiveNote(active => {
+						if (active?.$id === noteId) {
+							return filtered.length > 0 ? filtered[0] : null
+						}
+						return active
+					})
+					return filtered
+				})
+				triggerProjectUpdate()
+			} catch (error) {
+				console.error(error)
+			}
+		},
+		[project?.$id, triggerProjectUpdate]
+	)
 
 	const handleContentChange = useCallback(
 		(content: string, noteId: string) => {

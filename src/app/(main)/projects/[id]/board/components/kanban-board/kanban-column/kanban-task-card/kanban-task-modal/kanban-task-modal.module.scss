@@ -132,6 +132,28 @@
 	}
 }
 
+.noteButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	color: var(--text);
+	border: 0.3px solid var(--btn-border);
+	background-color: transparent;
+	border-radius: 5px;
+	padding: 3px 6px;
+	font-size: 14px;
+	font-weight: 400;
+	font-family: inherit;
+	transition: background-color 0.2s, border-color 0.2s;
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--secondary);
+		border-color: var(--textSecondary);
+	}
+}
+
 .subtasksSection {
 	margin-top: 10px;
 	border-top: 1px solid var(--btn-border);

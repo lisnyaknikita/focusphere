@@ -13,6 +13,7 @@ export interface KanbanTask extends Models.Document {
 	assigneeId?: string
 	position: number
 	labels?: string[]
+	taskCode: string
 }
 
 export interface CreateKanbanTaskPayload {
@@ -25,4 +26,5 @@ export interface CreateKanbanTaskPayload {
 	assigneeId?: string
 	position: number
 	labels?: string[]
+	taskCode: string
 }

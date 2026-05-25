@@ -8,6 +8,8 @@ export interface Project extends Models.Document {
 	teamId?: string
 	color: string
 	isFavorite?: boolean
+	prefix: string
+	taskCounter: number
 }
 
 export interface CreateProjectPayload {
@@ -18,4 +20,6 @@ export interface CreateProjectPayload {
 	teamId?: string
 	color?: string
 	isFavorite?: boolean
+	prefix: string
+	taskCounter: number
 }
