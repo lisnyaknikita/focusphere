@@ -17,6 +17,8 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 40px;
+	position: relative;
+	z-index: 1;
 
 	@media screen and (max-width: 768px) {
 		transform: translate(50px, 8px);
