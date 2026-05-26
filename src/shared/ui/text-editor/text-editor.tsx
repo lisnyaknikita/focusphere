@@ -116,13 +116,6 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		}
 	}, [editor, activeNote?.$id, activeNote?.content, handleContentChange])
 
-	const handleEditorClickForwarding = (e: React.MouseEvent<HTMLDivElement>) => {
-		const target = e.target as HTMLElement
-		if (!target.closest('button') && !target.closest('input') && !target.closest('.bn-toolbar') && editor) {
-			editor.focus()
-		}
-	}
-
 	if (!activeNote) {
 		if (searchQuery && searchQuery.trim() !== '') {
 			return <div className={classes.emptyBySearchEditor} />
@@ -143,7 +136,7 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 	return (
 		<div className={classes.editor}>
 			<div className={classes.scrollContainer}>
-				<div className={classes.contentWrapper} onClick={handleEditorClickForwarding}>
+				<div className={classes.contentWrapper}>
 					<div className={classes.saveStatus}>
 						{isSaving && <span className={classes.saving}>Saving...</span>}
 						{!isSaving && showSaved && <span className={classes.saved}>✓ Saved</span>}
