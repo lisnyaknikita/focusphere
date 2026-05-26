@@ -7,11 +7,20 @@ import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
 import { useCreateBlockNote } from '@blocknote/react'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { EmptyIcon } from '../icons/empty-icon'
 import classes from './text-editor.module.scss'
 
-export const TextEditor = () => {
+export interface TextEditorRef {
+	undo: () => void
+}
+
+interface BlockNoteInternals {
+	_prosemirrorView?: { dom: HTMLElement }
+	editorView?: { dom: HTMLElement }
+}
+
+export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 	const { activeNote, handleContentChange, handleTitleChange, searchQuery } = useNotesContext()
 	const { isDark } = useThemeToggle()
 	const [isSaving, setIsSaving] = useState(false)
@@ -22,6 +31,39 @@ export const TextEditor = () => {
 	const editor = useCreateBlockNote({
 		initialContent: activeNote?.content ? (JSON.parse(activeNote.content) as PartialBlock[]) : undefined,
 	})
+
+	useImperativeHandle(ref, () => ({
+		undo: () => {
+			if (!editor) return
+
+			editor.focus()
+
+			const internals = editor as unknown as BlockNoteInternals
+			const targetDOM =
+				internals._prosemirrorView?.dom || internals.editorView?.dom || document.querySelector('.bn-editor')
+
+			if (targetDOM) {
+				const beforeInputEvent = new InputEvent('beforeinput', {
+					inputType: 'historyUndo',
+					bubbles: true,
+					cancelable: true,
+				})
+				targetDOM.dispatchEvent(beforeInputEvent)
+
+				const undoEvent = new KeyboardEvent('keydown', {
+					key: 'z',
+					code: 'KeyZ',
+					keyCode: 90,
+					which: 90,
+					ctrlKey: true,
+					metaKey: true,
+					bubbles: true,
+					cancelable: true,
+				})
+				targetDOM.dispatchEvent(undoEvent)
+			}
+		},
+	}))
 
 	useEffect(() => {
 		if (editor) {
@@ -74,6 +116,13 @@ export const TextEditor = () => {
 		}
 	}, [editor, activeNote?.$id, activeNote?.content, handleContentChange])
 
+	const handleEditorClickForwarding = (e: React.MouseEvent<HTMLDivElement>) => {
+		const target = e.target as HTMLElement
+		if (!target.closest('button') && !target.closest('input') && !target.closest('.bn-toolbar') && editor) {
+			editor.focus()
+		}
+	}
+
 	if (!activeNote) {
 		if (searchQuery && searchQuery.trim() !== '') {
 			return <div className={classes.emptyBySearchEditor} />
@@ -94,7 +143,7 @@ export const TextEditor = () => {
 	return (
 		<div className={classes.editor}>
 			<div className={classes.scrollContainer}>
-				<div className={classes.contentWrapper}>
+				<div className={classes.contentWrapper} onClick={handleEditorClickForwarding}>
 					<div className={classes.saveStatus}>
 						{isSaving && <span className={classes.saving}>Saving...</span>}
 						{!isSaving && showSaved && <span className={classes.saved}>✓ Saved</span>}
@@ -113,4 +162,6 @@ export const TextEditor = () => {
 			</div>
 		</div>
 	)
-}
+})
+
+TextEditor.displayName = 'TextEditor'
