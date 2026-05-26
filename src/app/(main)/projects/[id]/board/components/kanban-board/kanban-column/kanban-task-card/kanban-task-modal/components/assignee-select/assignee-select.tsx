@@ -5,6 +5,7 @@ import { useEnrichedTeamMembers } from '@/shared/hooks/projects/kanban-board/use
 import {
 	autoUpdate,
 	flip,
+	FloatingPortal,
 	offset,
 	shift,
 	useClick,
@@ -12,7 +13,6 @@ import {
 	useFloating,
 	useInteractions,
 	useRole,
-	FloatingPortal,
 } from '@floating-ui/react'
 import clsx from 'clsx'
 import { useState } from 'react'
