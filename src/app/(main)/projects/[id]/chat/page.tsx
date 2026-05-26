@@ -66,6 +66,7 @@ export default function ChatPage() {
 					activeChannel={chat.activeChannel}
 					messages={chat.messages}
 					teammates={chat.teammates}
+					tasks={chat.tasks}
 					onSendMessage={handleSendMessage}
 					onUpdateMessage={chat.updateMessage}
 					onDeleteMessage={chat.deleteMessage}

@@ -1,6 +1,10 @@
+'use client'
+
 import { ChatMessage } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
+import { renderParsedContent } from '@/shared/utils/parse-message-content/parse-message-content'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
-import { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import classes from './message-content.module.scss'
 
 interface MessageContentProps {
@@ -14,6 +18,7 @@ interface MessageContentProps {
 	setEditValue: Dispatch<SetStateAction<string>>
 	setIsEditing: Dispatch<SetStateAction<boolean>>
 	repliedToMessage?: ChatMessage
+	tasks?: KanbanTask[]
 }
 
 export const MessageContent = ({
@@ -27,7 +32,14 @@ export const MessageContent = ({
 	setEditValue,
 	setIsEditing,
 	repliedToMessage,
+	tasks = [],
 }: MessageContentProps) => {
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
+
 	const handleUpdate = () => {
 		if (editValue.trim() !== '' && editValue !== message.content) {
 			onUpdate(message.$id, editValue)
@@ -36,9 +48,7 @@ export const MessageContent = ({
 	}
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			handleUpdate()
-		}
+		if (e.key === 'Enter') handleUpdate()
 		if (e.key === 'Escape') {
 			setEditValue(message.content)
 			setIsEditing(false)
@@ -59,12 +69,14 @@ export const MessageContent = ({
 					{isEdited && <span className={classes.editedMessage}>(edited)</span>}
 				</div>
 			)}
+
 			{repliedToMessage && (
 				<div className={classes.replyQuote}>
 					<div className={classes.replyQuoteName}>{repliedToMessage.senderName}</div>
 					<div className={classes.replyQuoteText}>{stripHtml(repliedToMessage.content)}</div>
 				</div>
 			)}
+
 			<div className={classes.messageText}>
 				{isEditing ? (
 					<input
@@ -75,8 +87,10 @@ export const MessageContent = ({
 						onKeyDown={handleKeyDown}
 						onBlur={() => setIsEditing(false)}
 					/>
-				) : (
+				) : !isMounted || !tasks || tasks.length === 0 ? (
 					<div dangerouslySetInnerHTML={{ __html: message.content }} />
+				) : (
+					<div>{renderParsedContent(message.content, tasks)}</div>
 				)}
 			</div>
 		</div>

@@ -1,4 +1,5 @@
 import { ChatChannel, ChatMessage, TeamMember } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { formatDividerDate } from '@/shared/utils/format-divider-date/format-divider-date'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
@@ -12,6 +13,7 @@ interface ChatAreaProps {
 	activeChannel: ChatChannel | null
 	messages: ChatMessage[]
 	teammates?: TeamMember[]
+	tasks?: KanbanTask[]
 	onSendMessage: (content: string, replyToMessageId?: string) => void
 	onUpdateMessage: (id: string, content: string) => void
 	onDeleteMessage: (id: string) => void
@@ -27,6 +29,7 @@ export const ChatArea = ({
 	activeChannel,
 	messages,
 	teammates = [],
+	tasks = [],
 	onSendMessage,
 	onUpdateMessage,
 	onDeleteMessage,
@@ -139,6 +142,7 @@ export const ChatArea = ({
 													isContinuation={isContinuation}
 													message={message}
 													teammates={teammates}
+													tasks={tasks}
 													currentUserId={currentUserId}
 													currentUserName={currentUserName}
 													onUpdate={onUpdateMessage}
@@ -176,6 +180,7 @@ export const ChatArea = ({
 							setReplyingTo(null)
 						}}
 						disabled={false}
+						tasks={tasks}
 					/>
 				</div>
 			)}

@@ -1,4 +1,5 @@
 import { ChatMessage, TeamMember } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import clsx from 'clsx'
 import Image from 'next/image'
@@ -11,6 +12,7 @@ interface MessageItemProps {
 	isContinuation: boolean
 	message: ChatMessage
 	teammates?: TeamMember[]
+	tasks?: KanbanTask[]
 	currentUserId: string | undefined
 	currentUserName: string | undefined
 	onUpdate: (id: string, content: string) => void
@@ -23,6 +25,7 @@ export const MessageItem = ({
 	isContinuation,
 	message,
 	teammates = [],
+	tasks = [],
 	currentUserId,
 	currentUserName,
 	onUpdate,
@@ -69,6 +72,7 @@ export const MessageItem = ({
 					setEditValue={setEditValue}
 					setIsEditing={setIsEditing}
 					repliedToMessage={repliedToMessage}
+					tasks={tasks}
 				/>
 				<ActionButtons
 					message={message}

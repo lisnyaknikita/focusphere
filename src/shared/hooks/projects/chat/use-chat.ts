@@ -10,7 +10,9 @@ import {
 	updateChannel,
 	updateMessage,
 } from '@/lib/projects/chat/chat'
+import { getKanbanTasks } from '@/lib/projects/kanban-board-tasks/tasks'
 import { ChatChannel, ChatMessage, CreateChannelPayload, TeamMember } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -22,6 +24,7 @@ export const useChat = (project: Project | null) => {
 	const [activeChannel, setActiveChannel] = useState<ChatChannel | null>(null)
 	const [messages, setMessages] = useState<ChatMessage[]>([])
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false)
+	const [tasks, setTasks] = useState<KanbanTask[]>([])
 
 	const refreshTeammates = useCallback(async () => {
 		if (!project?.teamId) return
@@ -238,14 +241,25 @@ export const useChat = (project: Project | null) => {
 		}
 	}
 
+	const refreshTasks = useCallback(async () => {
+		if (!project?.$id) return
+		try {
+			const res = await getKanbanTasks(project.$id)
+			setTasks(res.rows as unknown as KanbanTask[])
+		} catch (err) {
+			console.error('Failed to fetch tasks in chat:', err)
+		}
+	}, [project?.$id])
+
 	useEffect(() => {
 		if (project?.$id) {
 			refreshChannels()
+			refreshTasks()
 		}
 		if (project?.teamId) {
 			refreshTeammates()
 		}
-	}, [project?.$id, project?.teamId, refreshChannels, refreshTeammates])
+	}, [project?.$id, project?.teamId, refreshChannels, refreshTeammates, refreshTasks])
 
 	useEffect(() => {
 		if (!activeChannel || !project?.$id) return
@@ -301,5 +315,6 @@ export const useChat = (project: Project | null) => {
 		openDM: handleOpenDM,
 		refreshChannels,
 		refreshTeammates,
+		tasks,
 	}
 }
