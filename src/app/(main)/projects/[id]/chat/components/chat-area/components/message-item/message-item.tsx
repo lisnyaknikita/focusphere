@@ -1,6 +1,6 @@
-import { ChatMessage } from '@/shared/types/chat'
+import { ChatMessage, TeamMember } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
-import { Models } from 'appwrite'
 import clsx from 'clsx'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -11,21 +11,27 @@ import classes from './message-item.module.scss'
 interface MessageItemProps {
 	isContinuation: boolean
 	message: ChatMessage
-	teammates?: Models.Membership[]
+	teammates?: TeamMember[]
+	tasks?: KanbanTask[]
 	currentUserId: string | undefined
-	currentUserName?: string
+	currentUserName: string | undefined
 	onUpdate: (id: string, content: string) => void
 	onDelete: (id: string) => void
+	onReply: (message: ChatMessage) => void
+	repliedToMessage?: ChatMessage
 }
 
 export const MessageItem = ({
 	isContinuation,
 	message,
 	teammates = [],
+	tasks = [],
 	currentUserId,
 	currentUserName,
 	onUpdate,
 	onDelete,
+	onReply,
+	repliedToMessage,
 }: MessageItemProps) => {
 	const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
@@ -65,6 +71,8 @@ export const MessageItem = ({
 					onUpdate={onUpdate}
 					setEditValue={setEditValue}
 					setIsEditing={setIsEditing}
+					repliedToMessage={repliedToMessage}
+					tasks={tasks}
 				/>
 				<ActionButtons
 					message={message}
@@ -73,6 +81,7 @@ export const MessageItem = ({
 					setIsEditing={setIsEditing}
 					setEditValue={setEditValue}
 					setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+					onReply={onReply}
 				/>
 			</div>
 			<ConfirmModal

@@ -1,3 +1,4 @@
+import { getTeamMembersWithNames } from '@/app/actions/get-team-members'
 import { client } from '@/lib/appwrite'
 import {
 	createChannel,
@@ -5,31 +6,31 @@ import {
 	deleteMessage,
 	getChannels,
 	getMessages,
-	getTeamMembers,
 	sendMessage,
 	updateChannel,
 	updateMessage,
 } from '@/lib/projects/chat/chat'
-import { ChatChannel, ChatMessage, CreateChannelPayload } from '@/shared/types/chat'
+import { getKanbanTasks } from '@/lib/projects/kanban-board-tasks/tasks'
+import { ChatChannel, ChatMessage, CreateChannelPayload, TeamMember } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
-import { Models } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 export const useChat = (project: Project | null) => {
-	const [teammates, setTeammates] = useState<Models.Membership[]>([])
+	const [teammates, setTeammates] = useState<TeamMember[]>([])
 	const [channels, setChannels] = useState<ChatChannel[]>([])
+	const [dmChannels, setDmChannels] = useState<ChatChannel[]>([])
 	const [activeChannel, setActiveChannel] = useState<ChatChannel | null>(null)
 	const [messages, setMessages] = useState<ChatMessage[]>([])
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false)
+	const [tasks, setTasks] = useState<KanbanTask[]>([])
 
 	const refreshTeammates = useCallback(async () => {
 		if (!project?.teamId) return
-
 		try {
-			const res = await getTeamMembers(project.teamId)
-			console.log('Teammates loaded:', res.memberships)
-			setTeammates(res.memberships)
+			const members = await getTeamMembersWithNames(project.teamId)
+			setTeammates(members)
 		} catch (err) {
 			console.error('Failed to fetch teammates:', err)
 		}
@@ -41,10 +42,15 @@ export const useChat = (project: Project | null) => {
 		try {
 			const res = await getChannels(project.$id)
 			const docs = res.rows as unknown as ChatChannel[]
-			setChannels(docs)
 
-			if (docs.length > 0 && !activeChannel) {
-				setActiveChannel(docs[0])
+			const publicChannels = docs.filter(ch => ch.type !== 'dm')
+			const dms = docs.filter(ch => ch.type === 'dm')
+
+			setChannels(publicChannels)
+			setDmChannels(dms)
+
+			if (publicChannels.length > 0 && !activeChannel) {
+				setActiveChannel(publicChannels[0])
 			}
 		} catch (err) {
 			console.error('Failed to fetch channels:', err)
@@ -90,7 +96,13 @@ export const useChat = (project: Project | null) => {
 		}
 	}
 
-	const handleSendMessage = async (content: string, userId: string, userName: string, avatar?: string) => {
+	const handleSendMessage = async (
+		content: string,
+		userId: string,
+		userName: string,
+		avatar?: string,
+		replyToMessageId?: string
+	) => {
 		if (!activeChannel || !project) return
 
 		const optimisticId = `temp-${Date.now()}`
@@ -108,6 +120,7 @@ export const useChat = (project: Project | null) => {
 			senderId: userId,
 			senderName: userName,
 			senderAvatar: avatar,
+			replyToMessageId,
 		}
 
 		setMessages(prev => [...prev, optimisticMessage])
@@ -120,6 +133,7 @@ export const useChat = (project: Project | null) => {
 					senderId: userId,
 					senderName: userName,
 					senderAvatar: avatar,
+					replyToMessageId,
 				},
 				project.teamId
 			)
@@ -193,18 +207,64 @@ export const useChat = (project: Project | null) => {
 		}
 	}
 
+	const handleOpenDM = async (currentUserId: string, targetMember: TeamMember) => {
+		if (!project) return
+
+		const existingDM = dmChannels.find(
+			ch =>
+				ch.type === 'dm' &&
+				ch.dmParticipants?.includes(currentUserId) &&
+				ch.dmParticipants?.includes(targetMember.userId)
+		)
+
+		if (existingDM) {
+			setActiveChannel(existingDM)
+			return
+		}
+
+		const payload: CreateChannelPayload = {
+			name: `dm-${currentUserId}-${targetMember.userId}`,
+			projectId: project.$id,
+			type: 'dm',
+			ownerId: currentUserId,
+			teamId: project.teamId,
+			dmParticipants: [currentUserId, targetMember.userId],
+		}
+
+		try {
+			const newChannel = (await createChannel(payload)) as unknown as ChatChannel
+			setDmChannels(prev => [...prev, newChannel])
+			setActiveChannel(newChannel)
+		} catch (err) {
+			console.error('Failed to open DM:', err)
+			toast.error('Failed to open direct message')
+		}
+	}
+
+	const refreshTasks = useCallback(async () => {
+		if (!project?.$id) return
+		try {
+			const res = await getKanbanTasks(project.$id)
+			setTasks(res.rows as unknown as KanbanTask[])
+		} catch (err) {
+			console.error('Failed to fetch tasks in chat:', err)
+		}
+	}, [project?.$id])
+
 	useEffect(() => {
 		if (project?.$id) {
 			refreshChannels()
+			refreshTasks()
 		}
 		if (project?.teamId) {
 			refreshTeammates()
 		}
-	}, [project?.$id, project?.teamId, refreshChannels, refreshTeammates])
+	}, [project?.$id, project?.teamId, refreshChannels, refreshTeammates, refreshTasks])
 
 	useEffect(() => {
 		if (!activeChannel || !project?.$id) return
 
+		setMessages([])
 		refreshMessages(activeChannel.$id)
 
 		const unsubscribe = client.subscribe(
@@ -241,6 +301,7 @@ export const useChat = (project: Project | null) => {
 	return {
 		teammates,
 		channels,
+		dmChannels,
 		activeChannel,
 		setActiveChannel,
 		messages,
@@ -251,7 +312,9 @@ export const useChat = (project: Project | null) => {
 		deleteMessage: handleDeleteMessage,
 		updateChannel: handleUpdateChannel,
 		deleteChannel: handleDeleteChannel,
+		openDM: handleOpenDM,
 		refreshChannels,
 		refreshTeammates,
+		tasks,
 	}
 }

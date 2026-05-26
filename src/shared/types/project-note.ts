@@ -8,6 +8,7 @@ export interface BaseNote extends Models.Document {
 
 export interface ProjectNote extends BaseNote {
 	projectId: string
+	linkedTaskCode?: string
 }
 
 export interface CreateProjectNotePayload {
@@ -15,6 +16,7 @@ export interface CreateProjectNotePayload {
 	content: string
 	projectId: string
 	userId: string
+	linkedTaskCode?: string
 }
 
 export interface CreateGeneralNotePayload {

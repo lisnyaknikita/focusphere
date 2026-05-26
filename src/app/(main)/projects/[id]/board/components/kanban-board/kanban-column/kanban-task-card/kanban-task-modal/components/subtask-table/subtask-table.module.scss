@@ -1,0 +1,121 @@
+.subtasksTable {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--btn-border);
+	border-radius: 6px;
+	background-color: var(--secondaryFull);
+	max-height: 200px;
+	overflow-x: auto;
+}
+
+.tableHeaderRow,
+.tableRow {
+	display: grid;
+	grid-template-columns: 1fr 120px 90px 32px;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 12px;
+}
+
+.tableHeaderRow {
+	background: var(--secondaryFull);
+	border-bottom: 1px solid var(--btn-border);
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--textSecondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	position: sticky;
+	top: 0;
+	z-index: 2;
+}
+
+.tableBody {
+	display: flex;
+	flex-direction: column;
+}
+
+.tableRow {
+	border-bottom: 1px solid var(--btn-border);
+	transition: background-color 0.2s;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		.deleteSubtaskBtn {
+			opacity: 1;
+		}
+	}
+}
+
+.subtaskTitleInput {
+	background: transparent;
+	border: 1px solid transparent;
+	color: var(--text);
+	font-size: 13px;
+	font-family: inherit;
+	width: 100%;
+	padding: 4px 6px;
+	border-radius: 4px;
+	outline: none;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&:focus {
+		background: transparent;
+		border-color: var(--btn-border);
+	}
+}
+
+.colAssignee {
+	> div > button {
+		margin-top: 0;
+	}
+}
+
+.statusSelect {
+	background: var(--secondaryFull);
+	border: 1px solid var(--btn-border);
+	color: var(--text);
+	font-size: 11px;
+	font-weight: 700;
+	padding: 4px 6px;
+	border-radius: 4px;
+	cursor: pointer;
+	outline: none;
+	width: 100%;
+
+	option {
+		background: var(--secondaryFull);
+	}
+}
+
+.colAction {
+	display: flex;
+	justify-content: center;
+}
+
+.deleteSubtaskBtn {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	padding: 4px;
+
+	> svg path {
+		fill: var(--textSecondary);
+		transition: all 0.2s;
+	}
+
+	&:hover {
+		> svg path {
+			fill: #dc2626;
+		}
+	}
+}

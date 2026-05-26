@@ -4,7 +4,7 @@ import {
 	getKanbanTasks,
 	updateKanbanTask,
 } from '@/lib/projects/kanban-board-tasks/tasks'
-import { touchProject } from '@/lib/projects/projects'
+import { touchProject, updateProject } from '@/lib/projects/projects'
 import { Task } from '@/shared/types/kanban'
 import { CreateKanbanTaskPayload, KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
@@ -64,17 +64,29 @@ export const useKanban = (project: Project) => {
 			const tasksInColumn = tasks.filter(t => t.status === status)
 			const newPosition = tasksInColumn.length
 
+			const currentCounter = project.taskCounter || 0
+			const newCounter = currentCounter + 1
+
+			const taskCode = `${project.prefix || 'TSK'}-${newCounter}`
+
+			await updateProject(project.$id, { taskCounter: newCounter })
+
 			const payload: CreateKanbanTaskPayload = {
 				title,
 				status,
 				priority: 'medium',
 				projectId: project.$id,
+				taskCode,
+				assigneeId: user?.$id || '',
 				assigneeName: user?.name || 'Unknown user',
 				position: newPosition,
 			}
 
 			const res = await createKanbanTask(payload)
 			setTasks(prev => [...prev, res as unknown as KanbanTask])
+
+			project.taskCounter = newCounter
+
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to add task:', error)
@@ -84,11 +96,13 @@ export const useKanban = (project: Project) => {
 
 	const moveTask = async (taskId: string, newStatus: TaskStatus) => {
 		const previousTasks = [...tasks]
+		const targetTasks = tasks.filter(t => t.status === newStatus)
+		const newPosition = targetTasks.length > 0 ? Math.max(...targetTasks.map(t => t.position || 0)) + 1 : 0
 
-		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, status: newStatus } : t)))
+		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, status: newStatus, position: newPosition } : t)))
 
 		try {
-			await updateKanbanTask(taskId, { status: newStatus })
+			await updateKanbanTask(taskId, { status: newStatus, position: newPosition })
 			triggerProjectUpdate()
 		} catch (error) {
 			console.error('Failed to move task:', error)

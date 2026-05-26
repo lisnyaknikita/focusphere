@@ -101,3 +101,69 @@
 	color: var(--text);
 	opacity: 0.6;
 }
+
+.editorContainer {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.replyBanner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px;
+	margin: 0 15px -13px 15px;
+	background-color: var(--secondaryFull);
+	border-top: 1px solid var(--btn-border);
+	border-left: 1px solid var(--btn-border);
+	border-right: 1px solid var(--btn-border);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	gap: 10px;
+}
+
+.replyBannerContent {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	overflow: hidden;
+}
+
+.replyBannerName {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text);
+}
+
+.replyBannerText {
+	font-size: 13px;
+	color: var(--text);
+	opacity: 0.8;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.replyBannerClose {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--text);
+	opacity: 0.8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+	border-radius: 4px;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+}

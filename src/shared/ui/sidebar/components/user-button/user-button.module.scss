@@ -8,10 +8,15 @@
 	transition: all 0.2s ease;
 	overflow: hidden;
 
-	.avatarImage {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		width: 100% !important;
+		height: 100% !important;
+		object-fit: cover !important;
+		border-radius: 5px;
 	}
 
 	&:global(.collapsed) {

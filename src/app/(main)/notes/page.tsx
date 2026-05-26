@@ -8,12 +8,13 @@ import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
+import { UndoIcon } from '@/shared/ui/icons/undo-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
-import { TextEditor } from '@/shared/ui/text-editor/text-editor'
+import { TextEditor, TextEditorRef } from '@/shared/ui/text-editor/text-editor'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { NewNoteModal } from './components/header/new-note-modal/new-note-modal'
 import { SearchInput } from './components/header/search-input/search-input'
@@ -22,6 +23,8 @@ import classes from './page.module.scss'
 const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v: boolean) => void }) => {
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 	const [isHydrated, setIsHydrated] = useState(false)
+
+	const editorRef = useRef<TextEditorRef>(null)
 
 	const { isFocusMode, toggleFocusMode } = useFocusMode('generalNotes')
 	const { activeNote, isLoading, deleteNote, notes, searchQuery } = useNotesContext()
@@ -79,7 +82,12 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 								) : (
 									<NotesList storageKey='global-notes-collapsed' />
 								))}
-							<TextEditor key={activeNote?.$id} />
+							<TextEditor key={activeNote?.$id} ref={editorRef} />
+							{activeNote && (
+								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
+									<UndoIcon />
+								</button>
+							)}
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick}>
 									Delete
