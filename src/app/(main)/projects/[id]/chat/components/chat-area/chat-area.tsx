@@ -1,17 +1,20 @@
-import { ChatChannel, ChatMessage } from '@/shared/types/chat'
+import { ChatChannel, ChatMessage, TeamMember } from '@/shared/types/chat'
+import { KanbanTask } from '@/shared/types/kanban-task'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { formatDividerDate } from '@/shared/utils/format-divider-date/format-divider-date'
-import { Models } from 'appwrite'
-import { useEffect, useRef } from 'react'
+import { stripHtml } from '@/shared/utils/strip-html/strip-html'
+import { useEffect, useRef, useState } from 'react'
 import classes from './chat-area.module.scss'
-import { Editor } from './components/editor/editor'
+import { Editor, EditorRef } from './components/editor/editor'
 import { Header } from './components/header/header'
 import { MessageItem } from './components/message-item/message-item'
 
 interface ChatAreaProps {
 	activeChannel: ChatChannel | null
 	messages: ChatMessage[]
-	teammates?: Models.Membership[]
-	onSendMessage: (content: string) => void
+	teammates?: TeamMember[]
+	tasks?: KanbanTask[]
+	onSendMessage: (content: string, replyToMessageId?: string) => void
 	onUpdateMessage: (id: string, content: string) => void
 	onDeleteMessage: (id: string) => void
 	onUpdateChannel: (id: string, name: string) => Promise<void>
@@ -19,13 +22,14 @@ interface ChatAreaProps {
 	currentUserId: string | undefined
 	currentUserName?: string
 	isLoading: boolean
-	onOpenChatSidebar: () => void
+	onToggleChatSidebar: () => void
 }
 
 export const ChatArea = ({
 	activeChannel,
 	messages,
 	teammates = [],
+	tasks = [],
 	onSendMessage,
 	onUpdateMessage,
 	onDeleteMessage,
@@ -34,9 +38,11 @@ export const ChatArea = ({
 	currentUserId,
 	currentUserName,
 	isLoading,
-	onOpenChatSidebar,
+	onToggleChatSidebar,
 }: ChatAreaProps) => {
+	const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 	const messagesEndRef = useRef<HTMLDivElement>(null)
+	const editorRef = useRef<EditorRef>(null)
 	const hasScrolledRef = useRef<string | null>(null)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
 	const mainRef = useRef<HTMLElement>(null)
@@ -66,6 +72,21 @@ export const ChatArea = ({
 		prevMessagesLengthRef.current = messages.length
 	}, [messages, isLoading, activeChannel?.$id])
 
+	const handleReply = (message: ChatMessage) => {
+		setReplyingTo(message)
+		setTimeout(() => {
+			editorRef.current?.focus()
+		}, 10)
+	}
+
+	const getDisplayName = () => {
+		if (!activeChannel || activeChannel.type !== 'dm') return undefined
+
+		const otherUserId = activeChannel.dmParticipants?.find(id => id !== currentUserId)
+		const otherUser = teammates.find(m => m.userId === otherUserId)
+		return otherUser?.userName ?? 'Direct Message'
+	}
+
 	return (
 		<div className={classes.chatArea}>
 			<Header
@@ -73,7 +94,8 @@ export const ChatArea = ({
 				onUpdateChannel={onUpdateChannel}
 				onDeleteChannel={onDeleteChannel}
 				currentUserId={currentUserId}
-				onOpenChatSidebar={onOpenChatSidebar}
+				onToggleChatSidebar={onToggleChatSidebar}
+				displayName={getDisplayName()}
 			/>
 			<main className={classes.main} ref={mainRef}>
 				{!activeChannel ? (
@@ -81,9 +103,11 @@ export const ChatArea = ({
 				) : (
 					<>
 						<div className={classes.chatInfo}>
-							<h5 className={classes.title}>{activeChannel?.name}</h5>
+							<h5 className={classes.title}>{activeChannel.type === 'dm' ? getDisplayName() : activeChannel.name}</h5>
 							<p className={classes.subtitle}>
-								{activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
+								{activeChannel.type === 'dm'
+									? `Direct message with ${getDisplayName()}`
+									: activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
 							</p>
 						</div>
 						<div className={classes.messages}>
@@ -95,7 +119,15 @@ export const ChatArea = ({
 										const currentDate = new Date(message.$createdAt).toDateString()
 										const prevDate = index > 0 ? new Date(messages[index - 1].$createdAt).toDateString() : null
 										const isNewDay = currentDate !== prevDate
-										const isContinuation = !isNewDay && index > 0 && messages[index - 1].senderId === message.senderId
+										const isContinuation =
+											!isNewDay &&
+											index > 0 &&
+											messages[index - 1].senderId === message.senderId &&
+											!message.replyToMessageId
+
+										const repliedToMessage = message.replyToMessageId
+											? messages.find(m => m.$id === message.replyToMessageId)
+											: undefined
 
 										return (
 											<div key={message.$id}>
@@ -110,10 +142,13 @@ export const ChatArea = ({
 													isContinuation={isContinuation}
 													message={message}
 													teammates={teammates}
+													tasks={tasks}
 													currentUserId={currentUserId}
 													currentUserName={currentUserName}
 													onUpdate={onUpdateMessage}
 													onDelete={onDeleteMessage}
+													onReply={handleReply}
+													repliedToMessage={repliedToMessage}
 												/>
 											</div>
 										)
@@ -125,7 +160,30 @@ export const ChatArea = ({
 					</>
 				)}
 			</main>
-			{activeChannel && <Editor onSend={onSendMessage} disabled={false} />}
+			{activeChannel && (
+				<div className={classes.editorContainer}>
+					{replyingTo && (
+						<div className={classes.replyBanner}>
+							<div className={classes.replyBannerContent}>
+								<span className={classes.replyBannerName}>Replying to {replyingTo.senderName}</span>
+								<span className={classes.replyBannerText}>{stripHtml(replyingTo.content)}</span>
+							</div>
+							<button onClick={() => setReplyingTo(null)} className={classes.replyBannerClose}>
+								<CloseIcon />
+							</button>
+						</div>
+					)}
+					<Editor
+						ref={editorRef}
+						onSend={content => {
+							onSendMessage(content, replyingTo?.$id)
+							setReplyingTo(null)
+						}}
+						disabled={false}
+						tasks={tasks}
+					/>
+				</div>
+			)}
 		</div>
 	)
 }

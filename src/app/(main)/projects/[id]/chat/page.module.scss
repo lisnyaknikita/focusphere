@@ -10,3 +10,20 @@
 	height: 100%;
 	overflow: hidden;
 }
+
+@media screen and (min-width: 631px) {
+	.sidebarWrapper {
+		transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+		width: 200px;
+		opacity: 1;
+		overflow: hidden;
+		display: flex;
+		flex-shrink: 0;
+
+		&.desktopCollapsed {
+			width: 0;
+			opacity: 0;
+			pointer-events: none;
+		}
+	}
+}

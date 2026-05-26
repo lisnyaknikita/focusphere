@@ -1,0 +1,227 @@
+.backlogPage {
+	width: 100%;
+	height: 100%;
+}
+
+.loaderWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+}
+
+.inner {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--secondary);
+	border-radius: 5px;
+	height: 100%;
+	overflow-y: auto;
+	padding: 24px;
+	gap: 20px;
+
+	@media (max-width: 520px) {
+		padding: 16px 12px;
+		gap: 16px;
+	}
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+}
+
+.stats {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.badge {
+	background-color: color-mix(in srgb, var(--text) 10%, transparent);
+	color: var(--text);
+	padding: 4px 10px;
+	border-radius: 6px;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.subtitle {
+	color: var(--textSecondary);
+	font-size: 14px;
+}
+
+.addButton {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	color: var(--text);
+	padding: 6px 14px;
+	border-radius: 6px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s, border-color 0.2s;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--text) 5%, transparent);
+	}
+
+	@media (max-width: 480px) {
+		width: 100%;
+		justify-content: center;
+		padding: 10px;
+	}
+}
+
+.plusIcon {
+	width: 14px;
+	height: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	path {
+		fill: var(--text);
+	}
+}
+
+.banner {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+	border: 1px solid color-mix(in srgb, var(--line) 30%, transparent);
+	padding: 14px 16px;
+	border-radius: 8px;
+	color: var(--textSecondary);
+	font-size: 14px;
+	line-height: 1.5;
+
+	.infoIcon {
+		color: var(--text);
+		flex-shrink: 0;
+		margin-top: 2px;
+	}
+
+	.actionText {
+		color: var(--text);
+		font-weight: 500;
+	}
+
+	@media (max-width: 520px) {
+		padding: 10px 12px;
+		font-size: 13px;
+	}
+}
+
+.table {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid color-mix(in srgb, var(--line) 20%, transparent);
+	border-radius: 8px;
+	background-color: var(--primary);
+	overflow-x: auto;
+	width: 100%;
+}
+
+.tableHeader {
+	display: grid;
+	grid-template-columns: 2.5fr 1.5fr 1fr 120px;
+	padding: 12px 18px;
+	border-bottom: 1px solid color-mix(in srgb, var(--line) 20%, transparent);
+	background-color: color-mix(in srgb, var(--secondary) 40%, transparent);
+	color: var(--textSecondary);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+
+	@media (max-width: 768px) {
+		min-width: 540px;
+	}
+}
+
+.tableBody {
+	display: flex;
+	flex-direction: column;
+}
+
+.emptyState {
+	padding: 40px;
+	text-align: center;
+	color: var(--textSecondary);
+	font-size: 14px;
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 2.5fr 1.5fr 1fr 120px;
+	align-items: center;
+	padding: 14px 18px;
+	border-bottom: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	@media (max-width: 768px) {
+		min-width: 540px;
+	}
+}
+
+.colTask {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	overflow: hidden;
+}
+
+.circleIcon {
+	color: var(--textSecondary);
+	flex-shrink: 0;
+	opacity: 0.6;
+}
+
+.inlineTaskInput {
+	width: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: var(--text);
+	font-size: 14px;
+	font-family: inherit;
+	padding: 0;
+	margin: 0;
+
+	&::placeholder {
+		color: var(--textSecondary);
+		opacity: 0.6;
+	}
+}
+
+.colTags,
+.colAdded,
+.colAction {
+	display: flex;
+	align-items: center;
+}
+
+.emptyValue {
+	color: var(--textSecondary);
+	opacity: 0.5;
+}
+
+.dateText {
+	color: var(--textSecondary);
+	font-size: 13px;
+}

@@ -1,0 +1,110 @@
+.taskLink {
+	display: inline-block;
+	color: var(--save-button-bg);
+	background: color-mix(in srgb, var(--save-button-bg) 8%, transparent);
+	padding: 1px 6px;
+	border-radius: 4px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.2s, border-color 0.2s;
+	font-size: inherit;
+	vertical-align: baseline;
+	margin: 0 2px;
+
+	&:hover {
+		background: color-mix(in srgb, var(--save-button-bg) 18%, transparent);
+	}
+}
+
+.taskTooltip {
+	background: var(--secondaryFull);
+	color: var(--text);
+	border: 1px solid var(--btn-border);
+	border-radius: 12px;
+	padding: 14px;
+	width: 280px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+	font-family: inherit;
+	z-index: 1000;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	backdrop-filter: blur(12px);
+}
+
+.tooltipHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+}
+
+.taskCode {
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--textSecondary);
+	letter-spacing: 0.5px;
+}
+
+.statusBadge {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 6px;
+	border-radius: 4px;
+	border: 1px solid transparent;
+	text-transform: capitalize;
+}
+
+.tooltipTitle {
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--text);
+	margin: 0;
+	line-height: 1.4;
+}
+
+.tooltipDescription {
+	font-size: 13px;
+	color: var(--textSecondary);
+	line-height: 1.4;
+	margin: 0;
+	word-break: break-word;
+	display: -webkit-box;
+	line-clamp: 3;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.tooltipFooter {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-top: 1px solid var(--btn-border);
+	padding-top: 8px;
+	margin-top: 4px;
+	font-size: 12px;
+}
+
+.assignee {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--textSecondary);
+	font-weight: 500;
+}
+
+.priorityBadge {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: var(--textSecondary);
+	font-size: 11px;
+	font-weight: 500;
+}
+
+.priorityDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}

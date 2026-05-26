@@ -1,44 +1,46 @@
 'use client'
 
-import { ChatChannel } from '@/shared/types/chat'
+import { ChatChannel, TeamMember } from '@/shared/types/chat'
 import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { ChannelIcon } from '@/shared/ui/icons/projects/channel-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
-import { Models } from 'appwrite'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import classes from './chat-sidebar.module.scss'
 import { CreateChannelModal } from './components/create-channel-modal/create-channel-modal'
 
 interface ChatSidebarProps {
-	teammates: Models.Membership[]
+	teammates: TeamMember[]
 	channels: ChatChannel[]
+	dmChannels: ChatChannel[]
 	activeChannelId?: string
 	onSelectChannel: (channel: ChatChannel) => void
 	onCreateChannel: (name: string, ownerId: string) => Promise<void>
 	currentUserId?: string
 	isMobileOpen: boolean
 	onMobileClose: () => void
+	onOpenDM: (currentUserId: string, targetMember: TeamMember) => void
 }
 
 export const ChatSidebar = ({
 	teammates,
 	channels,
+	dmChannels,
 	activeChannelId,
 	onSelectChannel,
 	onCreateChannel,
 	currentUserId,
 	isMobileOpen,
 	onMobileClose,
+	onOpenDM,
 }: ChatSidebarProps) => {
 	const [isChannelsOpened, setIsChannelsOpened] = useState(true)
-	// const [isMessagesOpened, setIsMessagesOpened] = useState(false)
+	const [isMessagesOpened, setIsMessagesOpened] = useState(true)
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 	const [newChannelName, setNewChannelName] = useState('')
 	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-	console.log(teammates)
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isTooltipOpen,
@@ -124,6 +126,7 @@ export const ChatSidebar = ({
 								className={clsx(classes.listItem, channel.$id === activeChannelId && 'active')}
 								key={channel.$id}
 								onClick={() => onSelectChannel(channel)}
+								title={channel.name}
 							>
 								<ChannelIcon />
 								<span>{channel.name}</span>
@@ -131,26 +134,34 @@ export const ChatSidebar = ({
 						))}
 					</ul>
 				</div>
-				{/* <div className={classes.messages}>
+				<div className={classes.messages}>
 					<div className={classes.trigger} onClick={() => setIsMessagesOpened(prev => !prev)}>
 						<button className={classes.triggerTitle}>
 							<ArrowBottomIcon className={clsx(!isMessagesOpened && 'rotated')} />
 							<span>Direct messages</span>
 						</button>
-						<button className={clsx(classes.createButton)}>
-							<PlusIcon />
-						</button>
 					</div>
-					<ul className={clsx(classes.list, isMessagesOpened && 'opened')}> */}
-				{/* {teammates.map(mate => (
-					<li className={classes.listItem} key={mate.$id}>
-						<Image src={'/avatar.jpg'} alt='avatar' width={20} height={19} />
-						<span>{mate.userName}</span>
-					</li>
-				))} */}
-				{/* <p>Soon...</p>
+					<ul className={clsx(classes.list, isMessagesOpened && 'opened')}>
+						{teammates
+							.filter(m => m.userId !== currentUserId)
+							.map((mate: TeamMember) => {
+								const existingDM = dmChannels.find(
+									ch => ch.dmParticipants?.includes(currentUserId!) && ch.dmParticipants?.includes(mate.userId)
+								)
+								const isActive = existingDM?.$id === activeChannelId
+
+								return (
+									<li
+										className={clsx(classes.listItem, isActive && 'active')}
+										key={mate.$id}
+										onClick={() => onOpenDM(currentUserId!, mate)}
+									>
+										<span>{mate.userName}</span>
+									</li>
+								)
+							})}
 					</ul>
-				</div> */}
+				</div>
 			</div>
 			<Modal isVisible={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
 				<CreateChannelModal

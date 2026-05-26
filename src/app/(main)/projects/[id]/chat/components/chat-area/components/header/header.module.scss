@@ -1,5 +1,5 @@
 .header {
-	padding: 10px 15px;
+	padding: 10px 5px;
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -13,7 +13,7 @@
 }
 
 .sidebarToggle {
-	display: none;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	width: 32px;
@@ -25,10 +25,6 @@
 
 	&:hover {
 		background-color: var(--hover);
-	}
-
-	@media screen and (max-width: 630px) {
-		display: flex;
 	}
 }
 

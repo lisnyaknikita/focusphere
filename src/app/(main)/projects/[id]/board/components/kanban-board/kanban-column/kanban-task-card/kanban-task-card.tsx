@@ -1,11 +1,11 @@
 'use client'
 
-import { getUserAvatar } from '@/lib/appwrite'
+import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
 import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
 import { Modal } from '@/shared/ui/modal/modal'
+import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import Image from 'next/image'
 import { useState } from 'react'
 import classes from './kanban-task-card.module.scss'
 import { KanbanTaskModal } from './kanban-task-modal/kanban-task-modal'
@@ -51,19 +51,36 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 			>
 				<div className={classes.taskContent}>
 					<h4 className={classes.taskTitle}>{task.title}</h4>
-					<p className={classes.taskDescription}>{task.description}</p>
+					{task.labels && task.labels.length > 0 && (
+						<ul className={classes.taskLabels}>
+							{task.labels.map(label => {
+								const color = getLabelColor(label)
+								return (
+									<li
+										key={label}
+										className={classes.labelTag}
+										style={{
+											borderColor: color,
+										}}
+									>
+										{label}
+									</li>
+								)
+							})}
+						</ul>
+					)}
 					<footer className={classes.taskCardFooter}>
 						<div className={classes.taskAssignee}>
-							<Image src={getUserAvatar(task.assigneeName)} alt={task.assigneeName} width={20} height={20} />
+							<OwnerAvatar userId={task.assigneeId || ''} size={20} />
 							<span>{task.assigneeName}</span>
 						</div>
 						<span
 							className={classes.priorityIndicator}
 							style={{ backgroundColor: priorityColors[task.priority || 'medium'] }}
 						/>
-						<div className={classes.taskDate}>
+						<time className={classes.taskDate}>
 							{new Date(task.$createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-						</div>
+						</time>
 					</footer>
 				</div>
 			</li>

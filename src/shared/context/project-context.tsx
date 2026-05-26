@@ -1,7 +1,7 @@
 'use client'
 
 import { getProjectById } from '@/lib/projects/projects'
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
 import { useNotes } from '../hooks/projects/notes/use-notes'
 import { Project } from '../types/project'
 import { BaseNote, ProjectNote } from '../types/project-note'
@@ -14,7 +14,7 @@ interface ProjectContextType {
 	notes: ProjectNote[]
 	activeNote: ProjectNote | null
 	setActiveNote: (note: ProjectNote | null) => void
-	createNote: (title?: string) => Promise<void>
+	createNote: (title?: string, linkedTaskCode?: string) => Promise<void>
 	deleteNote: (noteId: string) => Promise<void>
 	handleContentChange: (content: string, noteId: string) => void
 	handleTitleChange: (title: string, noteId: string) => void
@@ -49,37 +49,62 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 		setProject(prev => (prev ? { ...prev, ...newData } : null))
 	}
 
+	const projectContextValue = useMemo(
+		() => ({
+			project,
+			isLoading,
+			updateProjectState,
+			notes: notesData.notes,
+			activeNote: notesData.activeNote,
+			setActiveNote: notesData.setActiveNote,
+			createNote: notesData.createNote,
+			deleteNote: notesData.deleteNote,
+			handleContentChange: notesData.handleContentChange,
+			handleTitleChange: notesData.handleTitleChange,
+			isNotesLoading: notesData.isLoading,
+		}),
+		[
+			project,
+			isLoading,
+			notesData.notes,
+			notesData.activeNote,
+			notesData.setActiveNote,
+			notesData.createNote,
+			notesData.deleteNote,
+			notesData.handleContentChange,
+			notesData.handleTitleChange,
+			notesData.isLoading,
+		]
+	)
+
+	const notesContextValue = useMemo(
+		() => ({
+			notes: notesData.notes,
+			activeNote: notesData.activeNote,
+			setActiveNote: notesData.setActiveNote as (note: BaseNote | null) => void,
+			handleContentChange: notesData.handleContentChange,
+			handleTitleChange: notesData.handleTitleChange,
+			createNote: notesData.createNote,
+			deleteNote: notesData.deleteNote,
+			isLoading: notesData.isLoading,
+			headerTitle: project?.title,
+		}),
+		[
+			notesData.notes,
+			notesData.activeNote,
+			notesData.setActiveNote,
+			notesData.handleContentChange,
+			notesData.handleTitleChange,
+			notesData.createNote,
+			notesData.deleteNote,
+			notesData.isLoading,
+			project?.title,
+		]
+	)
+
 	return (
-		<ProjectContext.Provider
-			value={{
-				project,
-				isLoading,
-				updateProjectState,
-				notes: notesData.notes,
-				activeNote: notesData.activeNote,
-				setActiveNote: notesData.setActiveNote,
-				createNote: notesData.createNote,
-				deleteNote: notesData.deleteNote,
-				handleContentChange: notesData.handleContentChange,
-				handleTitleChange: notesData.handleTitleChange,
-				isNotesLoading: notesData.isLoading,
-			}}
-		>
-			<NotesContext.Provider
-				value={{
-					notes: notesData.notes,
-					activeNote: notesData.activeNote,
-					setActiveNote: notesData.setActiveNote as (note: BaseNote | null) => void,
-					handleContentChange: notesData.handleContentChange,
-					handleTitleChange: notesData.handleTitleChange,
-					createNote: notesData.createNote,
-					deleteNote: notesData.deleteNote,
-					isLoading: notesData.isLoading,
-					headerTitle: project?.title,
-				}}
-			>
-				{children}
-			</NotesContext.Provider>
+		<ProjectContext.Provider value={projectContextValue}>
+			<NotesContext.Provider value={notesContextValue}>{children}</NotesContext.Provider>
 		</ProjectContext.Provider>
 	)
 }

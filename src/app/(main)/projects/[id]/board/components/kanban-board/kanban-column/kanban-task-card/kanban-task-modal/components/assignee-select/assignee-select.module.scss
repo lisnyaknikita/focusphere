@@ -1,0 +1,97 @@
+.assigneeSelectContainer {
+	position: relative;
+	display: inline-block;
+}
+
+.triggerButton {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 14px;
+	margin-top: 10px;
+	color: var(--text);
+	font-family: inherit;
+	padding: 5px 0;
+	border-bottom: 1px solid transparent;
+
+	img {
+		border-radius: 5px;
+	}
+
+	&.disabled {
+		cursor: default;
+		background: transparent;
+		border-color: transparent;
+		padding: 6px 0;
+	}
+}
+
+.dropdown {
+	background: var(--secondaryFull);
+	border: 1px solid var(--btn-border);
+	border-radius: 8px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+	padding: 8px 0;
+	width: 240px;
+	z-index: 2100;
+}
+
+.dropdownTitle {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--textSecondary);
+	text-transform: uppercase;
+	padding: 4px 12px 8px 12px;
+	border-bottom: 1px solid var(--btn-border);
+	margin-bottom: 4px;
+}
+
+.loaderWrapper {
+	display: flex;
+	justify-content: center;
+	padding: 12px 0;
+}
+
+.membersList {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.memberOption {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 6px 12px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background: var(--hover);
+	}
+}
+
+.memberText {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+
+	.name {
+		font-size: 13px;
+		color: var(--text);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.email {
+		font-size: 11px;
+		font-weight: 400;
+		color: var(--textSecondary);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}

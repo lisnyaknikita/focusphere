@@ -169,6 +169,7 @@
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
+	flex: 1;
 }
 
 .noteTitle {
@@ -192,9 +193,29 @@
 	text-overflow: ellipsis;
 }
 
+.notesItemFooter {
+	margin-top: auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .noteTime {
 	font-size: 12px;
 	font-weight: 400;
 	color: color-mix(in srgb, var(--text) 60%, transparent);
-	margin-top: auto;
+}
+
+.personalBadge {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 600;
+	background-color: var(--secondary);
+	border: 0.3px solid var(--btn-border);
+	color: var(--textSecondary);
+	border-radius: 4px;
+	padding: 1.5px 5px;
+	margin-right: 6px;
+	vertical-align: middle;
+	line-height: 1.1;
 }

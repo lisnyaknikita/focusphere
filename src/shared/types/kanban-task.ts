@@ -1,6 +1,6 @@
 import { Models } from 'appwrite'
 
-export type TaskStatus = 'todo' | 'inprogress' | 'done'
+export type TaskStatus = 'todo' | 'inprogress' | 'done' | 'backlog'
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 export interface KanbanTask extends Models.Document {
@@ -10,7 +10,10 @@ export interface KanbanTask extends Models.Document {
 	priority: TaskPriority
 	projectId: string
 	assigneeName: string
+	assigneeId?: string
 	position: number
+	labels?: string[]
+	taskCode: string
 }
 
 export interface CreateKanbanTaskPayload {
@@ -20,5 +23,8 @@ export interface CreateKanbanTaskPayload {
 	priority: TaskPriority
 	projectId: string
 	assigneeName: string
+	assigneeId?: string
 	position: number
+	labels?: string[]
+	taskCode: string
 }

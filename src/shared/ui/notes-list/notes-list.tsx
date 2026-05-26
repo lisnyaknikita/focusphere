@@ -1,4 +1,5 @@
 import { useNotesContext } from '@/shared/context/notes-context'
+import { ProjectNote } from '@/shared/types/project-note'
 import { getBlockNotePreview } from '@/shared/utils/get-blocknote-preview/get-blocknote-preview'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
@@ -78,7 +79,12 @@ export const NotesList = ({ withTitle, withTags, storageKey }: NotesListProps) =
 												{note.title}
 											</h4>
 											<h6 className={classes.noteSubtitle}>{previewText}</h6>
-											<time className={classes.noteTime}>{time}</time>
+											<footer className={classes.notesItemFooter}>
+												<time className={classes.noteTime}>{time}</time>
+												{(note as ProjectNote).linkedTaskCode && (
+													<span className={classes.personalBadge}>Personal</span>
+												)}
+											</footer>
 										</div>
 									</a>
 								</li>

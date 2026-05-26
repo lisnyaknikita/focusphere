@@ -1,0 +1,115 @@
+.counterTrigger {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-size: 12px;
+	color: var(--text);
+	user-select: none;
+	transition: color 0.2s ease;
+
+	&.isSolo {
+		cursor: default;
+	}
+}
+
+.icon {
+	flex-shrink: 0;
+	color: currentColor;
+}
+
+.popover {
+	background: var(--secondaryFull);
+	border: 1px solid var(--btn-border);
+	border-radius: 8px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+	padding: 12px;
+	width: 260px;
+	z-index: 1000;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(4px);
+	transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.popoverVisible {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.popoverTitle {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--textSecondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin: 0 0 10px 0;
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--btn-border);
+}
+
+.loaderWrapper {
+	display: flex;
+	justify-content: center;
+	padding: 10px 0;
+}
+
+.membersList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 240px;
+	overflow-y: auto;
+}
+
+.memberItem {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 4px;
+	border-radius: 6px;
+}
+
+.avatarWrapper {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+
+	img {
+		border-radius: 5px !important;
+	}
+}
+
+.memberInfo {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+
+	.name {
+		font-size: 13px;
+		font-weight: 500;
+		color: var(--text);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.email {
+		font-size: 11px;
+		color: var(--textSecondary);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
+
+.emptyState {
+	font-size: 13px;
+	color: var(--textSecondary);
+	text-align: center;
+	padding: 8px 0;
+}
