@@ -134,8 +134,8 @@ export const useKanban = (project: Project) => {
 		const deletePromise = deleteKanbanTask(taskId)
 
 		toast.promise(deletePromise, {
-			loading: 'Deleting task...',
-			success: 'Task deleted successfully',
+			loading: 'Deleting task and its subtasks...',
+			success: 'Task and subtasks deleted successfully',
 			error: 'Failed to delete task',
 		})
 

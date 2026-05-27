@@ -1,5 +1,6 @@
 import { CreateKanbanTaskPayload } from '@/shared/types/kanban-task'
 import { Client, ID, Query, TablesDB } from 'appwrite'
+import { deleteKanbanSubtask, getKanbanSubtasks } from './subtasks'
 
 const client = new Client()
 	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
@@ -34,11 +35,22 @@ export const updateKanbanTask = async (taskId: string, data: Partial<CreateKanba
 }
 
 export const deleteKanbanTask = async (taskId: string): Promise<void> => {
-	await tablesDB.deleteRow({
-		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-		tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
-		rowId: taskId,
-	})
+	try {
+		const subtasksRes = await getKanbanSubtasks(taskId)
+
+		const subtaskPromises = subtasksRes.rows.map(subtask => deleteKanbanSubtask(subtask.$id))
+
+		await Promise.all(subtaskPromises)
+
+		await tablesDB.deleteRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
+			rowId: taskId,
+		})
+	} catch (error) {
+		console.error('Failed to perform cascade delete for task:', error)
+		throw error
+	}
 }
 
 export const updateLegacyTaskNames = async (oldName: string, newName: string) => {
