@@ -83,14 +83,14 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 									<NotesList storageKey='global-notes-collapsed' />
 								))}
 							<TextEditor key={activeNote?.$id} ref={editorRef} />
-							{activeNote && (
-								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
-									<UndoIcon />
-								</button>
-							)}
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick}>
 									Delete
+								</button>
+							)}
+							{activeNote && (
+								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
+									<UndoIcon />
 								</button>
 							)}
 							{activeNote && (

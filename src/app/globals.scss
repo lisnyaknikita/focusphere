@@ -222,7 +222,7 @@ ul {
 .ql-snow .ql-picker-options {
 	background-color: var(--secondaryFull) !important;
 
-	> .ql-picker-item {
+	>.ql-picker-item {
 		color: var(--text) !important;
 		transition: color 0.2s;
 
@@ -271,7 +271,8 @@ ul {
 
 .sx__week-grid__date {
 	padding: 0 !important;
-	> div {
+
+	>div {
 		width: 100%;
 		display: flex;
 		justify-content: center;
@@ -314,7 +315,7 @@ ul {
 }
 
 .bn-inline-content {
-	> a {
+	>a {
 		cursor: pointer !important;
 	}
 }
@@ -322,6 +323,8 @@ ul {
 .bn-editor,
 .bn-menu,
 .bn-toolbar,
+.bn-side-menu,
+div:has(> .bn-side-menu),
 [data-radix-popper-content-wrapper],
 [data-floating-ui-portal] {
 	z-index: 11 !important;
