@@ -73,6 +73,11 @@
 .colAssignee {
 	> div > button {
 		margin-top: 0;
+
+		@media screen and (max-width: 768px) {
+			padding: 5px 0 !important;
+			transform: none !important;
+		}
 	}
 }
 
@@ -118,4 +123,43 @@
 			fill: #dc2626;
 		}
 	}
+
+	@media (hover: none) {
+		opacity: 1;
+	}
 }
+
+@media screen and (max-width: 600px) {
+	.tableHeaderRow,
+	.tableRow {
+		grid-template-columns: 1fr 80px 32px;
+	}
+
+	.colAssignee {
+		display: none;
+	}
+
+	.deleteSubtaskBtn {
+		opacity: 1;
+	}
+}
+
+@media screen and (max-width: 430px) {
+	.tableHeaderRow,
+	.tableRow {
+		grid-template-columns: 1fr 70px 28px;
+		padding: 4px 8px;
+		gap: 4px;
+	}
+
+	.subtaskTitleInput {
+		font-size: 12px;
+		padding: 4px 4px;
+	}
+
+	.statusSelect {
+		font-size: 10px;
+		padding: 4px;
+	}
+}
+
