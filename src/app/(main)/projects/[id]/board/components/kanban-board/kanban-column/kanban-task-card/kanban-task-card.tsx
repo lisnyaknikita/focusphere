@@ -85,7 +85,12 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 				</div>
 			</li>
 			<Modal isVisible={isTaskModalVisible} onClose={() => setIsTaskModalVisible(false)}>
-				<KanbanTaskModal task={task} onUpdate={onUpdateTask} onDelete={onDeleteTask} />
+				<KanbanTaskModal
+					task={task}
+					onUpdate={onUpdateTask}
+					onDelete={onDeleteTask}
+					onClose={() => setIsTaskModalVisible(false)}
+				/>
 			</Modal>
 		</>
 	)

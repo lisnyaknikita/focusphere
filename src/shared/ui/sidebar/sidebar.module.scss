@@ -1,4 +1,5 @@
 .sidebar {
+	position: relative;
 	padding: 30px 11px 30px 11px;
 	background-color: var(--secondary);
 	border-radius: 5px;
@@ -7,7 +8,11 @@
 	align-items: center;
 	justify-content: space-between;
 	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.2s ease;
-	z-index: 11;
+	z-index: 12;
+
+	&.focusModeActive {
+		z-index: 0;
+	}
 
 	&:global(.collapsed) {
 		& .navigation {
@@ -24,6 +29,10 @@
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		background-color: var(--secondaryFull);
 		z-index: 100;
+
+		&.focusModeActive {
+			z-index: 0;
+		}
 
 		&.mobileOpen {
 			transform: translateX(0);

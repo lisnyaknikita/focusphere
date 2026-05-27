@@ -73,7 +73,14 @@ export const Sidebar = () => {
 				className={clsx(classes.mobileOverlay, isMobileOpen && classes.mobileOpen)}
 				onClick={() => setIsMobileOpen(false)}
 			/>
-			<div className={clsx(classes.sidebar, isCollapsed && 'collapsed', isMobileOpen && classes.mobileOpen)}>
+			<div
+				className={clsx(
+					classes.sidebar,
+					isCollapsed && 'collapsed',
+					isMobileOpen && classes.mobileOpen,
+					isAnyFocusModeActive && classes.focusModeActive
+				)}
+			>
 				<Logo isCollapsed={isCollapsed} />
 				<nav className={classes.navigation}>
 					<ul className={classes.navigationList}>

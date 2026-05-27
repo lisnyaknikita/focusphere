@@ -1,9 +1,5 @@
 .dropdownContainer {
-	&:global(.open) {
-		> .trigger svg {
-			transform: rotate(180deg);
-		}
-	}
+	position: relative;
 }
 
 .trigger {
@@ -21,13 +17,18 @@
 	font-size: 14px;
 	font-family: inherit;
 	transition: background-color 0.2s;
+	cursor: pointer;
 
 	&:hover {
 		background-color: var(--secondary);
 	}
+}
 
-	> svg {
-		transition: transform 0.2s;
+.arrowIcon {
+	transition: transform 0.2s;
+
+	&.open {
+		transform: rotate(180deg);
 	}
 }
 
@@ -40,9 +41,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
-	position: absolute;
-	top: 34px;
-	opacity: 1;
+	z-index: 2100;
 }
 
 .item {
@@ -55,9 +54,23 @@
 	font-weight: 400;
 	cursor: pointer;
 	color: var(--text);
+	background-color: transparent;
+	border: none;
 	transition: background-color 0.2s ease;
 
 	&:hover {
 		background-color: var(--hover);
 	}
+
+	&.active {
+		background-color: var(--secondary);
+		font-weight: 600;
+	}
 }
+
+@media screen and (max-width: 600px) {
+	.dropdown {
+		width: 200px;
+	}
+}
+

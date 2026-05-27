@@ -5,10 +5,15 @@
 	display: flex;
 	align-items: center;
 	gap: 2px;
+	overflow-x: auto;
+	white-space: nowrap;
+	flex-shrink: 1;
 
-	@media screen and (max-width: 768px) {
-		transform: translate(50px, 8px);
+	&::-webkit-scrollbar {
+		display: none;
 	}
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 .tab {
@@ -19,6 +24,7 @@
 	padding: 5px 14px;
 	font-family: inherit;
 	transition: background-color 0.2s;
+	flex-shrink: 0;
 
 	&:hover {
 		color: var(--text);

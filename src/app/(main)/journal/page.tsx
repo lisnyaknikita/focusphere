@@ -69,14 +69,14 @@ const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened
 						<>
 							{!isFocusMode && <NotesList storageKey='journal-notes-collapsed' />}
 							<TextEditor key={activeNote?.$id || 'empty'} ref={editorRef} />
-							{activeNote && (
-								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
-									<UndoIcon />
-								</button>
-							)}
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>
 									Delete
+								</button>
+							)}
+							{activeNote && (
+								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
+									<UndoIcon />
 								</button>
 							)}
 							{activeNote && (

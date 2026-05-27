@@ -4,13 +4,18 @@ import {
 	getKanbanSubtasks,
 	updateKanbanSubtask,
 } from '@/lib/projects/kanban-board-tasks/subtasks'
+import { useProject } from '@/shared/context/project-context'
 import { KanbanSubtask, SubtaskStatus } from '@/shared/types/kanban-subtask'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { useUser } from '../../use-user/use-user'
 
 export const useSubtasks = (taskId: string) => {
 	const [subtasks, setSubtasks] = useState<KanbanSubtask[]>([])
 	const [isLoading, setIsLoading] = useState(true)
+
+	const { project } = useProject()
+	const { user } = useUser()
 
 	useEffect(() => {
 		const fetchSubtasks = async () => {
@@ -29,12 +34,17 @@ export const useSubtasks = (taskId: string) => {
 
 	const addSubtask = async (title: string) => {
 		try {
+			const isSoloProject = !project?.teamId
+
+			const defaultAssigneeId = isSoloProject && user ? user.$id : ''
+			const defaultAssigneeName = isSoloProject && user ? user.name || user.email.split('@')[0] : 'Unassigned'
+
 			const payload = {
 				taskId,
 				title,
 				status: 'todo' as SubtaskStatus,
-				assigneeId: '',
-				assigneeName: 'Unassigned',
+				assigneeId: defaultAssigneeId,
+				assigneeName: defaultAssigneeName,
 			}
 			const res = await createKanbanSubtask(payload)
 			setSubtasks(prev => [...prev, res as unknown as KanbanSubtask])

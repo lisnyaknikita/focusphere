@@ -4,6 +4,7 @@ import { useProject } from '@/shared/context/project-context'
 import { useSubtasks } from '@/shared/hooks/projects/kanban-board/use-subtasks'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -17,9 +18,10 @@ interface KanbanTaskModalProps {
 	task: KanbanTask
 	onUpdate: (id: string, data: Partial<KanbanTask>) => Promise<void>
 	onDelete: (id: string) => Promise<void>
+	onClose?: () => void
 }
 
-export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalProps) => {
+export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTaskModalProps) => {
 	const [title, setTitle] = useState(task?.title)
 	const [description, setDescription] = useState(task?.description || '')
 	const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
@@ -69,6 +71,11 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete }: KanbanTaskModalPro
 	return (
 		<>
 			<div className={classes.modalInner}>
+				{onClose && (
+					<button className={classes.closeButton} onClick={onClose} aria-label='Close modal' type='button'>
+						<CloseIcon width={20} height={20} />
+					</button>
+				)}
 				<div className={classes.taskContent}>
 					{task.taskCode && <span className={classes.taskCodeBadge}>{task.taskCode}</span>}
 					<input
