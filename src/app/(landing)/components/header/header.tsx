@@ -1,3 +1,8 @@
+'use client'
+
+import { useLandingTheme } from '@/app/(landing)/landing-theme-context'
+import { MoonIcon } from '@/shared/ui/icons/landing/moon-icon'
+import { SunIcon } from '@/shared/ui/icons/landing/sun-icon'
 import { Logo } from '@/shared/ui/sidebar/components/logo/logo'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -12,6 +17,7 @@ const navLinks = [
 
 export const Header = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+	const { theme, toggleTheme } = useLandingTheme()
 
 	return (
 		<header className={classes.header}>
@@ -25,6 +31,18 @@ export const Header = () => {
 					))}
 				</nav>
 				<div className={classes.actions}>
+					<button
+						className={classes.themeToggle}
+						onClick={toggleTheme}
+						aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+					>
+						<span className={clsx(classes.themeIcon, classes.sunIcon, theme === 'light' && classes.themeIconActive)}>
+							<SunIcon />
+						</span>
+						<span className={clsx(classes.themeIcon, classes.moonIcon, theme === 'dark' && classes.themeIconActive)}>
+							<MoonIcon />
+						</span>
+					</button>
 					<Link href='/login' className={classes.loginBtn}>
 						Log in
 					</Link>
@@ -32,13 +50,27 @@ export const Header = () => {
 						Get Started
 					</Link>
 				</div>
-				<button
-					className={classes.mobileMenuBtn}
-					onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-					aria-label='Toggle menu'
-				>
-					<span className={clsx(classes.hamburger, mobileMenuOpen && classes.open)} />
-				</button>
+				<div className={classes.mobileRight}>
+					<button
+						className={classes.themeToggle}
+						onClick={toggleTheme}
+						aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+					>
+						<span className={clsx(classes.themeIcon, classes.sunIcon, theme === 'light' && classes.themeIconActive)}>
+							<SunIcon />
+						</span>
+						<span className={clsx(classes.themeIcon, classes.moonIcon, theme === 'dark' && classes.themeIconActive)}>
+							<MoonIcon />
+						</span>
+					</button>
+					<button
+						className={classes.mobileMenuBtn}
+						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+						aria-label='Toggle menu'
+					>
+						<span className={clsx(classes.hamburger, mobileMenuOpen && classes.open)} />
+					</button>
+				</div>
 			</div>
 			{mobileMenuOpen && (
 				<div className={classes.mobileMenu}>

@@ -1,3 +1,6 @@
+'use client'
+
+import { useLandingTheme } from '@/app/(landing)/landing-theme-context'
 import { ChatIcon } from '@/shared/ui/icons/landing/chat-icon'
 import { LinkIcon } from '@/shared/ui/icons/landing/link-icon'
 import { ProjectNotesIcon } from '@/shared/ui/icons/landing/project-notes-icon'
@@ -29,6 +32,8 @@ const features = [
 ]
 
 export const TeamCollab = () => {
+	const { theme } = useLandingTheme()
+
 	return (
 		<section className={classes.teamCollab}>
 			<div className={classes.container}>
@@ -52,7 +57,7 @@ export const TeamCollab = () => {
 				</div>
 				<div className={classes.visual}>
 					<Image
-						src='/chat.png'
+						src={`/chat-${theme}.png`}
 						alt='Team chat in Focusphere'
 						width={560}
 						height={380}

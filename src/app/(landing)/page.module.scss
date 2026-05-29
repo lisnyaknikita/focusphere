@@ -1,4 +1,10 @@
 .landing {
+	background-color: var(--primary);
+	color: var(--text);
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.light {
 	--primary: #ffffff;
 	--secondary: #f2f2f2e5;
 	--secondaryFull: #f2f2f2;
@@ -19,7 +25,27 @@
 	--btn-border: #3b3a3a;
 	--line: #c7c7c7;
 	--date-bg: #b5b5b5;
+}
 
-	background-color: var(--primary);
-	color: var(--text);
+.dark {
+	--primary: #111111;
+	--secondary: rgba(24, 24, 24, 0.95);
+	--secondaryFull: #181818;
+	--text: #f2f2f2;
+	--textSecondary: rgba(242, 242, 242, 0.58);
+	--logo-icon: #f2f2f2;
+	--hover: #252525;
+	--checkbox-bg: #f2f2f2;
+	--checkbox-icon: #111111;
+	--close-button-bg: #2a2a2a;
+	--close-button-fill: rgba(242, 242, 242, 0.6);
+	--save-button-bg: #f2f2f2;
+	--save-button-text: #1c1b1b;
+	--theme-toggler-bg: #333333;
+	--theme-toggler-circle: #111111;
+	--tab-bg: #555;
+	--tab-bg-active: #2a2a2a;
+	--btn-border: #c7c7c7;
+	--line: #2a2a2a;
+	--date-bg: #333333;
 }

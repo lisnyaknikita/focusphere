@@ -6,6 +6,7 @@
 	z-index: 100;
 	background-color: var(--primary);
 	border-bottom: 1px solid var(--line);
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .container {
@@ -63,6 +64,43 @@
 	}
 }
 
+.themeToggle {
+	position: relative;
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	border: 1px solid var(--line);
+	background: var(--hover);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s, border-color 0.2s;
+	flex-shrink: 0;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
+
+.themeIcon {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--textSecondary);
+	opacity: 0;
+	transform: scale(0.6) rotate(-30deg);
+	transition: opacity 0.25s ease, transform 0.25s ease, color 0.2s;
+	pointer-events: none;
+}
+
+.themeIconActive {
+	opacity: 1;
+	transform: scale(1) rotate(0deg);
+	color: var(--text);
+}
+
 .loginBtn {
 	padding: 10px 20px;
 	border-radius: 8px;
@@ -92,19 +130,25 @@
 	}
 }
 
-.mobileMenuBtn {
+.mobileRight {
 	display: none;
+	align-items: center;
+	gap: 8px;
+
+	@media (max-width: 768px) {
+		display: flex;
+	}
+}
+
+.mobileMenuBtn {
 	width: 32px;
 	height: 32px;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	background: none;
 	border: none;
 	cursor: pointer;
-
-	@media (max-width: 768px) {
-		display: flex;
-	}
 }
 
 .hamburger {
@@ -153,6 +197,7 @@
 	background-color: var(--primary);
 	border-bottom: 1px solid var(--line);
 	padding: 20px 24px;
+	transition: background-color 0.3s ease;
 
 	@media (max-width: 768px) {
 		display: block;
