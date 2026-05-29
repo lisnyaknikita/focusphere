@@ -1,8 +1,13 @@
+'use client'
+
+import { useLandingTheme } from '@/app/(landing)/landing-theme-context'
 import Image from 'next/image'
 import Link from 'next/link'
 import classes from './hero.module.scss'
 
 export const Hero = () => {
+	const { theme } = useLandingTheme()
+
 	return (
 		<section className={classes.hero}>
 			<div className={classes.container}>
@@ -24,7 +29,7 @@ export const Hero = () => {
 				</div>
 				<div className={classes.imageWrapper}>
 					<Image
-						src='/dashboard.png'
+						src={`/dashboard-${theme}.png`}
 						alt='Focusphere dashboard'
 						width={1200}
 						height={677}
