@@ -27,6 +27,19 @@
 	}
 }
 
+.recurrenceBtn {
+	padding: 0 3px;
+	> svg {
+		transition: transform 0.2s;
+	}
+
+	&:hover {
+		> svg {
+			transform: scale(1.1);
+		}
+	}
+}
+
 .editButton {
 	> svg {
 		width: 21px;
@@ -149,5 +162,71 @@
 
 	&:hover {
 		background-color: var(--secondary);
+	}
+}
+
+.recurrenceModalInner {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 320px;
+
+	h5 {
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--text);
+		margin: 0;
+	}
+
+	.recurrenceDesc {
+		font-size: 13px;
+		color: var(--textSecondary);
+		line-height: 1.4;
+		margin: 0 0 8px 0;
+	}
+}
+
+.recurrenceActions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+
+	.confirmBtn {
+		flex-basis: 50%;
+		font-size: 16px;
+		font-weight: 400;
+		color: var(--save-button-text);
+		padding: 4px;
+		background-color: var(--save-button-bg);
+		border-radius: 5px;
+		display: inline-block;
+		font-family: inherit;
+		transition: background-color 0.2s;
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.6;
+		}
+
+		&:not(:disabled):hover {
+			background-color: #aaa;
+		}
+	}
+
+	.cancelBtn {
+		flex-basis: 50%;
+		color: var(--text);
+		background-color: transparent;
+		border: 1px solid var(--btn-border);
+		border-radius: 5px;
+		padding: 4px;
+		font-size: 16px;
+		font-family: inherit;
+		transition: background-color 0.2s;
+
+		&:hover {
+			background-color: var(--secondary);
+		}
 	}
 }

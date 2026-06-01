@@ -1,16 +1,24 @@
 import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/components/color-picker/color-picker'
 import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
 import { Description } from '@/app/(main)/calendar/components/event-modal/components/description/description'
+import { RecurrencePicker } from '@/app/(main)/planner/components/header/recurrence-picker/recurrence-picker'
+import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
 import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { getDateForDayOfWeek } from '@/shared/hooks/planner/use-timeblock-form'
+import { TimeBlockForm } from '@/shared/types/time-block'
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
+import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { DateTimeIcon } from '../icons/calendar/date-time-icon'
 import { DescriptionIcon } from '../icons/calendar/description-icon'
 import { DeleteIcon } from '../icons/delete-icon'
 import { EditIcon } from '../icons/edit-icon'
 import { CopyTimeBlockIcon } from '../icons/planner/copy-timeblock-icon'
+import { RepeatIcon } from '../icons/planner/repeat-icon'
+import { Modal } from '../modal/modal'
 import classes from './event-info-modal.module.scss'
 
 interface EventInfoModalProps {
@@ -36,6 +44,8 @@ export const EventInfoModal = ({
 }: EventInfoModalProps) => {
 	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
 	const [isCopyTooltipOpen, setIsCopyTooltipOpen] = useState(false)
+	const [isRecurrenceModalOpen, setIsRecurrenceModalOpen] = useState(false)
+	const [repeatForm, setRepeatForm] = useState({ repeatDays: [] as number[] })
 
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
@@ -56,6 +66,49 @@ export const EventInfoModal = ({
 		}
 	}
 
+	const handleApplyRecurrence = async () => {
+		if (!actions?.create || repeatForm.repeatDays.length === 0) return
+
+		try {
+			const userId = await getCurrentUserId()
+			const startStr = event.start.toString()
+
+			const startTime = startStr.match(/(\d{2}:\d{2})/)?.[1] || '09:00'
+			const endStr = event.end.toString()
+			const endTime = endStr.match(/(\d{2}:\d{2})/)?.[1] || '10:00'
+			const baseDateMatch = startStr.match(/(\d{4}-\d{2}-\d{2})/)
+			const baseDateString = baseDateMatch ? baseDateMatch[1] : new Date().toISOString().slice(0, 10)
+
+			const createPromises = repeatForm.repeatDays.map(dayIndex => {
+				const targetDate = getDateForDayOfWeek(baseDateString, dayIndex)
+
+				return actions.create!({
+					title: event.title || 'Untitled Block',
+					startDate: `${targetDate}T${startTime}:00.000Z`,
+					endDate: `${targetDate}T${endTime}:00.000Z`,
+					color: event.color || '#D79716',
+					calendarId: getCalendarIdByColor(event.color || '#D79716'),
+					userId,
+				})
+			})
+
+			const batchExecution = Promise.all(createPromises)
+
+			toast.promise(batchExecution, {
+				loading: 'Duplicating time block...',
+				success: 'Time block duplicated successfully',
+				error: 'Failed to duplicate time block',
+			})
+
+			await batchExecution
+			setIsRecurrenceModalOpen(false)
+			setRepeatForm({ repeatDays: [] })
+			onUpdated?.()
+		} catch (error) {
+			console.error('Recurrence replication failed:', error)
+		}
+	}
+
 	const { refs, floatingStyles, context } = useFloating({
 		open: isCopyTooltipOpen,
 		onOpenChange: setIsCopyTooltipOpen,
@@ -66,6 +119,11 @@ export const EventInfoModal = ({
 
 	const hover = useHover(context)
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
+
+	const startStr = event.start.toString()
+	const baseDateMatch = startStr.match(/(\d{4}-\d{2}-\d{2})/)
+	const baseDateString = baseDateMatch ? baseDateMatch[1] : new Date().toISOString().slice(0, 10)
+	const currentEventDayIndex = new Date(baseDateString + 'T00:00:00').getDay()
 
 	if (isEditing) {
 		return (
@@ -143,6 +201,16 @@ export const EventInfoModal = ({
 								)}
 							</div>
 						)}
+						{isTimeBlock && (
+							<button
+								type='button'
+								className={classes.recurrenceBtn}
+								onClick={() => setIsRecurrenceModalOpen(true)}
+								title='Repeat this block'
+							>
+								<RepeatIcon />
+							</button>
+						)}
 						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<EditIcon />
 						</button>
@@ -172,6 +240,33 @@ export const EventInfoModal = ({
 					</div>
 				)}
 			</div>
+			<Modal isVisible={isRecurrenceModalOpen} onClose={() => setIsRecurrenceModalOpen(false)}>
+				<div className={classes.recurrenceModalInner}>
+					<h5>Duplicate Block</h5>
+					<p className={classes.recurrenceDesc}>
+						Select days of the current week to repeat this event with the same time.
+					</p>
+
+					<RecurrencePicker
+						form={repeatForm as TimeBlockForm}
+						setFormField={(key, value) => setRepeatForm(prev => ({ ...prev, [key]: value }))}
+						disabledDay={currentEventDayIndex}
+					/>
+
+					<div className={classes.recurrenceActions}>
+						<button onClick={() => setIsRecurrenceModalOpen(false)} className={classes.cancelBtn}>
+							Cancel
+						</button>
+						<button
+							onClick={handleApplyRecurrence}
+							className={classes.confirmBtn}
+							disabled={repeatForm.repeatDays.length === 0}
+						>
+							Apply
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	)
 }
