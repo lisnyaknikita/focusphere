@@ -4,3 +4,19 @@
 	overflow-x: auto;
 	flex: 1;
 }
+
+.addColumnBtn {
+	display: flex;
+	align-items: center;
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+	align-self: flex-start;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
