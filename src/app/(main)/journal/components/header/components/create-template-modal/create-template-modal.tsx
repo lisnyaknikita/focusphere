@@ -78,6 +78,7 @@ export const CreateTemplateModal = ({ onClose, onTemplateCreated }: CreateTempla
 					value={title}
 					onChange={e => setTitle(e.target.value)}
 					maxLength={35}
+					autoFocus
 				/>
 				<div className={classes.editorWrapper}>
 					<BlockNoteView editor={editor} theme={isDark ? 'dark' : 'light'} sideMenu={true} formattingToolbar={true} />
