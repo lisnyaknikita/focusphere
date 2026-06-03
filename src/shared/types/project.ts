@@ -10,6 +10,7 @@ export interface Project extends Models.Document {
 	isFavorite?: boolean
 	prefix: string
 	taskCounter: number
+	columns?: string[]
 }
 
 export interface CreateProjectPayload {
@@ -22,4 +23,5 @@ export interface CreateProjectPayload {
 	isFavorite?: boolean
 	prefix: string
 	taskCounter: number
+	columns?: string[]
 }

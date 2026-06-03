@@ -2,6 +2,7 @@ import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/compon
 import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
 import { useTimeBlockForm } from '@/shared/hooks/planner/use-timeblock-form'
 import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
+import { RecurrencePicker } from '../recurrence-picker/recurrence-picker'
 import classes from './time-block-modal.module.scss'
 
 interface TimeBlockModalProps {
@@ -25,6 +26,7 @@ export const TimeBlockModal = ({ onClose }: TimeBlockModalProps) => {
 				/>
 				<DateTime form={form} setFormField={setFormField} />
 				<ColorPicker form={form} setFormField={setFormField} />
+				<RecurrencePicker form={form} setFormField={setFormField} />
 				<button className={classes.saveButton}>Save</button>
 			</form>
 			<button className={classes.closeButton} onClick={() => onClose()}>

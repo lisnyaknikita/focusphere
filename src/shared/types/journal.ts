@@ -1,3 +1,4 @@
+import { Models } from 'appwrite'
 import { BaseNote } from './project-note'
 
 export type TemplateKey =
@@ -22,3 +23,15 @@ export interface CreateJournalEntryPayload {
 }
 
 export type UpdateJournalEntryPayload = Partial<Omit<CreateJournalEntryPayload, 'userId' | 'templateKey'>>
+
+export interface CustomJournalTemplate extends Models.Document {
+	title: string
+	content: string
+	userId: string
+}
+
+export interface CreateCustomTemplatePayload {
+	title: string
+	content: string
+	userId: string
+}

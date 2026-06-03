@@ -34,6 +34,25 @@ const createISOStringFromForm = (dateString: string, timeString: string): string
 	return date.toISOString()
 }
 
+export const getDateForDayOfWeek = (baseDateString: string, targetDayIndex: number): string => {
+	const parts = baseDateString.split('-').map(Number)
+	const baseDate = new Date(parts[0], parts[1] - 1, parts[2])
+
+	const rawDay = baseDate.getDay()
+	const currentDayIndex = rawDay === 0 ? 7 : rawDay
+
+	const diff = targetDayIndex - currentDayIndex
+
+	const targetDate = new Date(baseDate)
+	targetDate.setDate(baseDate.getDate() + diff)
+
+	const yyyy = targetDate.getFullYear()
+	const mm = String(targetDate.getMonth() + 1).padStart(2, '0')
+	const dd = String(targetDate.getDate()).padStart(2, '0')
+
+	return `${yyyy}-${mm}-${dd}`
+}
+
 export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
 	const [form, setForm] = useState<TimeBlockForm>(() => {
 		if (initialEvent) {
@@ -46,6 +65,7 @@ export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) 
 				startTime: formatTime(startDate),
 				endTime: formatTime(endDate),
 				color: (initialEvent.color as string) || '#D79716',
+				repeatDays: [],
 			}
 		}
 
@@ -57,6 +77,7 @@ export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) 
 			startTime: start,
 			endTime: end,
 			color: '#D79716',
+			repeatDays: [],
 		}
 	})
 
@@ -66,37 +87,57 @@ export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) 
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
-
-		const startDateISO = createISOStringFromForm(form.date, form.startTime)
-		const endDateISO = createISOStringFromForm(form.date, form.endTime)
 		const userId = await getCurrentUserId()
+		const isRepeating = form.repeatDays && form.repeatDays.length > 0
 
-		const timeBlockData = {
-			title: form.title,
-			startDate: startDateISO,
-			endDate: endDateISO,
-			color: form.color,
-			calendarId: getCalendarIdByColor(form.color),
-			userId,
+		if (!form.title || !form.title.trim()) {
+			toast.error('Title cannot be empty')
+			return
 		}
 
 		try {
-			if (initialEvent?.id) {
-				const updatePromise = updateTimeBlock(String(initialEvent.id), timeBlockData)
-				toast.promise(updatePromise, {
-					loading: 'Updating time block...',
-					success: 'Time block updated',
-					error: 'Failed to update time block',
+			if (initialEvent?.id && !isRepeating) {
+				const startDateISO = createISOStringFromForm(form.date, form.startTime)
+				const endDateISO = createISOStringFromForm(form.date, form.endTime)
+
+				const updatePromise = updateTimeBlock(String(initialEvent.id), {
+					title: form.title.trim(),
+					startDate: startDateISO,
+					endDate: endDateISO,
+					color: form.color,
+					calendarId: getCalendarIdByColor(form.color),
 				})
 				await updatePromise
 			} else {
-				const createPromise = createTimeBlock(timeBlockData)
-				toast.promise(createPromise, {
-					loading: 'Creating time block...',
-					success: 'Time block created',
-					error: 'Failed to create time block',
+				const originalDayIndex = new Date(form.date + 'T00:00:00').getDay()
+
+				const daysToCreate = isRepeating ? [originalDayIndex, ...form.repeatDays!] : [originalDayIndex]
+
+				const createPromises = daysToCreate.map(dayIndex => {
+					const targetDateString = getDateForDayOfWeek(form.date, dayIndex)
+
+					const startDateISO = createISOStringFromForm(targetDateString, form.startTime)
+					const endDateISO = createISOStringFromForm(targetDateString, form.endTime)
+
+					return createTimeBlock({
+						title: form.title.trim(),
+						startDate: startDateISO,
+						endDate: endDateISO,
+						color: form.color,
+						calendarId: getCalendarIdByColor(form.color),
+						userId,
+					})
 				})
-				await createPromise
+
+				const promiseExecution = Promise.all(createPromises)
+
+				toast.promise(promiseExecution, {
+					loading: isRepeating ? 'Creating repeating blocks...' : 'Creating time block...',
+					success: isRepeating ? 'Repeating blocks created' : 'Time block created',
+					error: 'Failed to create time block(s)',
+				})
+
+				await promiseExecution
 			}
 			onSuccess()
 		} catch (error) {

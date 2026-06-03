@@ -35,13 +35,14 @@
 	width: 195px;
 	border: 1px solid var(--btn-border);
 	border-radius: 5px;
-	background-color: var(--secondaryFull);
+	background-color: var(--secondary);
+	backdrop-filter: blur(12px);
 	padding: 5px;
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
 	position: absolute;
-	top: 34px;
+	top: 36px;
 	left: -65px;
 
 	@media screen and (max-width: 768px) {
@@ -49,22 +50,153 @@
 	}
 }
 
+.sectionLabel {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--textSecondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	padding: 6px 8px 2px;
+	pointer-events: none;
+}
+
+.customTemplatesList {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	max-height: 115px;
+	overflow-y: auto;
+	padding-right: 2px;
+
+	&::-webkit-scrollbar {
+		width: 3px;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--btn-border);
+		border-radius: 3px;
+	}
+}
+
 .templateItem {
 	font-family: inherit;
 	text-align: left;
 	width: 100%;
-	border-radius: 5px;
-	padding: 7px;
-	font-size: 16px;
+	border: none;
+	background: transparent;
+	border-radius: 6px;
+	padding: 8px 10px;
+	font-size: 14px;
 	font-weight: 400;
 	cursor: pointer;
 	color: var(--text);
 	display: flex;
 	align-items: center;
-	gap: 5px;
-	transition: background-color 0.2s ease;
+	gap: 8px;
+	transition: all 0.15s ease;
+	flex-shrink: 0;
 
 	&:hover {
 		background-color: var(--hover);
+	}
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	font-size: 14px;
+}
+
+.divider {
+	border: none;
+	height: 1px;
+	background-color: var(--btn-border);
+	margin: 6px 4px;
+	opacity: 0.6;
+}
+
+.createTemplateAction {
+	font-family: inherit;
+	width: 100%;
+	border: none;
+	border-radius: 6px;
+	padding: 8px 10px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	color: var(--save-button-text);
+	background-color: var(--save-button-bg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	transition: all 0.15s ease;
+	margin-top: 4px;
+
+	&:hover {
+		opacity: 0.95;
+		transform: scale(0.98);
+	}
+}
+
+.modalOverride {
+	padding: 0 !important;
+}
+
+.customTemplateRow {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+
+	&:hover {
+		.deleteTemplateBtn {
+			opacity: 0.5;
+			visibility: visible;
+		}
+	}
+}
+
+.customTemplateRow .templateItem {
+	padding-right: 32px;
+}
+
+.templateTitleText {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+	flex: 1;
+}
+
+.deleteTemplateBtn {
+	position: absolute;
+	right: 6px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--textSecondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+	border-radius: 4px;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+
+	&:hover {
+		opacity: 1 !important;
+		color: #dc2626;
+		background-color: var(--hover);
+	}
+
+	> svg {
+		width: 13px;
+		height: 13px;
 	}
 }

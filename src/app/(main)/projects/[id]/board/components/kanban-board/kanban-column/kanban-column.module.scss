@@ -7,6 +7,14 @@
 	display: flex;
 	flex-direction: column;
 	overflow: visible;
+	position: relative;
+
+	&:hover {
+		.deleteColumnBtn {
+			opacity: 0.5;
+			visibility: visible;
+		}
+	}
 
 	@media screen and (max-width: 430px) {
 		width: 270px;
@@ -30,12 +38,63 @@
 	border-radius: 50%;
 	background-color: var(--date-bg);
 	margin-right: 10px;
+	flex-shrink: 0;
 }
 
 .columnTitle {
 	font-size: 20px;
 	font-weight: 400;
 	color: var(--text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+	cursor: pointer;
+	margin-right: 5px;
+}
+
+.columnTitleInput {
+	font-size: 20px;
+	font-weight: 400;
+	font-family: inherit;
+	color: var(--text);
+	border: none;
+	background-color: transparent;
+	width: 100%;
+	min-width: 0;
+	margin-right: 5px;
+}
+
+.headerActions {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	flex-shrink: 0;
+}
+
+.deleteColumnBtn {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--textSecondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+	border-radius: 4px;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, visibility 0.2s ease, color 0.2s;
+
+	&:hover {
+		opacity: 1 !important;
+	}
+
+	> svg {
+		width: 16px;
+		height: 16px;
+	}
 }
 
 .tasksCounter {
