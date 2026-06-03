@@ -3,6 +3,7 @@
 import { getProjectById } from '@/lib/projects/projects'
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
 import { useNotes } from '../hooks/projects/notes/use-notes'
+import { CustomJournalTemplate } from '../types/journal'
 import { Project } from '../types/project'
 import { BaseNote, ProjectNote } from '../types/project-note'
 import { NotesContext } from './notes-context'
@@ -84,7 +85,10 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			setActiveNote: notesData.setActiveNote as (note: BaseNote | null) => void,
 			handleContentChange: notesData.handleContentChange,
 			handleTitleChange: notesData.handleTitleChange,
-			createNote: notesData.createNote,
+			createNote: notesData.createNote as (
+				hint?: string | CustomJournalTemplate,
+				linkedTaskCode?: string
+			) => Promise<void>,
 			deleteNote: notesData.deleteNote,
 			isLoading: notesData.isLoading,
 			headerTitle: project?.title,

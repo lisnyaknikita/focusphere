@@ -1,0 +1,64 @@
+.recurrenceWrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 15px;
+	background-color: var(--secondary);
+	border-radius: 12px;
+	margin-bottom: 20px;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.label {
+	font-size: 13px;
+	color: var(--textSecondary);
+	font-weight: 500;
+}
+
+.everyDayBtn {
+	font-size: 12px;
+	color: var(--text);
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	font-weight: 600;
+	font-family: 'Noto Sans', sans-serif !important;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.daysRow {
+	display: flex;
+	justify-content: space-between;
+}
+
+.dayCircle {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid var(--hover);
+	background: transparent;
+	color: var(--text);
+	font-size: 12px;
+	font-weight: 600;
+	font-family: 'Noto Sans', sans-serif !important;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:not(:disabled):hover {
+		border-color: var(--textSecondary);
+	}
+
+	&.active {
+		background-color: var(--hover);
+		color: var(--text);
+		border-color: var(--text);
+	}
+}

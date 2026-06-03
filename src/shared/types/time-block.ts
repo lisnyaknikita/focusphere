@@ -24,4 +24,5 @@ export interface TimeBlockForm {
 	startTime: string
 	endTime: string
 	color: string
+	repeatDays?: number[]
 }

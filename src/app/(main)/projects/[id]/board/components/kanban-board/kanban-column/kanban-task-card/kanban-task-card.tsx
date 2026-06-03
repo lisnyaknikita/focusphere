@@ -29,6 +29,9 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: task.$id,
 		disabled: isTaskModalVisible,
+		data: {
+			type: 'Task',
+		},
 	})
 
 	const style = {
