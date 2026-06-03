@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react'
 import { useDiaryNotes } from '../hooks/diary/use-diary-notes'
-import { TemplateKey } from '../types/journal'
+import { CustomJournalTemplate, TemplateKey } from '../types/journal'
 import { BaseNote } from '../types/project-note'
 import { NotesContext } from './notes-context'
 
@@ -17,10 +17,13 @@ export const DiaryProvider = ({ userId, children }: { userId: string; children: 
 				setActiveNote: diaryData.setActiveNote as (note: BaseNote | null) => void,
 				handleContentChange: diaryData.handleContentChange,
 				handleTitleChange: diaryData.handleTitleChange,
-				createNote: templateKey => diaryData.createNote(templateKey as TemplateKey),
+				createNote: templateSource => diaryData.createNote(templateSource as TemplateKey | CustomJournalTemplate),
 				deleteNote: diaryData.deleteNote,
 				isLoading: diaryData.isLoading,
 				headerTitle: 'Daily Journal',
+				customTemplates: diaryData.customTemplates,
+				addCustomTemplateState: diaryData.addCustomTemplateState,
+				deleteCustomTemplate: diaryData.deleteCustomTemplateAction,
 			}}
 		>
 			{children}

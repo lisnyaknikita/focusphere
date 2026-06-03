@@ -1,0 +1,149 @@
+.modalInner {
+	width: 680px;
+	max-width: 90vw;
+	border-radius: 10px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background-color: var(--primary);
+}
+
+.modalHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px 24px 10px 24px;
+	border-bottom: 1px solid var(--btn-border);
+
+	h3 {
+		font-size: 18px;
+		font-weight: 500;
+		color: var(--text);
+		font-family: inherit;
+	}
+}
+
+.closeX {
+	background: none;
+	border: none;
+	font-size: 20px;
+	color: var(--textSecondary);
+	cursor: pointer;
+	padding: 3px 6px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+
+	&:hover {
+		color: var(--text);
+		background-color: var(--hover);
+	}
+}
+
+.content {
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	background-color: var(--primary);
+}
+
+.templateTitleInput {
+	width: 100%;
+	font-size: 22px;
+	font-weight: 500;
+	font-family: inherit;
+	color: var(--text);
+	border: none;
+	background-color: transparent;
+	outline: none;
+	border-bottom: 1px solid var(--btn-border);
+	padding: 8px 0;
+	transition: border-bottom-color 0.2s ease;
+
+	&::placeholder {
+		color: var(--textSecondary);
+		opacity: 0.5;
+	}
+
+	&:focus {
+		border-bottom-color: var(--text);
+	}
+}
+
+.editorWrapper {
+	min-height: 320px;
+	max-height: 50vh;
+	overflow-y: auto;
+	border: 1px solid var(--btn-border);
+	border-radius: 6px;
+	background-color: var(--primary);
+	transition: border-color 0.2s ease;
+
+	&:focus-within {
+		border-color: var(--textSecondary);
+	}
+
+	:global {
+		.bn-container {
+			background-color: transparent !important;
+
+			> div {
+				padding: 0 10px 0 35px !important;
+				max-width: 100% !important;
+				min-width: 0 !important;
+				box-sizing: border-box;
+			}
+		}
+
+		.bn-editor {
+			background-color: transparent !important;
+			padding-bottom: 10px !important;
+			min-height: 280px;
+		}
+	}
+}
+
+.modalFooter {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 24px;
+	border-top: 1px solid var(--btn-border);
+}
+
+.saveBtn {
+	flex-basis: 50%;
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 4px;
+	background-color: var(--save-button-bg);
+	border-radius: 5px;
+	display: inline-block;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
+
+.cancelBtn {
+	flex-basis: 50%;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}

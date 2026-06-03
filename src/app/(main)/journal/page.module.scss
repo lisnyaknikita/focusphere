@@ -36,6 +36,7 @@
 	border-radius: 5px;
 	border: 1px solid var(--secondaryFull);
 	position: relative;
+	z-index: 0;
 
 	&:hover {
 		> .deleteButton {
