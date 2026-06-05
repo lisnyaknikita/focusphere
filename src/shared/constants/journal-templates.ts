@@ -32,19 +32,6 @@ export const JOURNAL_TEMPLATES = {
 		] as PartialBlock[],
 	},
 
-	mind_dump: {
-		key: 'mind_dump',
-		title: 'Mind Dump',
-		icon: '🧠',
-		content: [
-			{ type: 'heading', props: { level: 3 }, content: 'Everything on my mind right now' },
-			{ type: 'paragraph', content: 'Write freely. No structure, no filtering.' },
-			{ type: 'paragraph' },
-			{ type: 'paragraph' },
-			{ type: 'paragraph' },
-		] as PartialBlock[],
-	},
-
 	anxiety_journal: {
 		key: 'anxiety_journal',
 		title: 'Anxiety Journal',
@@ -60,6 +47,19 @@ export const JOURNAL_TEMPLATES = {
 			{ type: 'bulletListItem', content: '' },
 			{ type: 'bulletListItem', content: '' },
 			{ type: 'heading', props: { level: 3 }, content: 'One small step I can take' },
+			{ type: 'paragraph' },
+		] as PartialBlock[],
+	},
+
+	mind_dump: {
+		key: 'mind_dump',
+		title: 'Mind Dump',
+		icon: '🧠',
+		content: [
+			{ type: 'heading', props: { level: 3 }, content: 'Everything on my mind right now' },
+			{ type: 'paragraph', content: 'Write freely. No structure, no filtering.' },
+			{ type: 'paragraph' },
+			{ type: 'paragraph' },
 			{ type: 'paragraph' },
 		] as PartialBlock[],
 	},
