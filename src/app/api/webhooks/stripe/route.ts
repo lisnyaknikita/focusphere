@@ -1,16 +1,14 @@
-export const dynamic = 'force-dynamic'
 import { headers } from 'next/headers'
 import { Client, Databases, Query } from 'node-appwrite'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-	apiVersion: '2026-05-27.dahlia',
-})
-
-const DB_ID = process.env.NEXT_PUBLIC_DB_ID!
-const SUB_TABLE_ID = process.env.NEXT_PUBLIC_TABLE_SUBSCRIPTIONS!
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
+	const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+		apiVersion: '2026-05-27.dahlia',
+	})
+
 	const appwriteServerClient = new Client()
 		.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
 		.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
@@ -18,7 +16,11 @@ export async function POST(req: Request) {
 
 	const dbServer = new Databases(appwriteServerClient)
 
+	const DB_ID = process.env.NEXT_PUBLIC_DB_ID!
+	const SUB_TABLE_ID = process.env.NEXT_PUBLIC_TABLE_SUBSCRIPTIONS!
+
 	const body = await req.text()
+
 	const headersList = await headers()
 	const signature = headersList.get('stripe-signature')
 
