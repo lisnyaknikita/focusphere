@@ -1,5 +1,6 @@
 'use client'
 
+import { useBilling } from '@/shared/context/billing-context'
 import { GeneralNotesProvider } from '@/shared/context/general-notes-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
@@ -29,7 +30,17 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 	const { isFocusMode, toggleFocusMode } = useFocusMode('generalNotes')
 	const { activeNote, isLoading, deleteNote, notes, searchQuery } = useNotesContext()
 
+	const { isPro, openPaywall } = useBilling()
+
 	const isSearchEmpty = searchQuery && searchQuery.trim().length > 0 && notes.length === 0
+
+	const handleCreateNoteClick = () => {
+		if (!isPro && notes.length >= 6) {
+			openPaywall('notes_unlimited')
+			return
+		}
+		setIsNewNoteModalOpened(true)
+	}
 
 	const handleDeleteClick = () => {
 		if (activeNote) {
@@ -66,7 +77,7 @@ const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v
 				{!isFocusMode && (
 					<header className={classes.header}>
 						<SearchInput />
-						<CreateButton setIsModalVisible={setIsNewNoteModalOpened} text='New note' />
+						<CreateButton setIsModalVisible={handleCreateNoteClick} text='New note' />
 					</header>
 				)}
 				<main className={classes.notes}>

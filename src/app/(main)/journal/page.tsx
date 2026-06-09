@@ -1,6 +1,8 @@
 'use client'
 
+import { useBilling } from '@/shared/context/billing-context'
 import { DiaryProvider } from '@/shared/context/diary-context'
+import { useNotesContext } from '@/shared/context/notes-context'
 import { useDeleteDiaryNote } from '@/shared/hooks/diary/use-delete-diary-note'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
 import { useUser } from '@/shared/hooks/use-user/use-user'
@@ -29,6 +31,17 @@ const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened
 	const { isFocusMode, toggleFocusMode } = useFocusMode('journal')
 	const { activeNote, isLoading, handleDelete } = useDeleteDiaryNote()
 
+	const { notes } = useNotesContext()
+	const { isPro, openPaywall } = useBilling()
+
+	const handleNewEntryClick = () => {
+		if (!isPro && notes.length >= 6) {
+			openPaywall('journal_unlimited')
+			return
+		}
+		setIsNewEntryModalOpened(true)
+	}
+
 	const handleDeleteClick = () => {
 		setIsConfirmOpen(true)
 	}
@@ -55,7 +68,7 @@ const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened
 			>
 				{!isFocusMode && (
 					<header className={classes.header}>
-						<CreateButton setIsModalVisible={setIsNewEntryModalOpened} text='New Entry' />
+						<CreateButton setIsModalVisible={handleNewEntryClick} text='New Entry' />
 						<TemplatesDropdown />
 					</header>
 				)}

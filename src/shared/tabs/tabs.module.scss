@@ -19,7 +19,14 @@
 	text-transform: capitalize;
 	padding: 5px 14px;
 	font-family: inherit;
-	transition: background-color 0.2s;
+	transition: all 0.2s ease;
+
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	border: none;
+	background: transparent;
 
 	&:hover {
 		color: var(--text);
@@ -28,5 +35,38 @@
 	&.active {
 		background-color: var(--tab-bg-active);
 		color: var(--text);
+	}
+
+	&.lockedTab {
+		color: var(--tab-bg);
+		opacity: 0.8;
+
+		&::after {
+			content: 'PRO';
+			font-size: 9px;
+			font-weight: 800;
+			padding: 2px 4px;
+			border-radius: 3px;
+			text-transform: uppercase;
+			background-color: rgba(215, 151, 22, 0.15);
+			color: #d79716;
+			transition: all 0.2s ease;
+			line-height: 1;
+		}
+
+		&:hover {
+			opacity: 1;
+			color: var(--text);
+
+			&::after {
+				background-color: #d79716;
+				color: var(--text);
+			}
+		}
+
+		&.active::after {
+			background-color: var(--text);
+			color: var(--tab-bg-active);
+		}
 	}
 }

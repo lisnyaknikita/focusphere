@@ -1,0 +1,177 @@
+.paywallContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 5px;
+	color: var(--text);
+	width: 100%;
+	max-width: 480px;
+	max-height: 85dvh;
+	overflow: hidden;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 12px;
+
+	.badge {
+		background-color: rgba(215, 151, 22, 0.15);
+		color: #d79716;
+		font-size: 11px;
+		font-weight: 800;
+		text-transform: uppercase;
+		padding: 4px 8px;
+		border-radius: 5px;
+		letter-spacing: 0.5px;
+		line-height: 1;
+	}
+
+	h2 {
+		font-size: 20px;
+		font-weight: 600;
+		margin: 0;
+		color: var(--text);
+	}
+}
+
+.triggerBox {
+	display: flex;
+	gap: 16px;
+	background-color: var(--secondary);
+	padding: 16px;
+	border-radius: 8px;
+	border: 1px solid var(--btn-border);
+
+	.featureIcon {
+		font-size: 24px;
+		display: flex;
+		align-items: flex-start;
+		padding-top: 2px;
+	}
+
+	h4 {
+		margin: 0 0 6px 0;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--text);
+	}
+
+	p {
+		margin: 0;
+		font-size: 14px;
+		color: var(--textSecondary);
+		line-height: 1.4;
+	}
+}
+
+.divider {
+	border: none;
+	border-top: 1px solid var(--line);
+	margin: 0;
+}
+
+.othersList {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	overflow-y: auto;
+	max-height: 240px;
+	padding-right: 8px;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--btn-border);
+		border-radius: 10px;
+	}
+
+	h5 {
+		margin: 0;
+		font-size: 13px;
+		color: var(--textSecondary);
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+}
+
+.smallFeatureRow {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+
+	span {
+		font-size: 18px;
+		margin-top: 2px;
+	}
+
+	h6 {
+		margin: 0 0 4px 0;
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--text);
+	}
+
+	p {
+		margin: 0;
+		font-size: 13px;
+		color: var(--textSecondary);
+		line-height: 1.4;
+	}
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	margin-top: 10px;
+	padding-top: 10px;
+
+	button {
+		padding: 10px 16px;
+		border-radius: 6px;
+		font-size: 15px;
+		font-weight: 500;
+		font-family: inherit;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.backBtn {
+		background-color: transparent;
+		border: 1px solid var(--btn-border);
+		color: var(--text);
+
+		&:hover {
+			background-color: var(--secondary);
+		}
+	}
+
+	.checkoutBtn {
+		background-color: #d79716;
+		border: 1px solid #d79716;
+		color: #fff;
+
+		&:hover:not(:disabled) {
+			filter: brightness(1.1);
+		}
+
+		&:disabled {
+			opacity: 0.7;
+			cursor: not-allowed;
+		}
+	}
+
+	@media screen and (max-width: 480px) {
+		flex-direction: column-reverse;
+
+		button {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
