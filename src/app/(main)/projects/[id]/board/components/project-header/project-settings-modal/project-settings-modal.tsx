@@ -1,6 +1,7 @@
 'use client'
 
 import { CALENDAR_COLORS } from '@/lib/events/calendar-config'
+import { useBilling } from '@/shared/context/billing-context'
 import { useDeleteProject } from '@/shared/hooks/projects/use-delete-project'
 import { useUpdateProject } from '@/shared/hooks/projects/use-update-project'
 import { Project } from '@/shared/types/project'
@@ -24,6 +25,8 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 	const { remove, isDeleting } = useDeleteProject()
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 	const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+
+	const { isPro, openPaywall } = useBilling()
 
 	const router = useRouter()
 	const isOwner = currentUserId ? currentUserId === project.ownerId : false
@@ -120,7 +123,14 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 												label='Team project'
 												checked={field.value === 'team'}
 												name='projectType'
-												onChange={() => field.onChange('team')}
+												isLocked={!isPro}
+												onChange={() => {
+													if (!isPro) {
+														openPaywall('projects_team')
+														return
+													}
+													field.onChange('team')
+												}}
 											/>
 										</div>
 									)}

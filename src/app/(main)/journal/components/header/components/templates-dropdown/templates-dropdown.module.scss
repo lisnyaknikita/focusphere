@@ -32,7 +32,7 @@
 
 .dropdown {
 	z-index: 12;
-	width: 195px;
+	width: 230px;
 	border: 1px solid var(--btn-border);
 	border-radius: 5px;
 	background-color: var(--secondary);
@@ -43,7 +43,7 @@
 	gap: 5px;
 	position: absolute;
 	top: 36px;
-	left: -65px;
+	left: -112px;
 
 	@media screen and (max-width: 768px) {
 		left: -75px;
@@ -101,6 +101,40 @@
 	&:hover {
 		background-color: var(--hover);
 	}
+}
+
+.templateItem.lockedTemplate {
+	color: var(--textSecondary);
+	transition: color 0.15s ease, background-color 0.15s ease;
+
+	.icon {
+		opacity: 0.7;
+		font-size: 12px;
+	}
+
+	&:hover {
+		background-color: var(--hover);
+		color: var(--text);
+
+		.proBadge {
+			background-color: var(--save-button-bg);
+			color: var(--save-button-text);
+		}
+	}
+}
+
+.proBadge {
+	margin-left: auto;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	padding: 2px 5px;
+	border-radius: 4px;
+	text-transform: uppercase;
+	background-color: rgba(215, 151, 22, 0.15);
+	color: #d79716;
+	transition: all 0.15s ease;
+	flex-shrink: 0;
 }
 
 .icon {

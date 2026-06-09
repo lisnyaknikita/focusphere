@@ -12,6 +12,7 @@ import { DailyTasksModal } from './components/main/daily-tasks-modal/daily-tasks
 import { PlannerInner } from './components/main/planner-inner/planner-inner'
 
 import { mapTimeBlockToScheduleX } from '@/lib/events/event-mapper'
+import { useBilling } from '@/shared/context/billing-context'
 import { useCalendarApp } from '@/shared/hooks/planner/use-calendar-app'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
@@ -33,6 +34,7 @@ export default function Planner() {
 	const isCopyModeRef = useRef(false)
 
 	const { user } = useUser()
+	const { isPro, openPaywall } = useBilling()
 	const {
 		timeBlocks,
 		copiedTimeBlock,
@@ -42,8 +44,23 @@ export default function Planner() {
 		setCopiedTimeBlock,
 		createQuickBlock,
 	} = useTimeBlocks(user)
+
+	const isProRef = useRef(isPro)
+	const timeBlocksRef = useRef(timeBlocks)
+	const openPaywallRef = useRef(openPaywall)
+
+	useEffect(() => {
+		isProRef.current = isPro
+		timeBlocksRef.current = timeBlocks
+		openPaywallRef.current = openPaywall
+	}, [isPro, timeBlocks, openPaywall])
+
 	const { calendar, eventsService, eventModal } = useCalendarApp({
 		onQuickCreate: async dateTime => {
+			if (!isProRef.current && timeBlocksRef.current.length >= 50) {
+				openPaywallRef.current('planner_blocks_unlimited')
+				return
+			}
 			const event = await createQuickBlock(dateTime)
 			if (event) setQuickCreatedEvent(event)
 		},
@@ -75,9 +92,21 @@ export default function Planner() {
 		refreshTimeBlocks()
 	}, [refreshTimeBlocks])
 
+	const handleAddBlockClick = () => {
+		if (!isPro && timeBlocks.length >= 50) {
+			openPaywall('planner_blocks_unlimited')
+			return
+		}
+		setIsTimeBlockModalVisible(true)
+	}
+
 	const handleDayClick = useCallback(
 		async (date: string) => {
 			if (copiedTimeBlockRef.current) {
+				if (!isProRef.current && timeBlocksRef.current.length >= 50) {
+					openPaywallRef.current('planner_blocks_unlimited')
+					return
+				}
 				await pasteTimeBlock(date)
 				return
 			}
@@ -113,7 +142,7 @@ export default function Planner() {
 				)}
 				<header className={classes.header}>
 					<WeeklyGoals goals={weeklyGoals} onGoalsChange={refreshWeeklyGoals} />
-					<AddTimeBlockButton setIsModalVisible={setIsTimeBlockModalVisible} />
+					<AddTimeBlockButton setIsModalVisible={handleAddBlockClick} />
 				</header>
 				<main className={classes.planner}>
 					{isPageLoading ? (

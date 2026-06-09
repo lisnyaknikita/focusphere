@@ -230,3 +230,22 @@
 		}
 	}
 }
+
+.proAction {
+	color: #d79716;
+	opacity: 0.8;
+	transition: all 0.2s ease;
+
+	svg {
+		stroke: currentColor;
+		fill: transparent;
+	}
+
+	&:hover {
+		opacity: 1;
+
+		> svg {
+			transform: scale(1.1);
+		}
+	}
+}
