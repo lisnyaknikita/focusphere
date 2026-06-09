@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { headers } from 'next/headers'
 import { Client, Databases, Query } from 'node-appwrite'
 import Stripe from 'stripe'
