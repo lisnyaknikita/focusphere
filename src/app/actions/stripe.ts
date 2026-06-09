@@ -26,6 +26,7 @@ export async function createCheckoutSession(userId: string, userEmail: string, c
 
 			success_url: `${APP_URL}${currentPath}?success=true`,
 			cancel_url: `${APP_URL}${currentPath}`,
+			locale: 'en',
 		})
 
 		return session.url

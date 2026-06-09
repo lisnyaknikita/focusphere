@@ -2,6 +2,7 @@
 
 import { deleteKanbanTask } from '@/lib/projects/kanban-board-tasks/tasks'
 import { updateProject } from '@/lib/projects/projects'
+import { useBilling } from '@/shared/context/billing-context'
 import { useProject } from '@/shared/context/project-context'
 import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
 import { useSectionHeight } from '@/shared/hooks/section-height/useSectionHeight'
@@ -42,6 +43,8 @@ export const KanbanBoard = () => {
 	const { sectionRef, listHeight } = useSectionHeight(0.894)
 	const [newColumnId, setNewColumnId] = useState<string | null>(null)
 	const [columnToDelete, setColumnToDelete] = useState<Column | null>(null)
+
+	const { isPro, openPaywall } = useBilling()
 
 	useEffect(() => {
 		if (project?.columns && project.columns.length > 0) {
@@ -122,6 +125,11 @@ export const KanbanBoard = () => {
 
 	const handleAddColumn = async () => {
 		if (!project) return
+
+		if (!isPro) {
+			openPaywall('kanban_customization')
+			return
+		}
 
 		const id = `col_${Date.now()}`
 		const newCol: Column = { id, title: 'New Column' }

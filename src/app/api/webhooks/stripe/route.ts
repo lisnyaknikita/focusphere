@@ -94,5 +94,28 @@ export async function POST(req: Request) {
 		}
 	}
 
+	if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.paused') {
+		const subscription = event.data.object as Stripe.Subscription
+		const subscriptionId = subscription.id
+
+		const isPro = subscription.status === 'active' || subscription.status === 'trialing'
+
+		try {
+			const userSub = await dbServer.listDocuments(DB_ID, SUB_TABLE_ID, [
+				Query.equal('stripeSubscriptionId', subscriptionId),
+			])
+
+			if (userSub.total > 0) {
+				await dbServer.updateDocument(DB_ID, SUB_TABLE_ID, userSub.documents[0].$id, {
+					isPro,
+				})
+			} else {
+				console.warn(`⚠️ subscription.updated: no matching user found for subscriptionId=${subscriptionId}`)
+			}
+		} catch (appwriteError) {
+			console.error('Appwrite server error during subscription update:', appwriteError)
+		}
+	}
+
 	return new Response('OK', { status: 200 })
 }

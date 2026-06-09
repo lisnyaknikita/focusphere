@@ -1,6 +1,7 @@
 'use client'
 
 import { JOURNAL_TEMPLATES, TemplateKey } from '@/shared/constants/journal-templates'
+import { useBilling } from '@/shared/context/billing-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
@@ -13,16 +14,51 @@ import { toast } from 'sonner'
 import { CreateTemplateModal } from '../create-template-modal/create-template-modal'
 import classes from './templates-dropdown.module.scss'
 
+interface CustomTemplate {
+	$id: string
+	title: string
+	[key: string]: unknown
+}
+
 export const TemplatesDropdown = () => {
 	const [open, setOpen] = useState(false)
 	const [isConstructorOpen, setIsConstructorOpen] = useState(false)
 
-	const { createNote, customTemplates, addCustomTemplateState, deleteCustomTemplate } = useNotesContext()
+	const { notes, createNote, customTemplates, addCustomTemplateState, deleteCustomTemplate } = useNotesContext()
+	const { isPro, openPaywall } = useBilling()
 
 	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
 
-	const handleSelectSystem = async (key: TemplateKey) => {
+	const handleSelectSystem = async (key: TemplateKey, index: number) => {
+		if (!isPro && notes.length >= 6) {
+			openPaywall('journal_unlimited')
+			return
+		}
+
+		if (!isPro && index > 2) {
+			openPaywall('journal_templates')
+			return
+		}
+
 		await createNote(key)
+		setOpen(false)
+	}
+
+	const handleSelectCustom = async (template: CustomTemplate) => {
+		if (!isPro && notes.length >= 6) {
+			openPaywall('journal_unlimited')
+			return
+		}
+		await createNote(template as unknown as TemplateKey)
+		setOpen(false)
+	}
+
+	const handleCreateCustomClick = () => {
+		if (!isPro) {
+			openPaywall('journal_templates')
+			return
+		}
+		setIsConstructorOpen(true)
 		setOpen(false)
 	}
 
@@ -53,17 +89,22 @@ export const TemplatesDropdown = () => {
 						transition={{ duration: 0.18, ease: 'easeOut' }}
 					>
 						<div className={classes.sectionLabel}>System Templates</div>
-						{Object.values(JOURNAL_TEMPLATES).map(template => (
-							<button
-								type='button'
-								className={classes.templateItem}
-								key={template.key}
-								onClick={() => handleSelectSystem(template.key as TemplateKey)}
-							>
-								<span className={classes.icon}>{template.icon}</span>
-								{template.title}
-							</button>
-						))}
+						{Object.values(JOURNAL_TEMPLATES).map((template, index) => {
+							const isLocked = !isPro && index > 2
+
+							return (
+								<button
+									type='button'
+									className={clsx(classes.templateItem, isLocked && classes.lockedTemplate)}
+									key={template.key}
+									onClick={() => handleSelectSystem(template.key as TemplateKey, index)}
+								>
+									<span className={classes.icon}>{isLocked ? '🔒' : template.icon}</span>
+									{template.title}
+									{isLocked && <span className={classes.proBadge}>PRO</span>}
+								</button>
+							)
+						})}
 
 						{customTemplates && customTemplates.length > 0 && (
 							<>
@@ -71,15 +112,12 @@ export const TemplatesDropdown = () => {
 								<div className={classes.sectionLabel}>Custom Templates</div>
 
 								<div className={classes.customTemplatesList}>
-									{customTemplates.map(template => (
+									{(customTemplates as unknown as CustomTemplate[]).map(template => (
 										<div key={template.$id} className={classes.customTemplateRow}>
 											<button
 												type='button'
 												className={classes.templateItem}
-												onClick={() => {
-													createNote(template)
-													setOpen(false)
-												}}
+												onClick={() => handleSelectCustom(template)}
 											>
 												<span className={classes.icon}>📝</span>
 												<span className={classes.templateTitleText}>{template.title}</span>
@@ -98,14 +136,7 @@ export const TemplatesDropdown = () => {
 								</div>
 							</>
 						)}
-						<button
-							type='button'
-							className={classes.createTemplateAction}
-							onClick={() => {
-								setIsConstructorOpen(true)
-								setOpen(false)
-							}}
-						>
+						<button type='button' className={classes.createTemplateAction} onClick={handleCreateCustomClick}>
 							Create Custom
 						</button>
 					</motion.div>

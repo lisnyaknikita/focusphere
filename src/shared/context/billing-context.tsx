@@ -16,7 +16,7 @@ const BillingContext = createContext<BillingContextType | undefined>(undefined)
 
 export const BillingProvider = ({ children }: { children: ReactNode }) => {
 	const { user } = useUser()
-	const { isPro, isBillingLoading, stripeCustomerId } = useProStatus(user?.$id ?? '')
+	const { isPro, isBillingLoading: isProLoading, stripeCustomerId } = useProStatus(user?.$id ?? '')
 
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [activeFeatureId, setActiveFeatureId] = useState<string>('')
@@ -30,6 +30,8 @@ export const BillingProvider = ({ children }: { children: ReactNode }) => {
 		setIsModalOpen(false)
 		setActiveFeatureId('')
 	}
+
+	const isBillingLoading = !user || isProLoading
 
 	return (
 		<BillingContext.Provider value={{ isPro, isBillingLoading, stripeCustomerId, openPaywall }}>

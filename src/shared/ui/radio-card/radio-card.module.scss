@@ -83,3 +83,42 @@
 	color: var(--text);
 	font-family: inherit;
 }
+
+.card.locked {
+	border-color: var(--btn-border);
+	opacity: 0.85;
+	transition: all 0.2s ease;
+
+	.customRadio {
+		opacity: 0.6;
+		border-color: var(--btn-border);
+	}
+
+	&:hover {
+		background-color: var(--hover);
+		opacity: 1;
+
+		.proBadge {
+			background-color: #d79716;
+			color: #fff;
+		}
+	}
+}
+
+.labelRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.proBadge {
+	font-size: 9px;
+	font-weight: 800;
+	padding: 1px 5px;
+	border-radius: 3px;
+	text-transform: uppercase;
+	background-color: rgba(215, 151, 22, 0.15);
+	color: #d79716;
+	transition: all 0.2s ease;
+	line-height: 1;
+}

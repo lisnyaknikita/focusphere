@@ -22,6 +22,8 @@ export const useProStatus = (userId: string) => {
 		}
 
 		const checkStatus = async () => {
+			setIsBillingLoading(true)
+
 			try {
 				const subDoc = (await db.getRow({
 					databaseId: process.env.NEXT_PUBLIC_DB_ID!,
