@@ -15,6 +15,10 @@ import { OAuthProvider } from 'appwrite'
 import clsx from 'clsx'
 import Image from 'next/image'
 import { useState } from 'react'
+import { createCustomerPortalSession } from '@/app/actions/stripe'
+import { useBilling } from '@/shared/context/billing-context'
+import { usePathname } from 'next/navigation'
+import { toast } from 'sonner'
 import { AvatarUploader } from './avatar-uploader/avatar-uploader'
 import { EditableUsername } from './editable-username/editable-username'
 import classes from './user-button.module.scss'
@@ -33,6 +37,10 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
 
 	const { isDark, handleToggle } = useThemeToggle()
+	
+	const { isPro, stripeCustomerId, openPaywall } = useBilling()
+	const pathname = usePathname()
+	const [isRedirecting, setIsRedirecting] = useState(false)
 
 	const { refs: settingsRefs, floatingStyles: settingsFloatingStyles } = useFloating({
 		open: isSettingsTooltipOpen,
@@ -52,6 +60,35 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 			'https://www.googleapis.com/auth/calendar',
 		])
 	}
+
+	const handleManageSubscription = async () => {
+		if (!stripeCustomerId) {
+			toast.error('Stripe customer data is not loaded yet')
+			return
+		}
+
+		try {
+			setIsRedirecting(true)
+			toast.loading('Redirecting to billing portal...')
+
+			const url = await createCustomerPortalSession(stripeCustomerId, pathname)
+			if (url) {
+				window.location.href = url
+			} else {
+				throw new Error('Failed to retrieve billing portal URL')
+			}
+		} catch (error) {
+			console.error('Billing portal error:', error)
+			toast.error('Failed to open billing portal')
+			setIsRedirecting(false)
+		}
+	}
+
+	const handleUpgrade = () => {
+		setIsVisible(false)
+		openPaywall('')
+	}
+
 
 	return (
 		<>
@@ -133,6 +170,36 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 										onClick={() => setEnabled(!isEnabled)}
 									></div>
 								</div>
+							</div>
+						</section>
+						<hr className={classes.divider} />
+						<section className={classes.section}>
+							<span className={classes.sectionLabel}>SUBSCRIPTION</span>
+							<div className={classes.settingsCard}>
+								<div className={classes.subInfo}>
+									<span className={isPro ? classes.proBadge : classes.freeBadge}>
+										{isPro ? 'PRO' : 'FREE'}
+									</span>
+									<span className={classes.subPlanName}>
+										{isPro ? 'Focusphere Pro' : 'Starter Plan'}
+									</span>
+								</div>
+								{isPro ? (
+									<button
+										className={classes.connectBtn}
+										onClick={handleManageSubscription}
+										disabled={isRedirecting}
+									>
+										{isRedirecting ? 'Redirecting...' : 'Manage'}
+									</button>
+								) : (
+									<button
+										className={classes.connectBtn}
+										onClick={handleUpgrade}
+									>
+										Upgrade
+									</button>
+								)}
 							</div>
 						</section>
 						{!isGoogleConnected && (
