@@ -38,7 +38,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 
 	const { isDark, handleToggle } = useThemeToggle()
 	
-	const { isPro, stripeCustomerId, openPaywall } = useBilling()
+	const { isPro, stripeCustomerId, openPaywall, isBillingEnabled } = useBilling()
 	const pathname = usePathname()
 	const [isRedirecting, setIsRedirecting] = useState(false)
 
@@ -172,36 +172,40 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 								</div>
 							</div>
 						</section>
-						<hr className={classes.divider} />
-						<section className={classes.section}>
-							<span className={classes.sectionLabel}>SUBSCRIPTION</span>
-							<div className={classes.settingsCard}>
-								<div className={classes.subInfo}>
-									<span className={isPro ? classes.proBadge : classes.freeBadge}>
-										{isPro ? 'PRO' : 'FREE'}
-									</span>
-									<span className={classes.subPlanName}>
-										{isPro ? 'Focusphere Pro' : 'Starter Plan'}
-									</span>
-								</div>
-								{isPro ? (
-									<button
-										className={classes.connectBtn}
-										onClick={handleManageSubscription}
-										disabled={isRedirecting}
-									>
-										{isRedirecting ? 'Redirecting...' : 'Manage'}
-									</button>
-								) : (
-									<button
-										className={classes.connectBtn}
-										onClick={handleUpgrade}
-									>
-										Upgrade
-									</button>
-								)}
-							</div>
-						</section>
+						{isBillingEnabled && (
+							<>
+								<hr className={classes.divider} />
+								<section className={classes.section}>
+									<span className={classes.sectionLabel}>SUBSCRIPTION</span>
+									<div className={classes.settingsCard}>
+										<div className={classes.subInfo}>
+											<span className={isPro ? classes.proBadge : classes.freeBadge}>
+												{isPro ? 'PRO' : 'FREE'}
+											</span>
+											<span className={classes.subPlanName}>
+												{isPro ? 'Focusphere Pro' : 'Starter Plan'}
+											</span>
+										</div>
+										{isPro ? (
+											<button
+												className={classes.connectBtn}
+												onClick={handleManageSubscription}
+												disabled={isRedirecting}
+											>
+												{isRedirecting ? 'Redirecting...' : 'Manage'}
+											</button>
+										) : (
+											<button
+												className={classes.connectBtn}
+												onClick={handleUpgrade}
+											>
+												Upgrade
+											</button>
+										)}
+									</div>
+								</section>
+							</>
+						)}
 						{!isGoogleConnected && (
 							<>
 								<hr className={classes.divider} />
