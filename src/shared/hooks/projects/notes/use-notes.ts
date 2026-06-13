@@ -7,7 +7,7 @@ import {
 import { touchProject } from '@/lib/projects/projects'
 import { Project } from '@/shared/types/project'
 import { CreateProjectNotePayload, ProjectNote } from '@/shared/types/project-note'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useUser } from '../../use-user/use-user'
 
 export const useNotes = (project: Project) => {
@@ -16,7 +16,6 @@ export const useNotes = (project: Project) => {
 	const [activeNote, setActiveNote] = useState<ProjectNote | null>(null)
 
 	const { user, loading: isUserLoading } = useUser()
-	const saveTimeoutRef = useRef<Record<string, NodeJS.Timeout>>({})
 
 	const triggerProjectUpdate = useCallback(() => {
 		if (project?.$id) {
@@ -93,7 +92,7 @@ export const useNotes = (project: Project) => {
 	)
 
 	const handleContentChange = useCallback(
-		(content: string, noteId: string) => {
+		async (content: string, noteId: string) => {
 			if (!noteId) return
 
 			setNotes(prev => {
@@ -106,24 +105,19 @@ export const useNotes = (project: Project) => {
 			})
 			setActiveNote(prev => (prev?.$id === noteId ? { ...prev, content } : prev))
 
-			if (saveTimeoutRef.current[noteId]) {
-				clearTimeout(saveTimeoutRef.current[noteId])
+			try {
+				await updateProjectNote(project.$id, noteId, { content })
+				triggerProjectUpdate()
+			} catch (err) {
+				console.error('Auto-save failed', err)
+				throw err
 			}
-
-			saveTimeoutRef.current[noteId] = setTimeout(async () => {
-				try {
-					await updateProjectNote(project.$id, noteId, { content })
-					delete saveTimeoutRef.current[noteId]
-				} catch (err) {
-					console.error('Auto-save failed', err)
-				}
-			}, 1200)
 		},
-		[project?.$id]
+		[project?.$id, triggerProjectUpdate]
 	)
 
 	const handleTitleChange = useCallback(
-		(title: string, noteId: string) => {
+		async (title: string, noteId: string) => {
 			if (!noteId) return
 
 			setNotes(prev => {
@@ -136,27 +130,17 @@ export const useNotes = (project: Project) => {
 			})
 			setActiveNote(prev => (prev?.$id === noteId ? { ...prev, title } : prev))
 
-			if (saveTimeoutRef.current[noteId]) clearTimeout(saveTimeoutRef.current[noteId])
-
-			saveTimeoutRef.current[noteId] = setTimeout(async () => {
-				try {
-					const finalTitle = title.trim() === '' ? 'Untitled Note' : title
-					await updateProjectNote(project.$id, noteId, { title: finalTitle })
-					delete saveTimeoutRef.current[noteId]
-				} catch (err) {
-					console.error('Title save failed', err)
-				}
-			}, 1000)
+			try {
+				const finalTitle = title.trim() === '' ? 'Untitled Note' : title
+				await updateProjectNote(project.$id, noteId, { title: finalTitle })
+				triggerProjectUpdate()
+			} catch (err) {
+				console.error('Title save failed', err)
+				throw err
+			}
 		},
-		[project?.$id]
+		[project?.$id, triggerProjectUpdate]
 	)
-
-	useEffect(() => {
-		const timeouts = saveTimeoutRef.current
-		return () => {
-			Object.values(timeouts).forEach(t => clearTimeout(t))
-		}
-	}, [])
 
 	return {
 		notes,
