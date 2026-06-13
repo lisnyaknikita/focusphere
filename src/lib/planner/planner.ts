@@ -1,16 +1,11 @@
 import { CreateDailyTaskPayload } from '@/shared/types/daily-task'
 import { CreateEventPayload } from '@/shared/types/event'
 import { WeeklyGoalPayload } from '@/shared/types/weekly-goal'
-import { Client, ID, TablesDB } from 'appwrite'
-
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
+import { ID } from 'appwrite'
+import { db } from '../appwrite'
 
 export const createTimeBlock = async (data: CreateEventPayload) => {
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
 		rowId: ID.unique(),
@@ -19,7 +14,7 @@ export const createTimeBlock = async (data: CreateEventPayload) => {
 }
 
 export const updateTimeBlock = async (eventId: string, data: Partial<Omit<CreateEventPayload, 'userId'>>) => {
-	return tablesDB.updateRow({
+	return db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
 		rowId: eventId,
@@ -28,7 +23,7 @@ export const updateTimeBlock = async (eventId: string, data: Partial<Omit<Create
 }
 
 export const deleteTimeBlock = async (eventId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
 		rowId: eventId,
@@ -36,7 +31,7 @@ export const deleteTimeBlock = async (eventId: string): Promise<void> => {
 }
 
 export const createDailyTask = async (data: CreateDailyTaskPayload) => {
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
 		rowId: ID.unique(),
@@ -45,7 +40,7 @@ export const createDailyTask = async (data: CreateDailyTaskPayload) => {
 }
 
 export const updateDailyTask = async (taskId: string, data: Partial<Omit<CreateDailyTaskPayload, 'userId'>>) => {
-	return tablesDB.updateRow({
+	return db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
 		rowId: taskId,
@@ -54,7 +49,7 @@ export const updateDailyTask = async (taskId: string, data: Partial<Omit<CreateD
 }
 
 export const deleteDailyTask = async (taskId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
 		rowId: taskId,
@@ -62,7 +57,7 @@ export const deleteDailyTask = async (taskId: string): Promise<void> => {
 }
 
 export const createWeeklyGoal = async (payload: WeeklyGoalPayload) => {
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
 		rowId: ID.unique(),
@@ -71,7 +66,7 @@ export const createWeeklyGoal = async (payload: WeeklyGoalPayload) => {
 }
 
 export const updateWeeklyGoal = async (goalId: string, data: Partial<WeeklyGoalPayload>) => {
-	return tablesDB.updateRow({
+	return db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
 		rowId: goalId,
@@ -80,7 +75,7 @@ export const updateWeeklyGoal = async (goalId: string, data: Partial<WeeklyGoalP
 }
 
 export const deleteWeeklyGoal = async (goalId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_WEEKLY_GOALS!,
 		rowId: goalId,

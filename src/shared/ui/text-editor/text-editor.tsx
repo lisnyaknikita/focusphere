@@ -2,6 +2,7 @@
 
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
+import { BlockNoteInternals, TextEditorRef } from '@/shared/types/text-editor'
 import { PartialBlock } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
@@ -11,21 +12,14 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { EmptyIcon } from '../icons/empty-icon'
 import classes from './text-editor.module.scss'
 
-export interface TextEditorRef {
-	undo: () => void
-}
-
-interface BlockNoteInternals {
-	_prosemirrorView?: { dom: HTMLElement }
-	editorView?: { dom: HTMLElement }
-}
-
 export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 	const { activeNote, handleContentChange, handleTitleChange, searchQuery } = useNotesContext()
 	const { isDark } = useThemeToggle()
 	const [isSaving, setIsSaving] = useState(false)
 	const [showSaved, setShowSaved] = useState(false)
+	const [localTitle, setLocalTitle] = useState(activeNote?.title || '')
 
+	const titleSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 	const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
 	const editor = useCreateBlockNote({
@@ -75,6 +69,16 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 	}, [editor])
 
 	useEffect(() => {
+		if (titleSaveTimeoutRef.current) {
+			clearTimeout(titleSaveTimeoutRef.current)
+		}
+
+		if (activeNote) {
+			setLocalTitle(activeNote.title)
+		}
+	}, [activeNote?.$id])
+
+	useEffect(() => {
 		if (!activeNote || !editor) return
 
 		const unsubscribe = editor.onChange(() => {
@@ -116,6 +120,41 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		}
 	}, [editor, activeNote?.$id, activeNote?.content, handleContentChange])
 
+	const onTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const nextTitle = e.target.value
+		setLocalTitle(nextTitle)
+
+		if (titleSaveTimeoutRef.current) {
+			clearTimeout(titleSaveTimeoutRef.current)
+		}
+
+		titleSaveTimeoutRef.current = setTimeout(async () => {
+			if (nextTitle === activeNote?.title) return
+
+			setIsSaving(true)
+			setShowSaved(false)
+
+			try {
+				await handleTitleChange(nextTitle, activeNote!.$id)
+				setIsSaving(false)
+				setShowSaved(true)
+
+				setTimeout(() => {
+					setShowSaved(false)
+				}, 2000)
+			} catch (error) {
+				console.error('Failed to save title:', error)
+				setIsSaving(false)
+			}
+		}, 1000)
+	}
+
+	useEffect(() => {
+		return () => {
+			if (titleSaveTimeoutRef.current) clearTimeout(titleSaveTimeoutRef.current)
+		}
+	}, [])
+
 	if (!activeNote) {
 		if (searchQuery && searchQuery.trim() !== '') {
 			return <div className={classes.emptyBySearchEditor} />
@@ -144,8 +183,8 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 					<input
 						type='text'
 						className={classes.titleInput}
-						value={activeNote.title}
-						onChange={e => handleTitleChange(e.target.value, activeNote.$id)}
+						value={localTitle}
+						onChange={onTitleInputChange}
 						placeholder='Title'
 					/>
 					<div className={classes.bnWrapper}>

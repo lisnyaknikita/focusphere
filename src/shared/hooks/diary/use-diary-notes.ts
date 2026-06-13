@@ -16,6 +16,7 @@ export const useDiaryNotes = (userId: string) => {
 	useEffect(() => {
 		const fetchEntries = async () => {
 			if (!userId) return
+
 			try {
 				setIsLoading(true)
 
@@ -95,6 +96,7 @@ export const useDiaryNotes = (userId: string) => {
 				newNotes.splice(noteIndex, 1)
 				return [updatedNote, ...newNotes]
 			})
+
 			if (activeNote?.$id === noteId) {
 				setActiveNote(prev => (prev ? { ...prev, title } : null))
 			}
