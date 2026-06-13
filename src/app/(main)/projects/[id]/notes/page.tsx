@@ -53,7 +53,7 @@ export default function NotesPage() {
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
 						<>
-							{!isFocusMode && <NotesList withTitle={false} withTags={true} storageKey='project-notes-collapsed' />}
+							{!isFocusMode && <NotesList storageKey='project-notes-collapsed' />}
 							<TextEditor key={activeNote?.$id} ref={editorRef} />
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>

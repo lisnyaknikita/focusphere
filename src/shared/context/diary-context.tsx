@@ -20,7 +20,6 @@ export const DiaryProvider = ({ userId, children }: { userId: string; children: 
 				createNote: templateSource => diaryData.createNote(templateSource as TemplateKey | CustomJournalTemplate),
 				deleteNote: diaryData.deleteNote,
 				isLoading: diaryData.isLoading,
-				headerTitle: 'Daily Journal',
 				customTemplates: diaryData.customTemplates,
 				addCustomTemplateState: diaryData.addCustomTemplateState,
 				deleteCustomTemplate: diaryData.deleteCustomTemplateAction,

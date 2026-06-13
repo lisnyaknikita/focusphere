@@ -91,7 +91,6 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			) => Promise<void>,
 			deleteNote: notesData.deleteNote,
 			isLoading: notesData.isLoading,
-			headerTitle: project?.title,
 		}),
 		[
 			notesData.notes,
@@ -102,7 +101,6 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			notesData.createNote,
 			notesData.deleteNote,
 			notesData.isLoading,
-			project?.title,
 		]
 	)
 
