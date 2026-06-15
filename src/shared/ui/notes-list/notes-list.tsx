@@ -1,6 +1,7 @@
 import { useNotesContext } from '@/shared/context/notes-context'
 import { BaseNote } from '@/shared/types/project-note'
 import clsx from 'clsx'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { SidebarIcon } from '../icons/sidebar-icon'
 import { NotesListItem } from './components/notes-list-item/notes-list-item'
@@ -54,15 +55,15 @@ export const NotesList = ({ storageKey }: NotesListProps) => {
 					{!isLoading && notes.length === 0 && !isCollapsed && (
 						<p className={classes.noNotesMessage}>No entries here</p>
 					)}
-					{!isCollapsed &&
-						notes.map(note => (
-							<NotesListItem
-								key={note.$id}
-								note={note}
-								isActive={activeNote?.$id === note.$id}
-								onSelect={handleSelectNote}
-							/>
-						))}
+					{!isCollapsed && (
+						<AnimatePresence mode='popLayout'>
+							{notes.map(note => (
+								<motion.div key={note.$id} layout transition={{ type: 'spring', stiffness: 500, damping: 40 }}>
+									<NotesListItem note={note} isActive={activeNote?.$id === note.$id} onSelect={handleSelectNote} />
+								</motion.div>
+							))}
+						</AnimatePresence>
+					)}
 				</ul>
 				<button className={classes.sidebarButton} onClick={toggleCollapsed}>
 					<SidebarIcon />

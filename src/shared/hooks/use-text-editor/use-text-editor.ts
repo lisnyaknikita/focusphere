@@ -38,7 +38,7 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		initialContent: activeNote?.content ? (JSON.parse(activeNote.content) as PartialBlock[]) : undefined,
 	})
 
-	const saveTitle = async (titleToSave: string) => {
+	const saveTitle = async (titleToSave: string, silent = false) => {
 		if (titleSaveTimeoutRef.current) {
 			clearTimeout(titleSaveTimeoutRef.current)
 			titleSaveTimeoutRef.current = null
@@ -50,14 +50,14 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		const titleVal = titleToSave.trim() === '' ? 'Untitled Note' : titleToSave
 		if (titleVal === currentNote.title) return
 
-		if (isMountedRef.current) {
+		if (!silent && isMountedRef.current) {
 			setIsSaving(true)
 			setShowSaved(false)
 		}
 
 		try {
 			await handleTitleChange(titleVal, currentNote.$id)
-			if (isMountedRef.current) {
+			if (!silent && isMountedRef.current) {
 				setIsSaving(false)
 				setShowSaved(true)
 
@@ -67,11 +67,11 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 			}
 		} catch (error) {
 			console.error('Failed to save title:', error)
-			if (isMountedRef.current) setIsSaving(false)
+			if (!silent && isMountedRef.current) setIsSaving(false)
 		}
 	}
 
-	const saveContent = async () => {
+	const saveContent = async (silent = false) => {
 		if (saveTimeoutRef.current) {
 			clearTimeout(saveTimeoutRef.current)
 			saveTimeoutRef.current = null
@@ -82,14 +82,14 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		const currentNote = activeNoteRef.current
 		if (!currentNote || jsonContent === currentNote.content) return
 
-		if (isMountedRef.current) {
+		if (!silent && isMountedRef.current) {
 			setIsSaving(true)
 			setShowSaved(false)
 		}
 
 		try {
 			await handleContentChange(jsonContent, currentNote.$id)
-			if (isMountedRef.current) {
+			if (!silent && isMountedRef.current) {
 				setIsSaving(false)
 				setShowSaved(true)
 
@@ -99,7 +99,7 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 			}
 		} catch (error) {
 			console.error('Saving error:', error)
-			if (isMountedRef.current) setIsSaving(false)
+			if (!silent && isMountedRef.current) setIsSaving(false)
 		}
 	}
 
@@ -187,11 +187,11 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		return () => {
 			if (titleSaveTimeoutRef.current) {
 				clearTimeout(titleSaveTimeoutRef.current)
-				saveTitle(localTitleRef.current)
+				saveTitle(localTitleRef.current, true)
 			}
 			if (saveTimeoutRef.current) {
 				clearTimeout(saveTimeoutRef.current)
-				saveContent()
+				saveContent(true)
 			}
 		}
 	}, [editor])

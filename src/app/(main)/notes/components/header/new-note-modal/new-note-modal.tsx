@@ -1,5 +1,6 @@
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import classes from './new-note-modal.module.scss'
 
 interface NewNoteModalProps {
@@ -19,6 +20,7 @@ export const NewNoteModal = ({ onClose }: NewNoteModalProps) => {
 			onClose()
 		} catch (error) {
 			console.error('Failed to create note:', error)
+			toast.error('Failed to create note. Please try again.')
 		}
 	}
 
