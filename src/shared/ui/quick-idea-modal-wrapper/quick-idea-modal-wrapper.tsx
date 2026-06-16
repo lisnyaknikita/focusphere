@@ -9,6 +9,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { QuickIdeaModal } from '../quick-idea-modal/quick-idea-modal'
 
+const FREE_NOTE_LIMIT = 6
+
 export const QuickIdeaModalWrapper = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
@@ -17,6 +19,8 @@ export const QuickIdeaModalWrapper = () => {
 	const { notes, isLoading: isNotesLoading } = useGeneralNotes(user?.$id ?? '')
 
 	const isOpen = searchParams.get('modal') === 'quick-idea'
+
+	const isLimitExceeded = !isPro && notes.length >= FREE_NOTE_LIMIT
 
 	const handleClose = () => {
 		router.push('/dashboard')
@@ -27,7 +31,7 @@ export const QuickIdeaModalWrapper = () => {
 	useEffect(() => {
 		if (isBillingLoading || isNotesLoading || !isOpen) return
 
-		if (!isPro && notes.length >= 6) {
+		if (isLimitExceeded) {
 			handleClose()
 			openPaywall('notes_unlimited')
 		}
@@ -36,7 +40,7 @@ export const QuickIdeaModalWrapper = () => {
 	const handleSave = async (content: string) => {
 		if (!user) return
 
-		if (!isPro && notes.length >= 6) {
+		if (isLimitExceeded) {
 			openPaywall('notes_unlimited')
 			return
 		}
@@ -69,7 +73,7 @@ export const QuickIdeaModalWrapper = () => {
 		return null
 	}
 
-	if (!isPro && notes.length >= 6) {
+	if (isLimitExceeded) {
 		return null
 	}
 
