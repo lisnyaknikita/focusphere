@@ -45,6 +45,7 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 
 					if (eventId.startsWith('g_')) {
 						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+
 						await googleCalendarService.updateEvent(eventId, {
 							summary: title,
 							description: description as string | undefined,
