@@ -7,12 +7,15 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 export const useTimeBlocks = (user: CustomUser | null) => {
 	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([])
 	const [isLoading, setIsLoading] = useState(true)
 	const [copiedTimeBlock, setCopiedTimeBlock] = useState<SXEvent | null>(null)
+
 	const userId = user?.$id
+
 	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
 	const isCreatingRef = useRef(false)
 
@@ -66,6 +69,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				setCopiedTimeBlock(null)
 			} catch (error) {
 				console.error('Failed to paste time block:', error)
+				toast.error('Failed to paste time block')
 			}
 		},
 		[userId, getTimeBlocks]
@@ -134,8 +138,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 
 				await getTimeBlocks()
 
-				const toZDT = (iso: string) =>
-					Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
+				const toZDT = (iso: string) => Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
 
 				return {
 					id: created.$id,
@@ -147,6 +150,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				}
 			} catch (error) {
 				console.error('Failed to create quick block:', error)
+				toast.error('Failed to create quick time block')
 				return null
 			} finally {
 				isCreatingRef.current = false

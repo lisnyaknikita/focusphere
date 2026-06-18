@@ -3,6 +3,7 @@ import { DailyTask } from '@/shared/types/daily-task'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export const useDailyTasksCounters = () => {
 	const [dailyTasksCountByDate, setDailyTasksCountByDate] = useState<Record<string, number>>({})
@@ -28,6 +29,7 @@ export const useDailyTasksCounters = () => {
 			setDailyTasksCountByDate(map)
 		} catch (error) {
 			console.error('Error fetching daily tasks counters:', error)
+			toast.error('Error fetching daily tasks counters')
 		} finally {
 			setIsLoading(false)
 		}

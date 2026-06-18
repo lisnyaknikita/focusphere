@@ -1,53 +1,58 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
-export const useCalendarScroll = (dependencies: unknown[]) => {
-	const isInitialScrollDone = useRef(false)
+interface UseCalendarScrollProps {
+	dependencies: React.DependencyList
+	scrollOnlyOnce?: boolean
+}
+
+let isGlobalScrollDone = false
+
+export const useCalendarScroll = ({ dependencies, scrollOnlyOnce = false }: UseCalendarScrollProps) => {
+	useEffect(() => {
+		if (scrollOnlyOnce) {
+			isGlobalScrollDone = false
+		}
+	}, [scrollOnlyOnce])
 
 	useEffect(() => {
-		if (isInitialScrollDone.current) return
-
-		const scrollToTime = () => {
-			const indicator = document.querySelector('.sx__current-time-indicator') as HTMLElement | null
-
-			if (indicator) {
-				let scrollParent: HTMLElement | null = null
-				let parent = indicator.parentElement
-
-				while (parent && parent !== document.body && parent !== document.documentElement) {
-					const style = window.getComputedStyle(parent)
-					if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflowY === 'overlay') {
-						scrollParent = parent
-						break
-					}
-					parent = parent.parentElement
-				}
-
-				if (scrollParent) {
-					const parentRect = scrollParent.getBoundingClientRect()
-					const indicatorRect = indicator.getBoundingClientRect()
-					const scrollTop = scrollParent.scrollTop + (indicatorRect.top - parentRect.top) - parentRect.height / 2
-					scrollParent.scrollTo({
-						top: scrollTop,
-						behavior: 'smooth',
-					})
-				} else {
-					indicator.scrollIntoView({
-						behavior: 'smooth',
-						block: 'center',
-					})
-				}
-				isInitialScrollDone.current = true
-			}
-		}
+		if (scrollOnlyOnce && isGlobalScrollDone) return
 
 		const timeout = setTimeout(() => {
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					scrollToTime()
+			const el = document.querySelector('.sx__current-time-indicator') as HTMLElement | null
+			if (!el) return
+
+			let scrollParent: HTMLElement | null = null
+			let parent = el.parentElement
+
+			while (parent && parent !== document.body && parent !== document.documentElement) {
+				const style = window.getComputedStyle(parent)
+				if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflowY === 'overlay') {
+					scrollParent = parent
+					break
+				}
+				parent = parent.parentElement
+			}
+
+			if (scrollParent) {
+				const parentRect = scrollParent.getBoundingClientRect()
+				const indicatorRect = el.getBoundingClientRect()
+				const scrollTop = scrollParent.scrollTop + (indicatorRect.top - parentRect.top) - parentRect.height / 2
+
+				scrollParent.scrollTo({
+					top: scrollTop,
+					behavior: 'smooth',
 				})
-			})
-		}, 300)
+
+				if (scrollOnlyOnce) isGlobalScrollDone = true
+			} else {
+				el.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center',
+				})
+				if (scrollOnlyOnce) isGlobalScrollDone = true
+			}
+		}, 200)
 
 		return () => clearTimeout(timeout)
-	}, [dependencies])
+	}, [...dependencies])
 }

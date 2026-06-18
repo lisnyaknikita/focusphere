@@ -1,7 +1,7 @@
 import { createWeeklyGoal, deleteWeeklyGoal, updateWeeklyGoal } from '@/lib/planner/planner'
 import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 interface UseWeeklyGoalsMutationsProps {
@@ -13,22 +13,35 @@ export const useWeeklyGoalsMutations = ({ goals, onSuccess }: UseWeeklyGoalsMuta
 	const [editingGoalId, setEditingGoalId] = useState<string | null>(null)
 	const [editValue, setEditValue] = useState('')
 
+	const isCancelingRef = useRef(false)
+
 	const handleCreate = async (title: string, index: number) => {
 		if (!title.trim()) return
-		const userId = await getCurrentUserId()
+		try {
+			const userId = await getCurrentUserId()
 
-		await createWeeklyGoal({
-			title: title.trim(),
-			index,
-			userId,
-			isCompleted: false,
-		})
-		onSuccess()
+			await createWeeklyGoal({
+				title: title.trim(),
+				index,
+				userId,
+				isCompleted: false,
+			})
+			toast.success('Goal added')
+			onSuccess()
+		} catch (error) {
+			console.error('Failed to create goal:', error)
+			toast.error('Failed to add goal')
+		}
 	}
 
 	const handleUpdate = async (id: string, data: Partial<WeeklyGoal>) => {
-		await updateWeeklyGoal(id, data)
-		onSuccess()
+		try {
+			await updateWeeklyGoal(id, data)
+			onSuccess()
+		} catch (error) {
+			console.error('Failed to update goal:', error)
+			toast.error('Failed to save changes')
+		}
 	}
 
 	const handleToggle = async (goal: WeeklyGoal) => {
@@ -36,26 +49,30 @@ export const useWeeklyGoalsMutations = ({ goals, onSuccess }: UseWeeklyGoalsMuta
 	}
 
 	const startEdit = (goal: WeeklyGoal) => {
+		isCancelingRef.current = false
 		setEditingGoalId(goal.$id)
 		setEditValue(goal.title)
 	}
 
 	const cancelEdit = () => {
+		isCancelingRef.current = true
 		setEditingGoalId(null)
 		setEditValue('')
 	}
 
 	const saveEdit = async () => {
-		if (!editingGoalId) return
+		if (isCancelingRef.current || !editingGoalId) return
 
 		const title = editValue.trim()
+
 		if (!title) {
 			cancelEdit()
 			return
 		}
 
 		await handleUpdate(editingGoalId, { title })
-		cancelEdit()
+		setEditingGoalId(null)
+		setEditValue('')
 	}
 
 	const resetWeek = async () => {

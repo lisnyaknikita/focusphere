@@ -26,7 +26,7 @@ export const useTimeBlockDeletion = ({ eventsService, eventModal }: DeletionDepe
 				eventModal.close()
 			} catch (error) {
 				console.error('Error deleting time block:', error)
-				alert('Failed to delete this time block. Please try again.')
+				toast.error('Failed to delete this time block')
 			}
 		},
 		[eventsService, eventModal]

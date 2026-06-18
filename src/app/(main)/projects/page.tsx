@@ -2,8 +2,8 @@
 
 import { useBilling } from '@/shared/context/billing-context'
 import { useProjects } from '@/shared/hooks/projects/use-projects'
-import { Tabs } from '@/shared/tabs/tabs'
 import { FavoriteIcon } from '@/shared/ui/icons/projects/favorite-icon'
+import { Tabs } from '@/shared/ui/tabs/tabs'
 import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'

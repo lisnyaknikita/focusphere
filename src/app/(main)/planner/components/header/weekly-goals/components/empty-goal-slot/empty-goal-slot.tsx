@@ -28,8 +28,13 @@ export const EmptyGoalSlot = ({ index, onCreate, autoFocus }: EmptyGoalSlotProps
 				onChange={e => setGoalTitle(e.target.value)}
 				onBlur={handleCreateGoal}
 				onKeyDown={e => {
-					if (e.key === 'Enter') handleCreateGoal()
-					if (e.key === 'Escape') setGoalTitle('')
+					if (e.key === 'Enter') {
+						e.currentTarget.blur()
+					}
+					if (e.key === 'Escape') {
+						setGoalTitle('')
+						e.currentTarget.blur()
+					}
 				}}
 			/>
 		</div>

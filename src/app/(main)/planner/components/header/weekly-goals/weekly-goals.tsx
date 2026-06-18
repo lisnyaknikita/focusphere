@@ -61,7 +61,12 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 						{slots.map(({ goal, index }) => {
 							if (!goal) {
 								return (
-									<EmptyGoalSlot key={`empty-${index}`} index={index} onCreate={handleCreate} autoFocus={index === 0} />
+									<EmptyGoalSlot
+										key={`empty-${index}`}
+										index={index}
+										onCreate={handleCreate}
+										autoFocus={goals.length === 0 && index === 0}
+									/>
 								)
 							}
 							const isEditing = editingGoalId === goal.$id
@@ -95,24 +100,25 @@ export const WeeklyGoals = ({ goals, onGoalsChange }: WeeklyGoalsProps) => {
 								/>
 							)
 						})}
+
 						{goals.length > 0 && (
 							<button type='button' className={classes.startNewWeekButton} onClick={() => setIsResetModalOpen(true)}>
 								Start new week
 							</button>
 						)}
-						<Modal isVisible={isResetModalOpen} onClose={() => setIsResetModalOpen(false)}>
-							<WeeklyResetModal
-								goals={goals}
-								onClose={() => setIsResetModalOpen(false)}
-								onConfirm={async () => {
-									await resetWeek()
-									setIsResetModalOpen(false)
-								}}
-							/>
-						</Modal>
 					</motion.div>
 				)}
 			</AnimatePresence>
+			<Modal isVisible={isResetModalOpen} onClose={() => setIsResetModalOpen(false)}>
+				<WeeklyResetModal
+					goals={goals}
+					onClose={() => setIsResetModalOpen(false)}
+					onConfirm={async () => {
+						await resetWeek()
+						setIsResetModalOpen(false)
+					}}
+				/>
+			</Modal>
 		</div>
 	)
 }

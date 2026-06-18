@@ -36,7 +36,10 @@ export const PlannerInner = memo(
 		const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
 		const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
 
-		useCalendarScroll([timeBlocks])
+		useCalendarScroll({
+			dependencies: [timeBlocks.length],
+			scrollOnlyOnce: true,
+		})
 
 		const handleConfirmDelete = async () => {
 			if (eventToDelete) {

@@ -7,9 +7,9 @@ import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
 
 import { WeekDayHeader } from '@/app/(main)/planner/components/main/planner-inner/components/week-day-header/week-day-header'
-import { useCalendarAutoscroll } from '@/shared/hooks/calendar/use-calendar-autoscroll'
 import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
+import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -28,7 +28,7 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 
 	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
 
-	useCalendarAutoscroll(view)
+	useCalendarScroll({ dependencies: [view] })
 
 	const handleConfirmDelete = async () => {
 		if (eventToDelete) {
