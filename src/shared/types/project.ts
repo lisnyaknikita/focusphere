@@ -25,3 +25,5 @@ export interface CreateProjectPayload {
 	taskCounter: number
 	columns?: string[]
 }
+
+export type ProjectsView = 'solo' | 'team'

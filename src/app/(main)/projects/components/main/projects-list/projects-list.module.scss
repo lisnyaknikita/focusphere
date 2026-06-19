@@ -2,6 +2,12 @@
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 20px;
+	transition: opacity 0.25s ease;
+
+	&.fetching {
+		opacity: 0.5;
+		pointer-events: none;
+	}
 
 	@media screen and (max-width: 1024px) {
 		display: flex;

@@ -1,83 +1,46 @@
-// use-team-invitation.ts
 import { inviteMembersToTeam } from '@/lib/projects/invite-service/invite-service'
 import { getProjectById } from '@/lib/projects/projects'
-import { TeamInvitationValues } from '@/shared/schemas/team-invitation-schema'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { AppwriteException } from 'appwrite'
+import { toast } from 'sonner'
 
-export const useTeamInvitation = () => {
-	const searchParams = useSearchParams()
-	const projectId = searchParams.get('projectId')
-	const router = useRouter()
+export const useTeamInvitation = (projectId: string | null) => {
+	const queryClient = useQueryClient()
 
-	const [teamId, setTeamId] = useState<string | null>(null)
-	const [fetchError, setFetchError] = useState<string | null>(null)
-	const [submitError, setSubmitError] = useState<string | null>(null)
+	const { data: project, isLoading: isProjectLoading } = useQuery({
+		queryKey: ['project', projectId],
+		queryFn: () => getProjectById(projectId!),
+		enabled: !!projectId,
+		staleTime: 0,
+	})
 
-	const redirectToBoard = () => {
-		if (projectId) router.push(`/projects/${projectId}/board`)
-	}
+	const teamId = project?.teamId ?? null
 
-	useEffect(() => {
-		if (!projectId) return
+	const { mutateAsync: inviteMutate, isPending: isSending } = useMutation({
+		mutationFn: (emails: string[]) => inviteMembersToTeam(teamId!, emails, projectId!),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['team-members', teamId] })
+		},
+	})
 
-		let cancelled = false
+	const sendInvitations = async (emails: string[]) => {
+		if (!teamId) return
 
-		getProjectById(projectId)
-			.then(project => {
-				if (!cancelled && project.teamId) setTeamId(project.teamId)
-			})
-			.catch(() => {
-				if (!cancelled) setFetchError('Failed to load project. Please try again.')
-			})
+		const promise = inviteMutate(emails)
 
-		return () => {
-			cancelled = true
-		}
-	}, [projectId])
+		toast.promise(promise, {
+			loading: 'Sending invitations...',
+			success: 'Invitations sent!',
+			error: err => (err instanceof AppwriteException || err instanceof Error ? err.message : 'Invitation failed'),
+		})
 
-	const generateEmail = (input: string): string => {
-		const cleaned = input.trim().toLowerCase()
-		if (!cleaned) return ''
-		if (cleaned.includes('@')) return cleaned
-		return cleaned.replace(/\s+/g, '') + '@gmail.com'
-	}
-
-	const isValidEmail = (email: string) => email.includes('.') && email.includes('@')
-
-	const onSubmit = async (data: TeamInvitationValues, currentInput: string) => {
-		if (!projectId || !teamId) return
-
-		setSubmitError(null)
-
-		const fromFields = data.members.map(m => m.email)
-		const fromInput = generateEmail(currentInput)
-
-		const all = fromInput && !fromFields.includes(fromInput) ? [...fromFields, fromInput] : fromFields
-
-		const unique = [...new Set(all.map(e => e.trim()).filter(Boolean))]
-
-		if (unique.length === 0) {
-			redirectToBoard()
-			return
-		}
-
-		try {
-			await inviteMembersToTeam(teamId, unique, projectId)
-			redirectToBoard()
-		} catch (error) {
-			setSubmitError(error instanceof Error ? error.message : 'Something went wrong.')
-		}
+		return promise
 	}
 
 	return {
 		teamId,
-		projectId,
-		fetchError,
-		submitError,
-		generateEmail,
-		isValidEmail,
-		redirectToBoard,
-		onSubmit,
+		isProjectLoading,
+		isSending,
+		sendInvitations,
 	}
 }
