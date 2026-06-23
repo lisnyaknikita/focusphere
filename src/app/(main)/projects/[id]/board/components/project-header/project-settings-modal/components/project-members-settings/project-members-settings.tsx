@@ -32,6 +32,7 @@ export const ProjectMembersSettings = ({ projectId, teamId }: ProjectMembersSett
 						value={inputValue}
 						onChange={e => setInputValue(e.target.value)}
 						onKeyDown={handleKeyDown}
+						disabled={isSending}
 					/>
 					<div className={classes.suggestion}>
 						{inputValue && <SuggestionIcon />}

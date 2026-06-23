@@ -18,6 +18,14 @@ const GOOGLE_CALENDAR_API = 'https://www.googleapis.com/calendar/v3'
 
 class GoogleCalendarService {
 	private hasShownAuthError = false
+	private cachedToken: string | null = null
+	private tokenExpiry: Date | null = null
+
+	private formatIso(iso: string): string {
+		if (iso.includes('T') && (iso.endsWith('Z') || iso.includes('+'))) return iso
+		if (iso.length === 16) return iso + ':00'
+		return iso
+	}
 
 	private showAuthError() {
 		if (this.hasShownAuthError) return
@@ -42,6 +50,10 @@ class GoogleCalendarService {
 	}
 
 	private async getProviderToken(): Promise<string | null> {
+		if (this.cachedToken && this.tokenExpiry && this.tokenExpiry > new Date(Date.now() + 5 * 60 * 1000)) {
+			return this.cachedToken
+		}
+
 		try {
 			const session = await account.getSession('current')
 			if (session.provider !== 'google') return null
@@ -51,13 +63,19 @@ class GoogleCalendarService {
 
 			if (isExpired) {
 				const newToken = await this.refreshProviderToken(session.userId)
-				if (newToken) return newToken
+				if (newToken) {
+					this.cachedToken = newToken
+					this.tokenExpiry = new Date(Date.now() + 55 * 60 * 1000)
+					return newToken
+				}
 
 				this.showAuthError()
 				return null
 			}
 
-			return session.providerAccessToken
+			this.cachedToken = session.providerAccessToken
+			this.tokenExpiry = expiryDate
+			return this.cachedToken
 		} catch (error) {
 			console.error('Failed to get session token for Google Calendar', error)
 			return null
@@ -118,6 +136,8 @@ class GoogleCalendarService {
 			if (!res.ok) {
 				if (res.status === 401) {
 					this.showAuthError()
+				} else {
+					toast.error('Failed to sync Google Calendar events')
 				}
 				console.error('Google Calendar fetch error:', await res.text())
 				return []
@@ -127,6 +147,7 @@ class GoogleCalendarService {
 			return data.items || []
 		} catch (error) {
 			console.error('Error fetching google calendar events:', error)
+			toast.error('Network error. Google Calendar sync failed.')
 			return []
 		}
 	}
@@ -144,12 +165,6 @@ class GoogleCalendarService {
 		const isAllDay = payload.start.length <= 10
 		let startBody: GoogleDate, endBody: GoogleDate
 
-		const formatIso = (iso: string) => {
-			if (iso.includes('T') && (iso.endsWith('Z') || iso.includes('+'))) return iso
-			if (iso.length === 16) return iso + ':00'
-			return iso
-		}
-
 		if (isAllDay) {
 			startBody = { date: payload.start }
 			const endObj = new Date(payload.end)
@@ -157,8 +172,8 @@ class GoogleCalendarService {
 			endBody = { date: endObj.toISOString().split('T')[0] }
 		} else {
 			const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-			const startIso = formatIso(payload.start)
-			const endIso = formatIso(payload.end)
+			const startIso = this.formatIso(payload.start)
+			const endIso = this.formatIso(payload.end)
 
 			startBody = { dateTime: startIso, timeZone }
 			endBody = { dateTime: endIso, timeZone }
@@ -223,12 +238,6 @@ class GoogleCalendarService {
 		const isAllDay = payload.start.length <= 10
 		let startBody: GoogleDate, endBody: GoogleDate
 
-		const formatIso = (iso: string) => {
-			if (iso.includes('T') && (iso.endsWith('Z') || iso.includes('+'))) return iso
-			if (iso.length === 16) return iso + ':00'
-			return iso
-		}
-
 		if (isAllDay) {
 			startBody = { date: payload.start }
 			const endObj = new Date(payload.end)
@@ -236,8 +245,8 @@ class GoogleCalendarService {
 			endBody = { date: endObj.toISOString().split('T')[0] }
 		} else {
 			const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-			const startIso = formatIso(payload.start)
-			const endIso = formatIso(payload.end)
+			const startIso = this.formatIso(payload.start)
+			const endIso = this.formatIso(payload.end)
 
 			startBody = { dateTime: startIso }
 			endBody = { dateTime: endIso }

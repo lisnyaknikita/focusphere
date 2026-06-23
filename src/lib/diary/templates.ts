@@ -1,17 +1,12 @@
 import { CreateCustomTemplatePayload, CustomJournalTemplate } from '@/shared/types/journal'
-import { Client, ID, Query, TablesDB } from 'appwrite'
-
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
+import { ID, Query } from 'appwrite'
+import { db } from '../appwrite'
 
 const DB_ID = process.env.NEXT_PUBLIC_DB_ID!
 const TABLE_TEMPLATES_ID = process.env.NEXT_PUBLIC_TABLE_JOURNAL_TEMPLATES!
 
 export const getCustomTemplates = async (userId: string): Promise<CustomJournalTemplate[]> => {
-	const response = await tablesDB.listRows({
+	const response = await db.listRows({
 		databaseId: DB_ID,
 		tableId: TABLE_TEMPLATES_ID,
 		queries: [Query.equal('userId', userId), Query.orderDesc('$updatedAt')],
@@ -21,7 +16,7 @@ export const getCustomTemplates = async (userId: string): Promise<CustomJournalT
 }
 
 export const createCustomTemplate = async (data: CreateCustomTemplatePayload): Promise<CustomJournalTemplate> => {
-	const response = await tablesDB.createRow({
+	const response = await db.createRow({
 		databaseId: DB_ID,
 		tableId: TABLE_TEMPLATES_ID,
 		rowId: ID.unique(),
@@ -35,7 +30,7 @@ export const updateCustomTemplate = async (
 	templateId: string,
 	data: Partial<CreateCustomTemplatePayload>
 ): Promise<CustomJournalTemplate> => {
-	const response = await tablesDB.updateRow({
+	const response = await db.updateRow({
 		databaseId: DB_ID,
 		tableId: TABLE_TEMPLATES_ID,
 		rowId: templateId,
@@ -46,7 +41,7 @@ export const updateCustomTemplate = async (
 }
 
 export const deleteCustomTemplate = async (templateId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: DB_ID,
 		tableId: TABLE_TEMPLATES_ID,
 		rowId: templateId,

@@ -14,8 +14,11 @@ const fetchProjects = async (type: 'solo' | 'team', searchQuery: string, page: n
 	const queries = [Query.equal('type', type), Query.orderDesc('$createdAt'), Query.limit(LIMIT), Query.offset(offset)]
 
 	if (type === 'solo') queries.push(Query.equal('ownerId', userId))
-	if (searchQuery.trim()) queries.push(Query.contains('title', searchQuery))
 	if (favoritesOnly) queries.push(Query.equal('isFavorite', true))
+
+	if (searchQuery.trim()) {
+		queries.push(Query.or([Query.contains('title', searchQuery), Query.contains('description', searchQuery)]))
+	}
 
 	const response = await db.listRows({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
@@ -35,7 +38,7 @@ export const useProjects = (
 	page: number = 1,
 	favoritesOnly: boolean = false
 ) => {
-	const { data, isLoading, refetch } = useQuery({
+	const { data, isLoading, isFetching, refetch } = useQuery({
 		queryKey: ['projects', type, searchQuery, page, favoritesOnly],
 		queryFn: () => fetchProjects(type!, searchQuery, page, favoritesOnly),
 		enabled: !!type,
@@ -47,6 +50,7 @@ export const useProjects = (
 		total: data?.total ?? 0,
 		limit: LIMIT,
 		isLoading,
+		isFetching,
 		refreshProjects: async () => {
 			await refetch()
 		},

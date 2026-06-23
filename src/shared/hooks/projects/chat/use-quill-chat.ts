@@ -1,7 +1,7 @@
 'use client'
 
 import { KanbanTask } from '@/shared/types/kanban-task'
-import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
+import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import Quill, { QuillOptions } from 'quill'
 import { useEffect, useRef, useState } from 'react'
 
@@ -11,7 +11,6 @@ interface UseQuillChatProps {
 }
 
 export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
-	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	const [dropdownSearch, setDropdownSearch] = useState('')
 	const [dropdownIndex, setDropdownIndex] = useState(0)
@@ -19,6 +18,7 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 
 	const containerRef = useRef<HTMLDivElement>(null)
 	const quillRef = useRef<Quill | null>(null)
+
 	const onSendRef = useRef(onSend)
 	onSendRef.current = onSend
 
@@ -31,21 +31,6 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 	useEffect(() => {
 		stateRef.current = { isDropdownOpen, filteredTasks, dropdownIndex, hashIndex }
 	}, [isDropdownOpen, filteredTasks, dropdownIndex, hashIndex])
-
-	const {
-		refs: tooltipRefs,
-		floatingStyles: tooltipStyles,
-		context,
-	} = useFloating({
-		open: isTooltipOpen,
-		onOpenChange: setIsTooltipOpen,
-		placement: 'top',
-		whileElementsMounted: autoUpdate,
-		middleware: [offset(10), flip(), shift()],
-	})
-
-	const hover = useHover(context)
-	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	const { refs: dropdownRefs, floatingStyles: dropdownFloatingStyles } = useFloating({
 		open: isDropdownOpen,
@@ -60,17 +45,13 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 
 		const handleOutsideClick = (event: MouseEvent) => {
 			const dropdownEl = dropdownRefs.floating.current
-
 			if (dropdownEl && !dropdownEl.contains(event.target as Node)) {
 				setIsDropdownOpen(false)
 			}
 		}
 
 		document.addEventListener('mousedown', handleOutsideClick)
-
-		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick)
-		}
+		return () => document.removeEventListener('mousedown', handleOutsideClick)
 	}, [isDropdownOpen, dropdownRefs])
 
 	const handleSend = () => {
@@ -79,7 +60,6 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 		if (content === '<p><br></p>' || content === '' || quillRef.current.getText().trim() === '') return
 
 		onSendRef.current(content)
-		setIsTooltipOpen(false)
 		quillRef.current.setContents([])
 		quillRef.current.focus()
 	}
@@ -221,16 +201,11 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 			quillRef.current = null
 			if (containerRef.current) containerRef.current.innerHTML = ''
 		}
-	}, [tasks])
+	}, [])
 
 	return {
 		containerRef,
 		quillRef,
-		isTooltipOpen,
-		tooltipRefs,
-		tooltipStyles,
-		getReferenceProps,
-		getFloatingProps,
 		isDropdownOpen,
 		dropdownRefs,
 		dropdownFloatingStyles,

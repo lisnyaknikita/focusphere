@@ -7,7 +7,8 @@ import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { AssigneeSelect } from './components/assignee-select/assignee-select'
 import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
 import { SubtaskTable } from './components/subtask-table/subtask-table'
@@ -32,39 +33,64 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 	const { subtasks, addSubtask, updateSubtask, deleteSubtask } = useSubtasks(task.$id)
 	const router = useRouter()
 
+	useEffect(() => {
+		if (task) {
+			setTitle(task.title || '')
+			setDescription(task.description || '')
+		}
+	}, [task])
+
 	if (!task) return null
 
 	const handleBlur = (field: keyof KanbanTask, value: string) => {
 		if (value !== task[field]) {
-			onUpdate(task.$id, { [field]: value })
+			onUpdate(task.$id, { [field]: value }).catch((err: unknown) => {
+				console.error(`Failed to update field ${field}:`, err)
+				toast.error('Failed to update field')
+			})
 		}
 	}
 
 	const handleAddSubtaskSubmit = (e: React.FormEvent) => {
 		e.preventDefault()
 		if (newSubtaskTitle.trim() === '') return
-		addSubtask(newSubtaskTitle.trim())
+		addSubtask(newSubtaskTitle.trim()).catch((err: unknown) => {
+			console.error('Subtask submission failed:', err)
+			toast.error('Subtask submission failed')
+		})
 		setNewSubtaskTitle('')
 	}
 
 	const handleDeleteConfirm = async () => {
-		await onDelete(task.$id)
-		setIsDeleteConfirmOpen(false)
+		try {
+			await onDelete(task.$id)
+			setIsDeleteConfirmOpen(false)
+			onClose?.()
+		} catch (err: unknown) {
+			console.error('Failed to delete task:', err)
+			toast.error('Failed to delete task')
+		}
 	}
 
 	const handleBacklogConfirm = async () => {
-		await onUpdate(task.$id, { status: 'backlog' })
-		setIsBacklogConfirmOpen(false)
+		try {
+			await onUpdate(task.$id, { status: 'backlog' })
+			setIsBacklogConfirmOpen(false)
+			onClose?.()
+		} catch (err: unknown) {
+			console.error('Failed to move task to backlog:', err)
+			toast.error('Failed to move task to backlog')
+		}
 	}
 
 	const handleCreateNote = async () => {
 		const noteTitle = task.taskCode ? `${task.taskCode}: ${task.title}` : `Note: ${task.title}`
-
 		try {
 			await createNote(noteTitle, task.taskCode)
 			router.push(`/projects/${project?.$id}/notes`)
-		} catch (error) {
-			console.error('Failed to create note from task:', error)
+		} catch (err: unknown) {
+			console.error('Failed to create note from task:', err)
+			toast.error('Failed to create note from task')
 		}
 	}
 
@@ -146,7 +172,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 								onUpdate(task.$id, {
 									assigneeId: newUserId,
 									assigneeName: newUserName,
-								})
+								}).catch((err: unknown) => console.error(err))
 							}}
 						/>
 					</div>
@@ -155,7 +181,9 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 						<span className={classes.label}>Priority</span>
 						<PriorityDropdown
 							value={task.priority || 'medium'}
-							onChange={newPriority => onUpdate(task.$id, { priority: newPriority })}
+							onChange={newPriority => {
+								onUpdate(task.$id, { priority: newPriority }).catch((err: unknown) => console.error(err))
+							}}
 						/>
 					</div>
 
@@ -163,7 +191,9 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 						<span className={classes.label}>Labels</span>
 						<TaskLabelsEditor
 							labels={task.labels || []}
-							onChange={updatedLabels => onUpdate(task.$id, { labels: updatedLabels })}
+							onChange={updatedLabels => {
+								onUpdate(task.$id, { labels: updatedLabels }).catch((err: unknown) => console.error(err))
+							}}
 						/>
 					</div>
 

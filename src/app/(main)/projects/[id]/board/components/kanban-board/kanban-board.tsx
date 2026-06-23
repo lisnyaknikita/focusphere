@@ -1,190 +1,87 @@
 'use client'
 
-import { deleteKanbanTask } from '@/lib/projects/kanban-board-tasks/tasks'
-import { updateProject } from '@/lib/projects/projects'
 import { useBilling } from '@/shared/context/billing-context'
 import { useProject } from '@/shared/context/project-context'
 import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
+import { useKanbanDnd } from '@/shared/hooks/projects/kanban-board/use-kanban-dnd'
 import { useSectionHeight } from '@/shared/hooks/section-height/useSectionHeight'
 import { Column } from '@/shared/types/kanban'
-import { KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
-import {
-	closestCorners,
-	DndContext,
-	DragEndEvent,
-	DragOverlay,
-	DragStartEvent,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from '@dnd-kit/core'
-import { arrayMove, horizontalListSortingStrategy, SortableContext } from '@dnd-kit/sortable'
-import { useEffect, useState } from 'react'
+import { DndContext, DragOverlay, closestCorners } from '@dnd-kit/core'
+import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
-import { toast } from 'sonner'
 import classes from './kanban-board.module.scss'
 import { KanbanColumn } from './kanban-column/kanban-column'
 import { KanbanTaskCard } from './kanban-column/kanban-task-card/kanban-task-card'
 
-const DEFAULT_COLUMNS: Column[] = [
-	{ id: 'todo', title: 'To Do' },
-	{ id: 'inprogress', title: 'In Progress' },
-	{ id: 'done', title: 'Done' },
-]
-
 export const KanbanBoard = () => {
 	const { project } = useProject()
-	const { tasks, isLoading, addTask, moveTask, updateTask, deleteTask, reorderTasks } = useKanban(project!)
-	const [activeTask, setActiveTask] = useState<KanbanTask | null>(null)
-	const [activeColumn, setActiveColumn] = useState<Column | null>(null)
-	const [columns, setColumns] = useState<Column[]>([])
+	const { isPro, openPaywall } = useBilling()
 	const { sectionRef, listHeight } = useSectionHeight(0.894)
+
+	const {
+		tasks,
+		columns,
+		setColumns,
+		isLoading,
+		addColumn,
+		updateColumnTitle,
+		deleteColumnCascade,
+		addTask,
+		updateTask,
+		deleteTask,
+		moveTask,
+		reorderTasks,
+		updateColumnsMutate,
+		triggerProjectUpdate,
+	} = useKanban(project!)
+
+	const { activeTask, activeColumn, sensors, handleDragStart, handleDragEnd } = useKanbanDnd({
+		tasks,
+		columns,
+		setColumns,
+		moveTask,
+		reorderTasks,
+		updateColumnsMutate,
+		triggerProjectUpdate,
+	})
+
 	const [newColumnId, setNewColumnId] = useState<string | null>(null)
 	const [columnToDelete, setColumnToDelete] = useState<Column | null>(null)
 
-	const { isPro, openPaywall } = useBilling()
-
-	useEffect(() => {
-		if (project?.columns && project.columns.length > 0) {
-			setColumns(project.columns.map(col => JSON.parse(col)))
-		} else {
-			setColumns(DEFAULT_COLUMNS)
-		}
-	}, [project?.columns])
-
-	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: { distance: 8 },
-		})
-	)
-
-	const handleDragStart = (event: DragStartEvent) => {
-		const { active } = event
-		const activeType = active.data.current?.type
-
-		if (activeType === 'Task') {
-			const currentTask = tasks.find(t => t.$id === active.id)
-			setActiveTask(currentTask ?? null)
-		}
-
-		if (activeType === 'Column') {
-			const currentCol = columns.find(c => c.id === active.id)
-			setActiveColumn(currentCol ?? null)
-		}
-	}
-
-	const handleDragEnd = (event: DragEndEvent) => {
-		setActiveTask(null)
-		setActiveColumn(null)
-
-		const { active, over } = event
-		if (!over || !project) return
-
-		const activeId = active.id as string
-		const overId = over.id as string
-
-		if (activeId === overId) return
-
-		const activeType = active.data.current?.type
-		const overType = over.data.current?.type
-
-		if (activeType === 'Column') {
-			setColumns(prev => {
-				const oldIndex = prev.findIndex(col => col.id === activeId)
-				const newIndex = prev.findIndex(col => col.id === overId)
-				const newColumns = arrayMove(prev, oldIndex, newIndex)
-
-				updateProject(project.$id, { columns: newColumns.map(c => JSON.stringify(c)) })
-
-				return newColumns
-			})
-			return
-		}
-
-		if (activeType === 'Task') {
-			const activeTask = tasks.find(t => t.$id === activeId)
-			const overTask = tasks.find(t => t.$id === overId)
-
-			if (overTask) {
-				if (activeTask?.status !== overTask.status) {
-					moveTask(activeId, overTask.status as TaskStatus)
-				} else {
-					const oldIndex = tasks.findIndex(t => t.$id === activeId)
-					const newIndex = tasks.findIndex(t => t.$id === overId)
-					reorderTasks(arrayMove(tasks, oldIndex, newIndex))
-				}
-			} else {
-				if (overType === 'Column' && activeTask?.status !== overId) {
-					moveTask(activeId, overId as TaskStatus)
-				}
-			}
-		}
-	}
-
-	const handleAddColumn = async () => {
-		if (!project) return
-
+	const handleAddColumnClick = async (): Promise<void> => {
 		if (!isPro) {
 			openPaywall('kanban_customization')
 			return
 		}
-
 		const id = `col_${Date.now()}`
-		const newCol: Column = { id, title: 'New Column' }
-		const updatedColumns = [...columns, newCol]
-
-		setColumns(updatedColumns)
 		setNewColumnId(id)
-
-		await updateProject(project.$id, { columns: updatedColumns.map(c => JSON.stringify(c)) })
-	}
-
-	const handleUpdateColumnTitle = async (columnId: string, newTitle: string) => {
-		if (!project) return
-
-		const updatedColumns = columns.map(col => (col.id === columnId ? { ...col, title: newTitle } : col))
-
-		setColumns(updatedColumns)
-		if (newColumnId === columnId) setNewColumnId(null)
-
-		await updateProject(project.$id, { columns: updatedColumns.map(c => JSON.stringify(c)) })
-	}
-
-	const handleConfirmDeleteColumn = async () => {
-		if (!columnToDelete || !project) return
-
-		const targetColumnId = columnToDelete.id
-		const updatedColumns = columns.filter(col => col.id !== targetColumnId)
-
-		setColumns(updatedColumns)
-		setColumnToDelete(null)
-
 		try {
-			await updateProject(project.$id, {
-				columns: updatedColumns.map(c => JSON.stringify(c)),
-			})
+			await addColumn(id, 'New Column')
+		} catch (err: unknown) {
+			console.error(err)
+		}
+	}
 
-			const tasksToDelete = tasks.filter(task => task.status === targetColumnId)
+	const handleUpdateTitleClick = async (columnId: string, newTitle: string): Promise<void> => {
+		if (newColumnId === columnId) setNewColumnId(null)
+		try {
+			await updateColumnTitle(columnId, newTitle)
+		} catch (err: unknown) {
+			console.error(err)
+		}
+	}
 
-			if (tasksToDelete.length > 0) {
-				const batchDeletes = tasksToDelete.map(task => deleteKanbanTask(task.$id))
-				const cascadeExecution = Promise.all(batchDeletes)
-
-				toast.promise(cascadeExecution, {
-					loading: `Deleting column and destroying ${tasksToDelete.length} tasks...`,
-					success: 'Column and all associated tasks permanently deleted',
-					error: 'Column deleted, but some tasks failed to delete',
-				})
-
-				await cascadeExecution
-			} else {
-				toast.success('Empty column deleted successfully')
-			}
-		} catch (error) {
-			console.error('Failed to execute cascade delete for column:', error)
-			toast.error('Failed to delete column')
+	const handleConfirmDeleteColumn = async (): Promise<void> => {
+		if (!columnToDelete) return
+		const targetId = columnToDelete.id
+		setColumnToDelete(null)
+		try {
+			await deleteColumnCascade(targetId)
+		} catch (err: unknown) {
+			console.error(err)
 		}
 	}
 
@@ -208,17 +105,18 @@ export const KanbanBoard = () => {
 							tasks={tasks.filter(task => task.status === column.id)}
 							listHeight={listHeight}
 							autoFocusTitle={newColumnId === column.id}
-							onUpdateTitle={handleUpdateColumnTitle}
+							onUpdateTitle={handleUpdateTitleClick}
 							onDeleteColumn={() => setColumnToDelete(column)}
 							onAddTask={addTask}
 							onUpdateTask={updateTask}
 							onDeleteTask={deleteTask}
 						/>
 					))}
-					<button type='button' className={classes.addColumnBtn} onClick={handleAddColumn}>
+					<button type='button' className={classes.addColumnBtn} onClick={handleAddColumnClick}>
 						<PlusIcon />
 					</button>
 				</SortableContext>
+
 				<DragOverlay adjustScale={false}>
 					{activeTask && (
 						<KanbanTaskCard task={activeTask} isOverlay onUpdateTask={updateTask} onDeleteTask={deleteTask} />
@@ -236,6 +134,7 @@ export const KanbanBoard = () => {
 					)}
 				</DragOverlay>
 			</DndContext>
+
 			<ConfirmModal
 				isVisible={!!columnToDelete}
 				onClose={() => setColumnToDelete(null)}

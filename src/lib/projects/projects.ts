@@ -1,15 +1,9 @@
 import { CreateProjectPayload, Project } from '@/shared/types/project'
-import { Client, ID, Permission, Role, TablesDB } from 'appwrite'
-import { teams } from '../appwrite'
+import { ID, Permission, Role } from 'appwrite'
+import { db, teams } from '../appwrite'
 import { deleteChannel, getChannels } from './chat/chat'
 import { deleteKanbanTask, getKanbanTasks } from './kanban-board-tasks/tasks'
 import { deleteProjectNote, getProjectNotes } from './project-notes/notes'
-
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
 
 export const createProject = async (data: CreateProjectPayload) => {
 	const permissions = [
@@ -23,7 +17,7 @@ export const createProject = async (data: CreateProjectPayload) => {
 		permissions.push(Permission.update(Role.team(data.teamId)))
 	}
 
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 		rowId: ID.unique(),
@@ -36,7 +30,7 @@ export const createProject = async (data: CreateProjectPayload) => {
 }
 
 export const getProjectById = async (projectId: string): Promise<Project> => {
-	const response = await tablesDB.getRow({
+	const response = await db.getRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 		rowId: projectId,
@@ -46,7 +40,7 @@ export const getProjectById = async (projectId: string): Promise<Project> => {
 }
 
 export const updateProject = async (projectId: string, data: Partial<CreateProjectPayload>): Promise<Project> => {
-	const response = await tablesDB.updateRow({
+	const response = await db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 		rowId: projectId,
@@ -74,7 +68,7 @@ export const deleteProject = async (projectId: string): Promise<Project> => {
 
 		console.log(`Cascade delete finished for project: ${projectId}`)
 
-		const response = await tablesDB.deleteRow({
+		const response = await db.deleteRow({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 			rowId: projectId,
@@ -88,7 +82,7 @@ export const deleteProject = async (projectId: string): Promise<Project> => {
 }
 
 export const touchProject = async (projectId: string): Promise<Project> => {
-	const response = await tablesDB.updateRow({
+	const response = await db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 		rowId: projectId,
@@ -114,7 +108,7 @@ export const convertToTeamProject = async (projectId: string, ownerId: string, p
 	try {
 		const team = await teams.create(ID.unique(), `${projectTitle} Team`)
 
-		const updatedProject = await tablesDB.updateRow({
+		const updatedProject = await db.updateRow({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
 			rowId: projectId,

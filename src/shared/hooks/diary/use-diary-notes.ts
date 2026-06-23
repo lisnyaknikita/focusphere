@@ -5,7 +5,8 @@ import { deleteCustomTemplate, getCustomTemplates } from '@/lib/diary/templates'
 import { JOURNAL_TEMPLATES } from '@/shared/constants/journal-templates'
 import { CustomJournalTemplate, JournalEntry, TemplateKey } from '@/shared/types/journal'
 import { PartialBlock } from '@blocknote/core'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 export const useDiaryNotes = (userId: string) => {
 	const [notes, setNotes] = useState<JournalEntry[]>([])
@@ -13,9 +14,16 @@ export const useDiaryNotes = (userId: string) => {
 	const [isLoading, setIsLoading] = useState(true)
 	const [customTemplates, setCustomTemplates] = useState<CustomJournalTemplate[]>([])
 
+	const notesRef = useRef<JournalEntry[]>([])
+
+	useEffect(() => {
+		notesRef.current = notes
+	}, [notes])
+
 	useEffect(() => {
 		const fetchEntries = async () => {
 			if (!userId) return
+
 			try {
 				setIsLoading(true)
 
@@ -87,6 +95,9 @@ export const useDiaryNotes = (userId: string) => {
 
 	const handleTitleChange = useCallback(
 		async (title: string, noteId: string) => {
+			const oldNote = notesRef.current.find(n => n.$id === noteId)
+			const oldTitle = oldNote ? oldNote.title : ''
+
 			setNotes(prev => {
 				const noteIndex = prev.findIndex(n => n.$id === noteId)
 				if (noteIndex === -1) return prev
@@ -95,6 +106,7 @@ export const useDiaryNotes = (userId: string) => {
 				newNotes.splice(noteIndex, 1)
 				return [updatedNote, ...newNotes]
 			})
+
 			if (activeNote?.$id === noteId) {
 				setActiveNote(prev => (prev ? { ...prev, title } : null))
 			}
@@ -103,6 +115,23 @@ export const useDiaryNotes = (userId: string) => {
 				await updateDiaryEntry(noteId, { title })
 			} catch (error) {
 				console.error('Failed to update title:', error)
+
+				setNotes(prev => {
+					const noteIndex = prev.findIndex(n => n.$id === noteId)
+					if (noteIndex === -1) return prev
+
+					const rolledBackNote = { ...prev[noteIndex], title: oldTitle }
+					const newNotes = [...prev]
+					newNotes.splice(noteIndex, 1)
+					return [rolledBackNote, ...newNotes]
+				})
+
+				setActiveNote(prev => {
+					if (prev?.$id === noteId) return { ...prev, title: oldTitle }
+					return prev
+				})
+
+				toast.error('Connection lost. Changes were not saved.')
 			}
 		},
 		[activeNote?.$id]
@@ -110,6 +139,9 @@ export const useDiaryNotes = (userId: string) => {
 
 	const handleContentChange = useCallback(
 		async (content: string, noteId: string) => {
+			const oldNote = notesRef.current.find(n => n.$id === noteId)
+			const oldContent = oldNote ? oldNote.content : ''
+
 			setNotes(prev => {
 				const noteIndex = prev.findIndex(n => n.$id === noteId)
 				if (noteIndex === -1) return prev
@@ -127,6 +159,22 @@ export const useDiaryNotes = (userId: string) => {
 				await updateDiaryEntry(noteId, { content })
 			} catch (error) {
 				console.error('Failed to update content:', error)
+
+				setNotes(prev => {
+					const noteIndex = prev.findIndex(n => n.$id === noteId)
+					if (noteIndex === -1) return prev
+					const rolledBackNote = { ...prev[noteIndex], content: oldContent }
+					const newNotes = [...prev]
+					newNotes.splice(noteIndex, 1)
+					return [rolledBackNote, ...newNotes]
+				})
+
+				setActiveNote(prev => {
+					if (prev?.$id === noteId) return { ...prev, content: oldContent }
+					return prev
+				})
+
+				toast.error('Connection lost. Changes were not saved.')
 			}
 		},
 		[activeNote?.$id]

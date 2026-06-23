@@ -1,14 +1,15 @@
 import { mapEventToScheduleX } from '@/lib/events/event-mapper'
 import { useCalendarApp } from '@/shared/hooks/calendar/use-calendar-app'
-import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
+import { CalendarEvent } from '@/shared/types/event'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
 
 import '@schedule-x/theme-default/dist/index.css'
 
 import { WeekDayHeader } from '@/app/(main)/planner/components/main/planner-inner/components/week-day-header/week-day-header'
-import { createEvent, updateEvent } from '@/lib/events/events'
+import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
+import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -23,56 +24,17 @@ interface CalendarInnerProps {
 export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerProps) => {
 	const { calendar, eventsService, setView, eventModal } = useCalendarApp({ defaultView: view })
 	const { handleDelete } = useEventDeletion({ eventsService, eventModal })
+	const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
+
 	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
+
+	useCalendarScroll({ dependencies: [view] })
 
 	const handleConfirmDelete = async () => {
 		if (eventToDelete) {
 			await handleDelete(String(eventToDelete.id))
 			setEventToDelete(null)
 		}
-	}
-
-	const handleUpdateEvent = async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>) => {
-		const { title, description, color, startDate, endDate, calendarId } = data
-		const payload: Partial<Omit<CreateEventPayload, 'userId'>> = {
-			...(title !== undefined && { title }),
-			...(description !== undefined && { description }),
-			...(color !== undefined && { color }),
-			...(startDate !== undefined && { startDate }),
-			...(endDate !== undefined && { endDate }),
-			...(calendarId !== undefined && { calendarId }),
-		}
-
-		if (eventId.startsWith('g_')) {
-			const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-			await googleCalendarService.updateEvent(eventId, {
-				summary: title,
-				description,
-				color,
-				start: startDate ?? new Date().toISOString(),
-				end: endDate ?? new Date().toISOString(),
-			})
-			return
-		} else {
-			return updateEvent(eventId, payload)
-		}
-	}
-
-	const handleCreateEvent = async (data: CreateEventPayload) => {
-		const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-		const googleEvent = await googleCalendarService.createEvent({
-			summary: data.title,
-			description: data.description,
-			color: data.color,
-			start: data.startDate,
-			end: data.endDate,
-		})
-
-		if (googleEvent) {
-			return googleEvent
-		}
-
-		return createEvent(data)
 	}
 
 	const customComponents = useMemo(
@@ -93,7 +55,7 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 			),
 			weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} />,
 		}),
-		[getEvents]
+		[getEvents, handleCreateEvent, handleUpdateEvent]
 	)
 
 	useEffect(() => {
@@ -103,42 +65,6 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 	useEffect(() => {
 		setView(view)
 	}, [view, setView])
-
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			const el = document.querySelector('.sx__current-time-indicator') as HTMLElement | null
-			if (el) {
-				let scrollParent: HTMLElement | null = null
-				let parent = el.parentElement
-
-				while (parent && parent !== document.body && parent !== document.documentElement) {
-					const style = window.getComputedStyle(parent)
-					if (style.overflowY === 'auto' || style.overflowY === 'scroll' || style.overflowY === 'overlay') {
-						scrollParent = parent
-						break
-					}
-					parent = parent.parentElement
-				}
-
-				if (scrollParent) {
-					const parentRect = scrollParent.getBoundingClientRect()
-					const indicatorRect = el.getBoundingClientRect()
-					const scrollTop = scrollParent.scrollTop + (indicatorRect.top - parentRect.top) - parentRect.height / 2
-					scrollParent.scrollTo({
-						top: scrollTop,
-						behavior: 'smooth',
-					})
-				} else {
-					el.scrollIntoView({
-						behavior: 'smooth',
-						block: 'center',
-					})
-				}
-			}
-		}, 50)
-
-		return () => clearTimeout(timeout)
-	}, [])
 
 	return (
 		<>

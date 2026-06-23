@@ -1,11 +1,11 @@
 'use client'
 
 import { ChatChannel, TeamMember } from '@/shared/types/chat'
+import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { ChannelIcon } from '@/shared/ui/icons/projects/channel-icon'
 import { Modal } from '@/shared/ui/modal/modal'
-import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import classes from './chat-sidebar.module.scss'
@@ -40,18 +40,6 @@ export const ChatSidebar = ({
 	const [isMessagesOpened, setIsMessagesOpened] = useState(true)
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 	const [newChannelName, setNewChannelName] = useState('')
-	const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-
-	const { refs, floatingStyles, context } = useFloating({
-		open: isTooltipOpen,
-		onOpenChange: setIsTooltipOpen,
-		placement: 'top',
-		whileElementsMounted: autoUpdate,
-		middleware: [offset(10), flip(), shift()],
-	})
-
-	const hover = useHover(context)
-	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
 	const handleCreateSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -61,14 +49,9 @@ export const ChatSidebar = ({
 			await onCreateChannel(newChannelName.trim(), currentUserId)
 			setNewChannelName('')
 			setIsCreateModalOpen(false)
-		} catch (err) {
+		} catch (err: unknown) {
 			console.error('Create channel UI error:', err)
 		}
-	}
-
-	const handleOpenCreateModal = () => {
-		setIsCreateModalOpen(true)
-		setIsTooltipOpen(false)
 	}
 
 	useEffect(() => {
@@ -92,33 +75,19 @@ export const ChatSidebar = ({
 							<ArrowBottomIcon className={clsx(!isChannelsOpened && 'rotated')} />
 							<span>Channels</span>
 						</button>
-						<button
-							ref={refs.setReference}
-							className={classes.createButton}
-							onClick={handleOpenCreateModal}
-							{...getReferenceProps()}
-						>
-							<PlusIcon />
-							{isTooltipOpen && (
-								<div
-									ref={refs.setFloating}
-									style={{
-										...floatingStyles,
-										background: 'var(--save-button-bg)',
-										color: 'var(--save-button-text)',
-										padding: '4px 8px',
-										borderRadius: '5px',
-										fontSize: '13px',
-										fontWeight: 700,
-										zIndex: 1000,
-										whiteSpace: 'nowrap',
-									}}
-									{...getFloatingProps()}
+						<ActionTooltip text='Create channel'>
+							{(setRef, refProps) => (
+								<button
+									ref={setRef}
+									type='button'
+									className={classes.createButton}
+									onClick={() => setIsCreateModalOpen(true)}
+									{...refProps}
 								>
-									Create channel
-								</div>
+									<PlusIcon />
+								</button>
 							)}
-						</button>
+						</ActionTooltip>
 					</div>
 					<ul className={clsx(classes.list, isChannelsOpened && 'opened')}>
 						{channels.map(channel => (
@@ -145,16 +114,23 @@ export const ChatSidebar = ({
 						{teammates
 							.filter(m => m.userId !== currentUserId)
 							.map((mate: TeamMember) => {
-								const existingDM = dmChannels.find(
-									ch => ch.dmParticipants?.includes(currentUserId!) && ch.dmParticipants?.includes(mate.userId)
-								)
+								const existingDM = currentUserId
+									? dmChannels.find(
+											ch => ch.dmParticipants?.includes(currentUserId) && ch.dmParticipants?.includes(mate.userId)
+									  )
+									: null
+
 								const isActive = existingDM?.$id === activeChannelId
 
 								return (
 									<li
 										className={clsx(classes.listItem, isActive && 'active')}
 										key={mate.$id}
-										onClick={() => onOpenDM(currentUserId!, mate)}
+										onClick={() => {
+											if (currentUserId) {
+												onOpenDM(currentUserId, mate)
+											}
+										}}
 									>
 										<span>{mate.userName}</span>
 									</li>

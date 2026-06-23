@@ -13,7 +13,6 @@ import classes from './page.module.scss'
 export default function ChatPage() {
 	const { user, loading: userLoading } = useUser()
 	const { project, isLoading: projectLoading } = useProject()
-
 	const { avatarUrl } = useAvatarUrl(user)
 
 	const chat = useChat(project!)

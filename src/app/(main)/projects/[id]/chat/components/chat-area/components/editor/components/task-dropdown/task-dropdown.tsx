@@ -2,6 +2,7 @@
 
 import { KanbanTask } from '@/shared/types/kanban-task'
 import clsx from 'clsx'
+import { useEffect, useRef } from 'react'
 import classes from './task-dropdown.module.scss'
 
 const priorityColors: Record<string, string> = {
@@ -26,8 +27,28 @@ export const TaskDropdown = ({
 	dropdownIndex,
 	onSelectTask,
 }: TaskDropdownProps) => {
+	const containerRef = useRef<HTMLDivElement | null>(null)
+
+	useEffect(() => {
+		if (!containerRef.current) return
+
+		const activeItem = containerRef.current.querySelector(`.${classes.active}`) as HTMLElement
+
+		if (activeItem) {
+			activeItem.scrollIntoView({
+				block: 'nearest',
+				behavior: 'auto',
+			})
+		}
+	}, [dropdownIndex])
+
+	const handleCombinedRefs = (node: HTMLDivElement | null) => {
+		containerRef.current = node
+		floatingRef(node)
+	}
+
 	return (
-		<div ref={floatingRef} className={classes.taskDropdown} style={floatingStyles}>
+		<div ref={handleCombinedRefs} className={classes.taskDropdown} style={floatingStyles}>
 			{filteredTasks.length > 0 ? (
 				filteredTasks.map((task, idx) => (
 					<div

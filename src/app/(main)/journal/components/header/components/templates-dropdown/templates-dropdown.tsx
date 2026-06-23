@@ -110,7 +110,6 @@ export const TemplatesDropdown = () => {
 							<>
 								<hr className={classes.divider} />
 								<div className={classes.sectionLabel}>Custom Templates</div>
-
 								<div className={classes.customTemplatesList}>
 									{(customTemplates as unknown as CustomTemplate[]).map(template => (
 										<div key={template.$id} className={classes.customTemplateRow}>

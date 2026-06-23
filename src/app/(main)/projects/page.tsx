@@ -2,9 +2,10 @@
 
 import { useBilling } from '@/shared/context/billing-context'
 import { useProjects } from '@/shared/hooks/projects/use-projects'
-import { Tabs } from '@/shared/tabs/tabs'
+import { ProjectsView } from '@/shared/types/project'
+import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { FavoriteIcon } from '@/shared/ui/icons/projects/favorite-icon'
-import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
+import { Tabs } from '@/shared/ui/tabs/tabs'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
@@ -14,31 +15,31 @@ import { Search } from './components/header/search/search'
 import { ProjectsList } from './components/main/projects-list/projects-list'
 import classes from './page.module.scss'
 
-type ProjectsView = 'solo' | 'team'
-
 const VIEW_KEY = 'projectsView'
 
 export default function Projects() {
 	const [view, setView] = useState<ProjectsView | null>(null)
 	const [searchQuery, setSearchQuery] = useState('')
+	const [debouncedSearch, setDebouncedSearch] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [favoritesOnly, setFavoritesOnly] = useState(false)
-	const [isFavTooltipOpen, setIsFavTooltipOpen] = useState(false)
 
 	const { isPro, isBillingLoading, openPaywall } = useBilling()
 
-	const { refs, floatingStyles, context } = useFloating({
-		open: isFavTooltipOpen,
-		onOpenChange: setIsFavTooltipOpen,
-		placement: 'bottom',
-		whileElementsMounted: autoUpdate,
-		middleware: [offset(10), flip(), shift()],
-	})
+	useEffect(() => {
+		const handler = setTimeout(() => {
+			setDebouncedSearch(searchQuery)
+		}, 400)
 
-	const hover = useHover(context)
-	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
+		return () => clearTimeout(handler)
+	}, [searchQuery])
 
-	const { projects, total, limit, isLoading } = useProjects(view, searchQuery, currentPage, favoritesOnly)
+	const { projects, total, limit, isLoading, isFetching } = useProjects(
+		view,
+		debouncedSearch,
+		currentPage,
+		favoritesOnly
+	)
 
 	useEffect(() => {
 		if (isBillingLoading) return
@@ -90,41 +91,24 @@ export default function Projects() {
 							lockedTabs={!isBillingLoading && !isPro ? ['team'] : []}
 						/>
 						<Search value={searchQuery} onChange={setSearchQuery} />
-						<button
-							ref={refs.setReference}
-							className={clsx(classes.favoriteButton, favoritesOnly && 'active')}
-							onClick={() => setFavoritesOnly(!favoritesOnly)}
-							{...getReferenceProps()}
-							onMouseEnter={() => setIsFavTooltipOpen(true)}
-							onMouseLeave={() => setIsFavTooltipOpen(false)}
-						>
-							<FavoriteIcon />
-							{isFavTooltipOpen && (
-								<div
-									ref={refs.setFloating}
-									style={{
-										...floatingStyles,
-										background: 'var(--save-button-bg)',
-										color: 'var(--save-button-text)',
-										padding: '4px 8px',
-										borderRadius: '5px',
-										fontSize: '13px',
-										fontWeight: 700,
-										zIndex: 1000,
-										whiteSpace: 'nowrap',
-									}}
-									{...getFloatingProps()}
+						<ActionTooltip text={favoritesOnly ? 'Show all projects' : 'Show favorites only'}>
+							{(setRef, refProps) => (
+								<button
+									ref={setRef}
+									className={clsx(classes.favoriteButton, favoritesOnly && 'active')}
+									onClick={() => setFavoritesOnly(!favoritesOnly)}
+									{...refProps}
 								>
-									{favoritesOnly ? 'Show all projects' : 'Show favorites only'}
-								</div>
+									<FavoriteIcon />
+								</button>
 							)}
-						</button>
+						</ActionTooltip>
 						<div onClickCapture={handleCreateClickCapture}>
 							<CreateButton />
 						</div>
 					</header>
 					<main className={classes.projects}>
-						<ProjectsList projects={projects} isLoading={isLoading} />
+						<ProjectsList projects={projects} isLoading={isLoading} isFetching={isFetching} />
 					</main>
 					<footer className={classes.pagination}>
 						{total > limit && (

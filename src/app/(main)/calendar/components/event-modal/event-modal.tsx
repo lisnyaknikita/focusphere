@@ -14,6 +14,7 @@ interface EventModalProps {
 export const EventModal = ({ onClose }: EventModalProps) => {
 	const handleCreateEvent = async (data: CreateEventPayload) => {
 		const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+
 		const googleEvent = await googleCalendarService.createEvent({
 			summary: data.title,
 			description: data.description,

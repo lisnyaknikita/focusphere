@@ -1,17 +1,14 @@
 'use client'
 
 import { useTimerStore } from '@/shared/stores/timer.store'
+import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { PauseIcon } from '@/shared/ui/icons/focus/pause-icon'
 import { PlayIcon } from '@/shared/ui/icons/focus/play-icon'
 import { ResetIcon } from '@/shared/ui/icons/focus/reset-icon'
-import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import clsx from 'clsx'
-import { useState } from 'react'
 import classes from './timer.module.scss'
 
 export const Timer = () => {
-	const [isResetTooltipOpen, setIsResetTooltipOpen] = useState(false)
-
 	const timeLeft = useTimerStore(s => s.timeLeft)
 	const status = useTimerStore(s => s.status)
 	const startTimer = useTimerStore(s => s.startTimer)
@@ -27,22 +24,6 @@ export const Timer = () => {
 
 	const isRunning = status === 'work' || status === 'break'
 	const handleAction = isRunning ? pauseTimer : startTimer
-
-	const {
-		refs: resetRefs,
-		floatingStyles: resetStyles,
-		context: resetContext,
-	} = useFloating({
-		open: isResetTooltipOpen,
-		onOpenChange: setIsResetTooltipOpen,
-		placement: 'bottom',
-		whileElementsMounted: autoUpdate,
-		middleware: [offset(10), flip(), shift()],
-	})
-
-	const resetHover = useHover(resetContext)
-
-	const { getReferenceProps: getResetProps, getFloatingProps: getResetFloatingProps } = useInteractions([resetHover])
 
 	if (status === 'completed') {
 		return (
@@ -86,35 +67,13 @@ export const Timer = () => {
 			</button>
 			{status !== 'idle' && (
 				<>
-					<button
-						ref={resetRefs.setReference}
-						className={classes.resetButton}
-						onClick={() => {
-							resetTimer()
-							setIsResetTooltipOpen(false)
-						}}
-						{...getResetProps()}
-					>
-						<ResetIcon />
-					</button>
-					{isResetTooltipOpen && (
-						<div
-							ref={resetRefs.setFloating}
-							style={{
-								...resetStyles,
-								background: 'var(--save-button-bg)',
-								color: 'var(--save-button-text)',
-								padding: '4px 8px',
-								borderRadius: '5px',
-								fontSize: '13px',
-								fontWeight: 700,
-								zIndex: 1000,
-							}}
-							{...getResetFloatingProps()}
-						>
-							Reset timer
-						</div>
-					)}
+					<ActionTooltip text='Reset timer'>
+						{(setRef, refProps) => (
+							<button ref={setRef} className={classes.resetButton} onClick={resetTimer} {...refProps}>
+								<ResetIcon />
+							</button>
+						)}
+					</ActionTooltip>
 				</>
 			)}
 			{/* {(status === 'work' || status === 'break') && (

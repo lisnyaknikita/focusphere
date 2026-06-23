@@ -23,6 +23,7 @@ export default function BacklogPage() {
 		setInlineTitle,
 		taskToDelete,
 		setTaskToDelete,
+		isSubmitting,
 		handleInlineSubmit,
 		handleMoveToTodo,
 		handleDeleteConfirm,
@@ -93,13 +94,15 @@ export default function BacklogPage() {
 												onChange={e => setInlineTitle(e.target.value)}
 												onBlur={handleInlineSubmit}
 												onKeyDown={e => {
-													if (e.key === 'Enter') handleInlineSubmit()
+													if (e.key === 'Enter') e.currentTarget.blur()
+
 													if (e.key === 'Escape') {
 														setInlineTitle('')
 														setIsAddingInline(false)
 													}
 												}}
 												autoFocus
+												disabled={isSubmitting}
 											/>
 										</div>
 										<div className={classes.colTags}>

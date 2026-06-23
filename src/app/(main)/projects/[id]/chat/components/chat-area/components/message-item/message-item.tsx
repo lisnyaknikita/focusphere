@@ -3,7 +3,7 @@ import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import clsx from 'clsx'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ActionButtons } from './components/action-buttons/action-buttons'
 import { MessageContent } from './components/message-content/message-content'
 import classes from './message-item.module.scss'
@@ -37,8 +37,13 @@ export const MessageItem = ({
 	const [isEditing, setIsEditing] = useState(false)
 	const [editValue, setEditValue] = useState(message.content)
 
-	const currentAuthor = teammates?.find?.(m => m.userId === message.senderId)
+	useEffect(() => {
+		if (!isEditing) {
+			setEditValue(message.content)
+		}
+	}, [message.content, isEditing])
 
+	const currentAuthor = teammates.find(m => m.userId === message.senderId)
 	const displayAvatar = message.senderAvatar || '/avatar.jpg'
 
 	const isAuthor = currentUserId === message.senderId
@@ -53,10 +58,10 @@ export const MessageItem = ({
 
 	return (
 		<>
-			<div className={clsx(classes.message, isContinuation && 'continuation')} key={message.$id}>
+			<div className={clsx(classes.message, isContinuation && 'continuation')}>
 				{!isContinuation ? (
 					<div className={classes.authorAvatar}>
-						<Image src={displayAvatar} alt='avatar' width={46} height={46} />
+						<Image src={displayAvatar} alt={`${displayName}'s avatar`} width={46} height={46} />
 					</div>
 				) : (
 					<div className={classes.avatarPlaceholder} />

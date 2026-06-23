@@ -3,6 +3,7 @@ import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export const useWeeklyGoals = () => {
 	const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([])
@@ -21,6 +22,7 @@ export const useWeeklyGoals = () => {
 			setWeeklyGoals(response.rows as unknown as WeeklyGoal[])
 		} catch (error) {
 			console.error('Error fetching weekly goals:', error)
+			toast.error('Error fetching weekly goals')
 		} finally {
 			setIsLoading(false)
 		}
