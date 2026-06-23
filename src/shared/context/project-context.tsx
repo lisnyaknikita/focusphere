@@ -17,8 +17,8 @@ interface ProjectContextType {
 	setActiveNote: (note: ProjectNote | null) => void
 	createNote: (title?: string, linkedTaskCode?: string) => Promise<void>
 	deleteNote: (noteId: string) => Promise<void>
-	handleContentChange: (content: string, noteId: string) => void
-	handleTitleChange: (title: string, noteId: string) => void
+	handleContentChange: (content: string, noteId: string) => Promise<void>
+	handleTitleChange: (title: string, noteId: string) => Promise<void>
 	isNotesLoading: boolean
 }
 
@@ -91,7 +91,6 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			) => Promise<void>,
 			deleteNote: notesData.deleteNote,
 			isLoading: notesData.isLoading,
-			headerTitle: project?.title,
 		}),
 		[
 			notesData.notes,
@@ -102,7 +101,6 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			notesData.createNote,
 			notesData.deleteNote,
 			notesData.isLoading,
-			project?.title,
 		]
 	)
 

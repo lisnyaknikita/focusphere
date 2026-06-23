@@ -1,17 +1,12 @@
+import { db } from '@/lib/appwrite'
 import { CreateSubtaskPayload } from '@/shared/types/kanban-subtask'
-import { Client, ID, Query, TablesDB } from 'appwrite'
-
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
+import { ID, Query } from 'appwrite'
 
 const DB_ID = process.env.NEXT_PUBLIC_DB_ID!
 const SUBTASKS_TABLE_ID = process.env.NEXT_PUBLIC_TABLE_KANBAN_SUBTASKS!
 
 export const getKanbanSubtasks = async (taskId: string) => {
-	return tablesDB.listRows({
+	return db.listRows({
 		databaseId: DB_ID,
 		tableId: SUBTASKS_TABLE_ID,
 		queries: [Query.equal('taskId', taskId)],
@@ -19,7 +14,7 @@ export const getKanbanSubtasks = async (taskId: string) => {
 }
 
 export const createKanbanSubtask = async (data: CreateSubtaskPayload) => {
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: DB_ID,
 		tableId: SUBTASKS_TABLE_ID,
 		rowId: ID.unique(),
@@ -28,7 +23,7 @@ export const createKanbanSubtask = async (data: CreateSubtaskPayload) => {
 }
 
 export const updateKanbanSubtask = async (subtaskId: string, data: Partial<CreateSubtaskPayload>) => {
-	return tablesDB.updateRow({
+	return db.updateRow({
 		databaseId: DB_ID,
 		tableId: SUBTASKS_TABLE_ID,
 		rowId: subtaskId,
@@ -37,7 +32,7 @@ export const updateKanbanSubtask = async (subtaskId: string, data: Partial<Creat
 }
 
 export const deleteKanbanSubtask = async (subtaskId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: DB_ID,
 		tableId: SUBTASKS_TABLE_ID,
 		rowId: subtaskId,

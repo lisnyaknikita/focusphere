@@ -63,11 +63,7 @@ export const PriorityDropdown = ({ value, onChange }: PriorityDropdownProps) => 
 			<AnimatePresence>
 				{isOpen && (
 					<FloatingPortal>
-						<div
-							ref={refs.setFloating}
-							style={{ ...floatingStyles, zIndex: 2100 }}
-							{...getFloatingProps()}
-						>
+						<div ref={refs.setFloating} style={{ ...floatingStyles, zIndex: 2100 }} {...getFloatingProps()}>
 							<motion.div
 								className={classes.dropdown}
 								initial={{ opacity: 0, scale: 0.95, y: -6 }}
@@ -92,4 +88,3 @@ export const PriorityDropdown = ({ value, onChange }: PriorityDropdownProps) => 
 		</div>
 	)
 }
-

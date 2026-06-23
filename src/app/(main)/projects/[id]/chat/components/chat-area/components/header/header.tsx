@@ -27,23 +27,36 @@ export const Header = ({
 	displayName,
 }: HeaderProps) => {
 	const [isChannelInfoOpened, setIsChannelInfoOpened] = useState(false)
+
 	const isOwner = activeChannel?.ownerId === currentUserId
 	const isDM = activeChannel?.type === 'dm'
+	const channelTitle = displayName ?? activeChannel?.name
 
 	return (
 		<>
 			<header className={classes.header}>
-				<button className={classes.sidebarToggle} onClick={onToggleChatSidebar} aria-label='Open channels sidebar'>
+				<button
+					className={classes.sidebarToggle}
+					onClick={onToggleChatSidebar}
+					aria-label='Open channels sidebar'
+					type='button'
+				>
 					<SidebarIcon />
 				</button>
 
-				{activeChannel && (
-					<button className={classes.channelTrigger} onClick={() => !isDM && setIsChannelInfoOpened(true)}>
-						<ChannelIcon />
-						<span>{displayName ?? activeChannel.name}</span>
-						{!isDM && <ArrowBottomIcon />}
-					</button>
-				)}
+				{activeChannel &&
+					(isDM ? (
+						<div className={classes.channelTrigger}>
+							<ChannelIcon />
+							<span>{channelTitle}</span>
+						</div>
+					) : (
+						<button type='button' className={classes.channelTrigger} onClick={() => setIsChannelInfoOpened(true)}>
+							<ChannelIcon />
+							<span>{channelTitle}</span>
+							<ArrowBottomIcon />
+						</button>
+					))}
 			</header>
 
 			{activeChannel && !isDM && (

@@ -1,17 +1,12 @@
 import { CreateJournalEntryPayload, JournalEntry, UpdateJournalEntryPayload } from '@/shared/types/journal'
-import { Client, ID, Query, TablesDB } from 'appwrite'
-
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
+import { ID, Query } from 'appwrite'
+import { db } from '../appwrite'
 
 const DB_ID = process.env.NEXT_PUBLIC_DB_ID!
 const TABLE_ID = process.env.NEXT_PUBLIC_TABLE_DIARY_NOTES!
 
 export const getDiaryEntries = async (userId: string): Promise<JournalEntry[]> => {
-	const response = await tablesDB.listRows({
+	const response = await db.listRows({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
 		queries: [Query.equal('userId', userId), Query.orderDesc('$updatedAt')],
@@ -21,7 +16,7 @@ export const getDiaryEntries = async (userId: string): Promise<JournalEntry[]> =
 }
 
 export const createDiaryEntry = async (data: CreateJournalEntryPayload): Promise<JournalEntry> => {
-	const response = await tablesDB.createRow({
+	const response = await db.createRow({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
 		rowId: ID.unique(),
@@ -32,7 +27,7 @@ export const createDiaryEntry = async (data: CreateJournalEntryPayload): Promise
 }
 
 export const updateDiaryEntry = async (noteId: string, data: UpdateJournalEntryPayload): Promise<JournalEntry> => {
-	const response = await tablesDB.updateRow({
+	const response = await db.updateRow({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
 		rowId: noteId,
@@ -43,7 +38,7 @@ export const updateDiaryEntry = async (noteId: string, data: UpdateJournalEntryP
 }
 
 export const deleteDiaryEntry = async (noteId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: DB_ID,
 		tableId: TABLE_ID,
 		rowId: noteId,

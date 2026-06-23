@@ -1,7 +1,8 @@
 'use client'
 
 import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
-import { priorityColors, priorityLabels, statusColors, statusLabels } from '@/shared/context/task-highlight.constants'
+
+import { priorityColors, priorityLabels, statusColors, statusLabels } from '@/shared/constants/task-highlight.constants'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import {
 	autoUpdate,

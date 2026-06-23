@@ -1,14 +1,9 @@
 import { CreateEventPayload } from '@/shared/types/event'
-import { Client, ID, TablesDB } from 'appwrite'
-
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
+import { ID } from 'appwrite'
+import { db } from '../appwrite'
 
 export const createEvent = async (data: CreateEventPayload) => {
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
 		rowId: ID.unique(),
@@ -17,7 +12,7 @@ export const createEvent = async (data: CreateEventPayload) => {
 }
 
 export const updateEvent = async (eventId: string, data: Partial<Omit<CreateEventPayload, 'userId'>>) => {
-	return tablesDB.updateRow({
+	return db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
 		rowId: eventId,
@@ -26,7 +21,7 @@ export const updateEvent = async (eventId: string, data: Partial<Omit<CreateEven
 }
 
 export const deleteEvent = async (eventId: string): Promise<void> => {
-	await tablesDB.deleteRow({
+	await db.deleteRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
 		rowId: eventId,

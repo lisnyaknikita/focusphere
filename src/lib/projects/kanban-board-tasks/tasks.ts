@@ -1,15 +1,10 @@
+import { db } from '@/lib/appwrite'
 import { CreateKanbanTaskPayload } from '@/shared/types/kanban-task'
-import { Client, ID, Query, TablesDB } from 'appwrite'
+import { ID, Query } from 'appwrite'
 import { deleteKanbanSubtask, getKanbanSubtasks } from './subtasks'
 
-const client = new Client()
-	.setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-	.setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-
-const tablesDB = new TablesDB(client)
-
 export const getKanbanTasks = async (projectId: string) => {
-	return tablesDB.listRows({
+	return db.listRows({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
 		queries: [Query.equal('projectId', projectId), Query.orderAsc('position')],
@@ -17,7 +12,7 @@ export const getKanbanTasks = async (projectId: string) => {
 }
 
 export const createKanbanTask = async (data: CreateKanbanTaskPayload) => {
-	return tablesDB.createRow({
+	return db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
 		rowId: ID.unique(),
@@ -26,7 +21,7 @@ export const createKanbanTask = async (data: CreateKanbanTaskPayload) => {
 }
 
 export const updateKanbanTask = async (taskId: string, data: Partial<CreateKanbanTaskPayload>) => {
-	return tablesDB.updateRow({
+	return db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
 		rowId: taskId,
@@ -42,7 +37,7 @@ export const deleteKanbanTask = async (taskId: string): Promise<void> => {
 
 		await Promise.all(subtaskPromises)
 
-		await tablesDB.deleteRow({
+		await db.deleteRow({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
 			rowId: taskId,
@@ -55,14 +50,14 @@ export const deleteKanbanTask = async (taskId: string): Promise<void> => {
 
 export const updateLegacyTaskNames = async (oldName: string, newName: string) => {
 	try {
-		const tasks = await tablesDB.listRows({
+		const tasks = await db.listRows({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
 			queries: [Query.equal('assigneeName', oldName), Query.limit(100)],
 		})
 
 		const promises = tasks.rows.map(task =>
-			tablesDB.updateRow({
+			db.updateRow({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
 				rowId: task.$id,

@@ -16,7 +16,6 @@ export const GeneralNotesProvider = ({ userId, children }: { userId: string; chi
 					hint?: string | CustomJournalTemplate,
 					linkedTaskCode?: string
 				) => Promise<void>,
-				headerTitle: 'My Notes',
 			}}
 		>
 			{children}

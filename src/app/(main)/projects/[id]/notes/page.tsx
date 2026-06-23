@@ -2,12 +2,13 @@
 
 import { useDeleteNote } from '@/shared/hooks/projects/notes/use-delete-note'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { UndoIcon } from '@/shared/ui/icons/undo-icon'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
-import { TextEditor, TextEditorRef } from '@/shared/ui/text-editor/text-editor'
+import { TextEditor } from '@/shared/ui/text-editor/text-editor'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
@@ -52,7 +53,7 @@ export default function NotesPage() {
 						<BeatLoader color='#aaa' size={10} className={classes.loader} />
 					) : (
 						<>
-							{!isFocusMode && <NotesList withTitle={false} withTags={true} storageKey='project-notes-collapsed' />}
+							{!isFocusMode && <NotesList storageKey='project-notes-collapsed' />}
 							<TextEditor key={activeNote?.$id} ref={editorRef} />
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>

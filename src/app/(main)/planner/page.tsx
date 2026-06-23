@@ -1,37 +1,33 @@
 'use client'
 
-import { createTimeBlock, deleteTimeBlock, updateTimeBlock } from '@/lib/planner/planner'
-import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
-import { Modal } from '@/shared/ui/modal/modal'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import 'temporal-polyfill/global'
 import { AddTimeBlockButton } from './components/header/create-button/create-button'
-import { TimeBlockModal } from './components/header/time-block-modal/time-block-modal'
 import { WeeklyGoals } from './components/header/weekly-goals/weekly-goals'
-import { DailyTasksModal } from './components/main/daily-tasks-modal/daily-tasks-modal'
 import { PlannerInner } from './components/main/planner-inner/planner-inner'
 
 import { mapTimeBlockToScheduleX } from '@/lib/events/event-mapper'
 import { useBilling } from '@/shared/context/billing-context'
-import { useCalendarApp } from '@/shared/hooks/planner/use-calendar-app'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
+import { usePlannerCalendar } from '@/shared/hooks/planner/use-planner-calendar'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
 import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { BeatLoader } from 'react-spinners'
+import { PasteBanner } from './components/main/paste-banner/paste-banner'
+import { PlannerModals } from './components/main/planner-modals/planner-modals'
 import { CopyModeContext } from './copy-mode-context'
 import { DailyTasksCountByDateContext } from './daily-tasks-count-context'
 import classes from './page.module.scss'
 
 export default function Planner() {
 	const [isTimeBlockModalVisible, setIsTimeBlockModalVisible] = useState(false)
-	const [isDailyTasksModalVisible, setIsDailyTasksModalVisible] = useState(false)
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
-	const [quickCreatedEvent, setQuickCreatedEvent] = useState<import('@schedule-x/calendar').CalendarEvent | null>(null)
-	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
+	const [quickCreatedEvent, setQuickCreatedEvent] = useState<SXEvent | null>(null)
+
 	const hasDailyTasksChangesRef = useRef(false)
-	const isCopyModeRef = useRef(false)
+	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
 
 	const { user } = useUser()
 	const { isPro, openPaywall } = useBilling()
@@ -55,16 +51,14 @@ export default function Planner() {
 		openPaywallRef.current = openPaywall
 	}, [isPro, timeBlocks, openPaywall])
 
-	const { calendar, eventsService, eventModal } = useCalendarApp({
-		onQuickCreate: async dateTime => {
-			if (!isProRef.current && timeBlocksRef.current.length >= 50) {
-				openPaywallRef.current('planner_blocks_unlimited')
-				return
-			}
-			const event = await createQuickBlock(dateTime)
-			if (event) setQuickCreatedEvent(event)
-		},
+	const { calendar, eventsService, eventModal } = usePlannerCalendar({
+		isPro,
+		timeBlocks,
+		openPaywall,
+		createQuickBlock,
+		onQuickBlockCreated: setQuickCreatedEvent,
 	})
+
 	const { weeklyGoals, isLoading: isGoalsLoading, refreshWeeklyGoals } = useWeeklyGoals()
 	const { dailyTasksCountByDate, isLoading: isTasksLoading, refreshDailyTasksCounters } = useDailyTasksCounters()
 
@@ -82,10 +76,6 @@ export default function Planner() {
 		if (!eventsService) return
 		eventsService.set(timeBlocks.map(mapTimeBlockToScheduleX))
 	}, [timeBlocks, eventsService])
-
-	useEffect(() => {
-		isCopyModeRef.current = !!copiedTimeBlock
-	}, [copiedTimeBlock])
 
 	const handleTimeBlockCreated = useCallback(() => {
 		setIsTimeBlockModalVisible(false)
@@ -112,13 +102,12 @@ export default function Planner() {
 			}
 			hasDailyTasksChangesRef.current = false
 			setSelectedDate(date)
-			setIsDailyTasksModalVisible(true)
 		},
 		[pasteTimeBlock]
 	)
 
 	const handleTaskModalClose = useCallback(() => {
-		setIsDailyTasksModalVisible(false)
+		setSelectedDate(null)
 		if (hasDailyTasksChangesRef.current) {
 			refreshDailyTasksCounters()
 			hasDailyTasksChangesRef.current = false
@@ -128,18 +117,7 @@ export default function Planner() {
 	return (
 		<>
 			<div className={classes.plannerPage}>
-				{copiedTimeBlock && (
-					<div className={classes.pasteBanner}>
-						<div className={classes.info}>
-							<span className={classes.label}>Copying:</span>
-							<strong className={classes.eventTitle}>{copiedTimeBlock.title}</strong>
-						</div>
-						<p className={classes.hint}>Click on any day in the calendar to paste</p>
-						<button onClick={() => setCopiedTimeBlock(null)} className={classes.cancelBtn}>
-							Cancel
-						</button>
-					</div>
-				)}
+				{copiedTimeBlock && <PasteBanner copiedTimeBlock={copiedTimeBlock} onCancel={() => setCopiedTimeBlock(null)} />}
 				<header className={classes.header}>
 					<WeeklyGoals goals={weeklyGoals} onGoalsChange={refreshWeeklyGoals} />
 					<AddTimeBlockButton setIsModalVisible={handleAddBlockClick} />
@@ -164,55 +142,17 @@ export default function Planner() {
 					)}
 				</main>
 			</div>
-			<Modal isVisible={isTimeBlockModalVisible} onClose={() => setIsTimeBlockModalVisible(false)}>
-				<TimeBlockModal onClose={handleTimeBlockCreated} />
-			</Modal>
-			<Modal isVisible={isDailyTasksModalVisible} onClose={handleTaskModalClose}>
-				{selectedDate && (
-					<DailyTasksModal
-						date={selectedDate}
-						onClose={handleTaskModalClose}
-						onTasksChanged={handleDailyTasksChanged}
-					/>
-				)}
-			</Modal>
-			<Modal
-				isVisible={!!quickCreatedEvent}
-				onClose={async () => {
-					if (quickCreatedEvent) {
-						await deleteTimeBlock(String(quickCreatedEvent.id))
-					}
-					setQuickCreatedEvent(null)
-					refreshTimeBlocks()
-				}}
-				className='forQuickTimeBlock'
-			>
-				{quickCreatedEvent && (
-					<EventInfoModal
-						event={quickCreatedEvent}
-						isTimeBlock
-						initialEditing
-						onUpdated={() => {
-							setQuickCreatedEvent(null)
-							refreshTimeBlocks()
-						}}
-						onCancelCreate={async () => {
-							await deleteTimeBlock(String(quickCreatedEvent.id))
-							setQuickCreatedEvent(null)
-							refreshTimeBlocks()
-						}}
-						onConfirmDelete={async id => {
-							await deleteTimeBlock(id)
-							setQuickCreatedEvent(null)
-							refreshTimeBlocks()
-						}}
-						actions={{
-							create: createTimeBlock,
-							update: updateTimeBlock,
-						}}
-					/>
-				)}
-			</Modal>
+			<PlannerModals
+				isTimeBlockOpen={isTimeBlockModalVisible}
+				onTimeBlockClose={() => setIsTimeBlockModalVisible(false)}
+				onTimeBlockCreated={handleTimeBlockCreated}
+				selectedDate={selectedDate}
+				onTaskModalClose={handleTaskModalClose}
+				handleDailyTasksChanged={handleDailyTasksChanged}
+				quickCreatedEvent={quickCreatedEvent}
+				onQuickEventClose={setQuickCreatedEvent}
+				refreshTimeBlocks={refreshTimeBlocks}
+			/>
 		</>
 	)
 }

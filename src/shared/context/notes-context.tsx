@@ -8,12 +8,11 @@ interface NotesContextType<T extends BaseNote = BaseNote> {
 	notes: T[]
 	activeNote: T | null
 	setActiveNote: (note: T | null) => void
-	handleContentChange: (content: string, noteId: string) => void
-	handleTitleChange: (title: string, noteId: string) => void
+	handleContentChange: (content: string, noteId: string) => Promise<void>
+	handleTitleChange: (title: string, noteId: string) => Promise<void>
 	createNote: (hint?: string | CustomJournalTemplate, linkedTaskCode?: string) => Promise<void>
 	deleteNote: (noteId: string) => Promise<void>
 	isLoading: boolean
-	headerTitle?: string
 	searchQuery?: string
 	setSearchQuery?: (query: string) => void
 	customTemplates?: CustomJournalTemplate[]

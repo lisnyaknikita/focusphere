@@ -1,52 +1,32 @@
 import { db, storage } from '@/lib/appwrite'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-const avatarCache: Record<string, string> = {}
+const fetchAvatar = async (userId: string) => {
+	if (!userId) return '/avatar.jpg'
+
+	const profile = await db.getRow({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: 'profiles',
+		rowId: userId,
+	})
+
+	if (profile?.avatarId) {
+		return storage.getFileView(process.env.NEXT_PUBLIC_AVATAR_BUCKET_ID!, profile.avatarId)
+	}
+
+	return '/avatar.jpg'
+}
 
 export const useOwnerAvatar = (userId: string) => {
-	const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-	const [isLoading, setIsLoading] = useState(true)
+	const { data, isLoading } = useQuery({
+		queryKey: ['owner-avatar', userId],
+		queryFn: () => fetchAvatar(userId),
+		staleTime: Infinity,
+		gcTime: 1000 * 60 * 60,
+	})
 
-	useEffect(() => {
-		if (!userId) {
-			setAvatarUrl('/avatar.jpg')
-			setIsLoading(false)
-			return
-		}
-
-		if (avatarCache[userId]) {
-			setAvatarUrl(avatarCache[userId])
-			setIsLoading(false)
-			return
-		}
-
-		const fetchProfile = async () => {
-			try {
-				const profile = await db.getRow({
-					databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-					tableId: 'profiles',
-					rowId: userId,
-				})
-
-				if (profile?.avatarId) {
-					const url = storage.getFileView(process.env.NEXT_PUBLIC_AVATAR_BUCKET_ID!, profile.avatarId)
-					avatarCache[userId] = url
-					setAvatarUrl(url)
-				} else {
-					avatarCache[userId] = '/avatar.jpg'
-					setAvatarUrl('/avatar.jpg')
-				}
-			} catch (e) {
-				console.error(e)
-				avatarCache[userId] = '/avatar.jpg'
-				setAvatarUrl('/avatar.jpg')
-			} finally {
-				setIsLoading(false)
-			}
-		}
-
-		if (userId) fetchProfile()
-	}, [userId])
-
-	return { avatarUrl, isLoading }
+	return {
+		avatarUrl: data ?? '/avatar.jpg',
+		isLoading,
+	}
 }

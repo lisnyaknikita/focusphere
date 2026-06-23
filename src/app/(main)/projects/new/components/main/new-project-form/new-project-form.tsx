@@ -1,20 +1,17 @@
-import { getProjectById, updateProject } from '@/lib/projects/projects'
-import { useCreateProject } from '@/shared/hooks/projects/use-create-project'
+import { useProjectOperations } from '@/shared/hooks/projects/use-create-project'
 import { ProjectFormValues, projectSchema } from '@/shared/schemas/project-schema'
 import { RadioCard } from '@/shared/ui/radio-card/radio-card'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import classes from './new-project-form.module.scss'
 
 export const NewProjectForm = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const { create, isLoading: isCreating } = useCreateProject()
 
 	const projectId = searchParams.get('projectId')
-	const [isFetching, setIsFetching] = useState(!!projectId)
 
 	const {
 		register,
@@ -31,53 +28,51 @@ export const NewProjectForm = () => {
 		},
 	})
 
-	useEffect(() => {
-		if (projectId) {
-			const fetchProjectData = async () => {
-				try {
-					const project = await getProjectById(projectId)
-					reset({
-						title: project.title,
-						type: project.type,
-					})
-				} catch (error) {
-					console.error('Failed to load project:', error)
-				} finally {
-					setIsFetching(false)
-				}
-			}
-			fetchProjectData()
-		}
-	}, [projectId, reset])
+	const { project, isFetching, createProject, isCreating, updateProject, isUpdating } = useProjectOperations(projectId)
 
-	const onSubmit = async (data: ProjectFormValues) => {
-		if (projectId) {
-			try {
-				await updateProject(projectId, data)
-				if (data.type === 'team') {
-					router.push(`/projects/new/team?projectId=${projectId}`)
-				} else {
-					router.push(`/projects/${projectId}/board`)
-				}
-			} catch (err) {
-				console.error('Update failed:', err)
-			}
-		} else {
-			create(data, newId => {
-				if (data.type === 'team') {
-					router.push(`/projects/new/team?projectId=${newId}`)
-				} else {
-					router.push(`/projects/${newId}/board`)
-				}
+	useEffect(() => {
+		if (project) {
+			reset({
+				title: project.title,
+				type: project.type,
 			})
 		}
-	}
+	}, [project, reset])
 
 	useEffect(() => {
 		if (!projectId) setFocus('title')
 	}, [setFocus, projectId])
 
-	const isLoading = isCreating || isFetching
+	const handleNavigation = (id: string, type: 'solo' | 'team') => {
+		if (type === 'team') {
+			router.push(`/projects/new/team?projectId=${id}`)
+		} else {
+			router.push(`/projects/${id}/board`)
+		}
+	}
+
+	const onSubmit = async (data: ProjectFormValues) => {
+		try {
+			if (projectId) {
+				await updateProject(data)
+				handleNavigation(projectId, data.type)
+			} else {
+				const newProject = await createProject(data)
+				if (newProject) {
+					handleNavigation(newProject.$id, data.type)
+				}
+			}
+		} catch (err) {
+			console.error('Project operation failed:', err)
+		}
+	}
+
+	const isProcessing = isCreating || isUpdating || isFetching
+
+	const getButtonText = () => {
+		if (isProcessing) return 'Processing...'
+		return projectId ? 'Save & Continue' : 'Create'
+	}
 
 	return (
 		<form className={classes.newProjectForm} onSubmit={handleSubmit(onSubmit)}>
@@ -87,7 +82,7 @@ export const NewProjectForm = () => {
 			</p>
 			<div className={classes.titleLabel}>
 				<span>Project title</span>
-				<input type='text' placeholder='Enter your project name' {...register('title')} disabled={isLoading} />
+				<input type='text' placeholder='Enter your project name' {...register('title')} disabled={isProcessing} />
 				{errors.title && <p className={classes.errorText}>{errors.title.message}</p>}
 			</div>
 			<div className={classes.projectTypeLabel}>
@@ -116,8 +111,8 @@ export const NewProjectForm = () => {
 				/>
 				{errors.type && <p className={classes.errorText}>{errors.type.message}</p>}
 			</div>
-			<button className={classes.createButton} disabled={isLoading}>
-				{isLoading ? 'Processing...' : projectId ? 'Save & Continue' : 'Create'}
+			<button className={classes.createButton} disabled={isProcessing}>
+				{getButtonText()}
 			</button>
 		</form>
 	)

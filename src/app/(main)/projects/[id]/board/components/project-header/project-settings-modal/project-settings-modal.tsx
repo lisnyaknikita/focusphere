@@ -12,6 +12,7 @@ import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
+import { BeatLoader } from 'react-spinners'
 import { ProjectMembersSettings } from './components/project-members-settings/project-members-settings'
 import classes from './project-settings-modal.module.scss'
 
@@ -23,8 +24,10 @@ interface ProjectSettingsModalProps {
 export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalProps) => {
 	const { register, control, onSubmit, isSubmitting, errors } = useUpdateProject({ project, onSuccess: onClose })
 	const { remove, isDeleting } = useDeleteProject()
+
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 	const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+	const [isUserLoading, setIsUserLoading] = useState(true)
 
 	const { isPro, openPaywall } = useBilling()
 
@@ -35,6 +38,7 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 		getCurrentUserId()
 			.then(id => setCurrentUserId(id))
 			.catch(err => console.error('Failed to get user ID:', err))
+			.finally(() => setIsUserLoading(false))
 	}, [])
 
 	const handleConfirmDelete = async () => {
@@ -44,6 +48,26 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 			router.refresh()
 		})
 	}
+
+	if (isUserLoading) {
+		return <BeatLoader color='#aaa' size={10} className={classes.loader} />
+	}
+
+	const renderOwnerButtons = () => (
+		<>
+			<button className={classes.saveButton} disabled={isSubmitting}>
+				{isSubmitting ? 'Saving...' : 'Save Changes'}
+			</button>
+			<button
+				type='button'
+				className={classes.deleteButton}
+				onClick={() => setIsDeleteConfirmOpen(true)}
+				disabled={isDeleting || isSubmitting}
+			>
+				{isDeleting ? 'Deleting...' : 'Delete project'}
+			</button>
+		</>
+	)
 
 	return (
 		<>
@@ -171,40 +195,14 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 							Close
 						</button>
 					)}
-					{project.type === 'solo' && isOwner && (
-						<div className={classes.buttons}>
-							<button className={classes.saveButton} disabled={isSubmitting}>
-								{isSubmitting ? 'Saving...' : 'Save Changes'}
-							</button>
-							<button
-								type='button'
-								className={classes.deleteButton}
-								onClick={() => setIsDeleteConfirmOpen(true)}
-								disabled={isDeleting || isSubmitting}
-							>
-								{isDeleting ? 'Deleting...' : 'Delete project'}
-							</button>
-						</div>
-					)}
+					{project.type === 'solo' && isOwner && <div className={classes.buttons}>{renderOwnerButtons()}</div>}
 				</div>
 				{project.type === 'team' && project.teamId && isOwner && (
 					<div className={classes.invitationBlock}>
 						<ProjectMembersSettings teamId={project.teamId} projectId={project.$id} />
 						<div className={classes.buttons}>
 							{isOwner ? (
-								<>
-									<button className={classes.saveButton} disabled={isSubmitting}>
-										{isSubmitting ? 'Saving...' : 'Save Changes'}
-									</button>
-									<button
-										type='button'
-										className={classes.deleteButton}
-										onClick={() => setIsDeleteConfirmOpen(true)}
-										disabled={isDeleting || isSubmitting}
-									>
-										{isDeleting ? 'Deleting...' : 'Delete project'}
-									</button>
-								</>
+								renderOwnerButtons()
 							) : (
 								<button type='button' className={classes.saveButton} onClick={onClose}>
 									Close

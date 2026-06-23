@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 export const useToggleFavorite = (project: Project) => {
 	const queryClient = useQueryClient()
 
-	const { mutate } = useMutation({
+	const { mutateAsync } = useMutation({
 		mutationFn: (isFavorite: boolean) => updateProject(project.$id, { isFavorite }),
 		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['projects'] }),
 		onError: err => console.error(err),
@@ -17,11 +17,7 @@ export const useToggleFavorite = (project: Project) => {
 
 		const isAdding = !project.isFavorite
 
-		const togglePromise = new Promise<void>((resolve, reject) => {
-			mutate(isAdding, { onSuccess: () => resolve(), onError: reject })
-		})
-
-		toast.promise(togglePromise, {
+		toast.promise(mutateAsync(isAdding), {
 			loading: isAdding ? 'Adding to favorites...' : 'Removing from favorites...',
 			success: isAdding ? 'Added to favorites' : 'Removed from favorites',
 			error: 'Failed to update favorites',
