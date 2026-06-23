@@ -1,6 +1,7 @@
 import { Column } from '@/shared/types/kanban'
 import { TaskStatus } from '@/shared/types/kanban-task'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const useCreateTask = ({
 	onAddTask,
@@ -13,20 +14,23 @@ export const useCreateTask = ({
 	const [title, setTitle] = useState('')
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	const handleAddSubmit = async () => {
-		if (!title.trim()) {
+	const handleAddSubmit = async (forcedTitle?: string) => {
+		const targetTitle = (forcedTitle ?? title).trim()
+
+		if (!targetTitle) {
 			setIsAdding(false)
+			setTitle('')
 			return
 		}
 
 		setIsSubmitting(true)
-
 		try {
-			await onAddTask(title, column.id as TaskStatus)
+			await onAddTask(targetTitle, column.id as TaskStatus)
 			setTitle('')
 			setIsAdding(false)
-		} catch (error) {
-			console.error('Error adding task:', error)
+		} catch (err: unknown) {
+			console.error('Error adding task:', err)
+			toast.error('Error adding task')
 		} finally {
 			setIsSubmitting(false)
 		}

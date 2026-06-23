@@ -10,20 +10,34 @@
 	transform: translateY(-50%);
 	border-radius: 5px;
 
-	> button {
-		padding: 0 5px;
+	> div {
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+
+		&:not(:last-child) {
+			border-right: 0.3px solid var(--btn-border);
+		}
+	}
+
+	button {
+		padding: 2px 6px;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
 		> svg path {
 			transition: all 0.2s;
 		}
+
 		&:hover {
 			> svg path {
 				fill: var(--tab-bg);
 			}
 		}
-	}
-
-	> button:not(:last-child) {
-		border-right: 0.3px solid var(--btn-border);
 	}
 }
 
@@ -34,15 +48,10 @@
 		color: #fff;
 		opacity: 1;
 		transition: opacity 0.2s;
-		transform: translateY(2px);
 	}
 }
 
 .deleteButton {
-	> svg {
-		transform: translateY(2px);
-	}
-
 	&:hover {
 		> svg path {
 			fill: #dc2a2a !important;
@@ -57,7 +66,6 @@
 		color: #fff;
 		opacity: 1;
 		transition: opacity 0.2s;
-		transform: translateY(2px);
 	}
 
 	&:hover {

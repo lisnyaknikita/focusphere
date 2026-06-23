@@ -3,7 +3,7 @@ import { KanbanTask } from '@/shared/types/kanban-task'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { formatDividerDate } from '@/shared/utils/format-divider-date/format-divider-date'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import classes from './chat-area.module.scss'
 import { Editor, EditorRef } from './components/editor/editor'
 import { Header } from './components/header/header'
@@ -41,7 +41,6 @@ export const ChatArea = ({
 	onToggleChatSidebar,
 }: ChatAreaProps) => {
 	const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
-	const messagesEndRef = useRef<HTMLDivElement>(null)
 	const editorRef = useRef<EditorRef>(null)
 	const hasScrolledRef = useRef<string | null>(null)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
@@ -55,6 +54,34 @@ export const ChatArea = ({
 			})
 		}
 	}
+
+	const processedMessages = useMemo(() => {
+		if (!messages.length) return []
+
+		const messagesMap = new Map<string, ChatMessage>()
+		messages.forEach(m => messagesMap.set(m.$id, m))
+
+		return messages.map((message, index) => {
+			const currentDateObj = new Date(message.$createdAt)
+			const currentDate = currentDateObj.toDateString()
+
+			const prevMessage = index > 0 ? messages[index - 1] : null
+			const prevDate = prevMessage ? new Date(prevMessage.$createdAt).toDateString() : null
+
+			const isNewDay = currentDate !== prevDate
+			const isContinuation =
+				!isNewDay && !!prevMessage && prevMessage.senderId === message.senderId && !message.replyToMessageId
+
+			const repliedToMessage = message.replyToMessageId ? messagesMap.get(message.replyToMessageId) : undefined
+
+			return {
+				message,
+				isNewDay,
+				isContinuation,
+				repliedToMessage,
+			}
+		})
+	}, [messages])
 
 	useEffect(() => {
 		if (isLoading || !activeChannel?.$id) return
@@ -114,47 +141,29 @@ export const ChatArea = ({
 							{isLoading ? (
 								<div className={classes.loading}>Loading messages...</div>
 							) : (
-								<>
-									{messages.map((message, index) => {
-										const currentDate = new Date(message.$createdAt).toDateString()
-										const prevDate = index > 0 ? new Date(messages[index - 1].$createdAt).toDateString() : null
-										const isNewDay = currentDate !== prevDate
-										const isContinuation =
-											!isNewDay &&
-											index > 0 &&
-											messages[index - 1].senderId === message.senderId &&
-											!message.replyToMessageId
-
-										const repliedToMessage = message.replyToMessageId
-											? messages.find(m => m.$id === message.replyToMessageId)
-											: undefined
-
-										return (
-											<div key={message.$id}>
-												{isNewDay && (
-													<div className={classes.divider}>
-														<hr />
-														<span>{formatDividerDate(message.$createdAt)}</span>
-													</div>
-												)}
-
-												<MessageItem
-													isContinuation={isContinuation}
-													message={message}
-													teammates={teammates}
-													tasks={tasks}
-													currentUserId={currentUserId}
-													currentUserName={currentUserName}
-													onUpdate={onUpdateMessage}
-													onDelete={onDeleteMessage}
-													onReply={handleReply}
-													repliedToMessage={repliedToMessage}
-												/>
+								processedMessages.map(({ message, isNewDay, isContinuation, repliedToMessage }) => (
+									<div key={message.$id}>
+										{isNewDay && (
+											<div className={classes.divider}>
+												<hr />
+												<span>{formatDividerDate(message.$createdAt)}</span>
 											</div>
-										)
-									})}
-									<div ref={messagesEndRef} style={{ height: '1px' }} />
-								</>
+										)}
+
+										<MessageItem
+											isContinuation={isContinuation}
+											message={message}
+											teammates={teammates}
+											tasks={tasks}
+											currentUserId={currentUserId}
+											currentUserName={currentUserName}
+											onUpdate={onUpdateMessage}
+											onDelete={onDeleteMessage}
+											onReply={handleReply}
+											repliedToMessage={repliedToMessage}
+										/>
+									</div>
+								))
 							)}
 						</div>
 					</>

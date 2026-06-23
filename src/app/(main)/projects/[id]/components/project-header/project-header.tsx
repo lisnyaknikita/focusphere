@@ -18,7 +18,7 @@ export const ProjectHeader = ({ projectId }: { projectId: string }) => {
 
 	const pathName = usePathname()
 
-	const isNotesTab = pathName.endsWith('/notes')
+	const isNotesTab = pathName.includes('/notes')
 
 	return (
 		<>

@@ -9,18 +9,31 @@ interface NewNoteModalProps {
 
 export const NewNoteModal = ({ onClose }: NewNoteModalProps) => {
 	const [title, setTitle] = useState('')
+	const [isSubmitting, setIsSubmitting] = useState(false)
 	const { createNote } = useNotesContext()
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
-		if (!title.trim()) return
+
+		if (!title.trim() || isSubmitting) return
+
+		setIsSubmitting(true)
+
+		const promise = createNote(title)
+
+		toast.promise(promise, {
+			loading: 'Creating note...',
+			success: 'Note created!',
+			error: 'Failed to create note. Please try again.',
+		})
 
 		try {
-			await createNote(title)
+			await promise
 			onClose()
 		} catch (error) {
 			console.error('Failed to create note:', error)
-			toast.error('Failed to create note. Please try again.')
+		} finally {
+			setIsSubmitting(false)
 		}
 	}
 
@@ -34,13 +47,14 @@ export const NewNoteModal = ({ onClose }: NewNoteModalProps) => {
 					aria-label='Note title'
 					value={title}
 					onChange={e => setTitle(e.target.value)}
+					disabled={isSubmitting}
 					autoFocus
 				/>
 				<div className={classes.buttons}>
-					<button type='submit' className={classes.confirmButton}>
-						Create note
+					<button type='submit' className={classes.confirmButton} disabled={isSubmitting}>
+						{isSubmitting ? 'Processing...' : 'Create note'}
 					</button>
-					<button type='button' className={classes.cancelButton} onClick={onClose}>
+					<button type='button' className={classes.cancelButton} onClick={onClose} disabled={isSubmitting}>
 						Cancel
 					</button>
 				</div>

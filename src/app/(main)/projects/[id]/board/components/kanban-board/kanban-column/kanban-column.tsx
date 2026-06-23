@@ -100,7 +100,11 @@ export const KanbanColumn = ({
 						onClick={e => e.stopPropagation()}
 					/>
 				) : (
-					<h3 className={classes.columnTitle} onClick={() => setIsEditingTitle(true)}>
+					<h3
+						className={classes.columnTitle}
+						onClick={() => setIsEditingTitle(true)}
+						onMouseDown={e => e.stopPropagation()}
+					>
 						{column.title}
 					</h3>
 				)}
@@ -113,6 +117,7 @@ export const KanbanColumn = ({
 								e.stopPropagation()
 								onDeleteColumn()
 							}}
+							onMouseDown={e => e.stopPropagation()}
 							title='Delete column'
 						>
 							<DeleteIcon />
@@ -144,9 +149,7 @@ export const KanbanColumn = ({
 											setTitle('')
 										}
 									}}
-									onBlur={() => {
-										if (!title.trim()) setIsAdding(false)
-									}}
+									onBlur={() => handleAddSubmit()}
 									disabled={isSubmitting}
 								/>
 							</li>

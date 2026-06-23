@@ -1,16 +1,16 @@
 'use client'
 
 import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
-import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
+import { CreateKanbanTaskPayload, KanbanTask, TaskPriority } from '@/shared/types/kanban-task'
 import { Modal } from '@/shared/ui/modal/modal'
 import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import classes from './kanban-task-card.module.scss'
 import { KanbanTaskModal } from './kanban-task-modal/kanban-task-modal'
 
-const priorityColors = {
+const PRIORITY_COLORS: Record<TaskPriority, string> = {
 	low: '#A3A3A3',
 	medium: '#FBBF24',
 	high: '#F97316',
@@ -26,6 +26,7 @@ interface KanbanTaskCardProps {
 
 export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: KanbanTaskCardProps) => {
 	const [isTaskModalVisible, setIsTaskModalVisible] = useState(false)
+
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: task.$id,
 		disabled: isTaskModalVisible,
@@ -34,6 +35,14 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 		},
 	})
 
+	const formattedDate = useMemo(() => {
+		if (!task.$createdAt) return ''
+		return new Date(task.$createdAt).toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric',
+		})
+	}, [task.$createdAt])
+
 	const style = {
 		transform: CSS.Translate.toString(transform),
 		transition,
@@ -41,6 +50,8 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 		zIndex: isDragging ? 999 : undefined,
 		cursor: isDragging ? 'grabbing' : 'grab',
 	}
+
+	const taskPriority = task.priority || 'medium'
 
 	return (
 		<>
@@ -77,13 +88,8 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 							<OwnerAvatar userId={task.assigneeId || ''} size={20} />
 							<span>{task.assigneeName}</span>
 						</div>
-						<span
-							className={classes.priorityIndicator}
-							style={{ backgroundColor: priorityColors[task.priority || 'medium'] }}
-						/>
-						<time className={classes.taskDate}>
-							{new Date(task.$createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-						</time>
+						<span className={classes.priorityIndicator} style={{ backgroundColor: PRIORITY_COLORS[taskPriority] }} />
+						<time className={classes.taskDate}>{formattedDate}</time>
 					</footer>
 				</div>
 			</li>

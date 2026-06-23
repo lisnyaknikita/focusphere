@@ -2,6 +2,7 @@
 
 import { useQuillChat } from '@/shared/hooks/projects/chat/use-quill-chat'
 import { KanbanTask } from '@/shared/types/kanban-task'
+import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { SendIcon } from '@/shared/ui/icons/send-icon'
 import 'quill/dist/quill.snow.css'
 import { forwardRef, useImperativeHandle } from 'react'
@@ -22,11 +23,6 @@ export const Editor = forwardRef<EditorRef, EditorProps>(({ onSend, disabled, ta
 	const {
 		containerRef,
 		quillRef,
-		isTooltipOpen,
-		tooltipRefs,
-		tooltipStyles,
-		getReferenceProps,
-		getFloatingProps,
 		isDropdownOpen,
 		dropdownRefs,
 		dropdownFloatingStyles,
@@ -49,36 +45,23 @@ export const Editor = forwardRef<EditorRef, EditorProps>(({ onSend, disabled, ta
 			<div className={classes.editorInner}>
 				<div ref={containerRef} className='ql-chat-custom' />
 				<div className={classes.additionalButtons}>
-					<button
-						ref={tooltipRefs.setReference}
-						className={classes.sendButton}
-						onClick={handleSend}
-						disabled={disabled}
-						{...getReferenceProps()}
-					>
-						<SendIcon />
-						{isTooltipOpen && (
-							<div
-								ref={tooltipRefs.setFloating}
-								style={{
-									...tooltipStyles,
-									background: 'var(--save-button-bg)',
-									color: 'var(--save-button-text)',
-									padding: '4px 8px',
-									borderRadius: '5px',
-									fontSize: '13px',
-									fontWeight: 700,
-									zIndex: 1000,
-									whiteSpace: 'nowrap',
-								}}
-								{...getFloatingProps()}
+					<ActionTooltip text='Send message (Enter)'>
+						{(setRef, refProps) => (
+							<button
+								ref={setRef}
+								type='button'
+								className={classes.sendButton}
+								onClick={handleSend}
+								disabled={disabled}
+								{...refProps}
 							>
-								Send message (Enter)
-							</div>
+								<SendIcon />
+							</button>
 						)}
-					</button>
+					</ActionTooltip>
 				</div>
 			</div>
+
 			{isDropdownOpen && (
 				<TaskDropdown
 					floatingRef={dropdownRefs.setFloating}

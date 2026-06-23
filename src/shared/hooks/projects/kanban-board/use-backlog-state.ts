@@ -10,6 +10,7 @@ export const useBacklogState = (project: Project) => {
 	const [isAddingInline, setIsAddingInline] = useState(false)
 	const [inlineTitle, setInlineTitle] = useState('')
 	const [taskToDelete, setTaskToDelete] = useState<KanbanTask | null>(null)
+	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const { tasks, isLoading: isKanbanLoading, addTask, moveTask, updateTask, deleteTask } = useKanban(project)
 
@@ -23,14 +24,19 @@ export const useBacklogState = (project: Project) => {
 			return
 		}
 
+		if (isSubmitting) return
+
+		setIsSubmitting(true)
 		try {
 			await addTask(trimmedTitle, 'backlog')
 			toast.success('Task added to backlog')
-		} catch (error) {
-			console.error(error)
-		} finally {
 			setInlineTitle('')
 			setIsAddingInline(false)
+		} catch (error) {
+			console.error(error)
+			toast.error('Failed to add task')
+		} finally {
+			setIsSubmitting(false)
 		}
 	}
 
@@ -64,6 +70,7 @@ export const useBacklogState = (project: Project) => {
 		setInlineTitle,
 		taskToDelete,
 		setTaskToDelete,
+		isSubmitting,
 		handleInlineSubmit,
 		handleMoveToTodo,
 		handleDeleteConfirm,
