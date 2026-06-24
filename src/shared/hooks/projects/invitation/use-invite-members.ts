@@ -22,6 +22,7 @@ export const useInviteMembers = (teamId: string, projectId: string) => {
 		mutationFn: (emails: string[]) => inviteMembersToTeam(teamId, emails, projectId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['team-members', teamId] })
+			queryClient.invalidateQueries({ queryKey: ['team-memberships', teamId] })
 			setMembers([])
 			setInputValue('')
 		},

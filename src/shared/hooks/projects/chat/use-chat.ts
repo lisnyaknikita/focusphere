@@ -1,3 +1,5 @@
+'use client'
+
 import { getTeamMembersWithNames } from '@/app/actions/get-team-members'
 import { client } from '@/lib/appwrite'
 import {
@@ -26,32 +28,53 @@ export const useChat = (project: Project) => {
 	const [messages, setMessages] = useState<ChatMessage[]>([])
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false)
 
-	const { data: teammates = [] } = useQuery({
+	const { data: rawTeammates } = useQuery({
 		queryKey: ['team-members', project?.teamId],
-		queryFn: () => getTeamMembersWithNames(project.teamId!),
-		enabled: !!project?.teamId,
-		staleTime: 5 * 60 * 1000,
-	})
+		queryFn: async () => {
+			const res = await getTeamMembersWithNames(project.teamId!)
 
-	const { data: allChannels = [] } = useQuery({
+			if (res && typeof res === 'object' && !Array.isArray(res)) {
+				throw new Error('Chat fallback: teammates fetch failed')
+			}
+
+			return Array.isArray(res) ? res : ([] as TeamMember[])
+		},
+		enabled: !!project?.teamId,
+		staleTime: 1 * 60 * 1000,
+	})
+	const teammates = Array.isArray(rawTeammates) ? rawTeammates : []
+
+	const { data: rawChannels } = useQuery({
 		queryKey: ['chat-channels', projectId],
 		queryFn: async () => {
-			const res = await getChannels(projectId!)
-			return res.rows as unknown as ChatChannel[]
+			try {
+				const res = await getChannels(projectId!)
+				return res && Array.isArray(res.rows) ? (res.rows as unknown as ChatChannel[]) : []
+			} catch (err) {
+				console.error('Error in getChannels query:', err)
+				return [] as ChatChannel[]
+			}
 		},
 		enabled: !!projectId,
 		staleTime: 1 * 60 * 1000,
 	})
+	const allChannels = Array.isArray(rawChannels) ? rawChannels : []
 
-	const { data: tasks = [] } = useQuery({
+	const { data: rawTasks } = useQuery({
 		queryKey: ['kanban-tasks', projectId],
 		queryFn: async () => {
-			const res = await getKanbanTasks(projectId!)
-			return res.rows as unknown as KanbanTask[]
+			try {
+				const res = await getKanbanTasks(projectId!)
+				return res && Array.isArray(res.rows) ? (res.rows as unknown as KanbanTask[]) : []
+			} catch (err) {
+				console.error('Error in getKanbanTasks query:', err)
+				return [] as KanbanTask[]
+			}
 		},
 		enabled: !!projectId,
 		staleTime: 2 * 60 * 1000,
 	})
+	const tasks = Array.isArray(rawTasks) ? rawTasks : []
 
 	const channels = allChannels.filter(ch => ch.type !== 'dm')
 	const dmChannels = allChannels.filter(ch => ch.type === 'dm')
