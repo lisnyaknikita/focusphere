@@ -37,7 +37,8 @@ export const TeamMembersCounter = ({ teamId, projectType }: TeamMembersCounterPr
 
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
 
-	const displayCount = projectType === 'solo' ? 1 : teammates.length
+	const safeMembersCount = Array.isArray(teammates) ? teammates.length : 0
+	const displayCount = isSolo ? 1 : safeMembersCount
 
 	return (
 		<>

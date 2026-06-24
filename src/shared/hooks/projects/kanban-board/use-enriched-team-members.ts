@@ -3,15 +3,24 @@ import { TeamMember } from '@/shared/types/chat'
 import { useQuery } from '@tanstack/react-query'
 
 export const useEnrichedTeamMembers = (teamId?: string) => {
-	const { data: teammates = [], isLoading } = useQuery({
+	const { data, isLoading } = useQuery({
 		queryKey: ['team-members', teamId],
 		queryFn: async () => {
 			if (!teamId) return [] as TeamMember[]
-			return await getTeamMembersWithNames(teamId)
+
+			const result = await getTeamMembersWithNames(teamId)
+
+			if (result && typeof result === 'object' && !Array.isArray(result)) {
+				throw new Error('Backend returned an error object instead of array')
+			}
+
+			return Array.isArray(result) ? result : ([] as TeamMember[])
 		},
 		enabled: !!teamId,
-		staleTime: 5 * 60 * 1000,
+		staleTime: 1 * 60 * 1000,
 	})
+
+	const teammates = Array.isArray(data) ? data : []
 
 	return { teammates, isLoading }
 }
