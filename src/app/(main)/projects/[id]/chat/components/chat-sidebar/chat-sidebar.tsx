@@ -41,6 +41,8 @@ export const ChatSidebar = ({
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 	const [newChannelName, setNewChannelName] = useState('')
 
+	const safeTeammates = Array.isArray(teammates) ? teammates : ([] as TeamMember[])
+
 	const handleCreateSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		if (!newChannelName.trim() || !currentUserId) return
@@ -111,7 +113,7 @@ export const ChatSidebar = ({
 						</button>
 					</div>
 					<ul className={clsx(classes.list, isMessagesOpened && 'opened')}>
-						{teammates
+						{safeTeammates
 							.filter(m => m.userId !== currentUserId)
 							.map((mate: TeamMember) => {
 								const existingDM = currentUserId
