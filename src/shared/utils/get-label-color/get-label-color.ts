@@ -31,20 +31,16 @@ const DARK_BORDER_PALETTE = [
 export const getLabelColor = (label: string): string => {
 	if (!label) return '#71717a'
 
-	let hash = 0
-	const p = 31
-	const m = 1e9 + 9
+	let hash = 5381
 	for (let i = 0; i < label.length; i++) {
-		hash = (hash * p + label.charCodeAt(i)) % m
+		hash = (hash * 33) ^ label.charCodeAt(i)
+		hash = hash >>> 0
 	}
-
-	const goldenRatioConjugate = 0.618033988749895
-	const fraction = (hash * goldenRatioConjugate) % 1
-	const index = Math.floor(fraction * LIGHT_BORDER_PALETTE.length)
 
 	const isDarkMode =
 		typeof document !== 'undefined' &&
 		(document.documentElement.classList.contains('dark') || document.body.classList.contains('dark'))
 
-	return isDarkMode ? DARK_BORDER_PALETTE[index] : LIGHT_BORDER_PALETTE[index]
+	const palette = isDarkMode ? DARK_BORDER_PALETTE : LIGHT_BORDER_PALETTE
+	return palette[hash % palette.length]
 }
