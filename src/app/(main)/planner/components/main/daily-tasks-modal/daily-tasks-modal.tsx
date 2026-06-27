@@ -162,12 +162,9 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 														onTasksChanged?.()
 													}
 												}}
-												onKeyDown={async e => {
-													if (e.key !== 'Enter') return
-													const hasTitle = !!newTaskTitle.trim()
-													await handleAddTask()
-													if (hasTitle) {
-														onTasksChanged?.()
+												onKeyDown={e => {
+													if (e.key === 'Enter') {
+														e.currentTarget.blur()
 													}
 												}}
 												disabled={isSaving}
