@@ -320,14 +320,17 @@ ul {
 	}
 }
 
-.bn-editor,
+.bn-editor {
+	z-index: 1 !important;
+}
+
 .bn-menu,
 .bn-toolbar,
 .bn-side-menu,
 div:has(> .bn-side-menu),
 [data-radix-popper-content-wrapper],
 [data-floating-ui-portal] {
-	z-index: 11 !important;
+	z-index: 13 !important;
 }
 
 @media (prefers-color-scheme: dark) {
