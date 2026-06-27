@@ -121,7 +121,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 														onChange={e => setEditingTitle(e.target.value)}
 														onBlur={commitEdit}
 														onKeyDown={e => {
-															if (e.key === 'Enter') commitEdit()
+															if (e.key === 'Enter') e.currentTarget.blur()
 															if (e.key === 'Escape') {
 																setEditingTaskId(null)
 																setEditingTitle('')

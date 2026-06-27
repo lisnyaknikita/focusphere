@@ -167,7 +167,7 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 )
 
 if (typeof window !== 'undefined') {
-	let intervalId: NodeJS.Timeout | null = null
+	let worker: Worker | null = null
 	let lastActiveStatus: 'work' | 'break' = 'work'
 
 	if ('Notification' in window && Notification.permission === 'default') {
@@ -177,13 +177,19 @@ if (typeof window !== 'undefined') {
 	useTimerStore.subscribe(state => {
 		const { status, timeLeft } = state
 
-		if ((status === 'work' || status === 'break') && !intervalId) {
-			intervalId = setInterval(() => {
-				useTimerStore.getState().tickLogic()
-			}, 1000)
-		} else if (status !== 'work' && status !== 'break' && intervalId) {
-			clearInterval(intervalId)
-			intervalId = null
+		if ((status === 'work' || status === 'break') && !worker) {
+			worker = new Worker(new URL('@/shared/workers/timer.worker.ts', import.meta.url), { type: 'module' })
+
+			worker.onmessage = e => {
+				if (e.data === 'tick') {
+					useTimerStore.getState().tickLogic()
+				}
+			}
+			worker.postMessage('start')
+		} else if (status !== 'work' && status !== 'break' && worker) {
+			worker.postMessage('stop')
+			worker.terminate()
+			worker = null
 		}
 
 		if (status === 'idle') {

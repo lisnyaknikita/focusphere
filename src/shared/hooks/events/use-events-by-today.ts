@@ -26,18 +26,15 @@ const fetchEventsByToday = async (): Promise<CalendarEvent[]> => {
 		db.listRows({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
-			queries: [
-				Query.equal('userId', userId),
-				Query.lessThan('startDate', endOfDay),
-				Query.greaterThan('endDate', startOfDay),
-				Query.orderAsc('startDate'),
-				Query.limit(5000),
-			],
+			queries: [Query.equal('userId', userId), Query.limit(5000)],
 		}),
 		googleCalendarService.fetchEvents(new Date(startOfDay), new Date(endOfDay)),
 	])
 
-	const appwriteEvents = appwriteRes.rows as unknown as CalendarEvent[]
+	const allAppwriteEvents = appwriteRes.rows as unknown as CalendarEvent[]
+	const appwriteEvents = allAppwriteEvents
+		.filter(event => event.startDate < endOfDay && event.endDate > startOfDay)
+		.sort((a, b) => a.startDate.localeCompare(b.startDate))
 
 	const googleEvents: CalendarEvent[] = googleEventsRaw.map((gEvent: GoogleCalendarEvent) => {
 		const isAllDay = !!gEvent.start?.date
