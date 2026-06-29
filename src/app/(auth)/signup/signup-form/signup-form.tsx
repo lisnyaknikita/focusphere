@@ -1,11 +1,13 @@
 'use client'
 
 import { SignupFormValues, signupSchema } from '@/shared/schemas/signup-schema'
+import { authService } from '@/shared/services/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { authService } from '@/shared/services/auth.service'
+import { toast } from 'sonner'
 import classes from './signup-form.module.scss'
 
 interface SignupFormProps {
@@ -14,6 +16,7 @@ interface SignupFormProps {
 
 export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 	const [showPassword, setShowPassword] = useState(false)
+	const searchParams = useSearchParams()
 
 	const {
 		register,
@@ -24,18 +27,21 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 		mode: 'onBlur',
 	})
 
-	const [errorMessage, setErrorMessage] = useState('')
-
 	const onSubmit = async (data: SignupFormValues) => {
-		setErrorMessage('')
 		try {
-			await authService.signupUser(data)
+			const callbackUrl = searchParams.get('callbackUrl')
+			const origin = typeof window !== 'undefined' ? window.location.origin : ''
 
+			await authService.signupUser(data, origin, callbackUrl)
+
+			toast.success('Account created successfully!')
 			onSuccess()
 		} catch (error) {
 			if (error instanceof Error) {
 				console.error('Registration failed:', error)
-				setErrorMessage(error.message)
+				toast.error(error.message)
+			} else {
+				toast.error('Something went wrong. Please try again.')
 			}
 		}
 	}
@@ -85,7 +91,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 				</div>
 				{errors.password && <p className={classes.errorMessage}>{errors.password.message}</p>}
 			</label>
-			{errorMessage && <p className={classes.errorMessage} style={{ marginBottom: '15px' }}>{errorMessage}</p>}
+
 			<button type='submit' className={classes.submitButton} disabled={isSubmitting || !isValid}>
 				{isSubmitting ? 'Registering...' : 'Continue'}
 			</button>

@@ -10,7 +10,15 @@ function ResetPasswordContent() {
 	const userId = params.get('userId')
 	const secret = params.get('secret')
 
-	if (!userId || !secret) return <p>Invalid password reset link.</p>
+	if (!userId || !secret) {
+		return (
+			<div className={classes.createPasswordBlock}>
+				<p className={classes.title} style={{ fontSize: '16px', textAlign: 'center' }}>
+					Invalid or expired password reset link.
+				</p>
+			</div>
+		)
+	}
 
 	return (
 		<div className={classes.createPasswordBlock}>
