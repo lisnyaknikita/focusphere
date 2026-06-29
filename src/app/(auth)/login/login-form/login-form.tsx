@@ -1,40 +1,49 @@
 import { LoginFormValues, loginSchema } from '@/shared/schemas/login-schema'
+import { authService } from '@/shared/services/auth.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import classes from './login-form.module.scss'
-import { authService } from '@/shared/services/auth.service'
 
 export const LoginForm = () => {
 	const router = useRouter()
-	const [errorMessage, setErrorMessage] = useState('')
+	const searchParams = useSearchParams()
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting, isValid },
+		formState: { errors, isSubmitting },
 	} = useForm<LoginFormValues>({
 		resolver: zodResolver(loginSchema),
 		mode: 'onBlur',
 	})
 
 	const onSubmit = async (data: LoginFormValues) => {
-		setErrorMessage('')
-
 		try {
 			await authService.loginUser(data.email, data.password)
 
-			const searchParams = new URLSearchParams(window.location.search)
 			const callbackUrl = searchParams.get('callbackUrl')
 
+			toast.success('Welcome back!')
+
 			router.push(callbackUrl || '/dashboard')
+
+			router.refresh()
 		} catch (err) {
 			if (err instanceof Error) {
-				setErrorMessage(err.message)
+				toast.error(err.message)
+			} else {
+				toast.error('Failed to log in. Please check your credentials.')
 			}
 		}
+	}
+
+	const handleForgotPassword = () => {
+		const currentParams = searchParams.toString()
+		const forgotUrl = currentParams ? `/forgot?${currentParams}` : '/forgot'
+		router.push(forgotUrl)
 	}
 
 	return (
@@ -50,6 +59,7 @@ export const LoginForm = () => {
 				/>
 				{errors.email && <p className={classes.errorMessage}>{errors.email.message}</p>}
 			</label>
+
 			<label className={classes.formLabel}>
 				<span>Password</span>
 				<div className={classes.passwordContainer}>
@@ -60,14 +70,14 @@ export const LoginForm = () => {
 						className={clsx({ [classes.errorInput]: errors.password })}
 						disabled={isSubmitting}
 					/>
-					<button className={classes.forgotButton} type="button" onClick={() => router.push(`/forgot${window.location.search}`)}>
+					<button className={classes.forgotButton} type='button' onClick={handleForgotPassword} disabled={isSubmitting}>
 						Forgot password?
 					</button>
 				</div>
 				{errors.password && <p className={classes.errorMessage}>{errors.password.message}</p>}
 			</label>
-			{errorMessage && <p className={classes.errorMessage}>{errorMessage}</p>}
-			<button type='submit' className={classes.submitButton} disabled={isSubmitting || !isValid}>
+
+			<button type='submit' className={classes.submitButton} disabled={isSubmitting}>
 				{isSubmitting ? 'Logging in...' : 'Log In'}
 			</button>
 		</form>

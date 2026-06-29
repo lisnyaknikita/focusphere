@@ -1,16 +1,22 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { resetPasswordSchema, ResetPasswordFormValues } from '@/shared/schemas/reset-password-schema'
+import { ResetPasswordFormValues, resetPasswordSchema } from '@/shared/schemas/reset-password-schema'
 import { authService } from '@/shared/services/auth.service'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import classes from './reset-password-form.module.scss'
 
-export const ResetPasswordForm = ({ userId, secret }: { userId: string; secret: string }) => {
+interface ResetPasswordFormProps {
+	userId: string
+	secret: string
+}
+
+export const ResetPasswordForm = ({ userId, secret }: ResetPasswordFormProps) => {
 	const router = useRouter()
-	const [error, setError] = useState('')
+	const searchParams = useSearchParams()
+
 	const {
 		register,
 		handleSubmit,
@@ -21,13 +27,22 @@ export const ResetPasswordForm = ({ userId, secret }: { userId: string; secret: 
 	})
 
 	const onSubmit = async (data: ResetPasswordFormValues) => {
-		setError('')
-
 		try {
 			await authService.updatePassword(userId, secret, data.password)
-			router.push(`/login${window.location.search}`)
+
+			toast.success('Password updated successfully! You can now log in.')
+
+			const currentParams = searchParams.toString()
+			const loginUrl = currentParams ? `/login?${currentParams}` : '/login'
+
+			router.push(loginUrl)
 		} catch (err) {
-			if (err instanceof Error) setError(err.message)
+			console.error(err)
+			if (err instanceof Error) {
+				toast.error(err.message)
+			} else {
+				toast.error('Failed to update password. Please try again.')
+			}
 		}
 	}
 
@@ -35,15 +50,14 @@ export const ResetPasswordForm = ({ userId, secret }: { userId: string; secret: 
 		<form className={classes.createPasswordForm} onSubmit={handleSubmit(onSubmit)}>
 			<label className={classes.formLabel}>
 				<span>New password</span>
-				<input type='password' placeholder='Enter the new password' {...register('password')} />
+				<input type='password' placeholder='Enter the new password' {...register('password')} disabled={isSubmitting} />
 				{errors.password && <p className={classes.errorMessage}>{errors.password.message}</p>}
 			</label>
 			<label className={classes.formLabel}>
 				<span>Confirm password</span>
-				<input type='password' placeholder='Confirm password' {...register('confirm')} />
+				<input type='password' placeholder='Confirm password' {...register('confirm')} disabled={isSubmitting} />
 				{errors.confirm && <p className={classes.errorMessage}>{errors.confirm.message}</p>}
 			</label>
-			{error && <p className={classes.errorMessage}>{error}</p>}
 			<button className={classes.submitButton} disabled={isSubmitting}>
 				{isSubmitting ? 'Updating...' : 'Update password'}
 			</button>

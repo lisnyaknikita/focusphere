@@ -4,6 +4,7 @@ import { account } from '@/lib/appwrite'
 import { APP_URL } from '@/shared/constants/app'
 import { OAuthProvider } from 'appwrite'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { GoogleIcon } from '../icons/google-icon'
 import classes from './google-auth-button.module.scss'
 
@@ -23,6 +24,7 @@ export const GoogleAuthButton = () => {
 			])
 		} catch (error) {
 			console.error('Auth error:', error)
+			toast.error('Failed to log in with Google. Please try again.')
 			setIsLoading(false)
 		}
 	}
