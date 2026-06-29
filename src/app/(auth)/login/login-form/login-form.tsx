@@ -14,7 +14,7 @@ export const LoginForm = () => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting, isValid },
+		formState: { errors, isSubmitting },
 	} = useForm<LoginFormValues>({
 		resolver: zodResolver(loginSchema),
 		mode: 'onBlur',
@@ -77,7 +77,7 @@ export const LoginForm = () => {
 				{errors.password && <p className={classes.errorMessage}>{errors.password.message}</p>}
 			</label>
 
-			<button type='submit' className={classes.submitButton} disabled={isSubmitting || !isValid}>
+			<button type='submit' className={classes.submitButton} disabled={isSubmitting}>
 				{isSubmitting ? 'Logging in...' : 'Log In'}
 			</button>
 		</form>

@@ -21,7 +21,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting, isValid },
+		formState: { errors, isSubmitting },
 	} = useForm<SignupFormValues>({
 		resolver: zodResolver(signupSchema),
 		mode: 'onBlur',
@@ -92,7 +92,7 @@ export const SignupForm = ({ onSuccess }: SignupFormProps) => {
 				{errors.password && <p className={classes.errorMessage}>{errors.password.message}</p>}
 			</label>
 
-			<button type='submit' className={classes.submitButton} disabled={isSubmitting || !isValid}>
+			<button type='submit' className={classes.submitButton} disabled={isSubmitting}>
 				{isSubmitting ? 'Registering...' : 'Continue'}
 			</button>
 		</form>

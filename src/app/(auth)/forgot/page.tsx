@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { ForgotForm } from './forgot-form/forgot-form'
 import classes from './page.module.scss'
 
@@ -6,7 +7,9 @@ export default function ForgotPasswordPage() {
 		<div className={classes.forgotPage}>
 			<div className={classes.forgotBlock}>
 				<h1 className={classes.title}>Reset your password</h1>
-				<ForgotForm />
+				<Suspense fallback={<p>Loading...</p>}>
+					<ForgotForm />
+				</Suspense>
 			</div>
 		</div>
 	)
