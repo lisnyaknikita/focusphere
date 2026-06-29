@@ -44,11 +44,12 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 	}, [task.$createdAt])
 
 	const style = {
-		transform: CSS.Translate.toString(transform),
+		transform: isOverlay ? 'rotate(2deg)' : CSS.Translate.toString(transform),
 		transition,
 		opacity: isDragging && !isOverlay ? 0.3 : 1,
 		zIndex: isDragging ? 999 : undefined,
 		cursor: isDragging ? 'grabbing' : 'grab',
+		boxShadow: isOverlay ? '0 10px 25px rgba(0, 0, 0, 0.15)' : undefined,
 	}
 
 	const taskPriority = task.priority || 'medium'

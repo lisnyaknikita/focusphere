@@ -38,7 +38,7 @@ export const KanbanBoard = () => {
 		triggerProjectUpdate,
 	} = useKanban(project!)
 
-	const { activeTask, activeColumn, sensors, handleDragStart, handleDragEnd } = useKanbanDnd({
+	const { activeTask, activeColumn, overColumnId, sensors, handleDragStart, handleDragOver, handleDragEnd } = useKanbanDnd({
 		tasks,
 		columns,
 		setColumns,
@@ -94,6 +94,7 @@ export const KanbanBoard = () => {
 			<DndContext
 				sensors={sensors}
 				onDragStart={handleDragStart}
+				onDragOver={handleDragOver}
 				onDragEnd={handleDragEnd}
 				collisionDetection={closestCorners}
 			>
@@ -110,6 +111,7 @@ export const KanbanBoard = () => {
 							onAddTask={addTask}
 							onUpdateTask={updateTask}
 							onDeleteTask={deleteTask}
+							isOver={overColumnId === column.id}
 						/>
 					))}
 					<button type='button' className={classes.addColumnBtn} onClick={handleAddColumnClick}>

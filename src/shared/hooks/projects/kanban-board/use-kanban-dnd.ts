@@ -1,6 +1,6 @@
 import { Column } from '@/shared/types/kanban'
 import { KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
-import { DragEndEvent, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { DragEndEvent, DragStartEvent, DragOverEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -26,6 +26,7 @@ export const useKanbanDnd = ({
 }: UseKanbanDndProps) => {
 	const [activeTask, setActiveTask] = useState<KanbanTask | null>(null)
 	const [activeColumn, setActiveColumn] = useState<Column | null>(null)
+	const [overColumnId, setOverColumnId] = useState<string | null>(null)
 
 	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
@@ -34,16 +35,48 @@ export const useKanbanDnd = ({
 		const activeType = active.data.current?.type as string | undefined
 
 		if (activeType === 'Task') {
-			setActiveTask(tasks.find(t => t.$id === active.id) ?? null)
+			const task = tasks.find(t => t.$id === active.id) ?? null
+			setActiveTask(task)
+			if (task) {
+				setOverColumnId(task.status)
+			}
 		}
 		if (activeType === 'Column') {
 			setActiveColumn(columns.find(c => c.id === active.id) ?? null)
 		}
 	}
 
+	const handleDragOver = (event: DragOverEvent): void => {
+		const { active, over } = event
+		if (!over) {
+			setOverColumnId(null)
+			return
+		}
+
+		const activeType = active.data.current?.type as string | undefined
+		if (activeType !== 'Task') {
+			return
+		}
+
+		const overId = over.id as string
+		const isColumn = columns.some(c => c.id === overId)
+
+		if (isColumn) {
+			setOverColumnId(overId)
+		} else {
+			const overTask = tasks.find(t => t.$id === overId)
+			if (overTask) {
+				setOverColumnId(overTask.status)
+			} else {
+				setOverColumnId(null)
+			}
+		}
+	}
+
 	const handleDragEnd = async (event: DragEndEvent): Promise<void> => {
 		setActiveTask(null)
 		setActiveColumn(null)
+		setOverColumnId(null)
 
 		const { active, over } = event
 		if (!over) return
@@ -97,8 +130,10 @@ export const useKanbanDnd = ({
 	return {
 		activeTask,
 		activeColumn,
+		overColumnId,
 		sensors,
 		handleDragStart,
+		handleDragOver,
 		handleDragEnd,
 	}
 }
