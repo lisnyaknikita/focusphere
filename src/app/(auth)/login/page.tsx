@@ -3,7 +3,7 @@
 import { GoogleAuthButton } from '@/shared/ui/google-auth-button/google-auth-button'
 import { Logo } from '@/shared/ui/sidebar/components/logo/logo'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { LoginForm } from './login-form/login-form'
 import classes from './page.module.scss'
 
@@ -24,7 +24,9 @@ export default function LoginPage() {
 					<hr />
 					<span>OR</span>
 				</div>
-				<LoginForm />
+				<Suspense fallback={<p>Loading...</p>}>
+					<LoginForm />
+				</Suspense>
 			</div>
 			<div className={classes.logo}>
 				<Logo />

@@ -18,13 +18,10 @@ export const authService = {
 		return user
 	},
 
-	async signupUser(data: SignupFormValues): Promise<void> {
+	async signupUser(data: SignupFormValues, origin: string, callbackUrl: string | null): Promise<void> {
 		const { fullName, email, password } = data
 
-		const searchParams = new URLSearchParams(window.location.search)
-		const callbackUrl = searchParams.get('callbackUrl')
-
-		const verificationUrl = `${location.origin}${VERIFICATION_REDIRECT_URL}${
+		const verificationUrl = `${origin}${VERIFICATION_REDIRECT_URL}${
 			callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''
 		}`
 
@@ -42,10 +39,8 @@ export const authService = {
 		}
 	},
 
-	async sendRecoveryEmail(email: string) {
-		const searchParams = new URLSearchParams(window.location.search)
-		const callbackUrl = searchParams.get('callbackUrl')
-		const redirectUrl = `${location.origin}/reset-password${
+	async sendRecoveryEmail(email: string, origin: string, callbackUrl: string | null) {
+		const redirectUrl = `${origin}/reset-password${
 			callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''
 		}`
 		await account.createRecovery(email, redirectUrl)

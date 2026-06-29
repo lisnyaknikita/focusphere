@@ -3,7 +3,7 @@
 import { GoogleAuthButton } from '@/shared/ui/google-auth-button/google-auth-button'
 import { Logo } from '@/shared/ui/sidebar/components/logo/logo'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import classes from './page.module.scss'
 import { SignupForm } from './signup-form/signup-form'
 
@@ -34,7 +34,9 @@ export default function SignupPage() {
 							<hr />
 							<span>OR</span>
 						</div>
-						<SignupForm onSuccess={() => setIsSuccess(true)} />
+						<Suspense fallback={<p>Loading...</p>}>
+							<SignupForm onSuccess={() => setIsSuccess(true)} />
+						</Suspense>
 					</>
 				)}
 			</div>
