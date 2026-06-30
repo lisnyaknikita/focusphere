@@ -385,6 +385,19 @@ div:has(> .bn-side-menu),
 	}
 }
 
+.rdp-root {
+	--rdp-accent-color: var(--text) !important;
+	--rdp-accent-background-color: var(--primary) !important;
+}
+
+.rdp-day_button {
+	transition: all 0.2s !important;
+
+	&:hover {
+		background-color: var(--secondary) !important;
+	}
+}
+
 @media screen and (max-width: 430px) {
 	.sx__week-grid__time-axis {
 		width: calc(100% - 48px) !important;
