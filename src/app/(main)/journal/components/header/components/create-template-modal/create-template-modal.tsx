@@ -85,11 +85,11 @@ export const CreateTemplateModal = ({ onClose, onTemplateCreated }: CreateTempla
 				</div>
 			</div>
 			<footer className={classes.modalFooter}>
-				<button type='button' className={classes.saveBtn} onClick={handleSave} disabled={isSaving}>
-					{isSaving ? 'Saving...' : 'Save Template'}
-				</button>
 				<button type='button' className={classes.cancelBtn} onClick={onClose}>
 					Cancel
+				</button>
+				<button type='button' className={classes.saveBtn} onClick={handleSave} disabled={isSaving}>
+					{isSaving ? 'Saving...' : 'Save Template'}
 				</button>
 			</footer>
 		</div>

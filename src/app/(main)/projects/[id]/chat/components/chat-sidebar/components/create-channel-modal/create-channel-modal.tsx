@@ -27,11 +27,11 @@ export const CreateChannelModal = ({
 					/>
 				</div>
 				<div className={classes.buttons}>
-					<button type='submit' className={classes.confirmButton} disabled={!newChannelName.trim()}>
-						Create channel
-					</button>
 					<button type='button' className={classes.cancelButton} onClick={onClose}>
 						Cancel
+					</button>
+					<button type='submit' className={classes.confirmButton} disabled={!newChannelName.trim()}>
+						Create channel
 					</button>
 				</div>
 			</form>

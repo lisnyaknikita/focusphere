@@ -27,11 +27,11 @@ export const EventEditView = ({ form, setFormField, handleSubmit, isTimeBlock, o
 			<ColorPicker form={form} setFormField={setFormField} />
 
 			<div className={classes.actions}>
-				<button type='submit' className={classes.saveBtn}>
-					Save
-				</button>
 				<button type='button' className={classes.cancelBtn} onClick={onCancel}>
 					Cancel
+				</button>
+				<button type='submit' className={classes.saveBtn}>
+					Save
 				</button>
 			</div>
 		</form>

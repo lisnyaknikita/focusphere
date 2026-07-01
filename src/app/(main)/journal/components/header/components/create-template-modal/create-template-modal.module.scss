@@ -144,7 +144,7 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	gap: 12px;
+	gap: 10px;
 	padding: 16px 24px;
 	border-top: 1px solid var(--btn-border);
 
@@ -156,19 +156,15 @@
 }
 
 .saveBtn {
-	flex-basis: 50%;
 	font-size: 16px;
 	font-weight: 400;
 	color: var(--save-button-text);
-	padding: 4px;
+	padding: 4px 8px;
 	background-color: var(--save-button-bg);
 	border-radius: 5px;
 	display: inline-block;
 	font-family: inherit;
 	transition: background-color 0.2s;
-	text-align: center;
-	cursor: pointer;
-	border: none;
 
 	&:hover {
 		background-color: #aaa;
@@ -182,17 +178,14 @@
 }
 
 .cancelBtn {
-	flex-basis: 50%;
 	color: var(--text);
 	background-color: transparent;
 	border: 1px solid var(--btn-border);
 	border-radius: 5px;
-	padding: 4px;
+	padding: 4px 8px;
 	font-size: 16px;
 	font-family: inherit;
 	transition: background-color 0.2s;
-	text-align: center;
-	cursor: pointer;
 
 	&:hover {
 		background-color: var(--secondary);

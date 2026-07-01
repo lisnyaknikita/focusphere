@@ -55,9 +55,6 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 
 	const renderOwnerButtons = () => (
 		<>
-			<button className={classes.saveButton} disabled={isSubmitting}>
-				{isSubmitting ? 'Saving...' : 'Save Changes'}
-			</button>
 			<button
 				type='button'
 				className={classes.deleteButton}
@@ -65,6 +62,9 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 				disabled={isDeleting || isSubmitting}
 			>
 				{isDeleting ? 'Deleting...' : 'Delete project'}
+			</button>
+			<button className={classes.saveButton} disabled={isSubmitting}>
+				{isSubmitting ? 'Saving...' : 'Save Changes'}
 			</button>
 		</>
 	)
