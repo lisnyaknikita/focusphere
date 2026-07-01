@@ -40,7 +40,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 3px;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	width: 100%;
 	max-height: 24px;
 	overflow: hidden;
@@ -98,4 +98,35 @@
 	font-size: 12px;
 	font-weight: 400;
 	color: var(--text);
+}
+
+.dueDateBadge {
+	font-size: 12px;
+	font-weight: 500;
+	text-transform: uppercase;
+	padding: 2px 6px;
+	border-radius: 5px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background-color: var(--secondary);
+	color: var(--textSecondary);
+	margin-bottom: 10px;
+
+	&.overdue {
+		border: 1px solid #dc2626;
+		color: #dc2626;
+		font-weight: 600;
+	}
+
+	&.today {
+		border: 1px solid #ea580c;
+		color: #ea580c;
+		font-weight: 600;
+	}
+
+	&.upcoming {
+		border: 1px solid var(--btn-border);
+		color: var(--textSecondary);
+	}
 }

@@ -14,6 +14,7 @@ export interface KanbanTask extends Models.Document {
 	position: number
 	labels?: string[]
 	taskCode: string
+	dueDate?: string | null
 }
 
 export interface CreateKanbanTaskPayload {
@@ -27,4 +28,5 @@ export interface CreateKanbanTaskPayload {
 	position: number
 	labels?: string[]
 	taskCode: string
+	dueDate?: string | null
 }

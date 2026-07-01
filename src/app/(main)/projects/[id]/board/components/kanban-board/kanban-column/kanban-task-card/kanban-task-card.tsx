@@ -2,6 +2,7 @@
 
 import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
 import { CreateKanbanTaskPayload, KanbanTask, TaskPriority } from '@/shared/types/kanban-task'
+import { ClockIcon } from '@/shared/ui/icons/projects/clock-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
 import { useSortable } from '@dnd-kit/sortable'
@@ -43,6 +44,26 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 		})
 	}, [task.$createdAt])
 
+	const dueDateInfo = useMemo(() => {
+		if (!task.dueDate) return null
+
+		const todayStr = new Date().toISOString().split('T')[0]
+		let status: 'overdue' | 'today' | 'upcoming' = 'upcoming'
+
+		if (task.dueDate < todayStr) {
+			status = 'overdue'
+		} else if (task.dueDate === todayStr) {
+			status = 'today'
+		}
+
+		const formatted = new Date(task.dueDate).toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric',
+		})
+
+		return { formatted, status }
+	}, [task.dueDate])
+
 	const style = {
 		transform: isOverlay ? 'rotate(2deg)' : CSS.Translate.toString(transform),
 		transition,
@@ -83,6 +104,12 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 								)
 							})}
 						</ul>
+					)}
+					{dueDateInfo && (
+						<div className={`${classes.dueDateBadge} ${classes[dueDateInfo.status]}`} title='Due date'>
+							<ClockIcon width={16} height={16} />
+							<span>{dueDateInfo.formatted}</span>
+						</div>
 					)}
 					<footer className={classes.taskCardFooter}>
 						<div className={classes.taskAssignee}>
