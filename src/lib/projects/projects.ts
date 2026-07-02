@@ -131,3 +131,62 @@ export const convertToTeamProject = async (projectId: string, ownerId: string, p
 		throw error
 	}
 }
+
+export const clearProjectTeamData = async (projectId: string): Promise<void> => {
+	const channelsRes = await getChannels(projectId)
+	const channelPromises = channelsRes.rows.map(channel => deleteChannel(channel.$id))
+	await Promise.all(channelPromises)
+}
+
+export const revokeTeamPermissionsForProjectData = async (projectId: string, ownerId: string): Promise<void> => {
+	const channelsRes = await getChannels(projectId)
+	const updatePromises = channelsRes.rows.map(channel => {
+		return db.updateRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: process.env.NEXT_PUBLIC_TABLE_PROJECT_CHANNELS!,
+			rowId: channel.$id,
+			permissions: [
+				Permission.read(Role.user(ownerId)),
+				Permission.update(Role.user(ownerId)),
+				Permission.delete(Role.user(ownerId)),
+			],
+		})
+	})
+	await Promise.all(updatePromises)
+}
+
+export const convertToSoloProject = async (
+	projectId: string,
+	ownerId: string,
+	deleteTeamData: boolean,
+	data: Partial<CreateProjectPayload>
+) => {
+	try {
+		if (deleteTeamData) {
+			await clearProjectTeamData(projectId)
+		} else {
+			await revokeTeamPermissionsForProjectData(projectId, ownerId)
+		}
+
+		const response = await db.updateRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: process.env.NEXT_PUBLIC_TABLE_PROJECTS!,
+			rowId: projectId,
+			data: {
+				...data,
+				type: 'solo',
+				teamId: null,
+			},
+			permissions: [
+				Permission.read(Role.user(ownerId)),
+				Permission.update(Role.user(ownerId)),
+				Permission.delete(Role.user(ownerId)),
+			],
+		})
+
+		return response
+	} catch (error) {
+		console.error('Failed to convert project to solo:', error)
+		throw error
+	}
+}
