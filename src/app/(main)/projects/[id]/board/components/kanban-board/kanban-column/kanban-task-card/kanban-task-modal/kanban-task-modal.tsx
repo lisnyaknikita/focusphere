@@ -44,6 +44,26 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 	if (!task) return null
 
 	const handleBlur = (field: keyof KanbanTask, value: string) => {
+		if (field === 'title') {
+			const trimmedTitle = value.trim()
+
+			if (!trimmedTitle) {
+				toast.error('Task title cannot be empty')
+				setTitle(task.title || '')
+				return
+			}
+
+			if (trimmedTitle !== task.title) {
+				setTitle(trimmedTitle)
+				onUpdate(task.$id, { title: trimmedTitle }).catch((err: unknown) => {
+					console.error(`Failed to update field title:`, err)
+					toast.error('Failed to update field')
+					setTitle(task.title || '')
+				})
+			}
+			return
+		}
+
 		if (value !== task[field]) {
 			onUpdate(task.$id, { [field]: value }).catch((err: unknown) => {
 				console.error(`Failed to update field ${field}:`, err)

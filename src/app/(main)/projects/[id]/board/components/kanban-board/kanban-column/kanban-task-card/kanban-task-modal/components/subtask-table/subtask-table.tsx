@@ -1,6 +1,7 @@
 import { KanbanSubtask, SubtaskStatus } from '@/shared/types/kanban-subtask'
 import { Project } from '@/shared/types/project'
 import { DeleteIcon } from '@/shared/ui/icons/delete-icon'
+import { toast } from 'sonner'
 import { AssigneeSelect } from '../assignee-select/assignee-select'
 import classes from './subtask-table.module.scss'
 
@@ -12,9 +13,22 @@ interface SubtaskTableProps {
 }
 
 export const SubtaskTable = ({ subtasks, project, updateSubtask, deleteSubtask }: SubtaskTableProps) => {
-	const handleSubtaskBlur = (subtaskId: string, originalTitle: string, currentTitle: string) => {
-		if (currentTitle.trim() !== '' && currentTitle !== originalTitle) {
-			updateSubtask(subtaskId, { title: currentTitle })
+	const handleSubtaskBlur = (e: React.FocusEvent<HTMLInputElement>, subtaskId: string, originalTitle: string) => {
+		const trimmedTitle = e.target.value.trim()
+
+		if (!trimmedTitle) {
+			toast.error('Subtask title cannot be empty')
+			e.target.value = originalTitle
+			return
+		}
+
+		if (trimmedTitle !== originalTitle) {
+			e.target.value = trimmedTitle
+			updateSubtask(subtaskId, { title: trimmedTitle }).catch((err: unknown) => {
+				console.error('Failed to update subtask:', err)
+				toast.error('Failed to update subtask')
+				e.target.value = originalTitle
+			})
 		}
 	}
 
@@ -34,7 +48,7 @@ export const SubtaskTable = ({ subtasks, project, updateSubtask, deleteSubtask }
 							<input
 								type='text'
 								defaultValue={subtask.title}
-								onBlur={e => handleSubtaskBlur(subtask.$id, subtask.title, e.target.value)}
+								onBlur={e => handleSubtaskBlur(e, subtask.$id, subtask.title)}
 								onKeyDown={e => {
 									if (e.key === 'Enter') e.currentTarget.blur()
 								}}
