@@ -1,7 +1,6 @@
 import { createEvent, updateEvent } from '@/lib/events/events'
 import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { CreateEventPayload } from '@/shared/types/event'
-import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
 import { Description } from './components/description/description'
@@ -50,11 +49,10 @@ export const EventModal = ({ onClose }: EventModalProps) => {
 				<DateTime form={form} setFormField={setFormField} />
 				<Description form={form} setFormField={setFormField} />
 				<ColorPicker form={form} setFormField={setFormField} />
-				<button className={classes.saveButton}>Save</button>
+				<button type='submit' className={classes.saveButton}>
+					Save
+				</button>
 			</form>
-			<button className={classes.closeButton} onClick={() => onClose()}>
-				<CloseButtonIcon />
-			</button>
 		</div>
 	)
 }

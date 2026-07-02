@@ -1,23 +1,24 @@
 'use client'
 
+import { createCustomerPortalSession } from '@/app/actions/stripe'
 import { account } from '@/lib/appwrite'
 import { APP_URL } from '@/shared/constants/app'
+import { useBilling } from '@/shared/context/billing-context'
 import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { useTimeBlockUIStore } from '@/shared/stores/time-block-ui-store'
 import { FeedbackModal } from '@/shared/ui/feedback-section/feedback-modal/feedback-modal'
 import { FeedbackSection } from '@/shared/ui/feedback-section/feedback-section'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { SignOutIcon } from '@/shared/ui/icons/sign-out-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import { OAuthProvider } from 'appwrite'
 import clsx from 'clsx'
 import Image from 'next/image'
-import { useState } from 'react'
-import { createCustomerPortalSession } from '@/app/actions/stripe'
-import { useBilling } from '@/shared/context/billing-context'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { AvatarUploader } from './avatar-uploader/avatar-uploader'
 import { EditableUsername } from './editable-username/editable-username'
@@ -37,7 +38,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
 
 	const { isDark, handleToggle } = useThemeToggle()
-	
+
 	const { isPro, stripeCustomerId, openPaywall, isBillingEnabled } = useBilling()
 	const pathname = usePathname()
 	const [isRedirecting, setIsRedirecting] = useState(false)
@@ -88,7 +89,6 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 		setIsVisible(false)
 		openPaywall('')
 	}
-
 
 	return (
 		<>
@@ -141,8 +141,13 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 				<div className={classes.modalInner}>
 					<div className={classes.modalHeader}>
 						<h6 className={classes.modalTitle}>Settings</h6>
-						<button className={classes.closeX} onClick={() => setIsVisible(false)}>
-							✕
+						<button
+							className={classes.closeButton}
+							onClick={() => setIsVisible(false)}
+							aria-label='Close modal'
+							type='button'
+						>
+							<CloseIcon width={20} height={20} />
 						</button>
 					</div>
 					<div className={classes.modalContent}>
@@ -179,12 +184,8 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 									<span className={classes.sectionLabel}>SUBSCRIPTION</span>
 									<div className={classes.settingsCard}>
 										<div className={classes.subInfo}>
-											<span className={isPro ? classes.proBadge : classes.freeBadge}>
-												{isPro ? 'PRO' : 'FREE'}
-											</span>
-											<span className={classes.subPlanName}>
-												{isPro ? 'Focusphere Pro' : 'Starter Plan'}
-											</span>
+											<span className={isPro ? classes.proBadge : classes.freeBadge}>{isPro ? 'PRO' : 'FREE'}</span>
+											<span className={classes.subPlanName}>{isPro ? 'Focusphere Pro' : 'Starter Plan'}</span>
 										</div>
 										{isPro ? (
 											<button
@@ -195,10 +196,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 												{isRedirecting ? 'Redirecting...' : 'Manage'}
 											</button>
 										) : (
-											<button
-												className={classes.connectBtn}
-												onClick={handleUpgrade}
-											>
+											<button className={classes.connectBtn} onClick={handleUpgrade}>
 												Upgrade
 											</button>
 										)}

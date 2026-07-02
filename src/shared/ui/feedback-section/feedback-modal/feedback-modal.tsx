@@ -5,6 +5,7 @@ import { Modal } from '@/shared/ui/modal/modal'
 import clsx from 'clsx'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { CloseIcon } from '../../icons/close-icon'
 import classes from './feedback-modal.module.scss'
 
 interface FeedbackModalProps {
@@ -62,8 +63,8 @@ export const FeedbackModal = ({ isVisible, onClose }: FeedbackModalProps) => {
 			<div className={classes.feedbackModalInner}>
 				<div className={classes.header}>
 					<h3 className={classes.title}>Feedback & Support</h3>
-					<button className={classes.closeX} onClick={onClose}>
-						✕
+					<button className={classes.closeButton} onClick={onClose} aria-label='Close modal' type='button'>
+						<CloseIcon width={20} height={20} />
 					</button>
 				</div>
 
