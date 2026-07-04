@@ -19,6 +19,8 @@ import clsx from 'clsx'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
+import { BeatLoader } from 'react-spinners'
 import { toast } from 'sonner'
 import { AvatarUploader } from './avatar-uploader/avatar-uploader'
 import { EditableUsername } from './editable-username/editable-username'
@@ -32,7 +34,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isVisible, setIsVisible] = useState(false)
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
 	const [isSettingsTooltipOpen, setIsSettingsTooltipOpen] = useState(false)
-	const { user, logout, updateUserData, isGoogleConnected } = useUser()
+	const { user, logout, updateUserData, isGoogleConnected, isLoggingOut } = useUser()
 	const { isEnabled, setEnabled } = useTimeBlockUIStore()
 
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
@@ -235,6 +237,15 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 				</div>
 			</Modal>
 			<FeedbackModal isVisible={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
+			{isLoggingOut &&
+				typeof window !== 'undefined' &&
+				createPortal(
+					<div className={classes.logoutOverlay}>
+						<BeatLoader color='var(--text)' size={14} />
+						<span className={classes.logoutText}>Logging out of account...</span>
+					</div>,
+					document.body
+				)}
 		</>
 	)
 }

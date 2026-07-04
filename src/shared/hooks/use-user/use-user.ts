@@ -8,6 +8,7 @@ export const useUser = () => {
 	const [user, setUser] = useState<CustomUser | null>(null)
 	const [isGoogleConnected, setIsGoogleConnected] = useState(false)
 	const [loading, setLoading] = useState(true)
+	const [isLoggingOut, setIsLoggingOut] = useState(false)
 
 	useEffect(() => {
 		const getUser = async () => {
@@ -68,13 +69,14 @@ export const useUser = () => {
 
 	const logout = async () => {
 		try {
+			setIsLoggingOut(true)
 			await account.deleteSession({ sessionId: 'current' })
-			setUser(null)
 			window.location.href = '/login'
 		} catch (error) {
 			console.error('Logout error:', error)
+			setIsLoggingOut(false)
 		}
 	}
 
-	return { user, loading, logout, updateUserData, isGoogleConnected }
+	return { user, loading, logout, updateUserData, isGoogleConnected, isLoggingOut }
 }
