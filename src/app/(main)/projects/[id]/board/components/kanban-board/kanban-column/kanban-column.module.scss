@@ -8,6 +8,8 @@
 	flex-direction: column;
 	overflow: visible;
 	position: relative;
+	border: 1.5px solid transparent;
+	transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 
 	&:hover {
 		.deleteColumnBtn {
@@ -20,6 +22,12 @@
 		width: 270px;
 		padding: 10px;
 	}
+}
+
+.columnIsOver {
+	background-color: var(--hover) !important;
+	border-color: var(--btn-border) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .scrollWrapper {

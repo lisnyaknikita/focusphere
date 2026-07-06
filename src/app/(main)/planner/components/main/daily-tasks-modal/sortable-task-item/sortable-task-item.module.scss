@@ -3,14 +3,29 @@
 	cursor: grab;
 	width: 100%;
 
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+
 	&:active {
 		cursor: grabbing;
 	}
 
-	&:global(.isDragging) {
+	&:has(input) {
+		-webkit-user-select: auto;
+		user-select: auto;
+	}
+
+	&.isDragging {
+		cursor: grabbing;
+
 		> * {
 			pointer-events: none !important;
 			user-select: none;
 		}
+	}
+
+	&.isEditing {
+		cursor: text;
 	}
 }

@@ -2,7 +2,7 @@ import { useDailyTasks } from '@/shared/hooks/planner/use-daily-tasks'
 import { DailyTask } from '@/shared/types/daily-task'
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
-import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { formatModalDate } from '@/shared/utils/format-modal-date/format-modal-date'
 import {
@@ -182,8 +182,8 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 					<PlusIcon />
 					<span>Add new task</span>
 				</button>
-				<button className={classes.closeButton} onClick={() => onClose()}>
-					<CloseButtonIcon />
+				<button className={classes.closeButton} onClick={() => onClose()} aria-label='Close modal' type='button'>
+					<CloseIcon width={20} height={20} />
 				</button>
 			</div>
 			<ConfirmModal

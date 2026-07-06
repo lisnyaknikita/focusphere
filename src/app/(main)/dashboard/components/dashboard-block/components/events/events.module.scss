@@ -14,6 +14,44 @@
 	}
 }
 
+.eventsHeader {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.syncingIndicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 11px;
+	font-weight: 400;
+	color: color-mix(in srgb, var(--text) 45%, transparent);
+	white-space: nowrap;
+}
+
+.syncingDot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background-color: #4285F4;
+	flex-shrink: 0;
+	animation: pulseDot 1.2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+	0%, 100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.4;
+		transform: scale(0.7);
+	}
+}
+
+
 .eventsList {
 	display: flex;
 	flex-direction: column;

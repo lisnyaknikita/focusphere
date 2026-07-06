@@ -74,12 +74,18 @@ export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent, acti
 		e.preventDefault()
 		if (!actions) return
 
+		const trimmedTitle = form.title.trim()
+		if (!trimmedTitle) {
+			toast.error('Title is required')
+			return
+		}
+
 		const startDateISO = createISOStringFromForm(form.date, form.startTime)
 		const endDateISO = createISOStringFromForm(form.date, form.endTime)
 		const userId = await getCurrentUserId()
 
 		const eventData: CreateEventPayload = {
-			title: form.title,
+			title: trimmedTitle,
 			description: form.description,
 			startDate: startDateISO,
 			endDate: endDateISO,

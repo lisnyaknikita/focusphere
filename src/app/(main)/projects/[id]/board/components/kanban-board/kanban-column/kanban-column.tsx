@@ -22,6 +22,7 @@ interface KanbanColumnProps {
 	onAddTask: (title: string, status: TaskStatus) => Promise<void>
 	onUpdateTask: (taskId: string, data: Partial<CreateKanbanTaskPayload>) => Promise<void>
 	onDeleteTask: (taskId: string) => Promise<void>
+	isOver?: boolean
 }
 
 export const KanbanColumn = ({
@@ -35,6 +36,7 @@ export const KanbanColumn = ({
 	onAddTask,
 	onUpdateTask,
 	onDeleteTask,
+	isOver,
 }: KanbanColumnProps) => {
 	const [isEditingTitle, setIsEditingTitle] = useState(autoFocusTitle ?? false)
 	const [editTitle, setEditTitle] = useState(column.title)
@@ -77,7 +79,13 @@ export const KanbanColumn = ({
 	const taskIds = tasks.map(task => task.$id)
 
 	return (
-		<div className={`${classes.column} ${isOverlay ? classes.columnOverlay : ''}`} ref={setNodeRef} style={style}>
+		<div
+			className={`${classes.column} ${isOverlay ? classes.columnOverlay : ''} ${
+				isOver && !isOverlay ? classes.columnIsOver : ''
+			}`}
+			ref={setNodeRef}
+			style={style}
+		>
 			<header className={classes.columnHeader} {...attributes} {...listeners}>
 				<span className={classes.icon} />
 				{isEditingTitle ? (

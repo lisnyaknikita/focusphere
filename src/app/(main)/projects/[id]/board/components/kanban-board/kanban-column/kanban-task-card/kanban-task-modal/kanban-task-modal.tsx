@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { AssigneeSelect } from './components/assignee-select/assignee-select'
 import { PriorityDropdown } from './components/priority-dropdown/priority-dropdown'
 import { SubtaskTable } from './components/subtask-table/subtask-table'
+import { TaskDueDate } from './components/task-due-date/task-due-date'
 import { TaskLabelsEditor } from './components/task-labels-editor/task-labels-editor'
 import classes from './kanban-task-modal.module.scss'
 
@@ -43,6 +44,26 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 	if (!task) return null
 
 	const handleBlur = (field: keyof KanbanTask, value: string) => {
+		if (field === 'title') {
+			const trimmedTitle = value.trim()
+
+			if (!trimmedTitle) {
+				toast.error('Task title cannot be empty')
+				setTitle(task.title || '')
+				return
+			}
+
+			if (trimmedTitle !== task.title) {
+				setTitle(trimmedTitle)
+				onUpdate(task.$id, { title: trimmedTitle }).catch((err: unknown) => {
+					console.error(`Failed to update field title:`, err)
+					toast.error('Failed to update field')
+					setTitle(task.title || '')
+				})
+			}
+			return
+		}
+
 		if (value !== task[field]) {
 			onUpdate(task.$id, { [field]: value }).catch((err: unknown) => {
 				console.error(`Failed to update field ${field}:`, err)
@@ -183,6 +204,16 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 							value={task.priority || 'medium'}
 							onChange={newPriority => {
 								onUpdate(task.$id, { priority: newPriority }).catch((err: unknown) => console.error(err))
+							}}
+						/>
+					</div>
+
+					<div className={classes.detailItem}>
+						<span className={classes.label}>Due Date</span>
+						<TaskDueDate
+							value={task.dueDate}
+							onChange={nextDate => {
+								onUpdate(task.$id, { dueDate: nextDate }).catch(err => console.error(err))
 							}}
 						/>
 					</div>

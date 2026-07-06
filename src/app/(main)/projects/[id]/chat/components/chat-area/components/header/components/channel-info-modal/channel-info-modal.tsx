@@ -1,6 +1,6 @@
 import { ChatChannel } from '@/shared/types/chat'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
-import { CloseButtonIcon } from '@/shared/ui/icons/calendar/close-button-icon'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { DeleteIcon } from '@/shared/ui/icons/delete-icon'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -97,8 +97,11 @@ export const ChannelInfoModal = ({ onClose, channel, onUpdate, onDelete, isOwner
 					<DeleteIcon width={18} height={18} />
 					<span>Delete channel</span>
 				</button>
-				<button className={classes.closeButton} onClick={() => onClose()}>
+				{/* <button className={classes.closeButton} onClick={() => onClose()}>
 					<CloseButtonIcon />
+				</button> */}
+				<button className={classes.closeButton} onClick={() => onClose()} aria-label='Close modal' type='button'>
+					<CloseIcon width={20} height={20} />
 				</button>
 			</div>
 			<ConfirmModal

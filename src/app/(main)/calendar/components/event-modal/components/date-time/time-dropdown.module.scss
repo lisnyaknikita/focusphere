@@ -1,0 +1,91 @@
+.dropdownContainer {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdownTrigger {
+	background: transparent;
+	border: none;
+	color: var(--text);
+	font-family: inherit;
+	font-size: 16px;
+	padding: 2px 3px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+	outline: none;
+
+	&:hover,
+	&.active {
+		background-color: var(--secondary);
+		text-decoration: underline;
+	}
+}
+
+.dropdownList {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	z-index: 100;
+	min-width: 200px;
+	max-height: 220px;
+	overflow-y: auto;
+	background-color: var(--secondaryFull);
+	border: 1px solid var(--btn-border);
+	border-radius: 6px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+	padding: 4px 0;
+	outline: none;
+
+	&::-webkit-scrollbar {
+		width: 3px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: var(--btn-border);
+		border-radius: 3px;
+	}
+}
+
+.dropdownItem {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	background: transparent;
+	border: none;
+	padding: 8px 12px;
+	font-family: inherit;
+	font-size: 14px;
+	color: var(--text);
+	text-align: left;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+	outline: none;
+
+	&:hover,
+	&.focused {
+		background-color: var(--hover);
+	}
+
+	&.selected {
+		background-color: var(--hover);
+		font-weight: 500;
+	}
+}
+
+.timeText {
+	flex-shrink: 0;
+}
+
+.durationText {
+	font-size: 11px;
+	color: var(--textSecondary);
+	font-weight: 400;
+	white-space: nowrap;
+}

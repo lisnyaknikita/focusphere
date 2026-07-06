@@ -1,14 +1,13 @@
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { DayPicker } from 'react-day-picker'
-import TimePicker from 'react-time-picker'
+import { TimeDropdown } from './time-dropdown'
 
 import { EventForm } from '@/shared/types/event'
 import { TimeBlockForm } from '@/shared/types/time-block'
 import { DateTimeIcon } from '@/shared/ui/icons/calendar/date-time-icon'
 import { Modal } from '@/shared/ui/modal/modal'
 import 'react-day-picker/style.css'
-import 'react-time-picker/dist/TimePicker.css'
 import classes from './date-time.module.scss'
 
 type FormType = EventForm | TimeBlockForm
@@ -49,20 +48,27 @@ export const DateTime = <T extends EventForm | TimeBlockForm>({ form, setFormFie
 					</Modal>
 				)}
 				<div className={classes.timePickers}>
-					<TimePicker
-						className={classes.timePicker}
-						onChange={value => value && setFormField('startTime', value)}
+					<TimeDropdown
 						value={form.startTime}
-						disableClock={true}
-						clearIcon={null}
+						onChange={value => {
+							setFormField('startTime', value)
+
+							if (form.endTime && value >= form.endTime) {
+								const [h, m] = value.split(':').map(Number)
+								const totalMins = h * 60 + m + 30
+
+								const nextH = String(Math.floor(totalMins / 60) % 24).padStart(2, '0')
+								const nextM = String(totalMins % 60).padStart(2, '0')
+
+								setFormField('endTime', `${nextH}:${nextM}`)
+							}
+						}}
 					/>
-					<span>–</span>
-					<TimePicker
-						className={classes.timePicker}
-						onChange={value => value && setFormField('endTime', value)}
+					<span className={classes.separator}>–</span>
+					<TimeDropdown
 						value={form.endTime}
-						disableClock={true}
-						clearIcon={null}
+						onChange={value => setFormField('endTime', value)}
+						compareTime={form.startTime}
 					/>
 				</div>
 			</div>

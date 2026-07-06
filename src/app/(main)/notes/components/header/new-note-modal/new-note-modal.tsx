@@ -51,11 +51,11 @@ export const NewNoteModal = ({ onClose }: NewNoteModalProps) => {
 					autoFocus
 				/>
 				<div className={classes.buttons}>
-					<button type='submit' className={classes.confirmButton} disabled={isSubmitting}>
-						{isSubmitting ? 'Processing...' : 'Create note'}
-					</button>
 					<button type='button' className={classes.cancelButton} onClick={onClose} disabled={isSubmitting}>
 						Cancel
+					</button>
+					<button type='submit' className={classes.confirmButton} disabled={isSubmitting}>
+						{isSubmitting ? 'Processing...' : 'Create note'}
 					</button>
 				</div>
 			</form>

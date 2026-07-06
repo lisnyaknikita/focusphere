@@ -22,48 +22,102 @@
 	}
 }
 
-.descriptionForm {
-	width: 250px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 20px;
+.modal {
+	width: 375px;
+	position: relative;
+
+	@media screen and (max-width: 430px) {
+		width: 330px;
+	}
+}
+
+.title {
+	font-size: 18px;
+	font-weight: 400;
+	color: var(--text);
+	margin-bottom: 20px;
 }
 
 .descriptionTextarea {
 	width: 100%;
-	color: var(--text);
-	border: 0.3px solid var(--line);
-	border-radius: 5px;
-	background: transparent;
-	resize: none;
+	border: 1px solid var(--btn-border);
+	background-color: transparent;
 	outline: none;
+	font-size: 16px;
 	font-family: inherit;
-	min-height: 100px;
-	padding: 7px;
+	color: var(--text);
+	padding: 5px;
+	resize: vertical;
+	margin-bottom: 20px;
 }
 
 .descriptionContent {
-	width: 250px;
-	min-height: 100px;
-	font-size: 14px;
-	overflow-wrap: break-word;
-	word-wrap: break-word;
-}
-
-.saveDescriptionButton {
-	font-size: 14px;
-	font-weight: 400;
-	color: var(--save-button-text);
-	padding: 4px 2px;
-	background-color: var(--save-button-bg);
-	border-radius: 10px;
-	display: inline-block;
 	width: 100%;
-	font-family: inherit;
+	min-height: 100px;
+	font-size: 16px;
+	color: var(--text);
+	cursor: pointer;
+	padding: 8px;
+	border: 1px dashed var(--btn-border);
+	border-radius: 5px;
+	margin-bottom: 20px;
+	background-color: transparent;
 	transition: background-color 0.2s;
 
 	&:hover {
+		background-color: var(--secondary);
+	}
+}
+
+.descriptionText {
+	white-space: pre-wrap;
+	word-break: break-word;
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--textSecondary);
+}
+
+.buttons {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.confirmButton {
+	font-size: 16px;
+	font-weight: 400;
+	color: var(--save-button-text);
+	padding: 4px 8px;
+	background-color: var(--save-button-bg);
+	border-radius: 5px;
+	display: inline-block;
+	font-family: inherit;
+	transition: background-color 0.2s;
+	cursor: pointer;
+
+	&:hover {
 		background-color: #aaa;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+.cancelButton {
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px 8px;
+	font-size: 16px;
+	font-family: inherit;
+	transition: background-color 0.2s;
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--secondary);
 	}
 }
