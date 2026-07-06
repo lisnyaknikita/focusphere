@@ -15,28 +15,37 @@ const reverseColorMap: Record<string, string> = {
 	'7': '#16ADD7',
 }
 
-const fetchEventsByToday = async (): Promise<CalendarEvent[]> => {
-	const userId = await getCurrentUserId()
+const getTodayRange = () => {
 	const today = Temporal.Now.plainDateISO()
 	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 	const startOfDay = today.toZonedDateTime({ timeZone }).startOfDay().toInstant().toString()
 	const endOfDay = today.add({ days: 1 }).toZonedDateTime({ timeZone }).startOfDay().toInstant().toString()
+	return { startOfDay, endOfDay }
+}
 
-	const [appwriteRes, googleEventsRaw] = await Promise.all([
-		db.listRows({
-			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-			tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
-			queries: [Query.equal('userId', userId), Query.limit(5000)],
-		}),
-		googleCalendarService.fetchEvents(new Date(startOfDay), new Date(endOfDay)),
-	])
+const fetchAppwriteEventsToday = async (): Promise<CalendarEvent[]> => {
+	const userId = await getCurrentUserId()
+	const { startOfDay, endOfDay } = getTodayRange()
+
+	const appwriteRes = await db.listRows({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
+		queries: [Query.equal('userId', userId), Query.limit(5000)],
+	})
 
 	const allAppwriteEvents = appwriteRes.rows as unknown as CalendarEvent[]
-	const appwriteEvents = allAppwriteEvents
+	return allAppwriteEvents
 		.filter(event => event.startDate < endOfDay && event.endDate > startOfDay)
 		.sort((a, b) => a.startDate.localeCompare(b.startDate))
+}
 
-	const googleEvents: CalendarEvent[] = googleEventsRaw.map((gEvent: GoogleCalendarEvent) => {
+const fetchGoogleEventsToday = async (): Promise<CalendarEvent[]> => {
+	const userId = await getCurrentUserId()
+	const { startOfDay, endOfDay } = getTodayRange()
+
+	const googleEventsRaw = await googleCalendarService.fetchEvents(new Date(startOfDay), new Date(endOfDay))
+
+	return googleEventsRaw.map((gEvent: GoogleCalendarEvent) => {
 		const isAllDay = !!gEvent.start?.date
 		let startDate = gEvent.start?.dateTime ?? ''
 		let endDate = gEvent.end?.dateTime ?? ''
@@ -64,23 +73,38 @@ const fetchEventsByToday = async (): Promise<CalendarEvent[]> => {
 			calendarId: 'google-calendar',
 			userId,
 		}
-	})
-
-	return [...appwriteEvents, ...googleEvents]
+	}) as unknown as CalendarEvent[]
 }
 
 export const useEventsByToday = () => {
-	const { data, isLoading, refetch } = useQuery({
-		queryKey: ['events-today'],
-		queryFn: fetchEventsByToday,
+	const {
+		data: appwriteEvents = [],
+		isLoading: isAppwriteLoading,
+		refetch: refetchAppwrite,
+	} = useQuery({
+		queryKey: ['events-today-appwrite'],
+		queryFn: fetchAppwriteEventsToday,
 		staleTime: 1000 * 60 * 5,
 	})
 
+	const {
+		data: googleEvents = [],
+		isFetching: isGoogleLoading,
+		refetch: refetchGoogle,
+	} = useQuery({
+		queryKey: ['events-today-google'],
+		queryFn: fetchGoogleEventsToday,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const events = [...appwriteEvents, ...googleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
+
 	return {
-		events: data ?? [],
-		isLoading,
+		events,
+		isLoading: isAppwriteLoading,
+		isGoogleLoading,
 		refresh: async () => {
-			await refetch()
+			await Promise.all([refetchAppwrite(), refetchGoogle()])
 		},
 	}
 }

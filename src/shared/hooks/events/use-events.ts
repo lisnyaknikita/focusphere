@@ -6,9 +6,50 @@ import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useState } from 'react'
 
+const mapGoogleEvent = (gEvent: GoogleCalendarEvent, userId: string): CalendarEvent => {
+	const isAllDay = !!gEvent.start?.date
+	let startDate = gEvent.start?.dateTime || ''
+	let endDate = gEvent.end?.dateTime || ''
+
+	if (isAllDay) {
+		startDate = gEvent.start.date!
+
+		const endObj = new Date(gEvent.end.date!)
+		endObj.setDate(endObj.getDate() - 1)
+		endDate = endObj.toISOString().split('T')[0]
+	}
+
+	const reverseColorMap: Record<string, string> = {
+		'5': '#D79716',
+		'11': '#D71616',
+		'10': '#17720F',
+		'9': '#1351AE',
+		'3': '#97107A',
+		'7': '#16ADD7',
+	}
+
+	return {
+		$id: `g_${gEvent.id}`,
+		$createdAt: new Date().toISOString(),
+		$updatedAt: new Date().toISOString(),
+		$collectionId: '',
+		$databaseId: '',
+		$permissions: [],
+		$sequence: 0,
+		title: gEvent.summary || 'Google Event',
+		description: gEvent.description || '',
+		startDate,
+		endDate,
+		color: gEvent.colorId ? reverseColorMap[gEvent.colorId] || '#4285F4' : '#4285F4',
+		calendarId: 'google-calendar',
+		userId,
+	} as unknown as CalendarEvent
+}
+
 export const useEvents = () => {
 	const [events, setEvents] = useState<CalendarEvent[]>([])
 	const [isLoading, setIsLoading] = useState(true)
+	const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
 	const getEvents = useCallback(async () => {
 		const userId = await getCurrentUserId()
@@ -16,69 +57,37 @@ export const useEvents = () => {
 		const filters = [Query.equal('userId', userId), Query.limit(5000)]
 
 		setIsLoading(true)
+		setIsGoogleLoading(true)
+
+		const timeMin = new Date()
+		timeMin.setMonth(timeMin.getMonth() - 2)
+		const timeMax = new Date()
+		timeMax.setMonth(timeMax.getMonth() + 3)
 
 		try {
-			const timeMin = new Date()
-			timeMin.setMonth(timeMin.getMonth() - 2)
-			const timeMax = new Date()
-			timeMax.setMonth(timeMax.getMonth() + 3)
-
-			const [appwriteRes, googleEventsRaw] = await Promise.all([
-				db.listRows({
-					databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-					tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
-					queries: filters,
-				}),
-				googleCalendarService.fetchEvents(timeMin, timeMax),
-			])
+			const appwriteRes = await db.listRows({
+				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+				tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
+				queries: filters,
+			})
 
 			const appwriteEvents = appwriteRes.rows as unknown as CalendarEvent[]
+			setEvents(appwriteEvents)
+			setIsLoading(false)
 
-			const googleEvents: CalendarEvent[] = googleEventsRaw.map((gEvent: GoogleCalendarEvent) => {
-				const isAllDay = !!gEvent.start?.date
-				let startDate = gEvent.start?.dateTime || ''
-				let endDate = gEvent.end?.dateTime || ''
-
-				if (isAllDay) {
-					startDate = gEvent.start.date!
-
-					const endObj = new Date(gEvent.end.date!)
-					endObj.setDate(endObj.getDate() - 1)
-					endDate = endObj.toISOString().split('T')[0]
-				}
-
-				const reverseColorMap: Record<string, string> = {
-					'5': '#D79716',
-					'11': '#D71616',
-					'10': '#17720F',
-					'9': '#1351AE',
-					'3': '#97107A',
-					'7': '#16ADD7',
-				}
-
-				return {
-					$id: `g_${gEvent.id}`,
-					$createdAt: new Date().toISOString(),
-					$updatedAt: new Date().toISOString(),
-					$collectionId: '',
-					$databaseId: '',
-					$permissions: [],
-					$sequence: 0,
-					title: gEvent.summary || 'Google Event',
-					description: gEvent.description || '',
-					startDate,
-					endDate,
-					color: gEvent.colorId ? reverseColorMap[gEvent.colorId] || '#4285F4' : '#4285F4',
-					calendarId: 'google-calendar',
-					userId: userId,
-				}
-			}) as unknown as CalendarEvent[]
-
-			setEvents([...appwriteEvents, ...googleEvents])
+			try {
+				const googleEventsRaw = await googleCalendarService.fetchEvents(timeMin, timeMax)
+				const googleEvents = googleEventsRaw.map(gEvent => mapGoogleEvent(gEvent, userId))
+				setEvents([...appwriteEvents, ...googleEvents])
+			} catch (googleError) {
+				console.error('Google Calendar sync error:', googleError)
+			} finally {
+				setIsGoogleLoading(false)
+			}
 		} catch (error) {
 			console.error(error)
-		} finally {
 			setIsLoading(false)
+			setIsGoogleLoading(false)
 		}
 	}, [])
 
@@ -126,5 +135,6 @@ export const useEvents = () => {
 		events,
 		getEvents,
 		isLoading,
+		isGoogleLoading,
 	}
 }

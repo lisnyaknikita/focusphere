@@ -13,7 +13,7 @@ import classes from './events.module.scss'
 
 export const EventsBlock = () => {
 	const { sectionRef, listHeight } = useSectionHeight(0.72)
-	const { events, isLoading } = useEventsByToday()
+	const { events, isLoading, isGoogleLoading } = useEventsByToday()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedEvent, setSelectedEvent] = useState<SXEvent | null>(null)
 
@@ -32,8 +32,18 @@ export const EventsBlock = () => {
 	return (
 		<>
 			<section className={classes.events} ref={sectionRef}>
-				<h2>Events for today:</h2>
-				{events.length === 0 && !isLoading ? (
+				<h2 className={classes.eventsHeader}>
+					Events for today:
+					{isGoogleLoading && (
+						<span className={classes.syncingIndicator}>
+							<span className={classes.syncingDot} />
+							Syncing...
+						</span>
+					)}
+				</h2>
+				{isLoading ? (
+					<BeatLoader color='#aaa' size={10} className={classes.loader} />
+				) : events.length === 0 && !isGoogleLoading ? (
 					<p className={classes.noEventsMessage}>No events for today</p>
 				) : events.length === 0 ? (
 					<BeatLoader color='#aaa' size={10} className={classes.loader} />
