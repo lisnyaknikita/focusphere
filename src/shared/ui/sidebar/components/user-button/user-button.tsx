@@ -242,7 +242,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 				createPortal(
 					<div className={classes.logoutOverlay}>
 						<BeatLoader color='var(--text)' size={14} />
-						<span className={classes.logoutText}>Logging out of account...</span>
+						<span className={classes.logoutText}>Signing out...</span>
 					</div>,
 					document.body
 				)}

@@ -154,7 +154,7 @@ ul {
 	right: 0;
 	top: 0;
 	bottom: 0;
-	background-color: #2b2b2b;
+	background-color: color-mix(in srgb, var(--secondary) 70%, transparent);
 	display: flex;
 	justify-content: center;
 	align-items: center;
