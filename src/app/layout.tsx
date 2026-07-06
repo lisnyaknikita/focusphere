@@ -33,8 +33,23 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang='en'>
+		<html lang='en' suppressHydrationWarning>
 			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
+							(function() {
+								try {
+									var savedTheme = localStorage.getItem('theme');
+									var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+									var isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+									document.documentElement.classList.toggle('dark', isDark);
+									document.documentElement.classList.toggle('light', !isDark);
+								} catch (e) {}
+							})();
+						`,
+					}}
+				/>
 				<Script defer src='https://cloud.umami.is/script.js' data-website-id='e247f637-575b-4bd3-b79c-c573760b74c9' />
 			</head>
 			<body className={`${notoSans.variable}`}>

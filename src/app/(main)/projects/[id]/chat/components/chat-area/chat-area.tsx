@@ -177,8 +177,14 @@ export const ChatArea = ({
 								<span className={classes.replyBannerName}>Replying to {replyingTo.senderName}</span>
 								<span className={classes.replyBannerText}>{stripHtml(replyingTo.content)}</span>
 							</div>
-							<button onClick={() => setReplyingTo(null)} className={classes.replyBannerClose}>
-								<CloseIcon />
+
+							<button
+								className={classes.replyBannerClose}
+								onClick={() => setReplyingTo(null)}
+								aria-label='Close modal'
+								type='button'
+							>
+								<CloseIcon width={20} height={20} />
 							</button>
 						</div>
 					)}

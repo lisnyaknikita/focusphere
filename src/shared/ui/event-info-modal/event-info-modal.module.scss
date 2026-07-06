@@ -129,14 +129,13 @@
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: 12px;
+	gap: 10px;
 
 	.confirmBtn {
-		flex-basis: 50%;
 		font-size: 16px;
 		font-weight: 400;
 		color: var(--save-button-text);
-		padding: 4px;
+		padding: 4px 8px;
 		background-color: var(--save-button-bg);
 		border-radius: 5px;
 		display: inline-block;
@@ -154,12 +153,11 @@
 	}
 
 	.cancelBtn {
-		flex-basis: 50%;
 		color: var(--text);
 		background-color: transparent;
 		border: 1px solid var(--btn-border);
 		border-radius: 5px;
-		padding: 4px;
+		padding: 4px 8px;
 		font-size: 16px;
 		font-family: inherit;
 		transition: background-color 0.2s;

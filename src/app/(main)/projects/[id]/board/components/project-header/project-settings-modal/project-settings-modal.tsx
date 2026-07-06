@@ -6,6 +6,7 @@ import { useDeleteProject } from '@/shared/hooks/projects/use-delete-project'
 import { useUpdateProject } from '@/shared/hooks/projects/use-update-project'
 import { Project } from '@/shared/types/project'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
+import { Modal } from '@/shared/ui/modal/modal'
 import { RadioCard } from '@/shared/ui/radio-card/radio-card'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import clsx from 'clsx'
@@ -13,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { BeatLoader } from 'react-spinners'
+import { ConvertToSoloModal } from './components/convert-to-solo-modal/convert-to-solo-modal'
 import { ProjectMembersSettings } from './components/project-members-settings/project-members-settings'
 import classes from './project-settings-modal.module.scss'
 
@@ -22,7 +24,16 @@ interface ProjectSettingsModalProps {
 }
 
 export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalProps) => {
-	const { register, control, onSubmit, isSubmitting, errors } = useUpdateProject({ project, onSuccess: onClose })
+	const {
+		register,
+		control,
+		onSubmit,
+		isSubmitting,
+		errors,
+		isSoloConfirmOpen,
+		setIsSoloConfirmOpen,
+		handleSoloConfirm,
+	} = useUpdateProject({ project, onSuccess: onClose })
 	const { remove, isDeleting } = useDeleteProject()
 
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
@@ -55,9 +66,6 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 
 	const renderOwnerButtons = () => (
 		<>
-			<button className={classes.saveButton} disabled={isSubmitting}>
-				{isSubmitting ? 'Saving...' : 'Save Changes'}
-			</button>
 			<button
 				type='button'
 				className={classes.deleteButton}
@@ -65,6 +73,9 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 				disabled={isDeleting || isSubmitting}
 			>
 				{isDeleting ? 'Deleting...' : 'Delete project'}
+			</button>
+			<button className={classes.saveButton} disabled={isSubmitting}>
+				{isSubmitting ? 'Saving...' : 'Save Changes'}
 			</button>
 		</>
 	)
@@ -224,6 +235,9 @@ export const ProjectSettingsModal = ({ project, onClose }: ProjectSettingsModalP
 					</>
 				}
 			/>
+			<Modal isVisible={isSoloConfirmOpen} onClose={() => setIsSoloConfirmOpen(false)}>
+				<ConvertToSoloModal onCancel={() => setIsSoloConfirmOpen(false)} onConfirm={handleSoloConfirm} />
+			</Modal>
 		</>
 	)
 }

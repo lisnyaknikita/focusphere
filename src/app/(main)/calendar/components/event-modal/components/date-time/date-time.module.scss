@@ -11,28 +11,38 @@
 	}
 }
 
-.date {
-	color: var(--text);
+.info {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
 }
 
 .date {
+	color: var(--text);
 	font-size: 16px;
 	font-family: inherit;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 2px 4px;
+	border-radius: 5px;
+	transition: background-color 0.15s ease;
 
 	&:hover {
+		background-color: var(--secondary);
 		text-decoration: underline;
 	}
 }
 
-.timePicker {
-	font-size: 14px;
-	font-family: inherit;
+.timePickers {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
 
-	> div {
-		border: none !important;
-	}
-
-	> div div {
-		min-width: auto !important;
-	}
+.separator {
+	color: var(--textSecondary);
+	font-size: 16px;
+	user-select: none;
 }

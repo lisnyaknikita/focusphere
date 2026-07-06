@@ -4,6 +4,7 @@ import { createCustomTemplate } from '@/lib/diary/templates'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { CustomJournalTemplate } from '@/shared/types/journal'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { BlockNoteView } from '@blocknote/mantine'
 import { useCreateBlockNote } from '@blocknote/react'
 import { useEffect, useState } from 'react'
@@ -66,8 +67,8 @@ export const CreateTemplateModal = ({ onClose, onTemplateCreated }: CreateTempla
 		<div className={classes.modalInner}>
 			<header className={classes.modalHeader}>
 				<h3>Create Custom Template</h3>
-				<button type='button' className={classes.closeX} onClick={onClose}>
-					✕
+				<button className={classes.closeButton} onClick={onClose} aria-label='Close modal' type='button'>
+					<CloseIcon width={20} height={20} />
 				</button>
 			</header>
 			<div className={classes.content}>
@@ -85,11 +86,11 @@ export const CreateTemplateModal = ({ onClose, onTemplateCreated }: CreateTempla
 				</div>
 			</div>
 			<footer className={classes.modalFooter}>
-				<button type='button' className={classes.saveBtn} onClick={handleSave} disabled={isSaving}>
-					{isSaving ? 'Saving...' : 'Save Template'}
-				</button>
 				<button type='button' className={classes.cancelBtn} onClick={onClose}>
 					Cancel
+				</button>
+				<button type='button' className={classes.saveBtn} onClick={handleSave} disabled={isSaving}>
+					{isSaving ? 'Saving...' : 'Save Template'}
 				</button>
 			</footer>
 		</div>

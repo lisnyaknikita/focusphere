@@ -16,7 +16,7 @@ import classes from './page.module.scss'
 export default function Calendar() {
 	const [isModalVisible, setIsModalVisible] = useState(false)
 
-	const { events, getEvents, isLoading } = useEvents()
+	const { events, getEvents, isLoading, isGoogleLoading } = useEvents()
 	const { view, isMobile, handleViewChange } = useCalendarView()
 
 	useEffect(() => {
@@ -36,11 +36,19 @@ export default function Calendar() {
 				) : (
 					<>
 						<header className={classes.header}>
-							<Tabs
-								tabs={isMobile ? ['month', 'day'] : ['month', 'week', 'day']}
-								activeTab={view}
-								onChange={handleViewChange}
-							/>
+							<div className={classes.headerLeft}>
+								<Tabs
+									tabs={isMobile ? ['month', 'day'] : ['month', 'week', 'day']}
+									activeTab={view}
+									onChange={handleViewChange}
+								/>
+								{isGoogleLoading && (
+									<span className={classes.syncingIndicator}>
+										<span className={classes.syncingDot} />
+										Syncing Google Calendar...
+									</span>
+								)}
+							</div>
 							<CreateButton setIsModalVisible={setIsModalVisible} text='Add event' />
 						</header>
 						<main className={classes.calendar}>

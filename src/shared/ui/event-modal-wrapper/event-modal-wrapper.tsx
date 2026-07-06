@@ -14,7 +14,8 @@ export const EventModalWrapper = () => {
 
 	const handleClose = () => {
 		router.push('/dashboard')
-		queryClient.invalidateQueries({ queryKey: ['events-today'] })
+		queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] })
+		queryClient.invalidateQueries({ queryKey: ['events-today-google'] })
 		router.refresh()
 	}
 

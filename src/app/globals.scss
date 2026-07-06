@@ -154,7 +154,7 @@ ul {
 	right: 0;
 	top: 0;
 	bottom: 0;
-	background-color: #2b2b2b;
+	background-color: color-mix(in srgb, var(--secondary) 70%, transparent);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -382,6 +382,19 @@ div:has(> .bn-side-menu),
 	.is-list-view .sx__forward-backward-navigation {
 		display: flex !important;
 		padding-left: 0px !important;
+	}
+}
+
+.rdp-root {
+	--rdp-accent-color: var(--text) !important;
+	--rdp-accent-background-color: var(--primary) !important;
+}
+
+.rdp-day_button {
+	transition: all 0.2s !important;
+
+	&:hover {
+		background-color: var(--secondary) !important;
 	}
 }
 
