@@ -27,10 +27,14 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		try {
 			const userId = await getCurrentUserId()
 
+			const thirtyDaysAgo = new Date()
+			thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+			const thresholdDate = thirtyDaysAgo.toISOString()
+
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
-				queries: [Query.equal('userId', userId), Query.limit(5000)],
+				queries: [Query.equal('userId', userId), Query.greaterThanEqual('startDate', thresholdDate), Query.limit(1000)],
 			})
 
 			setTimeBlocks(response.rows as unknown as TimeBlock[])
