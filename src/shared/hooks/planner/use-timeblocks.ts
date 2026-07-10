@@ -8,10 +8,10 @@ import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const useTimeBlocks = (user: CustomUser | null) => {
-	const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([])
-	const [isLoading, setIsLoading] = useState(true)
+	const queryClient = useQueryClient()
 	const [copiedTimeBlock, setCopiedTimeBlock] = useState<SXEvent | null>(null)
 
 	const userId = user?.$id
@@ -23,9 +23,10 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		copiedTimeBlockRef.current = copiedTimeBlock
 	}, [copiedTimeBlock])
 
-	const getTimeBlocks = useCallback(async () => {
-		try {
-			const userId = await getCurrentUserId()
+	const { data: timeBlocks = [], isLoading, refetch: getTimeBlocks } = useQuery<TimeBlock[]>({
+		queryKey: ['timeblocks', userId],
+		queryFn: async () => {
+			const uId = await getCurrentUserId()
 
 			const thirtyDaysAgo = new Date()
 			thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -34,16 +35,17 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
-				queries: [Query.equal('userId', userId), Query.greaterThanEqual('startDate', thresholdDate), Query.limit(1000)],
+				queries: [
+					Query.equal('userId', uId),
+					Query.greaterThanEqual('startDate', thresholdDate),
+					Query.limit(1000),
+				],
 			})
 
-			setTimeBlocks(response.rows as unknown as TimeBlock[])
-		} catch (error) {
-			console.error('Error fetching time blocks:', error)
-		} finally {
-			setIsLoading(false)
-		}
-	}, [])
+			return response.rows as unknown as TimeBlock[]
+		},
+		enabled: !!userId,
+	})
 
 	const pasteTimeBlock = useCallback(
 		async (date: string) => {
@@ -69,14 +71,14 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 					userId,
 				})
 
-				await getTimeBlocks()
+				queryClient.invalidateQueries({ queryKey: ['timeblocks', userId] })
 				setCopiedTimeBlock(null)
 			} catch (error) {
 				console.error('Failed to paste time block:', error)
 				toast.error('Failed to paste time block')
 			}
 		},
-		[userId, getTimeBlocks]
+		[userId, queryClient]
 	)
 
 	const cleanupOldTimeBlocks = useCallback(async () => {
@@ -86,7 +88,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		if (lastCleanup === today) return
 
 		try {
-			const userId = await getCurrentUserId()
+			const uId = await getCurrentUserId()
 
 			const thirtyDaysAgo = new Date()
 			thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -97,7 +99,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_TIMEBLOCKS!,
 				queries: [
-					Query.equal('userId', userId),
+					Query.equal('userId', uId),
 					Query.lessThan('startDate', thresholdDate),
 					Query.limit(100),
 					Query.select(['$id']),
@@ -107,13 +109,14 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 			if (response.rows.length > 0) {
 				await Promise.allSettled(response.rows.map(block => deleteTimeBlock(block.$id)))
 				console.log(`[TimeBlocks Cleanup] TimeBlocks deleted: ${response.rows.length}`)
+				queryClient.invalidateQueries({ queryKey: ['timeblocks', userId] })
 			}
 
 			localStorage.setItem('last_timeblocks_cleanup', today)
 		} catch (error) {
 			console.error('[TimeBlocks Cleanup] Error:', error)
 		}
-	}, [])
+	}, [userId, queryClient])
 
 	const createQuickBlock = useCallback(
 		async (dateTime: Temporal.ZonedDateTime) => {
@@ -140,7 +143,7 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 					userId,
 				})
 
-				await getTimeBlocks()
+				queryClient.invalidateQueries({ queryKey: ['timeblocks', userId] })
 
 				const toZDT = (iso: string) => Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
 
@@ -160,16 +163,12 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				isCreatingRef.current = false
 			}
 		},
-		[userId, getTimeBlocks]
+		[userId, queryClient]
 	)
 
 	useEffect(() => {
 		cleanupOldTimeBlocks()
 	}, [cleanupOldTimeBlocks])
-
-	useEffect(() => {
-		getTimeBlocks()
-	}, [getTimeBlocks])
 
 	return {
 		timeBlocks,

@@ -2,15 +2,12 @@ import { db } from '@/lib/appwrite'
 import { DailyTask } from '@/shared/types/daily-task'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
 
 export const useDailyTasksCounters = () => {
-	const [dailyTasksCountByDate, setDailyTasksCountByDate] = useState<Record<string, number>>({})
-	const [isLoading, setIsLoading] = useState(true)
-
-	const getDailyTasksCounters = useCallback(async () => {
-		try {
+	const { data: dailyTasksCountByDate = {}, isLoading, refetch } = useQuery<Record<string, number>>({
+		queryKey: ['daily-tasks-counters'],
+		queryFn: async () => {
 			const userId = await getCurrentUserId()
 
 			const response = await db.listRows({
@@ -31,22 +28,13 @@ export const useDailyTasksCounters = () => {
 				map[row.date] = (map[row.date] ?? 0) + 1
 			}
 
-			setDailyTasksCountByDate(map)
-		} catch (error) {
-			console.error('Error fetching daily tasks counters:', error)
-			toast.error('Error fetching daily tasks counters')
-		} finally {
-			setIsLoading(false)
-		}
-	}, [])
-
-	useEffect(() => {
-		getDailyTasksCounters()
-	}, [getDailyTasksCounters])
+			return map
+		},
+	})
 
 	return {
 		dailyTasksCountByDate,
 		isLoading,
-		refreshDailyTasksCounters: getDailyTasksCounters,
+		refreshDailyTasksCounters: refetch,
 	}
 }
