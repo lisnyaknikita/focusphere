@@ -1,12 +1,13 @@
 'use client'
 
 import { getProjectById } from '@/lib/projects/projects'
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, ReactNode, useContext, useCallback, useMemo } from 'react'
 import { useNotes } from '../hooks/projects/notes/use-notes'
 import { CustomJournalTemplate } from '../types/journal'
 import { Project } from '../types/project'
 import { BaseNote, ProjectNote } from '../types/project-note'
 import { NotesContext } from './notes-context'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 interface ProjectContextType {
 	project: Project | null
@@ -25,30 +26,24 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined)
 
 export const ProjectProvider = ({ projectId, children }: { projectId: string; children: ReactNode }) => {
-	const [project, setProject] = useState<Project | null>(null)
-	const [isLoading, setIsLoading] = useState(true)
+	const queryClient = useQueryClient()
 
-	useEffect(() => {
-		const fetchProject = async () => {
-			try {
-				setIsLoading(true)
-				const data = await getProjectById(projectId)
-				setProject(data)
-			} catch (error) {
-				console.error('Failed to fetch project:', error)
-			} finally {
-				setIsLoading(false)
-			}
-		}
-
-		if (projectId) fetchProject()
-	}, [projectId])
+	const { data: project = null, isLoading } = useQuery<Project | null>({
+		queryKey: ['project', projectId],
+		queryFn: async () => {
+			if (!projectId) return null
+			return getProjectById(projectId)
+		},
+		enabled: !!projectId,
+	})
 
 	const notesData = useNotes(project!)
 
-	const updateProjectState = (newData: Partial<Project>) => {
-		setProject(prev => (prev ? { ...prev, ...newData } : null))
-	}
+	const updateProjectState = useCallback((newData: Partial<Project>) => {
+		queryClient.setQueryData(['project', projectId], (prev: Project | null) => {
+			return prev ? { ...prev, ...newData } : null
+		})
+	}, [queryClient, projectId])
 
 	const projectContextValue = useMemo(
 		() => ({
@@ -67,6 +62,7 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 		[
 			project,
 			isLoading,
+			updateProjectState,
 			notesData.notes,
 			notesData.activeNote,
 			notesData.setActiveNote,

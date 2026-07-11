@@ -6,6 +6,7 @@ import { DailyTask } from '@/shared/types/daily-task'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const CLEANUP_THRESHOLD_DAYS = 21
 const BATCH_SIZE = 10
@@ -16,9 +17,8 @@ interface UseDailyTasksProps {
 }
 
 export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
-	const [tasks, setTasks] = useState<DailyTask[]>([])
+	const queryClient = useQueryClient()
 	const [userId, setUserId] = useState<string | null>(null)
-	const [isLoading, setIsLoading] = useState(true)
 	const [isCreating, setIsCreating] = useState(false)
 	const [newTaskTitle, setNewTaskTitle] = useState('')
 	const [isSaving, setIsSaving] = useState(false)
@@ -29,30 +29,23 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		getCurrentUserId().then(setUserId)
 	}, [])
 
-	const getDailyTasks = useCallback(async () => {
-		if (!userId) return
+	const { data: tasks = [], isLoading, refetch: getDailyTasks } = useQuery<DailyTask[]>({
+		queryKey: ['daily-tasks', date, userId],
+		queryFn: async () => {
+			if (!userId) return []
 
-		const queries = [Query.equal('userId', userId), Query.equal('date', date), Query.orderAsc('order')]
+			const queries = [Query.equal('userId', userId), Query.equal('date', date), Query.orderAsc('order')]
 
-		try {
-			setIsLoading(true)
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 				tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
 				queries,
 			})
 
-			setTasks(response.rows as unknown as DailyTask[])
-		} catch (error) {
-			console.error('Failed to fetch tasks:', error)
-		} finally {
-			setIsLoading(false)
-		}
-	}, [date, userId])
-
-	useEffect(() => {
-		getDailyTasks()
-	}, [getDailyTasks])
+			return response.rows as unknown as DailyTask[]
+		},
+		enabled: !!userId,
+	})
 
 	const handleAddTask = async () => {
 		if (!newTaskTitle.trim() || !userId) {
@@ -71,7 +64,8 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		try {
 			setIsSaving(true)
 			const newTask = (await createDailyTask(payload)) as unknown as DailyTask
-			setTasks(prev => [...prev, newTask])
+			queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) => [...old, newTask])
+			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
 			setNewTaskTitle('')
 			setIsCreating(false)
 		} catch (error) {
@@ -83,13 +77,16 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 
 	const handleToggleTask = async (taskId: string, newStatus: boolean) => {
 		const previousTasks = [...tasks]
-		setTasks(prev => prev.map(item => (item.$id === taskId ? { ...item, isCompleted: newStatus } : item)))
+		queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) =>
+			old.map(item => (item.$id === taskId ? { ...item, isCompleted: newStatus } : item))
+		)
 
 		try {
 			await updateDailyTask(taskId, { isCompleted: newStatus })
+			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
 		} catch (error) {
 			console.error('Failed to update task status:', error)
-			setTasks(previousTasks)
+			queryClient.setQueryData(['daily-tasks', date, userId], previousTasks)
 		}
 	}
 
@@ -98,25 +95,30 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		if (!trimmed) return
 
 		const previousTasks = [...tasks]
-		setTasks(prev => prev.map(item => (item.$id === taskId ? { ...item, title: trimmed } : item)))
+		queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) =>
+			old.map(item => (item.$id === taskId ? { ...item, title: trimmed } : item))
+		)
 
 		try {
 			await updateDailyTask(taskId, { title: trimmed })
 		} catch (error) {
 			console.error('Failed to edit task:', error)
-			setTasks(previousTasks)
+			queryClient.setQueryData(['daily-tasks', date, userId], previousTasks)
 		}
 	}
 
 	const handleDeleteTask = async (taskId: string) => {
 		const previousTasks = [...tasks]
-		setTasks(prev => prev.filter(item => item.$id !== taskId))
+		queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) =>
+			old.filter(item => item.$id !== taskId)
+		)
 
 		try {
 			await deleteDailyTask(taskId)
+			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
 		} catch (error) {
 			console.error('Failed to delete task:', error)
-			setTasks(previousTasks)
+			queryClient.setQueryData(['daily-tasks', date, userId], previousTasks)
 		}
 	}
 
@@ -127,7 +129,7 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 	const handleReorder = (newTasks: DailyTask[]) => {
 		const tasksWithNewOrder = newTasks.map((task, index) => ({ ...task, order: index }))
 
-		setTasks(tasksWithNewOrder)
+		queryClient.setQueryData(['daily-tasks', date, userId], tasksWithNewOrder)
 
 		if (reorderTimeoutRef.current) {
 			clearTimeout(reorderTimeoutRef.current)
@@ -141,7 +143,7 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 				}
 			} catch (error) {
 				console.error('Failed to save new order:', error)
-				await getDailyTasks()
+				queryClient.invalidateQueries({ queryKey: ['daily-tasks', date, userId] })
 			}
 		}, REORDER_DEBOUNCE_DELAY)
 	}
@@ -178,13 +180,15 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 				}
 
 				console.log(`[Auto-Cleanup] Removed ${response.rows.length} old tasks.`)
+				queryClient.invalidateQueries({ queryKey: ['daily-tasks', date, userId] })
+				queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
 			}
 
 			localStorage.setItem('last_task_cleanup', today)
 		} catch (error) {
 			console.error('[Auto-Cleanup] Error:', error)
 		}
-	}, [userId, getDailyTasks])
+	}, [userId, date, queryClient])
 
 	useEffect(() => {
 		cleanupOldTasks()

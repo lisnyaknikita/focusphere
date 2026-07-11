@@ -9,12 +9,14 @@ import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
 import { useEffect, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface CalendarAppProps {
 	onQuickCreate?: (dateTime: Temporal.ZonedDateTime) => void
 }
 
 export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
+	const queryClient = useQueryClient()
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
 	const [eventModal] = useState(() => createEventModalPlugin())
@@ -51,6 +53,8 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 						startDate,
 						endDate,
 					})
+
+					queryClient.invalidateQueries({ queryKey: ['timeblocks'] })
 				} catch (error) {
 					console.error('Appwrite update failed:', error)
 				}
