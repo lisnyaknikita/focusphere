@@ -2,15 +2,12 @@ import { db } from '@/lib/appwrite'
 import { WeeklyGoal } from '@/shared/types/weekly-goal'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
 
 export const useWeeklyGoals = () => {
-	const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-
-	const getWeeklyGoals = useCallback(async () => {
-		try {
+	const { data: weeklyGoals = [], isLoading, refetch } = useQuery<WeeklyGoal[]>({
+		queryKey: ['weekly-goals'],
+		queryFn: async () => {
 			const userId = await getCurrentUserId()
 
 			const response = await db.listRows({
@@ -19,22 +16,13 @@ export const useWeeklyGoals = () => {
 				queries: [Query.equal('userId', userId), Query.orderAsc('index')],
 			})
 
-			setWeeklyGoals(response.rows as unknown as WeeklyGoal[])
-		} catch (error) {
-			console.error('Error fetching weekly goals:', error)
-			toast.error('Error fetching weekly goals')
-		} finally {
-			setIsLoading(false)
-		}
-	}, [])
-
-	useEffect(() => {
-		getWeeklyGoals()
-	}, [getWeeklyGoals])
+			return response.rows as unknown as WeeklyGoal[]
+		},
+	})
 
 	return {
 		weeklyGoals,
 		isLoading,
-		refreshWeeklyGoals: getWeeklyGoals,
+		refreshWeeklyGoals: refetch,
 	}
 }

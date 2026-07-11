@@ -2,6 +2,7 @@ import { deleteTimeBlock } from '@/lib/planner/planner'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { useCalendarApp } from './use-calendar-app'
+import { useQueryClient } from '@tanstack/react-query'
 
 type UseCalendarAppResult = ReturnType<typeof useCalendarApp>
 
@@ -11,6 +12,8 @@ interface DeletionDependencies {
 }
 
 export const useTimeBlockDeletion = ({ eventsService, eventModal }: DeletionDependencies) => {
+	const queryClient = useQueryClient()
+
 	const handleDelete = useCallback(
 		async (id: string) => {
 			const deletePromise = deleteTimeBlock(id)
@@ -24,12 +27,13 @@ export const useTimeBlockDeletion = ({ eventsService, eventModal }: DeletionDepe
 				await deletePromise
 				eventsService.remove(id)
 				eventModal.close()
+				queryClient.invalidateQueries({ queryKey: ['timeblocks'] })
 			} catch (error) {
 				console.error('Error deleting time block:', error)
 				toast.error('Failed to delete this time block')
 			}
 		},
-		[eventsService, eventModal]
+		[eventsService, eventModal, queryClient]
 	)
 
 	return { handleDelete }

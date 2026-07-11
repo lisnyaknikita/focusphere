@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Noto_Sans } from 'next/font/google'
 import { Toaster } from 'sonner'
+import { UserProvider } from '@/shared/context/user-context'
 
 import Script from 'next/script'
 import './globals.scss'
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
 		'google calendar sync',
 		'pomodoro timer',
 		'deep work',
+		'deep work workspace',
 	],
 }
 
@@ -53,7 +55,9 @@ export default function RootLayout({
 				<Script defer src='https://cloud.umami.is/script.js' data-website-id='e247f637-575b-4bd3-b79c-c573760b74c9' />
 			</head>
 			<body className={`${notoSans.variable}`}>
-				{children} <Toaster position='bottom-right' richColors />
+				<UserProvider>
+					{children} <Toaster position='bottom-right' richColors />
+				</UserProvider>
 			</body>
 		</html>
 	)
