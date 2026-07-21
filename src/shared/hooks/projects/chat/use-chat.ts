@@ -17,16 +17,64 @@ import { ChatChannel, ChatMessage, CreateChannelPayload, TeamMember } from '@/sh
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-export const useChat = (project: Project) => {
+export const useChat = (project: Project, currentUserId?: string) => {
 	const queryClient = useQueryClient()
 	const projectId = project?.$id
 
 	const [activeChannel, setActiveChannel] = useState<ChatChannel | null>(null)
 	const [messages, setMessages] = useState<ChatMessage[]>([])
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false)
+	const [unreadChannelIds, setUnreadChannelIds] = useState<Set<string>>(new Set())
+	const [isUnreadLoaded, setIsUnreadLoaded] = useState(false)
+
+	useEffect(() => {
+		if (!projectId || !currentUserId) return
+
+		const key = `focusphere_unread_${currentUserId}_${projectId}`
+		const stored = localStorage.getItem(key)
+		if (stored) {
+			try {
+				const parsed = JSON.parse(stored)
+				if (Array.isArray(parsed)) {
+					setUnreadChannelIds(new Set(parsed))
+				}
+			} catch (err) {
+				console.error('Failed to parse unread channels from localStorage:', err)
+			}
+		}
+		setIsUnreadLoaded(true)
+	}, [projectId, currentUserId])
+
+	useEffect(() => {
+		if (!projectId || !currentUserId || !isUnreadLoaded) return
+
+		const key = `focusphere_unread_${currentUserId}_${projectId}`
+		if (unreadChannelIds.size === 0) {
+			localStorage.removeItem(key)
+		} else {
+			localStorage.setItem(key, JSON.stringify(Array.from(unreadChannelIds)))
+		}
+	}, [unreadChannelIds, projectId, currentUserId, isUnreadLoaded])
+
+	const activeChannelRef = useRef<ChatChannel | null>(null)
+	activeChannelRef.current = activeChannel
+
+	const currentUserIdRef = useRef<string | undefined>(currentUserId)
+	currentUserIdRef.current = currentUserId
+
+	const handleSetActiveChannel = useCallback((channel: ChatChannel | null) => {
+		setActiveChannel(channel)
+		if (!channel) return
+		setUnreadChannelIds(prev => {
+			if (!prev.has(channel.$id)) return prev
+			const next = new Set(prev)
+			next.delete(channel.$id)
+			return next
+		})
+	}, [])
 
 	const { data: rawTeammates } = useQuery({
 		queryKey: ['team-members', project?.teamId],
@@ -60,6 +108,9 @@ export const useChat = (project: Project) => {
 	})
 	const allChannels = Array.isArray(rawChannels) ? rawChannels : []
 
+	const allChannelsRef = useRef<ChatChannel[]>([])
+	allChannelsRef.current = allChannels
+
 	const { data: rawTasks } = useQuery({
 		queryKey: ['kanban-tasks', projectId],
 		queryFn: async () => {
@@ -81,9 +132,9 @@ export const useChat = (project: Project) => {
 
 	useEffect(() => {
 		if (channels.length > 0 && !activeChannel) {
-			setActiveChannel(channels[0])
+			handleSetActiveChannel(channels[0])
 		}
-	}, [channels, activeChannel])
+	}, [channels, activeChannel, handleSetActiveChannel])
 
 	useEffect(() => {
 		if (!activeChannel?.$id) return
@@ -118,7 +169,7 @@ export const useChat = (project: Project) => {
 		try {
 			const newChannel = (await createChannel(payload)) as unknown as ChatChannel
 			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
-			setActiveChannel(newChannel)
+			handleSetActiveChannel(newChannel)
 		} catch (err: unknown) {
 			console.error(err)
 			toast.error('Failed to create channel')
@@ -150,7 +201,7 @@ export const useChat = (project: Project) => {
 			await deletePromise
 			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
 			if (activeChannel?.$id === id) {
-				setActiveChannel(channels.length > 0 ? channels[0] : null)
+				handleSetActiveChannel(channels.length > 0 ? channels[0] : null)
 			}
 		} catch (err: unknown) {
 			console.error(err)
@@ -168,7 +219,7 @@ export const useChat = (project: Project) => {
 		)
 
 		if (existingDM) {
-			setActiveChannel(existingDM)
+			handleSetActiveChannel(existingDM)
 			return
 		}
 
@@ -184,7 +235,7 @@ export const useChat = (project: Project) => {
 		try {
 			const newChannel = (await createChannel(payload)) as unknown as ChatChannel
 			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
-			setActiveChannel(newChannel)
+			handleSetActiveChannel(newChannel)
 		} catch (err: unknown) {
 			console.error(err)
 			toast.error('Failed to open direct message')
@@ -265,7 +316,7 @@ export const useChat = (project: Project) => {
 	}
 
 	useEffect(() => {
-		if (!activeChannel?.$id || !projectId) return
+		if (!projectId) return
 
 		const unsubscribe = client.subscribe(
 			`databases.${process.env.NEXT_PUBLIC_DB_ID}.collections.${process.env.NEXT_PUBLIC_TABLE_PROJECT_MESSAGES}.documents`,
@@ -273,47 +324,77 @@ export const useChat = (project: Project) => {
 				const events = response.events
 				const payload = response.payload as unknown as ChatMessage
 
-				if (payload.channelId !== activeChannel.$id) return
+				const isChannelInProject = allChannelsRef.current.some(ch => ch.$id === payload.channelId)
+				if (!isChannelInProject) return
 
-				if (events.some(e => e.includes('.create'))) {
-					setMessages(prev => {
-						if (prev.some(m => m.$id === payload.$id)) return prev
+				if (payload.channelId === activeChannelRef.current?.$id) {
+					if (events.some(e => e.includes('.create'))) {
+						setMessages(prev => {
+							if (prev.some(m => m.$id === payload.$id)) return prev
 
-						const tempMessageIndex = prev.findIndex(
-							m => m.$id.startsWith('temp-') && m.senderId === payload.senderId && m.content === payload.content
-						)
+							const tempMessageIndex = prev.findIndex(
+								m => m.$id.startsWith('temp-') && m.senderId === payload.senderId && m.content === payload.content
+							)
 
-						if (tempMessageIndex !== -1) {
-							const updated = [...prev]
-							updated[tempMessageIndex] = payload
-							return updated
-						}
+							if (tempMessageIndex !== -1) {
+								const updated = [...prev]
+								updated[tempMessageIndex] = payload
+								return updated
+							}
 
-						return [...prev, payload]
+							return [...prev, payload]
+						})
+					}
+
+					if (events.some(e => e.includes('.update'))) {
+						setMessages(prev => prev.map(m => (m.$id === payload.$id ? payload : m)))
+					}
+
+					if (events.some(e => e.includes('.delete'))) {
+						setMessages(prev => prev.filter(m => m.$id !== payload.$id))
+					}
+					return
+				}
+
+				if (events.some(e => e.includes('.create')) && payload.senderId !== currentUserIdRef.current) {
+					setUnreadChannelIds(prev => {
+						if (prev.has(payload.channelId)) return prev
+						const next = new Set(prev)
+						next.add(payload.channelId)
+						return next
 					})
-				}
-
-				if (events.some(e => e.includes('.update'))) {
-					setMessages(prev => prev.map(m => (m.$id === payload.$id ? payload : m)))
-				}
-
-				if (events.some(e => e.includes('.delete'))) {
-					setMessages(prev => prev.filter(m => (m.$id === payload.$id ? false : true)))
 				}
 			}
 		)
 
 		return () => unsubscribe()
-	}, [activeChannel?.$id, projectId])
+	}, [projectId])
+
+	useEffect(() => {
+		if (!projectId) return
+
+		const unsubscribe = client.subscribe(
+			`databases.${process.env.NEXT_PUBLIC_DB_ID}.collections.${process.env.NEXT_PUBLIC_TABLE_PROJECT_CHANNELS}.documents`,
+			response => {
+				const payload = response.payload as unknown as ChatChannel
+				if (payload.projectId === projectId) {
+					queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
+				}
+			}
+		)
+
+		return () => unsubscribe()
+	}, [projectId, queryClient])
 
 	return {
 		teammates,
 		channels,
 		dmChannels,
 		activeChannel,
-		setActiveChannel,
+		setActiveChannel: handleSetActiveChannel,
 		messages,
 		isLoadingMessages,
+		unreadChannelIds,
 		createChannel: handleCreateChannel,
 		sendMessage: handleSendMessage,
 		updateMessage: handleUpdateMessage,

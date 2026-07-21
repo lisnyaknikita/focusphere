@@ -22,6 +22,7 @@ interface ChatSidebarProps {
 	isMobileOpen: boolean
 	onMobileClose: () => void
 	onOpenDM: (currentUserId: string, targetMember: TeamMember) => void
+	unreadChannelIds: Set<string>
 }
 
 export const ChatSidebar = ({
@@ -35,6 +36,7 @@ export const ChatSidebar = ({
 	isMobileOpen,
 	onMobileClose,
 	onOpenDM,
+	unreadChannelIds,
 }: ChatSidebarProps) => {
 	const [isChannelsOpened, setIsChannelsOpened] = useState(true)
 	const [isMessagesOpened, setIsMessagesOpened] = useState(true)
@@ -101,6 +103,9 @@ export const ChatSidebar = ({
 							>
 								<ChannelIcon />
 								<span>{channel.name}</span>
+								{unreadChannelIds.has(channel.$id) && (
+									<span className={classes.unreadBadge} aria-label='Unread messages' />
+								)}
 							</li>
 						))}
 					</ul>
@@ -135,6 +140,9 @@ export const ChatSidebar = ({
 										}}
 									>
 										<span>{mate.userName}</span>
+										{existingDM && unreadChannelIds.has(existingDM.$id) && (
+											<span className={classes.unreadBadge} aria-label='Unread messages' />
+										)}
 									</li>
 								)
 							})}
