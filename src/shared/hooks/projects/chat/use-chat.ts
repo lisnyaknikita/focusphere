@@ -29,15 +29,23 @@ export const useChat = (project: Project, currentUserId?: string) => {
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false)
 	const [unreadChannelIds, setUnreadChannelIds] = useState<Set<string>>(new Set())
 	const [isUnreadLoaded, setIsUnreadLoaded] = useState(false)
+	const [lastReadMap, setLastReadMap] = useState<Record<string, string>>({})
+	const [activeUnreadThresholdId, setActiveUnreadThresholdId] = useState<string | null>(null)
+
+	const lastReadMapRef = useRef<Record<string, string>>({})
+	lastReadMapRef.current = lastReadMap
+
+	const unreadChannelIdsRef = useRef<Set<string>>(unreadChannelIds)
+	unreadChannelIdsRef.current = unreadChannelIds
 
 	useEffect(() => {
 		if (!projectId || !currentUserId) return
 
-		const key = `focusphere_unread_${currentUserId}_${projectId}`
-		const stored = localStorage.getItem(key)
-		if (stored) {
+		const unreadKey = `focusphere_unread_${currentUserId}_${projectId}`
+		const storedUnread = localStorage.getItem(unreadKey)
+		if (storedUnread) {
 			try {
-				const parsed = JSON.parse(stored)
+				const parsed = JSON.parse(storedUnread)
 				if (Array.isArray(parsed)) {
 					setUnreadChannelIds(new Set(parsed))
 				}
@@ -45,6 +53,20 @@ export const useChat = (project: Project, currentUserId?: string) => {
 				console.error('Failed to parse unread channels from localStorage:', err)
 			}
 		}
+
+		const lastReadKey = `focusphere_last_read_${currentUserId}_${projectId}`
+		const storedLastRead = localStorage.getItem(lastReadKey)
+		if (storedLastRead) {
+			try {
+				const parsed = JSON.parse(storedLastRead)
+				if (parsed && typeof parsed === 'object') {
+					setLastReadMap(parsed)
+				}
+			} catch (err) {
+				console.error('Failed to parse lastReadMap from localStorage:', err)
+			}
+		}
+
 		setIsUnreadLoaded(true)
 	}, [projectId, currentUserId])
 
@@ -59,6 +81,19 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		}
 	}, [unreadChannelIds, projectId, currentUserId, isUnreadLoaded])
 
+	const markChannelAsRead = useCallback(
+		(channelId: string, messageId: string) => {
+			if (!projectId || !currentUserId || !messageId) return
+			setLastReadMap(prev => {
+				const next = { ...prev, [channelId]: messageId }
+				const key = `focusphere_last_read_${currentUserId}_${projectId}`
+				localStorage.setItem(key, JSON.stringify(next))
+				return next
+			})
+		},
+		[projectId, currentUserId]
+	)
+
 	const activeChannelRef = useRef<ChatChannel | null>(null)
 	activeChannelRef.current = activeChannel
 
@@ -67,13 +102,22 @@ export const useChat = (project: Project, currentUserId?: string) => {
 
 	const handleSetActiveChannel = useCallback((channel: ChatChannel | null) => {
 		setActiveChannel(channel)
-		if (!channel) return
-		setUnreadChannelIds(prev => {
-			if (!prev.has(channel.$id)) return prev
-			const next = new Set(prev)
-			next.delete(channel.$id)
-			return next
-		})
+		if (!channel) {
+			setActiveUnreadThresholdId(null)
+			return
+		}
+
+		if (unreadChannelIdsRef.current.has(channel.$id)) {
+			const threshold = lastReadMapRef.current[channel.$id] || 'FIRST_UNREAD'
+			setActiveUnreadThresholdId(threshold)
+			setUnreadChannelIds(prev => {
+				const next = new Set(prev)
+				next.delete(channel.$id)
+				return next
+			})
+		} else {
+			setActiveUnreadThresholdId(null)
+		}
 	}, [])
 
 	const { data: rawTeammates } = useQuery({
@@ -144,7 +188,12 @@ export const useChat = (project: Project, currentUserId?: string) => {
 			try {
 				const res = await getMessages(activeChannel.$id)
 				const docs = res.rows as unknown as ChatMessage[]
-				setMessages(Array.isArray(docs) ? docs : [])
+				const fetchedMessages = Array.isArray(docs) ? docs : []
+				setMessages(fetchedMessages)
+				if (fetchedMessages.length > 0) {
+					const latestMsg = fetchedMessages[fetchedMessages.length - 1]
+					markChannelAsRead(activeChannel.$id, latestMsg.$id)
+				}
 			} catch (err: unknown) {
 				console.error('Failed to fetch messages:', err)
 			} finally {
@@ -154,7 +203,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 
 		setMessages([])
 		fetchMessages()
-	}, [activeChannel?.$id])
+	}, [activeChannel?.$id, markChannelAsRead])
 
 	const handleCreateChannel = async (name: string, ownerId: string) => {
 		if (!project) return
@@ -344,6 +393,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 
 							return [...prev, payload]
 						})
+						markChannelAsRead(payload.channelId, payload.$id)
 					}
 
 					if (events.some(e => e.includes('.update'))) {
@@ -395,6 +445,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		messages,
 		isLoadingMessages,
 		unreadChannelIds,
+		activeUnreadThresholdId,
 		createChannel: handleCreateChannel,
 		sendMessage: handleSendMessage,
 		updateMessage: handleUpdateMessage,
