@@ -3,14 +3,18 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
+import { useGlobalHotkeys } from '../hooks/use-global-hotkeys/use-global-hotkeys'
 import { BetaWelcomeContent } from '../ui/beta-welcome-content/beta-welcome-content'
 import { Modal } from '../ui/modal/modal'
+import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea-modal-wrapper'
 import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
 import classes from './client-layout.module.scss'
 
 export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 	const [isLoading, setIsLoading] = useState(true)
 	const [isWelcomeVisible, setIsWelcomeVisible] = useState(false)
+
+	useGlobalHotkeys()
 
 	const [queryClient] = useState(
 		() =>
@@ -57,6 +61,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 			<Modal isVisible={isWelcomeVisible} onClose={handleCloseWelcome}>
 				<BetaWelcomeContent onConfirm={handleCloseWelcome} />
 			</Modal>
+			<QuickIdeaModalWrapper />
 		</QueryClientProvider>
 	)
 }

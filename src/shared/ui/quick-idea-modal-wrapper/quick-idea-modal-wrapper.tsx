@@ -1,16 +1,24 @@
 'use client'
 
 import { Modal } from '@/shared/ui/modal/modal'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { QuickIdeaModal } from '../quick-idea-modal/quick-idea-modal'
 
 export const QuickIdeaModalWrapper = () => {
 	const router = useRouter()
+	const pathname = usePathname()
 	const searchParams = useSearchParams()
+
 	const isOpen = searchParams.get('modal') === 'quick-idea'
 
 	const handleClose = () => {
-		router.push('/dashboard')
+		const params = new URLSearchParams(searchParams.toString())
+		params.delete('modal')
+
+		const queryString = params.toString()
+		const targetUrl = queryString ? `${pathname}?${queryString}` : pathname
+
+		router.push(targetUrl, { scroll: false })
 	}
 
 	return (
