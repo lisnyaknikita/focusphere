@@ -15,7 +15,7 @@ export default function ChatPage() {
 	const { project, isLoading: projectLoading } = useProject()
 	const { avatarUrl } = useAvatarUrl(user)
 
-	const chat = useChat(project!)
+	const chat = useChat(project!, user?.$id)
 
 	const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(true)
 
@@ -59,6 +59,7 @@ export default function ChatPage() {
 								setIsChatSidebarOpen(false)
 							}
 						}}
+						unreadChannelIds={chat.unreadChannelIds}
 					/>
 				</div>
 				<ChatArea
@@ -75,6 +76,7 @@ export default function ChatPage() {
 					currentUserName={user?.name}
 					isLoading={chat.isLoadingMessages}
 					onToggleChatSidebar={() => setIsChatSidebarOpen(prev => !prev)}
+					activeUnreadThresholdId={chat.activeUnreadThresholdId}
 				/>
 			</div>
 		</div>

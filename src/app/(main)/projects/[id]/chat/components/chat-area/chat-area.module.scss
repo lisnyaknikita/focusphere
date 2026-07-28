@@ -83,6 +83,41 @@
 	}
 }
 
+.unreadDivider {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	margin-top: 15px;
+	margin-bottom: 15px;
+
+	> span {
+		display: inline-block;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		color: #5865f2;
+		padding: 2px 10px;
+		border: 1px solid rgba(88, 101, 242, 0.4);
+		border-radius: 12px;
+		position: relative;
+		background-color: var(--secondaryFull);
+		z-index: 1;
+	}
+
+	> hr {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+		border: none;
+		height: 1px;
+		background-color: #5865f2;
+		opacity: 0.6;
+	}
+}
+
 .messages {
 	padding: 0 15px;
 	display: flex;
