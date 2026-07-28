@@ -23,6 +23,7 @@ interface ChatAreaProps {
 	currentUserName?: string
 	isLoading: boolean
 	onToggleChatSidebar: () => void
+	activeUnreadThresholdId?: string | null
 }
 
 export const ChatArea = ({
@@ -39,12 +40,14 @@ export const ChatArea = ({
 	currentUserName,
 	isLoading,
 	onToggleChatSidebar,
+	activeUnreadThresholdId,
 }: ChatAreaProps) => {
 	const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
 	const editorRef = useRef<EditorRef>(null)
 	const hasScrolledRef = useRef<string | null>(null)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
 	const mainRef = useRef<HTMLElement>(null)
+	const unreadDividerRef = useRef<HTMLDivElement>(null)
 
 	const scrollToBottom = (behavior: ScrollBehavior = 'instant') => {
 		if (mainRef.current) {
@@ -54,6 +57,24 @@ export const ChatArea = ({
 			})
 		}
 	}
+
+	const firstUnreadMessageId = useMemo(() => {
+		if (!activeUnreadThresholdId || !messages.length) return null
+
+		if (activeUnreadThresholdId === 'FIRST_UNREAD') {
+			return messages[0].$id
+		}
+
+		const thresholdIdx = messages.findIndex(m => m.$id === activeUnreadThresholdId)
+		if (thresholdIdx !== -1) {
+			if (thresholdIdx < messages.length - 1) {
+				return messages[thresholdIdx + 1].$id
+			}
+			return null
+		}
+
+		return messages[0].$id
+	}, [activeUnreadThresholdId, messages])
 
 	const processedMessages = useMemo(() => {
 		if (!messages.length) return []
@@ -73,15 +94,17 @@ export const ChatArea = ({
 				!isNewDay && !!prevMessage && prevMessage.senderId === message.senderId && !message.replyToMessageId
 
 			const repliedToMessage = message.replyToMessageId ? messagesMap.get(message.replyToMessageId) : undefined
+			const isFirstUnread = message.$id === firstUnreadMessageId
 
 			return {
 				message,
 				isNewDay,
 				isContinuation,
 				repliedToMessage,
+				isFirstUnread,
 			}
 		})
-	}, [messages])
+	}, [messages, firstUnreadMessageId])
 
 	useEffect(() => {
 		if (isLoading || !activeChannel?.$id) return
@@ -90,7 +113,11 @@ export const ChatArea = ({
 		const isNewMessage = messages.length > prevMessagesLengthRef.current
 
 		if (isNewChannel && messages.length > 0) {
-			scrollToBottom('instant')
+			if (unreadDividerRef.current) {
+				unreadDividerRef.current.scrollIntoView({ behavior: 'instant', block: 'center' })
+			} else {
+				scrollToBottom('instant')
+			}
 			hasScrolledRef.current = activeChannel.$id
 		} else if (isNewMessage) {
 			scrollToBottom('smooth')
@@ -141,8 +168,15 @@ export const ChatArea = ({
 							{isLoading ? (
 								<div className={classes.loading}>Loading messages...</div>
 							) : (
-								processedMessages.map(({ message, isNewDay, isContinuation, repliedToMessage }) => (
+								processedMessages.map(({ message, isNewDay, isContinuation, repliedToMessage, isFirstUnread }) => (
 									<div key={message.$id}>
+										{isFirstUnread && (
+											<div className={classes.unreadDivider} ref={unreadDividerRef}>
+												<hr />
+												<span>New Messages</span>
+											</div>
+										)}
+
 										{isNewDay && (
 											<div className={classes.divider}>
 												<hr />
