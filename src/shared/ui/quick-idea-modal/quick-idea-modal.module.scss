@@ -1,4 +1,4 @@
-.modalInner {
+.modal {
 	width: 375px;
 	position: relative;
 
@@ -14,7 +14,7 @@
 	margin-bottom: 20px;
 }
 
-.notesContent {
+.textarea {
 	width: 100%;
 	border: 1px solid var(--btn-border);
 	background-color: transparent;

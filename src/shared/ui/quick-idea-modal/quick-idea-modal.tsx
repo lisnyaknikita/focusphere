@@ -1,40 +1,32 @@
 'use client'
 
-import { ChangeEvent, FormEvent, KeyboardEvent, useState } from 'react'
+import { useQuickIdeas } from '@/shared/hooks/use-quick-ideas/use-quick-ideas'
+import { ChangeEvent, KeyboardEvent, useState } from 'react'
 import { toast } from 'sonner'
 import classes from './quick-idea-modal.module.scss'
 
 interface QuickIdeaModalProps {
-	onSave: (content: string) => Promise<void>
 	onClose: () => void
 }
 
-export const QuickIdeaModal = ({ onSave, onClose }: QuickIdeaModalProps) => {
+export const QuickIdeaModal = ({ onClose }: QuickIdeaModalProps) => {
 	const [content, setContent] = useState('')
-	const [isSubmitting, setIsSubmitting] = useState(false)
+	const { handleAddIdea, isSaving } = useQuickIdeas()
 
-	const handleSubmit = async (e?: FormEvent | KeyboardEvent) => {
-		e?.preventDefault()
-
-		if (!content.trim() || isSubmitting) return
-
-		setIsSubmitting(true)
-
-		const savePromise = onSave(content.trim())
-
-		toast.promise(savePromise, {
-			loading: 'Capturing your idea...',
-			success: 'Idea captured successfully!',
-			error: 'Failed to save your idea',
-		})
+	const handleSubmit = async () => {
+		const trimmed = content.trim()
+		if (!trimmed || isSaving) return
 
 		try {
-			await savePromise
+			await handleAddIdea(trimmed)
+			toast.success('Idea captured!')
 			onClose()
 		} catch (error) {
-			console.error('Failed to quick-save note:', error)
-		} finally {
-			setIsSubmitting(false)
+			if (error instanceof Error) {
+				toast.error(error.message)
+			} else {
+				toast.error('Failed to save idea.')
+			}
 		}
 	}
 
@@ -43,39 +35,37 @@ export const QuickIdeaModal = ({ onSave, onClose }: QuickIdeaModalProps) => {
 			e.preventDefault()
 			handleSubmit()
 		}
-	}
-
-	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-		setContent(e.target.value)
+		if (e.key === 'Escape') {
+			e.preventDefault()
+			onClose()
+		}
 	}
 
 	return (
-		<div className={classes.modalInner}>
-			<div className={classes.modal}>
-				<h3 className={classes.title}>Quick Capture</h3>
-				<textarea
-					placeholder='What is on your mind? (Enter to save)'
-					className={classes.notesContent}
-					value={content}
-					onChange={handleChange}
-					onKeyDown={handleKeyDown}
-					autoFocus
-					disabled={isSubmitting}
-					rows={4}
-				/>
-				<div className={classes.buttons}>
-					<button type='button' className={classes.cancelButton} onClick={onClose}>
-						Cancel
-					</button>
-					<button
-						type='button'
-						className={classes.confirmButton}
-						onClick={() => handleSubmit()}
-						disabled={isSubmitting || !content.trim()}
-					>
-						{isSubmitting ? 'Saving...' : 'Save Idea'}
-					</button>
-				</div>
+		<div className={classes.modal}>
+			<h3 className={classes.title}>Quick Capture</h3>
+			<textarea
+				placeholder='What is on your mind? (Press Enter to save)'
+				className={classes.textarea}
+				value={content}
+				onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+				onKeyDown={handleKeyDown}
+				autoFocus
+				disabled={isSaving}
+				rows={4}
+			/>
+			<div className={classes.buttons}>
+				<button type='button' className={classes.cancelButton} onClick={onClose}>
+					Cancel
+				</button>
+				<button
+					type='button'
+					className={classes.confirmButton}
+					onClick={handleSubmit}
+					disabled={isSaving || !content.trim()}
+				>
+					{isSaving ? 'Saving...' : 'Save Idea'}
+				</button>
 			</div>
 		</div>
 	)
