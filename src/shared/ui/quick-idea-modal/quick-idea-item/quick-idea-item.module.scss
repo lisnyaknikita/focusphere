@@ -1,0 +1,95 @@
+.item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 4px;
+
+	background-color: var(--secondaryFull);
+	border: none;
+	border-radius: 5px;
+
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+
+	&:hover {
+		border-color: var(--btn-border);
+
+		.deleteBtn {
+			opacity: 0.8;
+		}
+	}
+}
+
+%textBase {
+	font-family: inherit;
+	font-size: 14px;
+	line-height: 20px;
+	padding: 6px 10px;
+	margin: 0;
+	box-sizing: border-box;
+	border-radius: 5px;
+	width: 100%;
+
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.itemText {
+	@extend %textBase;
+	flex: 1;
+	min-width: 0;
+	color: var(--text);
+	cursor: pointer;
+	border: 1px solid transparent;
+}
+
+.inlineInput {
+	@extend %textBase;
+	flex: 1;
+	min-width: 0;
+	color: var(--text);
+
+	background-color: var(--primary);
+	border: 1px solid transparent;
+	outline: none;
+
+	resize: none;
+	overflow: hidden;
+	display: block;
+
+	field-sizing: content;
+
+	&::selection {
+		background-color: var(--hover);
+	}
+}
+
+.deleteBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	margin-top: 2px;
+	margin-right: 4px;
+
+	background: transparent;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+
+	opacity: 0.4;
+	transition: opacity 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+
+	&:hover {
+		opacity: 1;
+		background-color: var(--close-button-bg);
+	}
+
+	&:active {
+		transform: scale(0.92);
+	}
+}
