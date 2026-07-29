@@ -43,10 +43,8 @@ export const EventsBlock = () => {
 				</h2>
 				{isLoading ? (
 					<BeatLoader color='#aaa' size={10} className={classes.loader} />
-				) : events.length === 0 && !isGoogleLoading ? (
-					<p className={classes.noEventsMessage}>No events for today</p>
 				) : events.length === 0 ? (
-					<BeatLoader color='#aaa' size={10} className={classes.loader} />
+					<p className={classes.noEventsMessage}>No events for today</p>
 				) : (
 					<ul className={classes.eventsList} style={{ maxHeight: `${listHeight}px` }}>
 						{events.map(item => (

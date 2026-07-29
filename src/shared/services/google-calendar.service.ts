@@ -125,6 +125,7 @@ class GoogleCalendarService {
 		url.searchParams.append('timeMax', timeMax.toISOString())
 		url.searchParams.append('singleEvents', 'true')
 		url.searchParams.append('maxResults', '500')
+		url.searchParams.append('fields', 'items(id,summary,description,colorId,start,end)')
 
 		try {
 			const res = await fetch(url.toString(), {
