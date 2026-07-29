@@ -62,7 +62,9 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 			<Modal isVisible={isWelcomeVisible} onClose={handleCloseWelcome}>
 				<BetaWelcomeContent onConfirm={handleCloseWelcome} />
 			</Modal>
-			<QuickIdeaModalWrapper />
+			<Suspense fallback={null}>
+				<QuickIdeaModalWrapper />
+			</Suspense>
 		</QueryClientProvider>
 	)
 }

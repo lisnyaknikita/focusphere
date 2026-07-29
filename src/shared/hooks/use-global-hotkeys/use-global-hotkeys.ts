@@ -1,13 +1,11 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 import { HotkeyConfig, useHotkeys } from '../use-hotkeys/use-hotkeys'
 
 export const useGlobalHotkeys = () => {
 	const router = useRouter()
-	const pathname = usePathname()
-	const searchParams = useSearchParams()
 
 	const shortcuts: HotkeyConfig[] = useMemo(
 		() => [
@@ -15,14 +13,16 @@ export const useGlobalHotkeys = () => {
 				code: 'KeyC',
 				alt: true,
 				callback: () => {
-					const params = new URLSearchParams(searchParams.toString())
+					const pathname = window.location.pathname
+					const params = new URLSearchParams(window.location.search)
+
 					params.set('modal', 'quick-idea')
 
 					router.push(`${pathname}?${params.toString()}`, { scroll: false })
 				},
 			},
 		],
-		[pathname, searchParams, router]
+		[router]
 	)
 
 	useHotkeys(shortcuts)

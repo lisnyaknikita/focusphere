@@ -4,8 +4,9 @@ import { EventModal } from '@/app/(main)/calendar/components/event-modal/event-m
 import { Modal } from '@/shared/ui/modal/modal'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export const EventModalWrapper = () => {
+const EventModalContent = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const queryClient = useQueryClient()
@@ -23,5 +24,13 @@ export const EventModalWrapper = () => {
 		<Modal isVisible={isOpen} onClose={handleClose}>
 			<EventModal onClose={handleClose} />
 		</Modal>
+	)
+}
+
+export const EventModalWrapper = () => {
+	return (
+		<Suspense fallback={null}>
+			<EventModalContent />
+		</Suspense>
 	)
 }

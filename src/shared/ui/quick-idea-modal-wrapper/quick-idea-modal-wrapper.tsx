@@ -2,9 +2,10 @@
 
 import { Modal } from '@/shared/ui/modal/modal'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { QuickIdeaModal } from '../quick-idea-modal/quick-idea-modal'
 
-export const QuickIdeaModalWrapper = () => {
+const QuickIdeaModalContent = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
@@ -25,5 +26,13 @@ export const QuickIdeaModalWrapper = () => {
 		<Modal isVisible={isOpen} onClose={handleClose}>
 			<QuickIdeaModal onClose={handleClose} />
 		</Modal>
+	)
+}
+
+export const QuickIdeaModalWrapper = () => {
+	return (
+		<Suspense fallback={null}>
+			<QuickIdeaModalContent />
+		</Suspense>
 	)
 }

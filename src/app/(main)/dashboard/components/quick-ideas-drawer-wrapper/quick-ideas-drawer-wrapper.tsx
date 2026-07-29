@@ -1,9 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import { QuickIdeasDrawer } from './quick-ideas-drawer/quick-ideas-drawer'
 
-export const QuickIdeasDrawerWrapper = () => {
+const QuickIdeasDrawerContent = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 
@@ -14,4 +15,12 @@ export const QuickIdeasDrawerWrapper = () => {
 	}
 
 	return <QuickIdeasDrawer isOpen={isOpen} onClose={handleClose} />
+}
+
+export const QuickIdeasDrawerWrapper = () => {
+	return (
+		<Suspense fallback={null}>
+			<QuickIdeasDrawerContent />
+		</Suspense>
+	)
 }
