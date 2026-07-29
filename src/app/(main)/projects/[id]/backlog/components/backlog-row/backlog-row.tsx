@@ -64,7 +64,7 @@ export const BacklogRow = ({ task, onUpdateTask, onMoveToTodo, onDeleteRequest }
 						autoFocus
 					/>
 				) : (
-					<span className={classes.taskTitleText} onClick={() => setIsEditing(true)} title='Click to edit'>
+					<span className={classes.taskTitleText} onClick={() => setIsEditing(true)} title={task.title}>
 						{task.title}
 					</span>
 				)}
