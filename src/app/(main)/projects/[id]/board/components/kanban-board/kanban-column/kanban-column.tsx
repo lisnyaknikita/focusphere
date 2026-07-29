@@ -7,7 +7,7 @@ import { DeleteIcon } from '@/shared/ui/icons/delete-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import classes from './kanban-column.module.scss'
 import { KanbanTaskCard } from './kanban-task-card/kanban-task-card'
 
@@ -45,6 +45,8 @@ export const KanbanColumn = ({
 
 	const { isAdding, title, setTitle, handleAddSubmit, setIsAdding, isSubmitting } = useCreateTask({ onAddTask, column })
 
+	const isSubmittingRef = useRef(false)
+
 	const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
 		id: column.id,
 		data: {
@@ -74,6 +76,17 @@ export const KanbanColumn = ({
 		}
 		onUpdateTitle?.(column.id, editTitle.trim())
 		setIsEditingTitle(false)
+	}
+
+	const onSubmitTask = async () => {
+		if (isSubmittingRef.current) return
+
+		isSubmittingRef.current = true
+		try {
+			await handleAddSubmit()
+		} finally {
+			isSubmittingRef.current = false
+		}
 	}
 
 	const taskIds = tasks.map(task => task.$id)
@@ -150,14 +163,14 @@ export const KanbanColumn = ({
 									onKeyDown={e => {
 										if (e.key === 'Enter' && !e.shiftKey) {
 											e.preventDefault()
-											handleAddSubmit()
+											onSubmitTask()
 										}
 										if (e.key === 'Escape') {
 											setIsAdding(false)
 											setTitle('')
 										}
 									}}
-									onBlur={() => handleAddSubmit()}
+									onBlur={onSubmitTask}
 									disabled={isSubmitting}
 								/>
 							</li>
