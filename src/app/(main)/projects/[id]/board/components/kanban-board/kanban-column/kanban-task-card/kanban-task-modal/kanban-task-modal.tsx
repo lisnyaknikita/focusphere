@@ -125,12 +125,16 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 				)}
 				<div className={classes.taskContent}>
 					{task.taskCode && <span className={classes.taskCodeBadge}>{task.taskCode}</span>}
-					<input
+					<textarea
 						className={classes.titleInput}
 						value={title}
+						rows={1}
 						onChange={e => setTitle(e.target.value)}
 						onKeyDown={e => {
-							if (e.key === 'Enter') e.currentTarget.blur()
+							if (e.key === 'Enter') {
+								e.preventDefault()
+								e.currentTarget.blur()
+							}
 						}}
 						onBlur={() => handleBlur('title', title)}
 					/>
