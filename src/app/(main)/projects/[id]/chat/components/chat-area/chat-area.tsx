@@ -1,3 +1,4 @@
+import { useTypingIndicator } from '@/shared/hooks/projects/chat/use-typing-indicator'
 import { ChatChannel, ChatMessage, TeamMember } from '@/shared/types/chat'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
@@ -8,6 +9,7 @@ import classes from './chat-area.module.scss'
 import { Editor, EditorRef } from './components/editor/editor'
 import { Header } from './components/header/header'
 import { MessageItem } from './components/message-item/message-item'
+import { TypingIndicator } from './components/typing-indicator/typing-indicator'
 
 interface ChatAreaProps {
 	activeChannel: ChatChannel | null
@@ -48,6 +50,13 @@ export const ChatArea = ({
 	const prevMessagesLengthRef = useRef<number>(messages.length)
 	const mainRef = useRef<HTMLElement>(null)
 	const unreadDividerRef = useRef<HTMLDivElement>(null)
+
+	const { typers, notifyTyping, notifyStopTyping } = useTypingIndicator(
+		activeChannel?.$id,
+		currentUserId,
+		currentUserName,
+		activeChannel?.teamId
+	)
 
 	const scrollToBottom = (behavior: ScrollBehavior = 'instant') => {
 		if (mainRef.current) {
@@ -222,12 +231,16 @@ export const ChatArea = ({
 							</button>
 						</div>
 					)}
+					<TypingIndicator typers={typers} />
 					<Editor
 						ref={editorRef}
 						onSend={content => {
+							notifyStopTyping()
 							onSendMessage(content, replyingTo?.$id)
 							setReplyingTo(null)
 						}}
+						onTyping={notifyTyping}
+						onStopTyping={notifyStopTyping}
 						disabled={false}
 						tasks={tasks}
 					/>

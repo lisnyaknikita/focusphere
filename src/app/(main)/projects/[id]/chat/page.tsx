@@ -73,7 +73,7 @@ export default function ChatPage() {
 					onUpdateChannel={chat.updateChannel}
 					onDeleteChannel={chat.deleteChannel}
 					currentUserId={user?.$id}
-					currentUserName={user?.name}
+					currentUserName={user?.name || user?.email?.split('@')[0] || 'User'}
 					isLoading={chat.isLoadingMessages}
 					onToggleChatSidebar={() => setIsChatSidebarOpen(prev => !prev)}
 					activeUnreadThresholdId={chat.activeUnreadThresholdId}

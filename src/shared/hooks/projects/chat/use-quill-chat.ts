@@ -3,14 +3,16 @@
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import Quill, { QuillOptions } from 'quill'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface UseQuillChatProps {
 	tasks: KanbanTask[]
 	onSend: (content: string) => void
+	onTyping?: () => void
+	onStopTyping?: () => void
 }
 
-export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
+export const useQuillChat = ({ tasks, onSend, onTyping, onStopTyping }: UseQuillChatProps) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	const [dropdownSearch, setDropdownSearch] = useState('')
 	const [dropdownIndex, setDropdownIndex] = useState(0)
@@ -22,15 +24,22 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 	const onSendRef = useRef(onSend)
 	onSendRef.current = onSend
 
-	const filteredTasks = tasks.filter(task => {
+	const onTypingRef = useRef(onTyping)
+	onTypingRef.current = onTyping
+
+	const onStopTypingRef = useRef(onStopTyping)
+	onStopTypingRef.current = onStopTyping
+
+	const filteredTasks = useMemo(() => {
+		if (!dropdownSearch) return tasks
 		const search = dropdownSearch.toLowerCase()
-		return task.taskCode?.toLowerCase().includes(search) || task.title?.toLowerCase().includes(search)
-	})
+		return tasks.filter(
+			task => task.taskCode?.toLowerCase().includes(search) || task.title?.toLowerCase().includes(search)
+		)
+	}, [tasks, dropdownSearch])
 
 	const stateRef = useRef({ isDropdownOpen, filteredTasks, dropdownIndex, hashIndex })
-	useEffect(() => {
-		stateRef.current = { isDropdownOpen, filteredTasks, dropdownIndex, hashIndex }
-	}, [isDropdownOpen, filteredTasks, dropdownIndex, hashIndex])
+	stateRef.current = { isDropdownOpen, filteredTasks, dropdownIndex, hashIndex }
 
 	const { refs: dropdownRefs, floatingStyles: dropdownFloatingStyles } = useFloating({
 		open: isDropdownOpen,
@@ -59,6 +68,7 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 		const content = quillRef.current.root.innerHTML.trim()
 		if (content === '<p><br></p>' || content === '' || quillRef.current.getText().trim() === '') return
 
+		onStopTypingRef.current?.()
 		onSendRef.current(content)
 		quillRef.current.setContents([])
 		quillRef.current.focus()
@@ -118,7 +128,10 @@ export const useQuillChat = ({ tasks, onSend }: UseQuillChatProps) => {
 		const quill = new Quill(editorContainer, options)
 		quillRef.current = quill
 
-		quill.on('text-change', () => {
+		quill.on('text-change', (_delta, _oldDelta, source) => {
+			if (source === 'user') {
+				onTypingRef.current?.()
+			}
 			setTimeout(() => {
 				if (!quillRef.current) return
 				const range = quill.getSelection()
