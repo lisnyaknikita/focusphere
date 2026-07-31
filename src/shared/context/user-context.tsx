@@ -1,10 +1,9 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { account } from '@/lib/appwrite'
 import { CustomUser } from '@/shared/types/custom-appwrite'
-import { ensureDefaultAvatar } from '@/shared/utils/ensure-default-avatar/ensure-default-avatar'
 import { AppwriteException } from 'appwrite'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 interface UserContextType {
 	user: CustomUser | null
@@ -26,20 +25,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		const getUser = async () => {
 			try {
-				let currentUser = (await account.get()) as CustomUser
-
-				if (!currentUser.prefs?.avatarId) {
-					const avatarId = await ensureDefaultAvatar()
-
-					currentUser = {
-						...currentUser,
-						prefs: {
-							...currentUser.prefs,
-							avatarId: avatarId,
-						},
-					}
-				}
-
+				const currentUser = (await account.get()) as CustomUser
 				const session = await account.getSession('current')
 
 				setIsGoogleConnected(session.provider === 'google')

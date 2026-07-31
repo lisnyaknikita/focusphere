@@ -29,6 +29,7 @@
 		"@stripe/stripe-js": "^9.7.0",
 		"@tanstack/react-query": "^5.94.5",
 		"appwrite": "^21.4.0",
+		"boring-avatars": "^2.0.4",
 		"clsx": "^2.1.1",
 		"framer-motion": "^12.23.6",
 		"next": "^15.3.6",

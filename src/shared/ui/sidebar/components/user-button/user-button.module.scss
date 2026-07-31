@@ -1,7 +1,7 @@
 .userButton {
 	width: 60px;
 	height: 60px;
-	background-color: var(--hover);
+	background-color: transparent;
 	color: var(--text);
 	border-radius: 5px;
 	font-family: inherit;
@@ -319,4 +319,3 @@
 		opacity: 1;
 	}
 }
-

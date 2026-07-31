@@ -29,7 +29,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 					<h3 className={classes.projectTitle}>{project.title}</h3>
 					<p className={classes.projectSubtitle}>{project.description}</p>
 					<div className={classes.infoWithIcons}>
-						<TeamMembersCounter teamId={project.teamId} projectType={project.type} />
+						<TeamMembersCounter teamId={project.teamId} projectType={project.type} ownerId={project.ownerId} />
 						<div className={classes.tasks}>
 							<TasksIcon />
 							<span>{isLoading ? '...' : `${tasks.length} ${tasksWord}`}</span>

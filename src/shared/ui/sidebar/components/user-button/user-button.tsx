@@ -13,6 +13,7 @@ import { FeedbackSection } from '@/shared/ui/feedback-section/feedback-section'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { SignOutIcon } from '@/shared/ui/icons/sign-out-icon'
 import { Modal } from '@/shared/ui/modal/modal'
+import { UserAvatar } from '@/shared/ui/user-avatar/user-avatar'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import { OAuthProvider } from 'appwrite'
 import clsx from 'clsx'
@@ -111,14 +112,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						style={{ borderRadius: 5, objectFit: 'cover' }}
 					/>
 				) : (
-					<Image
-						src='/avatar.jpg'
-						alt='Default avatar'
-						width={60}
-						height={60}
-						objectFit='cover'
-						style={{ borderRadius: 5, objectFit: 'cover' }}
-					/>
+					<UserAvatar src={null} name={getDisplayName()} size={60} style={{ borderRadius: 5 }} />
 				)}
 				{isSettingsTooltipOpen && isCollapsed && (
 					<div
@@ -155,7 +149,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 					<div className={classes.modalContent}>
 						<section className={classes.section}>
 							<div className={classes.profileRow}>
-								<AvatarUploader avatarUrl={avatarUrl} onUploaded={setAvatarUrl} />
+								<AvatarUploader avatarUrl={avatarUrl} onUploaded={setAvatarUrl} userName={getDisplayName()} />
 								<div className={classes.profileInfo}>
 									<EditableUsername displayName={getDisplayName()} onNameUpdated={name => updateUserData({ name })} />
 									<span className={classes.emailHint}>{user?.email}</span>

@@ -2,19 +2,23 @@ import { db, storage } from '@/lib/appwrite'
 import { useQuery } from '@tanstack/react-query'
 
 const fetchAvatar = async (userId: string) => {
-	if (!userId) return '/avatar.jpg'
+	if (!userId) return null
 
-	const profile = await db.getRow({
-		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-		tableId: 'profiles',
-		rowId: userId,
-	})
+	try {
+		const profile = await db.getRow({
+			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+			tableId: 'profiles',
+			rowId: userId,
+		})
 
-	if (profile?.avatarId) {
-		return storage.getFileView(process.env.NEXT_PUBLIC_AVATAR_BUCKET_ID!, profile.avatarId)
+		if (profile?.avatarId) {
+			return storage.getFileView(process.env.NEXT_PUBLIC_AVATAR_BUCKET_ID!, profile.avatarId) as string
+		}
+	} catch (e) {
+		console.log(e)
 	}
 
-	return '/avatar.jpg'
+	return null
 }
 
 export const useOwnerAvatar = (userId: string) => {
@@ -26,7 +30,7 @@ export const useOwnerAvatar = (userId: string) => {
 	})
 
 	return {
-		avatarUrl: data ?? '/avatar.jpg',
+		avatarUrl: data ?? null,
 		isLoading,
 	}
 }
