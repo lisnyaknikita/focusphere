@@ -1,7 +1,7 @@
 'use client'
 
 import { useOwnerAvatar } from '@/shared/hooks/projects/owner-avatar/use-owner-avatar'
-import Image from 'next/image'
+import { UserAvatar } from '@/shared/ui/user-avatar/user-avatar'
 import { BeatLoader } from 'react-spinners'
 
 export const OwnerAvatar = ({ userId, size = 30 }: { userId: string; size?: number }) => {
@@ -12,12 +12,11 @@ export const OwnerAvatar = ({ userId, size = 30 }: { userId: string; size?: numb
 	}
 
 	return (
-		<Image
-			src={avatarUrl || '/avatar.jpg'}
-			alt='Owner'
-			width={size}
-			height={size}
-			style={{ borderRadius: 5, objectFit: 'cover', minWidth: size, minHeight: size }}
+		<UserAvatar
+			src={avatarUrl}
+			name={userId}
+			size={size}
+			style={{ borderRadius: 5, minWidth: size, minHeight: size }}
 		/>
 	)
 }
