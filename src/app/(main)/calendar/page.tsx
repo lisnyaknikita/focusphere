@@ -6,7 +6,7 @@ import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { Modal } from '@/shared/ui/modal/modal'
 import { Tabs } from '@/shared/ui/tabs/tabs'
 import '@schedule-x/theme-default/dist/index.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import 'temporal-polyfill/global'
 import { EventModal } from './components/event-modal/event-modal'
@@ -18,10 +18,6 @@ export default function Calendar() {
 
 	const { events, getEvents, isLoading, isGoogleLoading } = useEvents()
 	const { view, isMobile, handleViewChange } = useCalendarView()
-
-	useEffect(() => {
-		getEvents()
-	}, [getEvents])
 
 	const handleEventCreated = () => {
 		setIsModalVisible(false)

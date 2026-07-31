@@ -6,6 +6,7 @@ export interface ChatChannel extends Models.Document {
 	description?: string
 	type: 'private' | 'public' | 'dm'
 	ownerId: string
+	teamId?: string
 	dmParticipants?: string[]
 }
 

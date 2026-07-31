@@ -1,5 +1,6 @@
 'use client'
 
+import { UserAvatar } from '@/shared/ui/user-avatar/user-avatar'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
@@ -9,9 +10,10 @@ import { uploadNewAvatar } from './services/upload-avatar-service/upload-avatar-
 interface AvatarUploaderProps {
 	avatarUrl: string | null
 	onUploaded: (newUrl: string) => void
+	userName?: string
 }
 
-export const AvatarUploader = ({ avatarUrl, onUploaded }: AvatarUploaderProps) => {
+export const AvatarUploader = ({ avatarUrl, onUploaded, userName = 'User' }: AvatarUploaderProps) => {
 	const [localUrl, setLocalUrl] = useState<string | null>(avatarUrl)
 	const [isAvatarUploaderTooltipOpen, setIsAvatarUploaderTooltipOpen] = useState(false)
 
@@ -82,7 +84,7 @@ export const AvatarUploader = ({ avatarUrl, onUploaded }: AvatarUploaderProps) =
 				{localUrl ? (
 					<Image src={localUrl} alt='Avatar' width={60} height={60} objectFit='cover' />
 				) : (
-					<Image src='/avatar.jpg' alt='Default avatar' width={60} height={60} objectFit='cover' />
+					<UserAvatar src={null} name={userName} size={60} />
 				)}
 				<input type='file' accept='image/*' onChange={handleImageChange} ref={inputRef} hidden />
 			</div>

@@ -3,8 +3,9 @@ import { deleteEvent } from '@/lib/events/events'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
 const mapGoogleEvent = (gEvent: GoogleCalendarEvent, userId: string): CalendarEvent => {
 	const isAllDay = !!gEvent.start?.date
@@ -46,50 +47,58 @@ const mapGoogleEvent = (gEvent: GoogleCalendarEvent, userId: string): CalendarEv
 	} as unknown as CalendarEvent
 }
 
+const fetchAppwriteEvents = async (): Promise<CalendarEvent[]> => {
+	const userId = await getCurrentUserId()
+	const filters = [Query.equal('userId', userId), Query.limit(5000)]
+
+	const appwriteRes = await db.listRows({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
+		queries: filters,
+	})
+
+	return appwriteRes.rows as unknown as CalendarEvent[]
+}
+
+const fetchGoogleEvents = async (): Promise<CalendarEvent[]> => {
+	const userId = await getCurrentUserId()
+	const timeMin = new Date()
+	timeMin.setMonth(timeMin.getMonth() - 2)
+	const timeMax = new Date()
+	timeMax.setMonth(timeMax.getMonth() + 3)
+
+	try {
+		const googleEventsRaw = await googleCalendarService.fetchEvents(timeMin, timeMax)
+		return googleEventsRaw.map(gEvent => mapGoogleEvent(gEvent, userId))
+	} catch (googleError) {
+		console.error('Google Calendar sync error:', googleError)
+		return []
+	}
+}
+
 export const useEvents = () => {
-	const [events, setEvents] = useState<CalendarEvent[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-	const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+	const queryClient = useQueryClient()
+
+	const { data: appwriteEvents = [], isLoading: isAppwriteLoading } = useQuery({
+		queryKey: ['events-appwrite'],
+		queryFn: fetchAppwriteEvents,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const { data: googleEvents = [], isFetching: isGoogleLoading } = useQuery({
+		queryKey: ['events-google'],
+		queryFn: fetchGoogleEvents,
+		staleTime: 1000 * 60 * 5,
+	})
+
+	const events = [...appwriteEvents, ...googleEvents]
 
 	const getEvents = useCallback(async () => {
-		const userId = await getCurrentUserId()
-
-		const filters = [Query.equal('userId', userId), Query.limit(5000)]
-
-		setIsLoading(true)
-		setIsGoogleLoading(true)
-
-		const timeMin = new Date()
-		timeMin.setMonth(timeMin.getMonth() - 2)
-		const timeMax = new Date()
-		timeMax.setMonth(timeMax.getMonth() + 3)
-
-		try {
-			const appwriteRes = await db.listRows({
-				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-				tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
-				queries: filters,
-			})
-
-			const appwriteEvents = appwriteRes.rows as unknown as CalendarEvent[]
-			setEvents(appwriteEvents)
-			setIsLoading(false)
-
-			try {
-				const googleEventsRaw = await googleCalendarService.fetchEvents(timeMin, timeMax)
-				const googleEvents = googleEventsRaw.map(gEvent => mapGoogleEvent(gEvent, userId))
-				setEvents([...appwriteEvents, ...googleEvents])
-			} catch (googleError) {
-				console.error('Google Calendar sync error:', googleError)
-			} finally {
-				setIsGoogleLoading(false)
-			}
-		} catch (error) {
-			console.error(error)
-			setIsLoading(false)
-			setIsGoogleLoading(false)
-		}
-	}, [])
+		await Promise.all([
+			queryClient.invalidateQueries({ queryKey: ['events-appwrite'] }),
+			queryClient.invalidateQueries({ queryKey: ['events-google'] }),
+		])
+	}, [queryClient])
 
 	const cleanupOldEvents = useCallback(async () => {
 		const lastCleanup = localStorage.getItem('last_calendar_cleanup')
@@ -134,7 +143,7 @@ export const useEvents = () => {
 	return {
 		events,
 		getEvents,
-		isLoading,
+		isLoading: isAppwriteLoading,
 		isGoogleLoading,
 	}
 }

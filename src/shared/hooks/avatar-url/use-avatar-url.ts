@@ -1,6 +1,6 @@
 'use client'
 
-import { storage } from '@/lib/appwrite'
+import { account, storage } from '@/lib/appwrite'
 import { CustomUser } from '@/shared/types/custom-appwrite'
 import { useEffect, useState } from 'react'
 
@@ -10,7 +10,10 @@ export const useAvatarUrl = (user: CustomUser | null) => {
 	const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
 	useEffect(() => {
-		if (!user) return
+		if (!user) {
+			setAvatarUrl(null)
+			return
+		}
 
 		const loadAvatar = async () => {
 			try {
@@ -19,6 +22,18 @@ export const useAvatarUrl = (user: CustomUser | null) => {
 				if (!avatarId) {
 					setAvatarUrl(null)
 					return
+				}
+
+				try {
+					const file = await storage.getFile(AVATAR_BUCKET_ID, avatarId)
+					if (file.name === 'default-avatar.jpg') {
+						await storage.deleteFile(AVATAR_BUCKET_ID, avatarId).catch(() => {})
+						await account.updatePrefs({ ...user.prefs, avatarId: '' }).catch(() => {})
+						setAvatarUrl(null)
+						return
+					}
+				} catch (e) {
+					console.log(e)
 				}
 
 				const url = storage.getFileView(AVATAR_BUCKET_ID, avatarId)
