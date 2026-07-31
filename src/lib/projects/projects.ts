@@ -52,6 +52,8 @@ export const updateProject = async (projectId: string, data: Partial<CreateProje
 
 export const deleteProject = async (projectId: string): Promise<Project> => {
 	try {
+		const project = await getProjectById(projectId)
+
 		const [tasksRes, notes, channelsRes] = await Promise.all([
 			getKanbanTasks(projectId),
 			getProjectNotes(projectId),
@@ -59,12 +61,18 @@ export const deleteProject = async (projectId: string): Promise<Project> => {
 		])
 
 		const taskPromises = tasksRes.rows.map(task => deleteKanbanTask(task.$id))
-
 		const notePromises = notes.map(note => deleteProjectNote(projectId, note.$id))
-
 		const channelPromises = channelsRes.rows.map(channel => deleteChannel(channel.$id))
 
 		await Promise.all([...taskPromises, ...notePromises, ...channelPromises])
+
+		if (project.teamId) {
+			try {
+				await teams.delete(project.teamId)
+			} catch (teamError) {
+				console.error(`Failed to delete Appwrite team ${project.teamId}:`, teamError)
+			}
+		}
 
 		console.log(`Cascade delete finished for project: ${projectId}`)
 
@@ -162,6 +170,8 @@ export const convertToSoloProject = async (
 	data: Partial<CreateProjectPayload>
 ) => {
 	try {
+		const currentProject = await getProjectById(projectId)
+
 		if (deleteTeamData) {
 			await clearProjectTeamData(projectId)
 		} else {
@@ -183,6 +193,14 @@ export const convertToSoloProject = async (
 				Permission.delete(Role.user(ownerId)),
 			],
 		})
+
+		if (currentProject.teamId) {
+			try {
+				await teams.delete(currentProject.teamId)
+			} catch (teamError) {
+				console.error(`Failed to delete team ${currentProject.teamId} on conversion:`, teamError)
+			}
+		}
 
 		return response
 	} catch (error) {
