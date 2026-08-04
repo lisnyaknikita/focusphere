@@ -58,13 +58,30 @@ export const ChatArea = ({
 		activeChannel?.teamId
 	)
 
-	const scrollToBottom = (behavior: ScrollBehavior = 'instant') => {
-		if (mainRef.current) {
-			mainRef.current.scrollTo({
-				top: mainRef.current.scrollHeight,
-				behavior,
+	const replyImageSrc = useMemo(() => {
+		if (!replyingTo?.content) return null
+		const match = replyingTo.content.match(/<img[^>]+src=["']([^"']+)["']/i)
+		return match ? match[1] : null
+	}, [replyingTo?.content])
+
+	const replyText = useMemo(() => {
+		if (!replyingTo) return ''
+		const cleanText = stripHtml(replyingTo.content).trim()
+		if (!cleanText && replyImageSrc) return 'Photo'
+		return cleanText
+	}, [replyingTo, replyImageSrc])
+
+	const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				if (mainRef.current) {
+					mainRef.current.scrollTo({
+						top: mainRef.current.scrollHeight,
+						behavior,
+					})
+				}
 			})
-		}
+		})
 	}
 
 	const firstUnreadMessageId = useMemo(() => {
@@ -121,19 +138,38 @@ export const ChatArea = ({
 		const isNewChannel = hasScrolledRef.current !== activeChannel.$id
 		const isNewMessage = messages.length > prevMessagesLengthRef.current
 
-		if (isNewChannel && messages.length > 0) {
-			if (unreadDividerRef.current) {
-				unreadDividerRef.current.scrollIntoView({ behavior: 'instant', block: 'center' })
-			} else {
-				scrollToBottom('instant')
-			}
-			hasScrolledRef.current = activeChannel.$id
+		if (isNewChannel) {
+			const timer = setTimeout(() => {
+				if (unreadDividerRef.current) {
+					unreadDividerRef.current.scrollIntoView({ behavior: 'instant', block: 'center' })
+				} else if (mainRef.current) {
+					mainRef.current.scrollTop = mainRef.current.scrollHeight
+				}
+				hasScrolledRef.current = activeChannel.$id
+			}, 50)
+
+			return () => clearTimeout(timer)
 		} else if (isNewMessage) {
 			scrollToBottom('smooth')
 		}
 
 		prevMessagesLengthRef.current = messages.length
 	}, [messages, isLoading, activeChannel?.$id])
+
+	useEffect(() => {
+		const mainEl = mainRef.current
+		if (!mainEl) return
+
+		const handleImageLoad = () => {
+			const isNearBottom = mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight < 350
+			if (isNearBottom) {
+				mainEl.scrollTop = mainEl.scrollHeight
+			}
+		}
+
+		mainEl.addEventListener('load', handleImageLoad, true)
+		return () => mainEl.removeEventListener('load', handleImageLoad, true)
+	}, [])
 
 	const handleReply = (message: ChatMessage) => {
 		setReplyingTo(message)
@@ -218,8 +254,10 @@ export const ChatArea = ({
 						<div className={classes.replyBanner}>
 							<div className={classes.replyBannerContent}>
 								<span className={classes.replyBannerName}>Replying to {replyingTo.senderName}</span>
-								<span className={classes.replyBannerText}>{stripHtml(replyingTo.content)}</span>
+								<span className={classes.replyBannerText}>{replyText}</span>
 							</div>
+
+							{replyImageSrc && <img src={replyImageSrc} alt='Reply preview' className={classes.replyBannerImage} />}
 
 							<button
 								className={classes.replyBannerClose}

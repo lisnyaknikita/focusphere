@@ -1,18 +1,21 @@
 'use client'
 
+import { FULL_TOOLBAR_OPTIONS } from '@/app/(main)/projects/[id]/chat/components/chat-area/components/editor/quill-toolbar/quill-toolbar'
 import { KanbanTask } from '@/shared/types/kanban-task'
+import { processImageUpload } from '@/shared/utils/quill/process-image-upload'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
 import Quill, { QuillOptions } from 'quill'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface UseQuillChatProps {
+	initialContent?: string
 	tasks: KanbanTask[]
 	onSend: (content: string) => void
 	onTyping?: () => void
 	onStopTyping?: () => void
 }
 
-export const useQuillChat = ({ tasks, onSend, onTyping, onStopTyping }: UseQuillChatProps) => {
+export const useQuillChat = ({ initialContent, tasks, onSend, onTyping, onStopTyping }: UseQuillChatProps) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	const [dropdownSearch, setDropdownSearch] = useState('')
 	const [dropdownIndex, setDropdownIndex] = useState(0)
@@ -104,11 +107,7 @@ export const useQuillChat = ({ tasks, onSend, onTyping, onStopTyping }: UseQuill
 			placeholder: 'Write a message... (Type # to mention a task)',
 			theme: 'snow',
 			modules: {
-				toolbar: [
-					['bold', 'italic', 'strike'],
-					['link', 'code-block'],
-					[{ list: 'ordered' }, { list: 'bullet' }],
-				],
+				toolbar: FULL_TOOLBAR_OPTIONS,
 				keyboard: {
 					bindings: {
 						enter: {
@@ -127,6 +126,63 @@ export const useQuillChat = ({ tasks, onSend, onTyping, onStopTyping }: UseQuill
 
 		const quill = new Quill(editorContainer, options)
 		quillRef.current = quill
+
+		if (initialContent) {
+			quill.clipboard.dangerouslyPasteHTML(initialContent)
+		}
+
+		const toolbar = quill.getModule('toolbar') as {
+			addHandler: (name: string, handler: () => void) => void
+		} | null
+
+		if (toolbar) {
+			toolbar.addHandler('image', () => {
+				const input = document.createElement('input')
+				input.setAttribute('type', 'file')
+				input.setAttribute('accept', 'image/png, image/jpeg, image/gif, image/webp')
+				input.click()
+
+				input.onchange = () => {
+					const file = input.files?.[0]
+					if (file) {
+						processImageUpload(file, quill)
+					}
+				}
+			})
+		}
+
+		const handlePaste = (e: ClipboardEvent) => {
+			const clipboardItems = e.clipboardData?.items
+			if (!clipboardItems) return
+
+			for (let i = 0; i < clipboardItems.length; i++) {
+				const item = clipboardItems[i]
+				if (item.type.startsWith('image/')) {
+					e.preventDefault()
+					const file = item.getAsFile()
+					if (file) {
+						processImageUpload(file, quill)
+					}
+					break
+				}
+			}
+		}
+
+		const handleDrop = (e: DragEvent) => {
+			const files = e.dataTransfer?.files
+			if (files && files.length > 0) {
+				const file = files[0]
+				if (file.type.startsWith('image/')) {
+					e.preventDefault()
+					e.stopPropagation()
+					processImageUpload(file, quill)
+				}
+			}
+		}
+
+		const editorRoot = quill.root
+		editorRoot.addEventListener('paste', handlePaste)
+		editorRoot.addEventListener('drop', handleDrop)
 
 		quill.on('text-change', (_delta, _oldDelta, source) => {
 			if (source === 'user') {
@@ -208,9 +264,15 @@ export const useQuillChat = ({ tasks, onSend, onTyping, onStopTyping }: UseQuill
 		}
 
 		quill.root.addEventListener('keydown', handleQuillKeyDown, true)
-		setTimeout(() => quill.focus(), 100)
+		setTimeout(() => {
+			if (quillRef.current) {
+				quillRef.current.root.focus({ preventScroll: true })
+			}
+		}, 100)
 
 		return () => {
+			editorRoot.removeEventListener('paste', handlePaste)
+			editorRoot.removeEventListener('drop', handleDrop)
 			quillRef.current = null
 			if (containerRef.current) containerRef.current.innerHTML = ''
 		}

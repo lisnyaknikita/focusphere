@@ -19,6 +19,16 @@
 	:global(.ql-editor) {
 		word-break: break-word !important;
 		overflow-wrap: break-word !important;
+
+		img {
+			max-width: 100%;
+			max-height: 300px;
+			height: auto;
+			object-fit: contain;
+			border-radius: 5px;
+			margin: 6px 0;
+			display: block;
+		}
 	}
 }
 

@@ -10,6 +10,7 @@ import { TaskDropdown } from './components/task-dropdown/task-dropdown'
 import classes from './editor.module.scss'
 
 interface EditorProps {
+	initialContent?: string
 	onSend: (content: string) => void
 	onTyping?: () => void
 	onStopTyping?: () => void
@@ -22,7 +23,7 @@ export interface EditorRef {
 }
 
 export const Editor = forwardRef<EditorRef, EditorProps>(
-	({ onSend, onTyping, onStopTyping, disabled, tasks = [] }, ref) => {
+	({ initialContent, onSend, onTyping, onStopTyping, disabled, tasks = [] }, ref) => {
 		const {
 			containerRef,
 			quillRef,
@@ -33,7 +34,7 @@ export const Editor = forwardRef<EditorRef, EditorProps>(
 			dropdownIndex,
 			handleSend,
 			handleSelectTask,
-		} = useQuillChat({ tasks, onSend, onTyping, onStopTyping })
+		} = useQuillChat({ initialContent, tasks, onSend, onTyping, onStopTyping })
 
 		useImperativeHandle(ref, () => ({
 			focus: () => {
