@@ -1,6 +1,8 @@
 import { TaskHighlight } from '@/app/(main)/projects/[id]/chat/components/chat-area/components/message-item/components/task-highlight/task-highlight'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import React from 'react'
+import { getQuillListType } from './normalize-quill-lists'
+import { sanitizeAttributes } from './sanitize-attributes'
 
 const parseHtmlToReact = (node: Node, tasks: KanbanTask[], nodeKey: string | number): React.ReactNode => {
 	if (node.nodeType === Node.TEXT_NODE) {
@@ -40,14 +42,20 @@ const parseHtmlToReact = (node: Node, tasks: KanbanTask[], nodeKey: string | num
 
 	if (node.nodeType === Node.ELEMENT_NODE) {
 		const element = node as Element
-		const tagName = element.tagName.toLowerCase()
+		let tagName = element.tagName.toLowerCase()
 
-		const attribs: Record<string, string> = {}
-		for (let i = 0; i < element.attributes.length; i++) {
-			const attr = element.attributes[i]
-			let name = attr.name
-			if (name === 'class') name = 'className'
-			attribs[name] = attr.value
+		const attribs = sanitizeAttributes(element)
+
+		if (tagName === 'ol' || tagName === 'ul') {
+			const firstLi = element.querySelector('li[data-list]')
+			if (firstLi) {
+				const listType = getQuillListType(firstLi)
+				if (listType === 'bullet') {
+					tagName = 'ul'
+				} else if (listType === 'ordered') {
+					tagName = 'ol'
+				}
+			}
 		}
 
 		const children = Array.from(element.childNodes).map((child, idx) => {
