@@ -1,11 +1,13 @@
 'use client'
 
+import { Editor } from '@/app/(main)/projects/[id]/chat/components/chat-area/components/editor/editor'
 import { useProject } from '@/shared/context/project-context'
 import { useSubtasks } from '@/shared/hooks/projects/kanban-board/use-subtasks'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
+import { ImagePreviewModal } from '@/shared/ui/image-preview-modal/image-preview-modal'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -25,7 +27,8 @@ interface KanbanTaskModalProps {
 
 export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTaskModalProps) => {
 	const [title, setTitle] = useState(task?.title)
-	const [description, setDescription] = useState(task?.description || '')
+	const [isEditingDescription, setIsEditingDescription] = useState(false)
+	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 	const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 	const [isBacklogConfirmOpen, setIsBacklogConfirmOpen] = useState(false)
@@ -37,39 +40,41 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 	useEffect(() => {
 		if (task) {
 			setTitle(task.title || '')
-			setDescription(task.description || '')
+			setIsEditingDescription(false)
 		}
 	}, [task])
 
 	if (!task) return null
 
-	const handleBlur = (field: keyof KanbanTask, value: string) => {
-		if (field === 'title') {
-			const trimmedTitle = value.trim()
+	const handleTitleBlur = (value: string) => {
+		const trimmedTitle = value.trim()
 
-			if (!trimmedTitle) {
-				toast.error('Task title cannot be empty')
-				setTitle(task.title || '')
-				return
-			}
-
-			if (trimmedTitle !== task.title) {
-				setTitle(trimmedTitle)
-				onUpdate(task.$id, { title: trimmedTitle }).catch((err: unknown) => {
-					console.error(`Failed to update field title:`, err)
-					toast.error('Failed to update field')
-					setTitle(task.title || '')
-				})
-			}
+		if (!trimmedTitle) {
+			toast.error('Task title cannot be empty')
+			setTitle(task.title || '')
 			return
 		}
 
-		if (value !== task[field]) {
-			onUpdate(task.$id, { [field]: value }).catch((err: unknown) => {
-				console.error(`Failed to update field ${field}:`, err)
+		if (trimmedTitle !== task.title) {
+			setTitle(trimmedTitle)
+			onUpdate(task.$id, { title: trimmedTitle }).catch((err: unknown) => {
+				console.error(`Failed to update title:`, err)
 				toast.error('Failed to update field')
+				setTitle(task.title || '')
 			})
 		}
+	}
+
+	const handleDescriptionPreviewClick = (e: React.MouseEvent<HTMLDivElement>) => {
+		const target = e.target as HTMLElement
+		if (target.tagName === 'IMG') {
+			const imgSrc = target.getAttribute('src')
+			if (imgSrc) {
+				setPreviewImageUrl(imgSrc)
+				return
+			}
+		}
+		setIsEditingDescription(true)
 	}
 
 	const handleAddSubtaskSubmit = (e: React.FormEvent) => {
@@ -136,24 +141,38 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 								e.currentTarget.blur()
 							}
 						}}
-						onBlur={() => handleBlur('title', title)}
+						onBlur={() => handleTitleBlur(title)}
 					/>
 
-					<label className={classes.descriptionSection}>
-						<span>Description</span>
-						<textarea
-							placeholder='Add a description...'
-							value={description}
-							onChange={e => setDescription(e.target.value)}
-							onKeyDown={e => {
-								if (e.key === 'Enter' && !e.shiftKey) {
-									e.preventDefault()
-									e.currentTarget.blur()
-								}
-							}}
-							onBlur={() => handleBlur('description', description)}
-						/>
-					</label>
+					<div className={classes.descriptionSection}>
+						<span className={classes.descriptionLabel}>Description</span>
+						{isEditingDescription ? (
+							<Editor
+								key={task.$id}
+								variant='description'
+								initialContent={task.description || ''}
+								onSend={async newDescription => {
+									if (newDescription !== task.description) {
+										await onUpdate(task.$id, { description: newDescription }).catch((err: unknown) => {
+											console.error('Failed to update task description:', err)
+											toast.error('Failed to update description')
+										})
+									}
+									setIsEditingDescription(false)
+								}}
+								onCancel={() => setIsEditingDescription(false)}
+								tasks={[]}
+							/>
+						) : (
+							<div className={classes.descriptionPreview} onClick={handleDescriptionPreviewClick}>
+								{task.description ? (
+									<div className='ql-editor' dangerouslySetInnerHTML={{ __html: task.description }} />
+								) : (
+									<span className={classes.descriptionPlaceholder}>Add a description...</span>
+								)}
+							</div>
+						)}
+					</div>
 
 					<div className={classes.subtasksSection}>
 						<div className={classes.subtasksHeader}>
@@ -245,6 +264,8 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 					</div>
 				</div>
 			</div>
+
+			<ImagePreviewModal src={previewImageUrl} onClose={() => setPreviewImageUrl(null)} />
 
 			<ConfirmModal
 				isVisible={isDeleteConfirmOpen}

@@ -2,9 +2,12 @@
 
 import { ChatMessage } from '@/shared/types/chat'
 import { KanbanTask } from '@/shared/types/kanban-task'
+import { ImagePreviewModal } from '@/shared/ui/image-preview-modal/image-preview-modal'
 import { renderParsedContent } from '@/shared/utils/parse-message-content/parse-message-content'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
+import clsx from 'clsx'
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { Editor } from '../../../editor/editor'
 import classes from './message-content.module.scss'
 
 interface MessageContentProps {
@@ -25,16 +28,15 @@ export const MessageContent = ({
 	isContinuation,
 	isEdited,
 	isEditing,
-	editValue,
 	message,
 	displayName,
 	onUpdate,
-	setEditValue,
 	setIsEditing,
 	repliedToMessage,
 	tasks = [],
 }: MessageContentProps) => {
 	const [isMounted, setIsMounted] = useState(false)
+	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 
 	useEffect(() => {
 		setIsMounted(true)
@@ -48,58 +50,84 @@ export const MessageContent = ({
 		})
 	}, [message.$createdAt, isContinuation])
 
-	const handleUpdate = () => {
-		const trimmedValue = editValue.trim()
+	const repliedImageSrc = useMemo(() => {
+		if (!repliedToMessage?.content) return null
+		const match = repliedToMessage.content.match(/<img[^>]+src=["']([^"']+)["']/i)
+		return match ? match[1] : null
+	}, [repliedToMessage?.content])
 
-		if (trimmedValue && trimmedValue !== message.content) {
-			onUpdate(message.$id, trimmedValue)
-		} else {
-			setEditValue(message.content)
+	const repliedText = useMemo(() => {
+		if (!repliedToMessage) return ''
+		const cleanText = stripHtml(repliedToMessage.content).trim()
+		if (!cleanText && repliedImageSrc) return 'Photo'
+		return cleanText
+	}, [repliedToMessage, repliedImageSrc])
+
+	const handleReplyClick = () => {
+		if (!repliedToMessage?.$id) return
+
+		const targetElement = document.getElementById(`message-${repliedToMessage.$id}`)
+		if (targetElement) {
+			targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+			targetElement.classList.add(classes.highlightedMessage)
+			setTimeout(() => {
+				targetElement.classList.remove(classes.highlightedMessage)
+			}, 1500)
 		}
-		setIsEditing(false)
 	}
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') handleUpdate()
-		if (e.key === 'Escape') {
-			setEditValue(message.content)
-			setIsEditing(false)
+	const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+		const target = e.target as HTMLElement
+		if (target.tagName === 'IMG') {
+			const imgSrc = target.getAttribute('src')
+			if (imgSrc) {
+				setPreviewImageUrl(imgSrc)
+			}
 		}
 	}
 
 	return (
-		<div className={classes.messageContent}>
-			{!isContinuation && (
-				<div className={classes.messageHeader}>
-					<div className={classes.name}>{displayName}</div>
-					<time>{formattedTime}</time>
-					{isEdited && <span className={classes.editedMessage}>(edited)</span>}
-				</div>
-			)}
-
-			{repliedToMessage && (
-				<div className={classes.replyQuote}>
-					<div className={classes.replyQuoteName}>{repliedToMessage.senderName}</div>
-					<div className={classes.replyQuoteText}>{stripHtml(repliedToMessage.content)}</div>
-				</div>
-			)}
-
-			<div className={classes.messageText}>
-				{isEditing ? (
-					<input
-						autoFocus
-						className={classes.editInput}
-						value={editValue}
-						onChange={e => setEditValue(e.target.value)}
-						onKeyDown={handleKeyDown}
-						onBlur={handleUpdate}
-					/>
-				) : !isMounted || !tasks || tasks.length === 0 ? (
-					<div dangerouslySetInnerHTML={{ __html: message.content }} />
-				) : (
-					<div>{renderParsedContent(message.content, tasks)}</div>
+		<>
+			<div className={classes.messageContent}>
+				{!isContinuation && (
+					<div className={classes.messageHeader}>
+						<div className={classes.name}>{displayName}</div>
+						<time>{formattedTime}</time>
+						{isEdited && <span className={classes.editedMessage}>(edited)</span>}
+					</div>
 				)}
+				{repliedToMessage && (
+					<div className={classes.replyQuote} onClick={handleReplyClick}>
+						<div className={classes.replyQuoteInner}>
+							<div className={classes.replyQuoteName}>{repliedToMessage.senderName}</div>
+							<div className={classes.replyQuoteText}>{repliedText}</div>
+						</div>
+						{repliedImageSrc && (
+							<img src={repliedImageSrc} alt='Reply attachment preview' className={classes.replyImageThumbnail} />
+						)}
+					</div>
+				)}
+
+				<div className={clsx(classes.messageText, isEditing && classes.isEditing)} onClick={handleContentClick}>
+					{isEditing ? (
+						<Editor
+							initialContent={message.content}
+							onSend={newContent => {
+								onUpdate(message.$id, newContent)
+								setIsEditing(false)
+							}}
+							tasks={tasks}
+						/>
+					) : !isMounted || !tasks || tasks.length === 0 ? (
+						<div dangerouslySetInnerHTML={{ __html: message.content }} />
+					) : (
+						<div>{renderParsedContent(message.content, tasks)}</div>
+					)}
+				</div>
 			</div>
-		</div>
+
+			<ImagePreviewModal src={previewImageUrl} onClose={() => setPreviewImageUrl(null)} />
+		</>
 	)
 }

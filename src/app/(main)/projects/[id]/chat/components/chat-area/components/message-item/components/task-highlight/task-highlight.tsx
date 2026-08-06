@@ -4,6 +4,7 @@ import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list
 
 import { priorityColors, priorityLabels, statusColors, statusLabels } from '@/shared/constants/task-highlight.constants'
 import { KanbanTask } from '@/shared/types/kanban-task'
+import { stripHtml } from '@/shared/utils/strip-html/strip-html'
 import {
 	autoUpdate,
 	flip,
@@ -16,7 +17,7 @@ import {
 	useInteractions,
 } from '@floating-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import classes from './task-highlight.module.scss'
 
 interface TaskHighlightProps {
@@ -45,6 +46,16 @@ export const TaskHighlight = ({ task }: TaskHighlightProps) => {
 	const priority = task.priority || 'medium'
 	const statusConf = statusColors[status] || statusColors.todo
 	const priorityColor = priorityColors[priority] || priorityColors.medium
+
+	const hasImages = useMemo(() => {
+		if (!task.description) return false
+		return /<img[^>]+/i.test(task.description)
+	}, [task.description])
+
+	const cleanDescription = useMemo(() => {
+		if (!task.description) return ''
+		return stripHtml(task.description).trim()
+	}, [task.description])
 
 	return (
 		<>
@@ -79,10 +90,19 @@ export const TaskHighlight = ({ task }: TaskHighlightProps) => {
 
 								<h4 className={classes.tooltipTitle}>{task.title}</h4>
 
-								{task.description && (
-									<p className={classes.tooltipDescription} title={task.description}>
-										{task.description.length > 120 ? `${task.description.substring(0, 120)}...` : task.description}
-									</p>
+								{(cleanDescription || hasImages) && (
+									<div className={classes.descriptionContainer}>
+										{cleanDescription && (
+											<p className={classes.tooltipDescription} title={cleanDescription}>
+												{cleanDescription.length > 120 ? `${cleanDescription.substring(0, 120)}...` : cleanDescription}
+											</p>
+										)}
+										{hasImages && (
+											<span className={classes.hasImageBadge}>
+												📷 <span>[Photo attached]</span>
+											</span>
+										)}
+									</div>
 								)}
 
 								<div className={classes.tooltipFooter}>

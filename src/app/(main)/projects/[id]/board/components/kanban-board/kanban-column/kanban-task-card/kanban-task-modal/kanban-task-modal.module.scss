@@ -65,30 +65,51 @@
 }
 
 .descriptionSection {
-	> span {
+	> .descriptionLabel {
 		font-size: 18px;
 		font-weight: 700;
 		font-family: inherit;
 		color: var(--text);
 		display: inline-block;
+		margin-bottom: 6px;
 	}
 
-	> textarea {
+	> .descriptionPreview {
 		width: 100%;
 		min-height: 150px;
+		max-height: 300px;
+		overflow-y: auto;
 		background-color: transparent;
 		border: 1px solid transparent;
 		border-radius: 5px;
 		color: var(--text);
 		font-size: 15px;
 		font-family: inherit;
-		resize: none;
 		padding: 8px;
 		margin-left: -8px;
+		cursor: pointer;
+		transition: background-color 0.2s;
+		word-break: break-word;
+		overflow-wrap: break-word;
 
-		&:focus {
-			border-color: var(--btn-border);
+		&:hover {
+			background-color: color-mix(in srgb, var(--secondary) 60%, transparent);
 		}
+
+		img {
+			max-width: 100% !important;
+			max-height: 300px !important;
+			height: auto !important;
+			object-fit: contain !important;
+			border-radius: 5px;
+			margin: 6px 0;
+			display: block;
+			cursor: pointer;
+		}
+	}
+
+	> .descriptionPlaceholder {
+		color: var(--textSecondary);
 	}
 }
 

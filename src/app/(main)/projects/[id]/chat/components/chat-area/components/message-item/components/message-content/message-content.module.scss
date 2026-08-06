@@ -3,6 +3,7 @@
 	flex-direction: column;
 	justify-content: space-between;
 	min-width: 0;
+	width: 100%;
 }
 
 .messageHeader {
@@ -31,13 +32,45 @@
 
 .replyQuote {
 	display: flex;
-	flex-direction: column;
-	gap: 2px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
 	border-left: 2px solid var(--save-button-bg);
-	padding: 0 100px 0 10px;
+	padding: 4px 10px;
 	margin-top: 4px;
 	margin-bottom: 4px;
-	opacity: 0.6;
+	opacity: 0.85;
+	background: color-mix(in srgb, var(--text) 4%, transparent);
+	border-radius: 0 6px 6px 0;
+	max-width: max-content;
+
+	cursor: pointer;
+	transition: opacity 0.2s, background-color 0.2s;
+
+	&:hover {
+		opacity: 1;
+		background: color-mix(in srgb, var(--text) 8%, transparent);
+	}
+}
+
+.highlightedMessage {
+	animation: highlightFlash 1.5s ease-in-out;
+}
+
+@keyframes highlightFlash {
+	0% {
+		background-color: color-mix(in srgb, var(--save-button-bg) 35%, transparent);
+	}
+	100% {
+		background-color: transparent;
+	}
+}
+
+.replyQuoteInner {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
 }
 
 .replyQuoteName {
@@ -55,6 +88,14 @@
 	max-width: 100%;
 }
 
+.replyImageThumbnail {
+	width: 34px;
+	height: 34px;
+	object-fit: cover;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
 .messageText {
 	font-size: 16px;
 	font-weight: 400;
@@ -65,9 +106,40 @@
 	width: 100%;
 	padding-right: 100px;
 
-	> ul,
-	ol {
+	&.isEditing {
+		padding-right: 0;
+	}
+
+	ul {
+		list-style-type: disc;
 		padding-left: 16px;
+		margin: 4px 0;
+	}
+
+	ol {
+		list-style-type: decimal;
+		padding-left: 16px;
+		margin: 4px 0;
+	}
+
+	li {
+		margin-bottom: 2px;
+	}
+
+	img {
+		max-width: 100%;
+		max-height: 360px;
+		height: auto;
+		object-fit: contain;
+		border-radius: 8px;
+		margin: 6px 0;
+		display: block;
+		cursor: pointer;
+		transition: opacity 0.2s ease;
+
+		&:hover {
+			opacity: 0.85;
+		}
 	}
 }
 
