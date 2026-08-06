@@ -10,12 +10,13 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 interface UseQuillChatProps {
 	initialContent?: string
 	tasks: KanbanTask[]
+	variant?: 'chat' | 'description'
 	onSend: (content: string) => void
 	onTyping?: () => void
 	onStopTyping?: () => void
 }
 
-export const useQuillChat = ({ initialContent, tasks, onSend, onTyping, onStopTyping }: UseQuillChatProps) => {
+export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping, onStopTyping }: UseQuillChatProps) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	const [dropdownSearch, setDropdownSearch] = useState('')
 	const [dropdownIndex, setDropdownIndex] = useState(0)
@@ -104,7 +105,7 @@ export const useQuillChat = ({ initialContent, tasks, onSend, onTyping, onStopTy
 		containerRef.current.appendChild(editorContainer)
 
 		const options: QuillOptions = {
-			placeholder: 'Write a message... (Type # to mention a task)',
+			placeholder: variant === 'description' ? 'Add a description...' : 'Write a message... (Type # to mention a task)',
 			theme: 'snow',
 			modules: {
 				toolbar: FULL_TOOLBAR_OPTIONS,
@@ -114,6 +115,7 @@ export const useQuillChat = ({ initialContent, tasks, onSend, onTyping, onStopTy
 							key: 'Enter',
 							shiftKey: false,
 							handler: () => {
+								if (variant === 'description') return true
 								if (stateRef.current.isDropdownOpen) return true
 								handleSend()
 								return false

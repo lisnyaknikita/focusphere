@@ -60,7 +60,7 @@ export const MessageItem = ({
 
 	return (
 		<>
-			<div className={clsx(classes.message, isContinuation && 'continuation')}>
+			<div id={`message-${message.$id}`} className={clsx(classes.message, isContinuation && 'continuation')}>
 				{!isContinuation ? (
 					<div className={classes.authorAvatar}>
 						<UserAvatar src={displayAvatar} name={displayName || message.senderId} size={46} />

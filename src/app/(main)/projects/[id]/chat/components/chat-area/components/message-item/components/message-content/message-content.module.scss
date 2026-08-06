@@ -3,6 +3,7 @@
 	flex-direction: column;
 	justify-content: space-between;
 	min-width: 0;
+	width: 100%;
 }
 
 .messageHeader {
@@ -42,6 +43,27 @@
 	background: color-mix(in srgb, var(--text) 4%, transparent);
 	border-radius: 0 6px 6px 0;
 	max-width: max-content;
+
+	cursor: pointer;
+	transition: opacity 0.2s, background-color 0.2s;
+
+	&:hover {
+		opacity: 1;
+		background: color-mix(in srgb, var(--text) 8%, transparent);
+	}
+}
+
+.highlightedMessage {
+	animation: highlightFlash 1.5s ease-in-out;
+}
+
+@keyframes highlightFlash {
+	0% {
+		background-color: color-mix(in srgb, var(--save-button-bg) 35%, transparent);
+	}
+	100% {
+		background-color: transparent;
+	}
 }
 
 .replyQuoteInner {
@@ -83,6 +105,10 @@
 	white-space: pre-wrap;
 	width: 100%;
 	padding-right: 100px;
+
+	&.isEditing {
+		padding-right: 0;
+	}
 
 	ul {
 		list-style-type: disc;
