@@ -78,6 +78,39 @@ export const useGeneralNotes = (userId: string) => {
 		}
 	}, [])
 
+	const handleTogglePin = useCallback(async (noteId: string) => {
+		let nextPinnedState = false
+
+		setNotes(prev => {
+			const noteIndex = prev.findIndex(n => n.$id === noteId)
+			if (noteIndex === -1) return prev
+			const updatedNote = { ...prev[noteIndex], isPinned: !prev[noteIndex].isPinned }
+			nextPinnedState = updatedNote.isPinned
+			const newNotes = [...prev]
+			newNotes[noteIndex] = updatedNote
+			return newNotes
+		})
+
+		setActiveNote(prev => (prev?.$id === noteId ? { ...prev, isPinned: !prev.isPinned } : prev))
+
+		try {
+			await updateGeneralNote(noteId, { isPinned: nextPinnedState })
+		} catch (error) {
+			console.error('Failed to toggle pin state:', error)
+			toast.error('Failed to update pin state')
+
+			setNotes(prev => {
+				const noteIndex = prev.findIndex(n => n.$id === noteId)
+				if (noteIndex === -1) return prev
+				const updatedNote = { ...prev[noteIndex], isPinned: !nextPinnedState }
+				const newNotes = [...prev]
+				newNotes[noteIndex] = updatedNote
+				return newNotes
+			})
+			setActiveNote(prev => (prev?.$id === noteId ? { ...prev, isPinned: !nextPinnedState } : prev))
+		}
+	}, [])
+
 	const handleDelete = async (noteId: string) => {
 		const deletePromise = deleteGeneralNote(noteId)
 
@@ -130,6 +163,7 @@ export const useGeneralNotes = (userId: string) => {
 		deleteNote: handleDelete,
 		handleTitleChange,
 		handleContentChange,
+		togglePinNote: handleTogglePin,
 		searchQuery,
 		setSearchQuery,
 	}

@@ -8,6 +8,7 @@ import { touchProject } from '@/lib/projects/projects'
 import { Project } from '@/shared/types/project'
 import { CreateProjectNotePayload, ProjectNote } from '@/shared/types/project-note'
 import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useUser } from '../../use-user/use-user'
 
 export const useNotes = (project: Project) => {
@@ -142,6 +143,45 @@ export const useNotes = (project: Project) => {
 		[project?.$id, triggerProjectUpdate]
 	)
 
+	const handleTogglePin = useCallback(
+		async (noteId: string) => {
+			if (!project?.$id) return
+
+			let nextPinnedState = false
+
+			setNotes(prev => {
+				const noteIndex = prev.findIndex(n => n.$id === noteId)
+				if (noteIndex === -1) return prev
+				const updatedNote = { ...prev[noteIndex], isPinned: !prev[noteIndex].isPinned }
+				nextPinnedState = updatedNote.isPinned
+				const newNotes = [...prev]
+				newNotes[noteIndex] = updatedNote
+				return newNotes
+			})
+
+			setActiveNote(prev => (prev?.$id === noteId ? { ...prev, isPinned: !prev.isPinned } : prev))
+
+			try {
+				await updateProjectNote(project.$id, noteId, { isPinned: nextPinnedState })
+			} catch (error) {
+				console.error('Failed to toggle pin state:', error)
+				toast.error('Failed to update pin state')
+
+				setNotes(prev => {
+					const noteIndex = prev.findIndex(n => n.$id === noteId)
+					if (noteIndex === -1) return prev
+					const updatedNote = { ...prev[noteIndex], isPinned: !nextPinnedState }
+					const newNotes = [...prev]
+					newNotes[noteIndex] = updatedNote
+					return newNotes
+				})
+
+				setActiveNote(prev => (prev?.$id === noteId ? { ...prev, isPinned: !nextPinnedState } : prev))
+			}
+		},
+		[project?.$id]
+	)
+
 	return {
 		notes,
 		isLoading,
@@ -151,5 +191,6 @@ export const useNotes = (project: Project) => {
 		setActiveNote,
 		handleContentChange,
 		handleTitleChange,
+		togglePinNote: handleTogglePin,
 	}
 }

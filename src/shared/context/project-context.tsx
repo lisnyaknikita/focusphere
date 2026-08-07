@@ -1,13 +1,13 @@
 'use client'
 
 import { getProjectById } from '@/lib/projects/projects'
-import { createContext, ReactNode, useContext, useCallback, useMemo } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createContext, ReactNode, useCallback, useContext, useMemo } from 'react'
 import { useNotes } from '../hooks/projects/notes/use-notes'
 import { CustomJournalTemplate } from '../types/journal'
 import { Project } from '../types/project'
 import { BaseNote, ProjectNote } from '../types/project-note'
 import { NotesContext } from './notes-context'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 interface ProjectContextType {
 	project: Project | null
@@ -39,11 +39,14 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 
 	const notesData = useNotes(project!)
 
-	const updateProjectState = useCallback((newData: Partial<Project>) => {
-		queryClient.setQueryData(['project', projectId], (prev: Project | null) => {
-			return prev ? { ...prev, ...newData } : null
-		})
-	}, [queryClient, projectId])
+	const updateProjectState = useCallback(
+		(newData: Partial<Project>) => {
+			queryClient.setQueryData(['project', projectId], (prev: Project | null) => {
+				return prev ? { ...prev, ...newData } : null
+			})
+		},
+		[queryClient, projectId]
+	)
 
 	const projectContextValue = useMemo(
 		() => ({
@@ -81,6 +84,7 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			setActiveNote: notesData.setActiveNote as (note: BaseNote | null) => void,
 			handleContentChange: notesData.handleContentChange,
 			handleTitleChange: notesData.handleTitleChange,
+			togglePinNote: notesData.togglePinNote,
 			createNote: notesData.createNote as (
 				hint?: string | CustomJournalTemplate,
 				linkedTaskCode?: string
@@ -94,6 +98,7 @@ export const ProjectProvider = ({ projectId, children }: { projectId: string; ch
 			notesData.setActiveNote,
 			notesData.handleContentChange,
 			notesData.handleTitleChange,
+			notesData.togglePinNote,
 			notesData.createNote,
 			notesData.deleteNote,
 			notesData.isLoading,
