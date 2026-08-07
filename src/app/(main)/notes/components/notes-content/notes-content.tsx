@@ -86,7 +86,7 @@ export const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpe
 								(isSearchEmpty ? (
 									<div className={classes.emptySearch}>No notes found</div>
 								) : (
-									<NotesList storageKey='global-notes-collapsed' />
+									<NotesList storageKey='global-notes-collapsed' allowPinning={true} />
 								))}
 							<TextEditor key={activeNote?.$id} ref={editorRef} />
 							{activeNote && (
