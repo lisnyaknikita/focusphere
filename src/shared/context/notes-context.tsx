@@ -10,6 +10,7 @@ interface NotesContextType<T extends BaseNote = BaseNote> {
 	setActiveNote: (note: T | null) => void
 	handleContentChange: (content: string, noteId: string) => Promise<void>
 	handleTitleChange: (title: string, noteId: string) => Promise<void>
+	togglePinNote?: (noteId: string) => Promise<void>
 	createNote: (hint?: string | CustomJournalTemplate, linkedTaskCode?: string) => Promise<void>
 	deleteNote: (noteId: string) => Promise<void>
 	isLoading: boolean

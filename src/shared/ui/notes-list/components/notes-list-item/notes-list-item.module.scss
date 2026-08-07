@@ -3,7 +3,7 @@
 	border-left: 0.2px solid transparent;
 	transition: all 0.2s;
 
-	&:global(.active) {
+	&.active {
 		background-color: var(--hover);
 		border-left: 0.2px solid var(--btn-border);
 	}
@@ -12,7 +12,7 @@
 		border-top: 0.2px solid transparent;
 		border-top-left-radius: 5px;
 
-		&:global(.active) {
+		&.active {
 			border-top: 0.2px solid var(--btn-border);
 		}
 
@@ -28,6 +28,10 @@
 	&:hover {
 		background-color: var(--hover);
 		border-left: 0.2px solid var(--btn-border);
+
+		.pinButton {
+			opacity: 1;
+		}
 	}
 }
 
@@ -105,13 +109,20 @@
 	margin-top: auto;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	width: 100%;
+	// justify-content: space-between;
 }
 
 .noteTime {
 	font-size: 12px;
 	font-weight: 400;
 	color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+
+.badgeAndTooltip {
+	display: flex;
+	align-items: center;
+	margin-left: auto;
 }
 
 .personalBadge {
@@ -126,4 +137,71 @@
 	margin-right: 6px;
 	vertical-align: middle;
 	line-height: 1.1;
+}
+
+.pinButton {
+	background: transparent;
+	border: none;
+	padding: 2px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: color-mix(in srgb, var(--text) 50%, transparent);
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+	&:hover {
+		color: var(--text);
+		transform: scale(1.15);
+	}
+
+	&.pinnedActive {
+		opacity: 1;
+		color: var(--save-button-bg);
+	}
+}
+
+.pinnedItem {
+	.pinnedLink {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		width: 100%;
+		padding: 8px 10px;
+		background: transparent;
+		border: none;
+		text-align: left;
+		cursor: pointer;
+		font-family: inherit;
+	}
+
+	.pinnedTitleGroup {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-width: 0;
+		flex: 1;
+
+		.pinButton {
+			opacity: 1;
+			margin-left: 0;
+			flex-shrink: 0;
+			transform: translateY(2px);
+		}
+
+		.noteTitle {
+			font-size: 14px;
+			font-weight: 500;
+			margin: 0;
+		}
+	}
+
+	.pinnedDate {
+		font-size: 12px;
+		font-weight: 400;
+		color: color-mix(in srgb, var(--text) 50%, transparent);
+		flex-shrink: 0;
+	}
 }

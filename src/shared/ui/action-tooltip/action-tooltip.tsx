@@ -1,19 +1,20 @@
-import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
+import { autoUpdate, flip, offset, Placement, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { ReactNode, useState } from 'react'
 
 interface ActionTooltipProps {
 	children: (setRef: (node: HTMLElement | null) => void, referenceProps: Record<string, unknown>) => ReactNode
 	text: string
 	isActive?: boolean
+	placement?: Placement
 }
 
-export const ActionTooltip = ({ children, text, isActive = true }: ActionTooltipProps) => {
+export const ActionTooltip = ({ children, text, isActive = true, placement = 'top' }: ActionTooltipProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isOpen && isActive,
 		onOpenChange: setIsOpen,
-		placement: 'top',
+		placement,
 		whileElementsMounted: autoUpdate,
 		middleware: [offset(8), flip(), shift()],
 	})
