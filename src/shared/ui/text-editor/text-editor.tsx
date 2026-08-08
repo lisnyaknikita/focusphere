@@ -2,10 +2,12 @@
 
 import { useTextEditor } from '@/shared/hooks/use-text-editor/use-text-editor'
 import { TextEditorRef } from '@/shared/types/text-editor'
+import { filterSuggestionItems } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
-import { forwardRef } from 'react'
+import { getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react'
+import { forwardRef, useMemo } from 'react'
 import { EmptyIcon } from '../icons/empty-icon'
 import classes from './text-editor.module.scss'
 
@@ -22,6 +24,26 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		handleTitleBlur,
 		handleEditorBlur,
 	} = useTextEditor(ref)
+
+	const customSlashMenuItems = useMemo(() => {
+		if (!editor) return []
+
+		const defaultItems = getDefaultReactSlashMenuItems(editor)
+
+		const excludedTitles = ['Video', 'Audio', 'File', 'Heading 4', 'Heading 5', 'Heading 6']
+
+		return defaultItems.filter(item => {
+			if (excludedTitles.includes(item.title)) {
+				return false
+			}
+
+			if (item.title.toLowerCase().startsWith('heading') && /[4-6]/.test(item.title)) {
+				return false
+			}
+
+			return true
+		})
+	}, [editor])
 
 	if (!activeNote) {
 		if (searchQuery && searchQuery.trim() !== '') {
@@ -57,7 +79,18 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 						placeholder='Title'
 					/>
 					<div className={classes.bnWrapper} onBlur={handleEditorBlur}>
-						<BlockNoteView editor={editor} theme={isDark ? 'dark' : 'light'} sideMenu={true} formattingToolbar={true} />
+						<BlockNoteView
+							editor={editor}
+							theme={isDark ? 'dark' : 'light'}
+							sideMenu={true}
+							formattingToolbar={true}
+							slashMenu={false}
+						>
+							<SuggestionMenuController
+								triggerCharacter={'/'}
+								getItems={async query => filterSuggestionItems(customSlashMenuItems, query)}
+							/>
+						</BlockNoteView>
 					</div>
 				</div>
 			</div>

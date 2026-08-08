@@ -117,13 +117,41 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 	}))
 
 	useEffect(() => {
-		if (editor) {
-			const timer = setTimeout(() => {
-				editor.focus()
-			}, 150)
-			return () => clearTimeout(timer)
+		if (!editor) return
+
+		const triggerIndexing = () => {
+			const view = editor.prosemirrorView
+			if (view && view.state && view.state.doc) {
+				let textPos = 0
+				view.state.doc.descendants((node, pos) => {
+					if (node.isTextblock && textPos === 0) {
+						textPos = pos + 1
+						return false
+					}
+				})
+
+				if (textPos > 0) {
+					try {
+						const tr = view.state.tr
+						tr.setMeta('addToHistory', false)
+						tr.insertText(' ', textPos)
+						tr.delete(textPos, textPos + 1)
+						view.dispatch(tr)
+					} catch (error) {
+						console.error('Failed to trigger numbered list indexing:', error)
+					}
+				}
+			}
 		}
-	}, [editor])
+
+		triggerIndexing()
+
+		const timer = setTimeout(() => {
+			editor.focus()
+		}, 150)
+
+		return () => clearTimeout(timer)
+	}, [editor, activeNote?.$id])
 
 	useEffect(() => {
 		if (titleSaveTimeoutRef.current) {
