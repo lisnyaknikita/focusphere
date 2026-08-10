@@ -62,9 +62,15 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		)
 	}
 
+	const handleWrapperClick = () => {
+		if (editor) {
+			editor.focus()
+		}
+	}
+
 	return (
 		<div className={classes.editor}>
-			<div className={classes.scrollContainer}>
+			<div className={classes.scrollContainer} onClick={handleWrapperClick}>
 				<div className={classes.contentWrapper}>
 					<div className={classes.saveStatus}>
 						{isSaving && <span className={classes.saving}>Saving...</span>}
@@ -78,7 +84,12 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 						onBlur={handleTitleBlur}
 						placeholder='Title'
 					/>
-					<div className={classes.bnWrapper} onBlur={handleEditorBlur}>
+					<div
+						className={classes.bnWrapper}
+						onBlur={handleEditorBlur}
+						onClick={handleWrapperClick}
+						onTouchEnd={handleWrapperClick}
+					>
 						<BlockNoteView
 							editor={editor}
 							theme={isDark ? 'dark' : 'light'}

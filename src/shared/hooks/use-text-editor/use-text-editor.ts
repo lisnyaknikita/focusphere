@@ -149,6 +149,11 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		triggerIndexing()
 
 		const timer = setTimeout(() => {
+			const blocks = editor.document
+			if (blocks && blocks.length > 0) {
+				const lastBlock = blocks[blocks.length - 1]
+				editor.setTextCursorPosition(lastBlock, 'end')
+			}
 			editor.focus()
 		}, 150)
 
