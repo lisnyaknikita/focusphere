@@ -19,6 +19,7 @@
 	position: relative;
 	min-width: 0;
 	overflow: hidden;
+	touch-action: manipulation;
 }
 
 .scrollContainer {
@@ -28,6 +29,7 @@
 	overflow-x: hidden;
 	display: flex;
 	justify-content: center;
+	touch-action: manipulation;
 }
 
 .contentWrapper {
@@ -123,6 +125,7 @@
 	cursor: text;
 	min-width: 0;
 	max-width: 100%;
+	touch-action: manipulation;
 
 	:global {
 		.bn-container {
