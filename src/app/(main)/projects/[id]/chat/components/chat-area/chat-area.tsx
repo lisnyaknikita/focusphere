@@ -4,6 +4,7 @@ import { KanbanTask } from '@/shared/types/kanban-task'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { formatDividerDate } from '@/shared/utils/format-divider-date/format-divider-date'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import classes from './chat-area.module.scss'
 import { Editor, EditorRef } from './components/editor/editor'
@@ -45,6 +46,8 @@ export const ChatArea = ({
 	activeUnreadThresholdId,
 }: ChatAreaProps) => {
 	const [replyingTo, setReplyingTo] = useState<ChatMessage | null>(null)
+	const [showScrollBottomButton, setShowScrollBottomButton] = useState(false)
+
 	const editorRef = useRef<EditorRef>(null)
 	const hasScrolledRef = useRef<string | null>(null)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
@@ -83,6 +86,19 @@ export const ChatArea = ({
 			})
 		})
 	}
+
+	useEffect(() => {
+		const mainEl = mainRef.current
+		if (!mainEl) return
+
+		const handleScroll = () => {
+			const distanceFromBottom = mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight
+			setShowScrollBottomButton(distanceFromBottom > 200)
+		}
+
+		mainEl.addEventListener('scroll', handleScroll)
+		return () => mainEl.removeEventListener('scroll', handleScroll)
+	}, [])
 
 	const firstUnreadMessageId = useMemo(() => {
 		if (!activeUnreadThresholdId || !messages.length) return null
@@ -196,58 +212,88 @@ export const ChatArea = ({
 				onToggleChatSidebar={onToggleChatSidebar}
 				displayName={getDisplayName()}
 			/>
-			<main className={classes.main} ref={mainRef}>
-				{!activeChannel ? (
-					<div className={classes.emptyState}>Select a channel to start a conversation, or create your first one</div>
-				) : (
-					<>
-						<div className={classes.chatInfo}>
-							<h5 className={classes.title}>{activeChannel.type === 'dm' ? getDisplayName() : activeChannel.name}</h5>
-							<p className={classes.subtitle}>
-								{activeChannel.type === 'dm'
-									? `Direct message with ${getDisplayName()}`
-									: activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
-							</p>
-						</div>
-						<div className={classes.messages}>
-							{isLoading ? (
-								<div className={classes.loading}>Loading messages...</div>
-							) : (
-								processedMessages.map(({ message, isNewDay, isContinuation, repliedToMessage, isFirstUnread }) => (
-									<div key={message.$id}>
-										{isFirstUnread && (
-											<div className={classes.unreadDivider} ref={unreadDividerRef}>
-												<hr />
-												<span>New Messages</span>
-											</div>
-										)}
+			<div className={classes.mainWrapper}>
+				<main className={classes.main} ref={mainRef}>
+					{!activeChannel ? (
+						<div className={classes.emptyState}>Select a channel to start a conversation, or create your first one</div>
+					) : (
+						<>
+							<div className={classes.chatInfo}>
+								<h5 className={classes.title}>{activeChannel.type === 'dm' ? getDisplayName() : activeChannel.name}</h5>
+								<p className={classes.subtitle}>
+									{activeChannel.type === 'dm'
+										? `Direct message with ${getDisplayName()}`
+										: activeChannel.description || `This is the start of the #${activeChannel.name} channel.`}
+								</p>
+							</div>
+							<div className={classes.messages}>
+								{isLoading ? (
+									<div className={classes.loading}>Loading messages...</div>
+								) : (
+									processedMessages.map(({ message, isNewDay, isContinuation, repliedToMessage, isFirstUnread }) => (
+										<div key={message.$id}>
+											{isFirstUnread && (
+												<div className={classes.unreadDivider} ref={unreadDividerRef}>
+													<hr />
+													<span>New Messages</span>
+												</div>
+											)}
 
-										{isNewDay && (
-											<div className={classes.divider}>
-												<hr />
-												<span>{formatDividerDate(message.$createdAt)}</span>
-											</div>
-										)}
+											{isNewDay && (
+												<div className={classes.divider}>
+													<hr />
+													<span>{formatDividerDate(message.$createdAt)}</span>
+												</div>
+											)}
 
-										<MessageItem
-											isContinuation={isContinuation}
-											message={message}
-											teammates={teammates}
-											tasks={tasks}
-											currentUserId={currentUserId}
-											currentUserName={currentUserName}
-											onUpdate={onUpdateMessage}
-											onDelete={onDeleteMessage}
-											onReply={handleReply}
-											repliedToMessage={repliedToMessage}
-										/>
-									</div>
-								))
-							)}
-						</div>
-					</>
-				)}
-			</main>
+											<MessageItem
+												isContinuation={isContinuation}
+												message={message}
+												teammates={teammates}
+												tasks={tasks}
+												currentUserId={currentUserId}
+												currentUserName={currentUserName}
+												onUpdate={onUpdateMessage}
+												onDelete={onDeleteMessage}
+												onReply={handleReply}
+												repliedToMessage={repliedToMessage}
+											/>
+										</div>
+									))
+								)}
+							</div>
+						</>
+					)}
+				</main>
+				<AnimatePresence>
+					{showScrollBottomButton && (
+						<motion.button
+							type='button'
+							className={classes.scrollToBottomButton}
+							onClick={() => scrollToBottom('smooth')}
+							initial={{ opacity: 0, scale: 0.8, y: 10 }}
+							animate={{ opacity: 1, scale: 1, y: 0 }}
+							exit={{ opacity: 0, scale: 0.8, y: 10 }}
+							transition={{ duration: 0.15 }}
+							aria-label='Scroll to bottom'
+						>
+							<svg
+								width='18'
+								height='18'
+								viewBox='0 0 24 24'
+								fill='none'
+								stroke='currentColor'
+								strokeWidth='2.5'
+								strokeLinecap='round'
+								strokeLinejoin='round'
+							>
+								<path d='M12 5v14M19 12l-7 7-7-7' />
+							</svg>
+						</motion.button>
+					)}
+				</AnimatePresence>
+			</div>
+
 			{activeChannel && (
 				<div className={classes.editorContainer}>
 					{replyingTo && (
