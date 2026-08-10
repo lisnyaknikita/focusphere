@@ -6,6 +6,14 @@
 	min-width: 0;
 }
 
+.mainWrapper {
+	flex: 1;
+	min-height: 0;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
 .main {
 	flex: 1;
 	min-height: 0;
@@ -206,5 +214,32 @@
 	&:hover {
 		background-color: var(--primary);
 		color: var(--text);
+	}
+}
+
+.scrollToBottomButton {
+	position: absolute;
+	right: 20px;
+	bottom: 16px;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--save-button-bg);
+	color: var(--save-button-text);
+	border: 1px solid var(--btn-border);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+	transition: transform 0.15s ease, background-color 0.2s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+	}
+
+	&:active {
+		transform: translateY(0) scale(0.95);
 	}
 }

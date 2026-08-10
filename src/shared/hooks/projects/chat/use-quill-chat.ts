@@ -69,8 +69,13 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 
 	const handleSend = () => {
 		if (!quillRef.current) return
-		const content = quillRef.current.root.innerHTML.trim()
-		if (content === '<p><br></p>' || content === '' || quillRef.current.getText().trim() === '') return
+		const root = quillRef.current.root
+		const content = root.innerHTML.trim()
+
+		const hasImage = root.querySelector('img') !== null
+		const hasText = quillRef.current.getText().trim().length > 0
+
+		if (!hasImage && !hasText) return
 
 		onStopTypingRef.current?.()
 		onSendRef.current(content)
@@ -161,6 +166,8 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 				const item = clipboardItems[i]
 				if (item.type.startsWith('image/')) {
 					e.preventDefault()
+					e.stopPropagation()
+					e.stopImmediatePropagation()
 					const file = item.getAsFile()
 					if (file) {
 						processImageUpload(file, quill)
@@ -177,14 +184,15 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 				if (file.type.startsWith('image/')) {
 					e.preventDefault()
 					e.stopPropagation()
+					e.stopImmediatePropagation()
 					processImageUpload(file, quill)
 				}
 			}
 		}
 
 		const editorRoot = quill.root
-		editorRoot.addEventListener('paste', handlePaste)
-		editorRoot.addEventListener('drop', handleDrop)
+		editorRoot.addEventListener('paste', handlePaste, true)
+		editorRoot.addEventListener('drop', handleDrop, true)
 
 		quill.on('text-change', (_delta, _oldDelta, source) => {
 			if (source === 'user') {
@@ -273,8 +281,8 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 		}, 100)
 
 		return () => {
-			editorRoot.removeEventListener('paste', handlePaste)
-			editorRoot.removeEventListener('drop', handleDrop)
+			editorRoot.removeEventListener('paste', handlePaste, true)
+			editorRoot.removeEventListener('drop', handleDrop, true)
 			quillRef.current = null
 			if (containerRef.current) containerRef.current.innerHTML = ''
 		}

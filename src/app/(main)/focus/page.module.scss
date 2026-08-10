@@ -51,3 +51,9 @@
 		transform: translateX(-50px);
 	}
 }
+
+.headerButtons {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}

@@ -164,6 +164,10 @@
 			max-width: 100% !important;
 			min-width: 0;
 
+			&[data-content-type='numberedListItem']:not([data-index])::before {
+				content: '' !important;
+			}
+
 			&[data-content-type='heading'] {
 				--level: 32px !important;
 			}
