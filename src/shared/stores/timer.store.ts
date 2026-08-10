@@ -1,3 +1,5 @@
+import { recordFocusSession } from '@/lib/focus/stats'
+import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -64,7 +66,21 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 			},
 
 			resetTimer: () => {
-				const { settings } = get()
+				const { settings, status, mode, timeLeft } = get()
+
+				const currentActiveMode = status === 'paused' ? mode : status
+				if (currentActiveMode === 'work') {
+					const totalSeconds = settings.flowDuration * 60
+					const spentSeconds = totalSeconds - timeLeft
+					const spentMinutes = Math.floor(spentSeconds / 60)
+
+					if (spentMinutes >= 1) {
+						getCurrentUserId()
+							.then(userId => recordFocusSession(userId, spentMinutes))
+							.catch(() => {})
+					}
+				}
+
 				set({
 					status: 'idle',
 					currentSession: 1,
@@ -100,6 +116,12 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 				const distance = Math.max(0, Math.round((expiry - now) / 1000))
 
 				if (distance <= 0) {
+					if (status === 'work') {
+						getCurrentUserId()
+							.then(userId => recordFocusSession(userId, settings.flowDuration))
+							.catch(() => {})
+					}
+
 					if (typeof window !== 'undefined') {
 						const audio = new Audio('/ding-sound.webm')
 						audio.volume = 0.5
