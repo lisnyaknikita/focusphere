@@ -7,7 +7,7 @@ import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
 import { getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react'
-import { forwardRef, useMemo } from 'react'
+import { forwardRef, useMemo, useRef } from 'react'
 import { EmptyIcon } from '../icons/empty-icon'
 import classes from './text-editor.module.scss'
 
@@ -24,6 +24,8 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		handleTitleBlur,
 		handleEditorBlur,
 	} = useTextEditor(ref)
+
+	const touchStartY = useRef<number | null>(null)
 
 	const customSlashMenuItems = useMemo(() => {
 		if (!editor) return []
@@ -62,15 +64,28 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		)
 	}
 
-	const handleWrapperClick = () => {
+	const handleClick = () => {
 		if (editor) {
 			editor.focus()
 		}
 	}
 
+	const handleTouchStart = (e: React.TouchEvent) => {
+		touchStartY.current = e.touches[0].clientY
+	}
+
+	const handleTouchEnd = (e: React.TouchEvent) => {
+		if (touchStartY.current === null || !editor) return
+		const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY.current)
+		if (deltaY < 10) {
+			editor.focus()
+		}
+		touchStartY.current = null
+	}
+
 	return (
 		<div className={classes.editor}>
-			<div className={classes.scrollContainer} onClick={handleWrapperClick}>
+			<div className={classes.scrollContainer}>
 				<div className={classes.contentWrapper}>
 					<div className={classes.saveStatus}>
 						{isSaving && <span className={classes.saving}>Saving...</span>}
@@ -87,8 +102,9 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 					<div
 						className={classes.bnWrapper}
 						onBlur={handleEditorBlur}
-						onClick={handleWrapperClick}
-						onTouchEnd={handleWrapperClick}
+						onClick={handleClick}
+						onTouchStart={handleTouchStart}
+						onTouchEnd={handleTouchEnd}
 					>
 						<BlockNoteView
 							editor={editor}

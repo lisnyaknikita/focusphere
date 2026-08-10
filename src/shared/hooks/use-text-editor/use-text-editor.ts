@@ -149,12 +149,15 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		triggerIndexing()
 
 		const timer = setTimeout(() => {
-			const blocks = editor.document
-			if (blocks && blocks.length > 0) {
-				const lastBlock = blocks[blocks.length - 1]
-				editor.setTextCursorPosition(lastBlock, 'end')
+			const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+			if (isDesktop) {
+				const blocks = editor.document
+				if (blocks && blocks.length > 0) {
+					const lastBlock = blocks[blocks.length - 1]
+					editor.setTextCursorPosition(lastBlock, 'end')
+				}
+				editor.focus()
 			}
-			editor.focus()
 		}, 150)
 
 		return () => clearTimeout(timer)
