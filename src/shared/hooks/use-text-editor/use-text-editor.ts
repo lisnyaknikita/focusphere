@@ -1,4 +1,5 @@
 import { useNotesContext } from '@/shared/context/notes-context'
+import { uploadBlockNoteImage } from '@/shared/editor-storage'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { PartialBlock } from '@blocknote/core'
 import { useCreateBlockNote } from '@blocknote/react'
@@ -36,6 +37,7 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 
 	const editor = useCreateBlockNote({
 		initialContent: activeNote?.content ? (JSON.parse(activeNote.content) as PartialBlock[]) : undefined,
+		uploadFile: uploadBlockNoteImage,
 	})
 
 	const saveTitle = async (titleToSave: string, silent = false) => {
