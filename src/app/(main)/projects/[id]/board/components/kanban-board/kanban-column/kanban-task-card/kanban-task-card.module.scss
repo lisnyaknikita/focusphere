@@ -5,6 +5,7 @@
 	border: 1px solid var(--btn-border);
 	overflow: hidden;
 	display: flex;
+	touch-action: pan-y;
 	cursor: grab;
 
 	&:hover {

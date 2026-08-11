@@ -32,6 +32,8 @@
 
 .scrollWrapper {
 	overflow-y: auto;
+	touch-action: pan-y;
+	-webkit-overflow-scrolling: touch;
 }
 
 .columnHeader {
