@@ -1,6 +1,14 @@
 import { Column } from '@/shared/types/kanban'
 import { KanbanTask, TaskStatus } from '@/shared/types/kanban-task'
-import { DragEndEvent, DragStartEvent, DragOverEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+	DragEndEvent,
+	DragOverEvent,
+	DragStartEvent,
+	MouseSensor,
+	TouchSensor,
+	useSensor,
+	useSensors,
+} from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -28,7 +36,19 @@ export const useKanbanDnd = ({
 	const [activeColumn, setActiveColumn] = useState<Column | null>(null)
 	const [overColumnId, setOverColumnId] = useState<string | null>(null)
 
-	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
+	const sensors = useSensors(
+		useSensor(MouseSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		}),
+		useSensor(TouchSensor, {
+			activationConstraint: {
+				delay: 200,
+				tolerance: 6,
+			},
+		})
+	)
 
 	const handleDragStart = (event: DragStartEvent): void => {
 		const { active } = event
