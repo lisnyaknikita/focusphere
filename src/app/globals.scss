@@ -319,6 +319,10 @@ ul {
 	}
 }
 
+.bn-drag-handle-menu {
+	left: 0px !important;
+}
+
 .bn-root[data-color-scheme='dark'],
 .bn-root[data-color-scheme='light'] {
 	--bn-colors-editor-background: transparent !important;
