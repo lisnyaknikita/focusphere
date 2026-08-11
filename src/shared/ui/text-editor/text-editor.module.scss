@@ -69,7 +69,7 @@
 
 .titleInput {
 	width: 100%;
-	font-size: 32px;
+	font-size: 32px !important;
 	font-weight: 700;
 	border: none;
 	outline: none;
@@ -80,6 +80,10 @@
 	&::placeholder {
 		color: var(--btn-border);
 		opacity: 0.3;
+	}
+
+	@media screen and (max-width: 480px) {
+		font-size: 26px !important;
 	}
 }
 

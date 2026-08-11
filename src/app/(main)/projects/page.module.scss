@@ -6,8 +6,12 @@
 	height: 100%;
 	position: relative;
 
+	@media screen and (max-width: 768px) {
+		padding: 8px 0px 10px 0;
+	}
+
 	@media screen and (max-width: 430px) {
-		padding: 9px 0;
+		padding: 8px 0;
 	}
 }
 
@@ -19,6 +23,10 @@
 	margin-bottom: 40px;
 
 	@media screen and (max-width: 768px) {
+		flex-wrap: wrap;
+		gap: 12px 0;
+		margin-bottom: 20px;
+
 		> div:first-child {
 			margin-left: 13%;
 		}
