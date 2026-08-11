@@ -25,6 +25,9 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 	const calendar = useNextCalendarApp({
 		views: [createViewMonthGrid(), createViewWeek(), createViewDay()],
 		defaultView: VIEW_TO_SX[defaultView],
+		weekOptions: {
+			gridHeight: 1032,
+		},
 		events: [],
 		plugins: [eventsService, calendarControls, dragAndDropPlugin, resizePlugin, createCurrentTimePlugin(), eventModal],
 		callbacks: {
