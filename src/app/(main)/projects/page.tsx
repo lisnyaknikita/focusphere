@@ -23,8 +23,19 @@ export default function Projects() {
 	const [debouncedSearch, setDebouncedSearch] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [favoritesOnly, setFavoritesOnly] = useState(false)
+	const [isMobile, setIsMobile] = useState(false)
 
 	const { isPro, isBillingLoading, openPaywall } = useBilling()
+
+	useEffect(() => {
+		const mediaQuery = window.matchMedia('(max-width: 767px)')
+		setIsMobile(mediaQuery.matches)
+
+		const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+		mediaQuery.addEventListener('change', handler)
+
+		return () => mediaQuery.removeEventListener('change', handler)
+	}, [])
 
 	useEffect(() => {
 		const handler = setTimeout(() => {
@@ -91,7 +102,10 @@ export default function Projects() {
 							lockedTabs={!isBillingLoading && !isPro ? ['team'] : []}
 						/>
 						<Search value={searchQuery} onChange={setSearchQuery} />
-						<ActionTooltip text={favoritesOnly ? 'Show all projects' : 'Show favorites only'}>
+						<ActionTooltip
+							text={favoritesOnly ? 'Show all projects' : 'Show favorites only'}
+							style={isMobile ? { marginLeft: 'auto' } : undefined}
+						>
 							{(setRef, refProps) => (
 								<button
 									ref={setRef}

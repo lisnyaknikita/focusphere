@@ -70,6 +70,7 @@ export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: Nav
 							padding: '4px 8px',
 							borderRadius: '5px',
 							fontSize: '14px',
+							whiteSpace: 'nowrap',
 							zIndex: 1000,
 						}}
 						role='tooltip'
