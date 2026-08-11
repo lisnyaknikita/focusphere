@@ -8,8 +8,8 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
-import { useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
 
 interface CalendarAppProps {
 	onQuickCreate?: (dateTime: Temporal.ZonedDateTime) => void
@@ -32,6 +32,9 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 	const calendar = useNextCalendarApp({
 		views: [createViewWeek(), createViewDay()],
 		defaultView,
+		weekOptions: {
+			gridHeight: 1032,
+		},
 		events: [],
 		plugins: [eventsService, calendarControls, createCurrentTimePlugin(), dragAndDropPlugin, resizePlugin, eventModal],
 		callbacks: {
@@ -46,8 +49,6 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 
 					const startDate = formatForAppwrite(start)
 					const endDate = formatForAppwrite(end)
-
-					console.log('Sending to Appwrite:', { startDate, endDate })
 
 					await updateTimeBlock(id as string, {
 						startDate,
