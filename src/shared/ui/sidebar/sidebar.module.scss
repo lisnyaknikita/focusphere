@@ -52,13 +52,11 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 8px;
-	background-color: var(--secondary);
 	border: 1px solid var(--btn-border);
 	color: var(--text);
 	z-index: 90;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	transition: all 0.2s ease;
 
 	&:hover {
