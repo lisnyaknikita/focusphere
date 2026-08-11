@@ -1,14 +1,15 @@
 import { autoUpdate, flip, offset, Placement, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
-import { ReactNode, useState } from 'react'
+import { CSSProperties, ReactNode, useState } from 'react'
 
 interface ActionTooltipProps {
 	children: (setRef: (node: HTMLElement | null) => void, referenceProps: Record<string, unknown>) => ReactNode
 	text: string
 	isActive?: boolean
 	placement?: Placement
+	style?: CSSProperties
 }
 
-export const ActionTooltip = ({ children, text, isActive = true, placement = 'top' }: ActionTooltipProps) => {
+export const ActionTooltip = ({ children, text, isActive = true, placement = 'top', style }: ActionTooltipProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const { refs, floatingStyles, context } = useFloating({
@@ -22,7 +23,7 @@ export const ActionTooltip = ({ children, text, isActive = true, placement = 'to
 	const { getReferenceProps, getFloatingProps } = useInteractions([useHover(context)])
 
 	return (
-		<div style={{ display: 'inline-block' }}>
+		<div style={{ display: 'inline-block', ...style }}>
 			{children(refs.setReference, getReferenceProps())}
 			{isOpen && isActive && (
 				<div

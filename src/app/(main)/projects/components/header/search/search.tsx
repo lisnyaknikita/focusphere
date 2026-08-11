@@ -12,7 +12,8 @@ interface SearchProps {
 }
 
 export const Search = ({ value, onChange }: SearchProps) => {
-	const [isExpanded, setIsExpanded] = useState(false)
+	const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+	const [isExpanded, setIsExpanded] = useState(isMobile)
 	const inputRef = useRef<HTMLInputElement>(null)
 
 	const handleExpand = () => {
@@ -21,7 +22,7 @@ export const Search = ({ value, onChange }: SearchProps) => {
 	}
 
 	const handleCollapse = () => {
-		if (!value) setIsExpanded(false)
+		if (!value && !isMobile) setIsExpanded(false)
 	}
 
 	return (
