@@ -4,7 +4,6 @@ import { QuickAccess } from './components/quick-access/quick-access'
 import { Title } from './components/title/title'
 
 import { DailyTasksModalWrapper } from '@/shared/ui/daily-tasks-modal-wrapper/daily-tasks-modal-warpper'
-import { QuickIdeasDrawerWrapper } from './components/quick-ideas-drawer-wrapper/quick-ideas-drawer-wrapper'
 import { QuickIdeasWidget } from './components/quick-ideas-widget/quick-ideas-widget'
 import classes from './page.module.scss'
 
@@ -19,7 +18,6 @@ export default function Dashboard() {
 			<QuickAccess />
 			<EventModalWrapper />
 			<DailyTasksModalWrapper />
-			<QuickIdeasDrawerWrapper />
 		</div>
 	)
 }

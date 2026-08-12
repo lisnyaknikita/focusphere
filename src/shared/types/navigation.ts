@@ -8,4 +8,5 @@ export type NavItem = {
 	isButton?: boolean
 	showIconSvg?: ReactElement
 	hideIconSvg?: ReactElement
+	shortcut?: string
 }

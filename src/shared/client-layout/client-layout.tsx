@@ -1,5 +1,6 @@
 'use client'
 
+import { QuickIdeasDrawerWrapper } from '@/app/(main)/dashboard/components/quick-ideas-drawer-wrapper/quick-ideas-drawer-wrapper'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
@@ -45,6 +46,9 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 			</div>
 			<Suspense fallback={null}>
 				<QuickIdeaModalWrapper />
+			</Suspense>
+			<Suspense fallback={null}>
+				<QuickIdeasDrawerWrapper />
 			</Suspense>
 		</QueryClientProvider>
 	)
