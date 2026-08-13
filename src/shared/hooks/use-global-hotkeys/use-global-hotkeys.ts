@@ -1,5 +1,6 @@
 'use client'
 
+import { useSidebarStore } from '@/shared/stores/sidebar.store'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { HotkeyConfig, useHotkeys } from '../use-hotkeys/use-hotkeys'
@@ -9,15 +10,15 @@ export const useGlobalHotkeys = () => {
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 
-	const toggleDrawerParam = useCallback(
-		(drawerName: string) => {
+	const toggleQueryParam = useCallback(
+		(paramKey: 'modal' | 'drawer', paramValue: string) => {
 			const params = new URLSearchParams(searchParams?.toString())
-			const currentDrawer = params.get('drawer')
+			const currentValue = params.get(paramKey)
 
-			if (currentDrawer === drawerName) {
-				params.delete('drawer')
+			if (currentValue === paramValue) {
+				params.delete(paramKey)
 			} else {
-				params.set('drawer', drawerName)
+				params.set(paramKey, paramValue)
 			}
 
 			const queryString = params.toString()
@@ -26,26 +27,37 @@ export const useGlobalHotkeys = () => {
 		[pathname, router, searchParams]
 	)
 
-	const setModalParam = useCallback(
-		(modalName: string) => {
-			const params = new URLSearchParams(searchParams?.toString())
-			params.set('modal', modalName)
-			router.push(`${pathname}?${params.toString()}`, { scroll: false })
-		},
-		[pathname, router, searchParams]
-	)
-
 	const shortcuts: HotkeyConfig[] = useMemo(
 		() => [
 			{
+				key: 'e',
+				alt: true,
+				callback: () => toggleQueryParam('modal', 'create-event'),
+			},
+			{
+				key: 't',
+				alt: true,
+				callback: () => toggleQueryParam('modal', 'create-daily-task'),
+			},
+			{
 				key: 'i',
 				meta: true,
-				callback: () => toggleDrawerParam('quick-ideas'),
+				callback: () => toggleQueryParam('drawer', 'quick-ideas'),
 			},
 			{
 				key: 'i',
 				ctrl: true,
-				callback: () => toggleDrawerParam('quick-ideas'),
+				callback: () => toggleQueryParam('drawer', 'quick-ideas'),
+			},
+			{
+				key: 'b',
+				meta: true,
+				callback: () => useSidebarStore.getState().toggleSidebar(),
+			},
+			{
+				key: 'b',
+				ctrl: true,
+				callback: () => useSidebarStore.getState().toggleSidebar(),
 			},
 			{ key: '1', alt: true, callback: () => router.push('/dashboard') },
 			{ key: '2', alt: true, callback: () => router.push('/calendar') },
@@ -55,7 +67,7 @@ export const useGlobalHotkeys = () => {
 			{ key: '6', alt: true, callback: () => router.push('/journal') },
 			{ key: '7', alt: true, callback: () => router.push('/notes') },
 		],
-		[router, pathname, searchParams, setModalParam]
+		[router, pathname, searchParams, toggleQueryParam]
 	)
 
 	useHotkeys(shortcuts)

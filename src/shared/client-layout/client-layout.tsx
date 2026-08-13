@@ -4,6 +4,8 @@ import { QuickIdeasDrawerWrapper } from '@/app/(main)/dashboard/components/quick
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
+import { DailyTasksModalWrapper } from '../ui/daily-tasks-modal-wrapper/daily-tasks-modal-warpper'
+import { EventModalWrapper } from '../ui/event-modal-wrapper/event-modal-wrapper'
 import { GlobalHotkeys } from '../ui/global-hotkeys/global-hotkeys'
 import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea-modal-wrapper'
 import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
@@ -45,10 +47,10 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 				)}
 			</div>
 			<Suspense fallback={null}>
-				<QuickIdeaModalWrapper />
-			</Suspense>
-			<Suspense fallback={null}>
 				<QuickIdeasDrawerWrapper />
+				<DailyTasksModalWrapper />
+				<EventModalWrapper />
+				<QuickIdeaModalWrapper />
 			</Suspense>
 		</QueryClientProvider>
 	)

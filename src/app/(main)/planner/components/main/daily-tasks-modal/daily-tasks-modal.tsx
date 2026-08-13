@@ -16,7 +16,7 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import classes from './daily-tasks-modal.module.scss'
 import { SortableTaskItem } from './sortable-task-item/sortable-task-item'
@@ -25,9 +25,10 @@ interface DailyTasksModalProps {
 	date: string
 	onClose: () => void
 	onTasksChanged?: () => void
+	autoCreate?: boolean
 }
 
-export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksModalProps) => {
+export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: DailyTasksModalProps) => {
 	const [taskToDelete, setTaskToDelete] = useState<DailyTask | null>(null)
 	const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 	const [editingTitle, setEditingTitle] = useState('')
@@ -98,6 +99,12 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged }: DailyTasksMod
 		setEditingTaskId(null)
 		setEditingTitle('')
 	}
+
+	useEffect(() => {
+		if (autoCreate) {
+			setIsCreating(true)
+		}
+	}, [autoCreate, setIsCreating])
 
 	return (
 		<>
