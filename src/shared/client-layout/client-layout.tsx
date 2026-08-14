@@ -8,6 +8,7 @@ import { DailyTasksModalWrapper } from '../ui/daily-tasks-modal-wrapper/daily-ta
 import { EventModalWrapper } from '../ui/event-modal-wrapper/event-modal-wrapper'
 import { GlobalHotkeys } from '../ui/global-hotkeys/global-hotkeys'
 import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea-modal-wrapper'
+import { ShortcutsModalWrapper } from '../ui/shortcuts-modal/shortcuts-modal-wrapper'
 import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
 import classes from './client-layout.module.scss'
 
@@ -51,6 +52,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 				<DailyTasksModalWrapper />
 				<EventModalWrapper />
 				<QuickIdeaModalWrapper />
+				<ShortcutsModalWrapper />
 			</Suspense>
 		</QueryClientProvider>
 	)

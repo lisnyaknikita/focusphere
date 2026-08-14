@@ -50,6 +50,11 @@ export const useGlobalHotkeys = () => {
 				callback: () => toggleQueryParam('drawer', 'quick-ideas'),
 			},
 			{
+				key: '?',
+				shift: true,
+				callback: () => toggleQueryParam('modal', 'shortcuts'),
+			},
+			{
 				key: 'b',
 				meta: true,
 				callback: () => useSidebarStore.getState().toggleSidebar(),
@@ -59,6 +64,7 @@ export const useGlobalHotkeys = () => {
 				ctrl: true,
 				callback: () => useSidebarStore.getState().toggleSidebar(),
 			},
+
 			{ key: '1', alt: true, callback: () => router.push('/dashboard') },
 			{ key: '2', alt: true, callback: () => router.push('/calendar') },
 			{ key: '3', alt: true, callback: () => router.push('/planner') },
