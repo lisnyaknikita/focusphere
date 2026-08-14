@@ -18,7 +18,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react
 import { OAuthProvider } from 'appwrite'
 import clsx from 'clsx'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { BeatLoader } from 'react-spinners'
@@ -39,11 +39,12 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const { isEnabled, setEnabled } = useTimeBlockUIStore()
 
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
-
 	const { isDark, handleToggle } = useThemeToggle()
 
 	const { isPro, stripeCustomerId, openPaywall, isBillingEnabled } = useBilling()
 	const pathname = usePathname()
+	const router = useRouter()
+	const searchParams = useSearchParams()
 	const [isRedirecting, setIsRedirecting] = useState(false)
 
 	const { refs: settingsRefs, floatingStyles: settingsFloatingStyles } = useFloating({
@@ -91,6 +92,12 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const handleUpgrade = () => {
 		setIsVisible(false)
 		openPaywall('')
+	}
+
+	const handleOpenShortcuts = () => {
+		const params = new URLSearchParams(searchParams?.toString())
+		params.set('modal', 'shortcuts')
+		router.push(`${pathname}?${params.toString()}`, { scroll: false })
 	}
 
 	return (
@@ -216,8 +223,14 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 						)}
 						<hr className={classes.divider} />
 						<section className={classes.section}>
-							<span className={classes.sectionLabel}>SUPPORT</span>
-							<FeedbackSection onOpenModal={() => setIsFeedbackOpen(true)} />
+							<span className={classes.sectionLabel}>SUPPORT & HELP</span>
+							<div className={classes.settingsStack}>
+								<button type='button' className={classes.settingsCardClickable} onClick={handleOpenShortcuts}>
+									<span>Keyboard shortcuts</span>
+									<kbd className={classes.kbdBadge}>?</kbd>
+								</button>
+								<FeedbackSection onOpenModal={() => setIsFeedbackOpen(true)} />
+							</div>
 						</section>
 					</div>
 					<div className={classes.modalFooter}>

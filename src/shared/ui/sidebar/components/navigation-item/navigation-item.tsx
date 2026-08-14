@@ -1,8 +1,7 @@
 import { NavItem } from '@/shared/types/navigation'
-import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
+import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { useState } from 'react'
 import classes from './navigation-item.module.scss'
 
 type NavigationItemProps = {
@@ -13,16 +12,6 @@ type NavigationItemProps = {
 }
 
 export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: NavigationItemProps) => {
-	const [isOpen, setIsOpen] = useState(false)
-
-	const { refs, floatingStyles } = useFloating({
-		open: isOpen,
-		onOpenChange: setIsOpen,
-		middleware: [offset(10), flip(), shift()],
-		whileElementsMounted: autoUpdate,
-		placement: 'right',
-	})
-
 	const icon = item.isButton
 		? isCollapsed
 			? item.showIconSvg || item.iconSvg
@@ -30,6 +19,7 @@ export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: Nav
 		: item.iconSvg
 
 	const label = item.isButton && !isCollapsed ? 'Hide' : item.label
+	const tooltipText = item.shortcut ? `${label} (${item.shortcut})` : label
 
 	const content = (
 		<>
@@ -43,42 +33,31 @@ export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: Nav
 	if (item.isButton) {
 		return (
 			<li className={classes.navigationItem}>
-				<button className={classes.navigationItemLink} onClick={onHideClick}>
-					{content}
-				</button>
+				<ActionTooltip text={tooltipText} isActive={isCollapsed} placement='right' style={{ width: '100%' }}>
+					{(setRef, refProps) => (
+						<button ref={setRef} className={classes.navigationItemLink} onClick={onHideClick} {...refProps}>
+							{content}
+						</button>
+					)}
+				</ActionTooltip>
 			</li>
 		)
 	}
 
 	return (
 		<li className={classes.navigationItem}>
-			<Link
-				href={item.href || '#'}
-				className={clsx(classes.navigationItemLink, isActive && classes.active)}
-				ref={refs.setReference}
-				onMouseEnter={() => isCollapsed && !item.isButton && setIsOpen(true)}
-				onMouseLeave={() => setIsOpen(false)}
-			>
-				{content}
-				{isOpen && isCollapsed && !item.isButton && (
-					<div
-						ref={refs.setFloating}
-						style={{
-							...floatingStyles,
-							background: 'var(--save-button-bg)',
-							color: 'var(--save-button-text)',
-							padding: '4px 8px',
-							borderRadius: '5px',
-							fontSize: '14px',
-							whiteSpace: 'nowrap',
-							zIndex: 1000,
-						}}
-						role='tooltip'
+			<ActionTooltip text={tooltipText} isActive={isCollapsed} placement='right' style={{ width: '100%' }}>
+				{(setRef, refProps) => (
+					<Link
+						ref={setRef}
+						href={item.href || '#'}
+						className={clsx(classes.navigationItemLink, isActive && classes.active)}
+						{...refProps}
 					>
-						{label}
-					</div>
+						{content}
+					</Link>
 				)}
-			</Link>
+			</ActionTooltip>
 		</li>
 	)
 }

@@ -5,7 +5,7 @@
 	justify-content: space-between;
 	padding: 12px 16px;
 	background-color: var(--secondary);
-	border: none;
+	border: 1px solid transparent;
 	border-radius: 10px;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -14,10 +14,7 @@
 
 	&:hover {
 		background-color: var(--hover);
-
-		.arrow {
-			transform: translateX(2px);
-		}
+		border: 1px solid var(--textSecondary);
 	}
 }
 

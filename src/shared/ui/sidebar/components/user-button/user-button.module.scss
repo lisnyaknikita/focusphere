@@ -286,6 +286,56 @@
 	line-height: 1;
 }
 
+.settingsStack {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.settingsCardClickable {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 12px 16px;
+	background-color: var(--secondary);
+	border-radius: 10px;
+	border: 1px solid transparent;
+	color: var(--text);
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	font-family: inherit;
+	transition: all 0.2s ease;
+
+	> span {
+		font-size: 15px;
+		font-weight: 500;
+	}
+
+	&:hover {
+		background-color: var(--hover);
+		border: 1px solid var(--textSecondary);
+	}
+}
+
+.kbdBadge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 6px;
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--textSecondary);
+	background: var(--primary);
+	border: 1px solid var(--hover);
+	border-radius: 5px;
+	box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+}
+
 .logoutOverlay {
 	position: fixed;
 	top: 0;

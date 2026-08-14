@@ -64,8 +64,13 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		)
 	}
 
-	const handleClick = () => {
-		if (editor) {
+	const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+		if (e.target === e.currentTarget && editor) {
+			const blocks = editor.document
+			if (blocks && blocks.length > 0) {
+				const lastBlock = blocks[blocks.length - 1]
+				editor.setTextCursorPosition(lastBlock, 'end')
+			}
 			editor.focus()
 		}
 	}
@@ -74,10 +79,16 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		touchStartY.current = e.touches[0].clientY
 	}
 
-	const handleTouchEnd = (e: React.TouchEvent) => {
+	const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
 		if (touchStartY.current === null || !editor) return
 		const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY.current)
-		if (deltaY < 10) {
+
+		if (deltaY < 10 && e.target === e.currentTarget) {
+			const blocks = editor.document
+			if (blocks && blocks.length > 0) {
+				const lastBlock = blocks[blocks.length - 1]
+				editor.setTextCursorPosition(lastBlock, 'end')
+			}
 			editor.focus()
 		}
 		touchStartY.current = null

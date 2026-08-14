@@ -1,9 +1,10 @@
 'use client'
 
+import { useHotkeys } from '@/shared/hooks/use-hotkeys/use-hotkeys'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { SearchIcon } from '@/shared/ui/icons/search-icon'
 import clsx from 'clsx'
-import { useRef, useState } from 'react'
+import { KeyboardEvent, useMemo, useRef, useState } from 'react'
 import classes from './search.module.scss'
 
 interface SearchProps {
@@ -18,16 +19,51 @@ export const Search = ({ value, onChange }: SearchProps) => {
 
 	const handleExpand = () => {
 		setIsExpanded(true)
-		inputRef.current?.focus()
+		setTimeout(() => {
+			inputRef.current?.focus()
+			inputRef.current?.select()
+		}, 50)
 	}
 
 	const handleCollapse = () => {
 		if (!value && !isMobile) setIsExpanded(false)
 	}
 
+	const searchShortcuts = useMemo(
+		() => [
+			{
+				key: '/',
+				callback: () => handleExpand(),
+			},
+			{
+				key: 'f',
+				meta: true,
+				callback: () => handleExpand(),
+			},
+			{
+				key: 'f',
+				ctrl: true,
+				callback: () => handleExpand(),
+			},
+		],
+		[]
+	)
+
+	useHotkeys(searchShortcuts)
+
+	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Escape') {
+			if (value) {
+				onChange('')
+			} else {
+				inputRef.current?.blur()
+			}
+		}
+	}
+
 	return (
 		<div className={clsx(classes.searchWrapper, isExpanded && 'expanded')}>
-			<ActionTooltip text='Search projects' isActive={!isExpanded}>
+			<ActionTooltip text='Search projects (/ or ⌘F)' isActive={!isExpanded}>
 				{(setRef, refProps) => (
 					<button ref={setRef} className={classes.searchIcon} onClick={handleExpand} aria-label='Search' {...refProps}>
 						<SearchIcon />
@@ -38,10 +74,11 @@ export const Search = ({ value, onChange }: SearchProps) => {
 				ref={inputRef}
 				type='text'
 				className={classes.searchInput}
-				placeholder='Search project'
+				placeholder='Search project...'
 				value={value}
 				onChange={e => onChange(e.target.value)}
 				onBlur={handleCollapse}
+				onKeyDown={handleKeyDown}
 			/>
 			{value && (
 				<button onClick={() => onChange('')} className={classes.clearBtn} onMouseDown={e => e.preventDefault()}>

@@ -84,6 +84,7 @@ export const Timer = () => {
 						bottom: '-40px',
 						fontSize: '10px',
 						opacity: 0.5,
+						cursor: 'pointer',
 					}}
 				>
 					⏩ Test Transition (5s left)

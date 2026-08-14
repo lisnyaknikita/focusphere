@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { Logo } from './components/logo/logo'
 
 import { useFocusModeStore } from '@/shared/stores/focus-mode.store'
+import { useSidebarStore } from '@/shared/stores/sidebar.store'
 import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { MenuIcon } from '../icons/menu-icon'
@@ -13,20 +14,15 @@ import { navItems } from './navigation-items'
 import classes from './sidebar.module.scss'
 
 export const Sidebar = () => {
-	const [isCollapsed, setIsCollapsed] = useState(() => {
-		if (typeof window !== 'undefined') {
-			const saved = localStorage.getItem('sidebar-collapsed')
-			return saved === 'true'
-		}
-		return false
-	})
+	const isCollapsed = useSidebarStore(s => s.isCollapsed)
+	const isMobileOpen = useSidebarStore(s => s.isMobileOpen)
+	const toggleSidebar = useSidebarStore(s => s.toggleSidebar)
+	const setIsMobileOpen = useSidebarStore(s => s.setIsMobileOpen)
 
 	const pathname = usePathname()
 	const focusModes = useFocusModeStore(s => s.focusModes)
 	const setFocusMode = useFocusModeStore(s => s.setFocusMode)
 	const [hasHydrated, setHasHydrated] = useState(false)
-
-	const [isMobileOpen, setIsMobileOpen] = useState(false)
 
 	useEffect(() => {
 		setHasHydrated(true)
@@ -61,19 +57,8 @@ export const Sidebar = () => {
 	}, [pathname, focusModes, hasHydrated, isProjectNotesPage])
 
 	useEffect(() => {
-		const savedState = localStorage.getItem('sidebar-collapsed')
-		if (savedState !== null) {
-			setIsCollapsed(savedState === 'true')
-		}
-	}, [])
-
-	useEffect(() => {
-		localStorage.setItem('sidebar-collapsed', String(isCollapsed))
-	}, [isCollapsed])
-
-	useEffect(() => {
 		setIsMobileOpen(false)
-	}, [pathname])
+	}, [pathname, setIsMobileOpen])
 
 	useEffect(() => {
 		if (isMobileOpen) {
@@ -85,14 +70,6 @@ export const Sidebar = () => {
 			document.body.style.overflow = ''
 		}
 	}, [isMobileOpen])
-
-	const onHideClick = () => {
-		if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-			setIsMobileOpen(false)
-		} else {
-			setIsCollapsed(prev => !prev)
-		}
-	}
 
 	return (
 		<>
@@ -122,7 +99,7 @@ export const Sidebar = () => {
 								item={item}
 								isCollapsed={isCollapsed}
 								isActive={(!item.isButton && item.href === pathname) || pathname.startsWith(`${item.href}/`)}
-								onHideClick={onHideClick}
+								onHideClick={toggleSidebar}
 							/>
 						))}
 					</ul>

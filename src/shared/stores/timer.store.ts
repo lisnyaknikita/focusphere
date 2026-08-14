@@ -29,6 +29,47 @@ interface TimerActions {
 	// jumpToFinish: () => void
 }
 
+let finishAudio: HTMLAudioElement | null = null
+
+function getFinishAudio(): HTMLAudioElement | null {
+	if (typeof window === 'undefined') return null
+	if (!finishAudio) {
+		finishAudio = new Audio('/ding-sound.webm')
+		finishAudio.volume = 0.5
+	}
+	return finishAudio
+}
+
+export function unlockAudio() {
+	const audio = getFinishAudio()
+	if (!audio) return
+
+	const originalVolume = audio.volume
+	audio.volume = 0
+	const playPromise = audio.play()
+
+	if (playPromise !== undefined) {
+		playPromise
+			.then(() => {
+				audio.pause()
+				audio.currentTime = 0
+				audio.volume = originalVolume
+			})
+			.catch(() => {
+				audio.volume = originalVolume
+			})
+	}
+}
+
+export function playFinishSound() {
+	const audio = getFinishAudio()
+	if (!audio) return
+
+	audio.currentTime = 0
+	audio.volume = 0.5
+	audio.play().catch(err => console.error('Audio error: ', err))
+}
+
 export const useTimerStore = create<TimerState & TimerActions>()(
 	persist(
 		(set, get) => ({
@@ -44,6 +85,7 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 			},
 
 			startTimer: () => {
+				unlockAudio()
 				const { status, timeLeft, settings, mode } = get()
 				let nextStatus: 'work' | 'break' = mode
 
@@ -123,9 +165,7 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 					}
 
 					if (typeof window !== 'undefined') {
-						const audio = new Audio('/ding-sound.webm')
-						audio.volume = 0.5
-						audio.play().catch(err => console.error('Audio error: ', err))
+						playFinishSound()
 
 						if ('Notification' in window && Notification.permission === 'granted') {
 							new Notification(status === 'work' ? 'Break Time! ☕' : 'Back to Work! 🚀', {
