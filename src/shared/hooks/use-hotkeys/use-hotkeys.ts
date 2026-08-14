@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 
 export interface HotkeyConfig {
-	code: string
+	key: string
 	alt?: boolean
 	ctrl?: boolean
 	meta?: boolean
@@ -19,17 +19,19 @@ export const useHotkeys = (hotkeys: HotkeyConfig[]) => {
 			const isInputField = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
 
 			for (const config of hotkeys) {
-				if (isInputField && !config.allowInInputs) {
-					continue
-				}
+				if (isInputField && !config.allowInInputs) continue
 
-				const matchAlt = config.alt ? e.altKey : !e.altKey
-				const matchCtrl = config.ctrl ? e.ctrlKey : !e.ctrlKey
-				const matchMeta = config.meta ? e.metaKey : !e.metaKey
-				const matchShift = config.shift ? e.shiftKey : !e.shiftKey
+				const matchAlt = !!config.alt === e.altKey
+				const matchCtrl = !!config.ctrl === e.ctrlKey
+				const matchMeta = !!config.meta === e.metaKey
+				const matchShift = !!config.shift === e.shiftKey
+
+				const targetKey = config.key.toLowerCase()
+				const currentKey = e.key.toLowerCase()
+				const currentCode = e.code.toLowerCase()
 
 				const matchKey =
-					e.code.toLowerCase() === config.code.toLowerCase() || e.key.toLowerCase() === config.code.toLowerCase()
+					currentKey === targetKey || currentCode === `digit${targetKey}` || currentCode === `key${targetKey}`
 
 				if (matchAlt && matchCtrl && matchMeta && matchShift && matchKey) {
 					e.preventDefault()

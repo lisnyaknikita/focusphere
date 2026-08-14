@@ -3,18 +3,24 @@
 import { EventModal } from '@/app/(main)/calendar/components/event-modal/event-modal'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useQueryClient } from '@tanstack/react-query'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
 const EventModalContent = () => {
 	const router = useRouter()
+	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const queryClient = useQueryClient()
 
 	const isOpen = searchParams.get('modal') === 'create-event'
 
 	const handleClose = () => {
-		router.push('/dashboard')
+		const params = new URLSearchParams(searchParams?.toString())
+		params.delete('modal')
+		const queryString = params.toString()
+
+		router.push(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false })
+
 		queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] })
 		queryClient.invalidateQueries({ queryKey: ['events-today-google'] })
 		router.refresh()

@@ -94,6 +94,7 @@ export const QuickIdeasDrawer = ({ isOpen, onClose }: QuickIdeasDrawerProps) => 
 								onKeyDown={handleCreateInDrawer}
 								disabled={isSaving}
 								className={classes.createInput}
+								autoFocus
 							/>
 						</div>
 
