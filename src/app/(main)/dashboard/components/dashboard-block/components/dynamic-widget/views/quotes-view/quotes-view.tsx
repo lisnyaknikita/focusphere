@@ -1,17 +1,13 @@
-'use client'
-
-import { BeatLoader } from 'react-spinners'
-
-import classes from './quotes.module.scss'
-
 import { merriweather } from '@/shared/fonts/font-merriweather'
 import { useQuote } from '@/shared/hooks/quotes/useQuote'
+import { BeatLoader } from 'react-spinners'
+import classes from './quotes-view.module.scss'
 
-export const QuotesBlock = () => {
+export const QuotesView = () => {
 	const { quote, isLoading } = useQuote()
 
 	return (
-		<section className={`${classes.quotes} ${merriweather.className}`}>
+		<div className={`${classes.quotes} ${merriweather.className}`}>
 			{isLoading || !quote ? (
 				<BeatLoader color='#aaa' size={10} className={classes.loader} />
 			) : (
@@ -20,6 +16,6 @@ export const QuotesBlock = () => {
 					<div className={classes.quoteAuthor}>{quote.author}</div>
 				</>
 			)}
-		</section>
+		</div>
 	)
 }

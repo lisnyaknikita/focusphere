@@ -1,4 +1,5 @@
-.quotes {
+.dynamicWidget {
+	position: relative;
 	text-align: center;
 	grid-column: 2;
 	grid-row: 1 / span 2;
@@ -8,6 +9,7 @@
 
 	@media screen and (max-width: 1024px) {
 		order: 2;
+		flex: 1;
 	}
 
 	@media screen and (max-width: 430px) {
@@ -15,21 +17,18 @@
 	}
 }
 
-.quoteContent {
-	font-size: 20px;
-	font-style: italic;
-	color: var(--text);
-	position: relative;
-	margin-bottom: 16px;
+.header {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 5;
 }
 
-.quoteAuthor {
-	font-size: 16px;
-	color: #aaa;
-	text-align: right;
-	font-style: normal;
-}
-
-.loader {
-	margin: 0 auto;
+.content {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }

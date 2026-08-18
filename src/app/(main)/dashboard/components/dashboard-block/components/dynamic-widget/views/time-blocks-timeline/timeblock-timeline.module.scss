@@ -1,0 +1,244 @@
+.timelineWrapper {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	box-sizing: border-box;
+	overflow: hidden;
+	min-height: 0;
+}
+
+.timelineHeader {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 14px;
+	flex-shrink: 0;
+}
+
+.title {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--text);
+}
+
+.countBadge {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--textSecondary);
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	padding: 2px 6px;
+	border-radius: 4px;
+}
+
+.timelineStream {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	overflow-y: auto;
+	padding-right: 4px;
+	min-height: 0;
+
+	&::-webkit-scrollbar {
+		width: 2px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--btn-border);
+		border-radius: 4px;
+	}
+}
+
+.blockCard {
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	border-left: 4px solid var(--btn-border);
+	border-radius: 8px;
+	padding: 10px 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	text-align: left;
+	transition: background-color 0.2s ease, opacity 0.2s ease;
+
+	&.past {
+		opacity: 0.45;
+
+		&:hover {
+			opacity: 0.85;
+		}
+	}
+
+	&.current {
+		opacity: 1;
+		background-color: var(--hover);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
+
+	&.upcoming {
+		opacity: 0.9;
+	}
+}
+
+.cardHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.timeInfo {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.timeRange {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--textSecondary);
+}
+
+.nowBadge {
+	font-size: 9px;
+	font-weight: 700;
+	color: var(--save-button-text);
+	background-color: var(--save-button-bg);
+	padding: 1px 5px;
+	border-radius: 4px;
+	letter-spacing: 0.5px;
+}
+
+.blockTitle {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text);
+	margin: 0;
+	line-height: 1.3;
+}
+
+.scheduleEndSection {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 8px;
+	padding-top: 4px;
+	flex-shrink: 0;
+}
+
+.endDivider {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		border-top: 1px dashed var(--btn-border);
+		z-index: 1;
+	}
+
+	span {
+		position: relative;
+		z-index: 2;
+		background-color: var(--secondaryFull);
+		padding: 0 8px;
+		font-size: 10px;
+		font-weight: 500;
+		color: var(--textSecondary);
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+}
+
+.actionPlannerCard {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 10px 12px;
+	background-color: transparent;
+	border: 1px dashed var(--btn-border);
+	border-radius: 8px;
+	color: var(--textSecondary);
+	font-size: 12px;
+	font-weight: 500;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		color: var(--text);
+		background-color: var(--hover);
+		border-color: var(--textSecondary);
+
+		.arrowIcon {
+			transform: translateX(3px);
+			color: var(--text);
+		}
+	}
+}
+
+.arrowIcon {
+	font-size: 14px;
+	transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.emptyState {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 24px;
+	box-sizing: border-box;
+}
+
+.emptyTitle {
+	font-size: 14px;
+	color: var(--textSecondary);
+	margin: 0;
+	text-align: center;
+}
+
+.plannerBtn {
+	font-size: 13px;
+	font-weight: 500;
+	font-family: inherit;
+	color: var(--save-button-text);
+	background-color: var(--save-button-bg);
+	border: none;
+	border-radius: 6px;
+	padding: 6px 14px;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+
+	&:hover {
+		opacity: 0.85;
+	}
+}
+
+.loaderWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	min-height: 180px;
+}
