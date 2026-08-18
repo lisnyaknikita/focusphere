@@ -1,0 +1,68 @@
+.dropdownWrapper {
+	position: relative;
+	display: inline-block;
+	z-index: 10;
+}
+
+.triggerButton {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 8px;
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	color: var(--textSecondary);
+	font-size: 13px;
+	font-weight: 500;
+	font-family: inherit;
+	cursor: pointer;
+	transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+
+	&:hover,
+	&.active {
+		color: var(--text);
+		background-color: var(--hover);
+	}
+}
+
+.dropdownMenu {
+	position: absolute;
+	top: calc(100% + 4px);
+	right: 0;
+	min-width: 120px;
+	padding: 4px;
+	background-color: var(--primary);
+	border: 1px solid var(--hover);
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.menuItem {
+	width: 100%;
+	text-align: left;
+	padding: 6px 10px;
+	font-size: 13px;
+	font-weight: 400;
+	font-family: inherit;
+	color: var(--textSecondary);
+	background: transparent;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: color 0.15s ease, background-color 0.15s ease;
+
+	&:hover {
+		color: var(--text);
+		background-color: var(--hover);
+	}
+
+	&.selected {
+		color: var(--text);
+		font-weight: 500;
+		background-color: var(--secondary);
+	}
+}
