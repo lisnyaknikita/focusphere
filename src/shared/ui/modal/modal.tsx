@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { CSSProperties, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import classes from './modal.module.scss'
 
@@ -10,9 +10,10 @@ interface ModalProps {
 	className?: string
 	overlayClassname?: string
 	onClose: () => void
+	style?: CSSProperties
 }
 
-export const Modal = ({ isVisible, children, className, overlayClassname, onClose }: ModalProps) => {
+export const Modal = ({ isVisible, children, className, overlayClassname, style, onClose }: ModalProps) => {
 	useEffect(() => {
 		if (isVisible) {
 			document.body.classList.add('modal-open')
@@ -41,7 +42,7 @@ export const Modal = ({ isVisible, children, className, overlayClassname, onClos
 						exit={{ opacity: 0, y: 30, transition: { duration: 0.2 } }}
 					>
 						<motion.div className={classes.modalContainer}>
-							<div className={clsx(classes.modal, className)} onClick={e => e.stopPropagation()}>
+							<div className={clsx(classes.modal, className)} onClick={e => e.stopPropagation()} style={style}>
 								{children}
 							</div>
 						</motion.div>

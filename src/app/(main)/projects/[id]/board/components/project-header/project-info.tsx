@@ -1,12 +1,13 @@
 'use client'
 
 import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
+import { useSprints } from '@/shared/hooks/projects/sprints/use-sprints'
 import { Project } from '@/shared/types/project'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { ProjectSettingsIcon } from '@/shared/ui/icons/projects/project-settings-icon'
 import { TasksIcon } from '@/shared/ui/icons/projects/tasks-icon'
 import { Modal } from '@/shared/ui/modal/modal'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import classes from './project-info.module.scss'
 import { ProjectSettingsModal } from './project-settings-modal/project-settings-modal'
 import { TeamMembersCounter } from './team-members-counter/team-members-counter'
@@ -18,9 +19,17 @@ interface ProjectInfoProps {
 export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 	const [isProjectSettingsModalOpen, setIsProjectSettingsModalOpen] = useState(false)
 
-	const { tasks, isLoading } = useKanban(project)
+	const { tasks, isLoading: isKanbanLoading } = useKanban(project)
+	const { activeSprint, isLoading: isSprintsLoading } = useSprints(project?.$id)
 
-	const tasksWord = tasks.length === 1 ? 'task' : 'tasks'
+	const isLoading = isKanbanLoading || isSprintsLoading
+
+	const activeSprintTasksCount = useMemo(() => {
+		if (!activeSprint) return 0
+		return tasks.filter(t => t.sprintId === activeSprint.$id).length
+	}, [tasks, activeSprint])
+
+	const tasksWord = activeSprintTasksCount === 1 ? 'task' : 'tasks'
 
 	return (
 		<>
@@ -32,7 +41,7 @@ export const ProjectInfo = ({ project }: ProjectInfoProps) => {
 						<TeamMembersCounter teamId={project.teamId} projectType={project.type} ownerId={project.ownerId} />
 						<div className={classes.tasks}>
 							<TasksIcon />
-							<span>{isLoading ? '...' : `${tasks.length} ${tasksWord}`}</span>
+							<span>{isLoading ? '...' : `${activeSprintTasksCount} ${tasksWord}`}</span>
 						</div>
 					</div>
 				</div>

@@ -1,26 +1,51 @@
 'use client'
 
 import { useKanban } from '@/shared/hooks/projects/kanban-board/use-kanban'
+import { useSprints } from '@/shared/hooks/projects/sprints/use-sprints'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { Project } from '@/shared/types/project'
+import { Sprint } from '@/shared/types/sprint'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 export const useBacklogState = (project: Project) => {
-	const [isAddingInline, setIsAddingInline] = useState(false)
+	const projectId = project?.$id
+
+	const {
+		tasks,
+		isLoading: isKanbanLoading,
+		addTask,
+		moveTaskToSprint,
+		reorderBacklogTasks,
+		updateTask,
+		deleteTask,
+	} = useKanban(project)
+
+	const {
+		sprints,
+		activeSprint,
+		plannedSprints,
+		completedSprints,
+		isLoading: isSprintsLoading,
+		startSprint,
+		completeSprint,
+		deleteSprint,
+	} = useSprints(projectId)
+
+	const [isCreateSprintModalOpen, setIsCreateSprintModalOpen] = useState(false)
+	const [editingSprint, setEditingSprint] = useState<Sprint | null>(null)
+	const [sprintToComplete, setSprintToComplete] = useState<Sprint | null>(null)
+	const [sprintToDelete, setSprintToDelete] = useState<Sprint | null>(null)
+	const [addingToSprintId, setAddingToSprintId] = useState<string | null | undefined>(undefined)
 	const [inlineTitle, setInlineTitle] = useState('')
 	const [taskToDelete, setTaskToDelete] = useState<KanbanTask | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	const { tasks, isLoading: isKanbanLoading, addTask, moveTask, updateTask, deleteTask } = useKanban(project)
-
-	const backlogTasks = tasks.filter(task => task.status === 'backlog')
-
-	const handleInlineSubmit = async () => {
+	const handleInlineSubmit = async (sprintId: string | null = null) => {
 		const trimmedTitle = inlineTitle.trim()
 
 		if (trimmedTitle === '') {
-			setIsAddingInline(false)
+			setAddingToSprintId(undefined)
 			return
 		}
 
@@ -28,24 +53,15 @@ export const useBacklogState = (project: Project) => {
 
 		setIsSubmitting(true)
 		try {
-			await addTask(trimmedTitle, 'backlog')
-			toast.success('Task added to backlog')
+			await addTask(trimmedTitle, 'backlog', sprintId)
+			toast.success('Task added')
 			setInlineTitle('')
-			setIsAddingInline(false)
+			setAddingToSprintId(undefined)
 		} catch (error) {
 			console.error(error)
 			toast.error('Failed to add task')
 		} finally {
 			setIsSubmitting(false)
-		}
-	}
-
-	const handleMoveToTodo = async (taskId: string) => {
-		try {
-			await moveTask(taskId, 'todo')
-			toast.success('Task moved to To Do')
-		} catch (error) {
-			console.error('Failed to move task:', error)
 		}
 	}
 
@@ -56,23 +72,67 @@ export const useBacklogState = (project: Project) => {
 			setTaskToDelete(null)
 		} catch (error) {
 			console.error('Failed to delete task:', error)
-			toast.error('Error while deleting task from backlog')
+			toast.error('Error while deleting task')
+		}
+	}
+
+	const handleStartSprint = async (sprintId: string) => {
+		try {
+			await startSprint(sprintId)
+		} catch (error) {
+			console.error('Failed to start sprint:', error)
+		}
+	}
+
+	const handleCompleteSprintConfirm = async () => {
+		if (!sprintToComplete) return
+		try {
+			await completeSprint(sprintToComplete.$id)
+			setSprintToComplete(null)
+		} catch (error) {
+			console.error('Failed to complete sprint:', error)
+		}
+	}
+
+	const handleDeleteSprintConfirm = async () => {
+		if (!sprintToDelete) return
+		try {
+			await deleteSprint(sprintToDelete.$id)
+			setSprintToDelete(null)
+		} catch (error) {
+			console.error('Failed to delete sprint:', error)
 		}
 	}
 
 	return {
-		backlogTasks,
-		isKanbanLoading,
+		tasks,
+		sprints,
+		activeSprint,
+		plannedSprints,
+		completedSprints,
+		isLoading: isKanbanLoading || isSprintsLoading,
 		updateTask,
-		isAddingInline,
-		setIsAddingInline,
+		moveTaskToSprint,
+		reorderBacklogTasks,
+		addingToSprintId,
+		setAddingToSprintId,
 		inlineTitle,
 		setInlineTitle,
 		taskToDelete,
 		setTaskToDelete,
 		isSubmitting,
+		isCreateSprintModalOpen,
+		setIsCreateSprintModalOpen,
+		editingSprint,
+		setEditingSprint,
+		sprintToComplete,
+		setSprintToComplete,
+		sprintToDelete,
+		setSprintToDelete,
 		handleInlineSubmit,
-		handleMoveToTodo,
 		handleDeleteConfirm,
+		handleStartSprint,
+		handleCompleteSprintConfirm,
+		handleDeleteSprintConfirm,
 	}
 }

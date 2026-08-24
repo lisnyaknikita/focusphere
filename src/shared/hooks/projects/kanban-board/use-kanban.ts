@@ -11,6 +11,7 @@ import { Project } from '@/shared/types/project'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { arrayMove } from '@dnd-kit/sortable'
 import { useUser } from '../../use-user/use-user'
 
 const DEFAULT_COLUMNS: Column[] = [
@@ -120,9 +121,10 @@ export const useKanban = (project: Project) => {
 		}
 	}
 
-	const addTask = async (title: string, status: TaskStatus): Promise<void> => {
+	const addTask = async (title: string, status: TaskStatus, sprintId?: string | null): Promise<void> => {
 		try {
-			const tasksInColumn = tasks.filter(t => t.status === status)
+			const finalStatus = sprintId && status === 'backlog' ? 'todo' : status
+			const tasksInColumn = tasks.filter(t => t.status === finalStatus)
 			const newPosition = tasksInColumn.length
 			const currentCounter = project.taskCounter || 0
 			const newCounter = currentCounter + 1
@@ -133,19 +135,105 @@ export const useKanban = (project: Project) => {
 
 			const payload: CreateKanbanTaskPayload = {
 				title,
-				status,
+				status: finalStatus,
 				priority: 'medium',
 				projectId,
 				taskCode,
 				assigneeId: user?.$id || '',
 				assigneeName: user?.name || 'Unknown user',
 				position: newPosition,
+				sprintId: sprintId || null,
 			}
 
 			await createTaskMutate(payload)
 		} catch (err: unknown) {
 			console.error(err)
 			toast.error('Failed to add task')
+		}
+	}
+
+	const moveTaskToSprint = async (taskId: string, sprintId: string | null): Promise<void> => {
+		const taskToMove = tasks.find(t => t.$id === taskId)
+		const newStatus = sprintId === null ? 'backlog' : (taskToMove?.status === 'backlog' ? 'todo' : taskToMove?.status || 'todo')
+
+		setTasks(prev => prev.map(t => (t.$id === taskId ? { ...t, sprintId, status: newStatus } : t)))
+		try {
+			await updateKanbanTask(taskId, { sprintId, status: newStatus })
+			queryClient.invalidateQueries({ queryKey: ['kanban-tasks', projectId] })
+			triggerProjectUpdate()
+		} catch (err: unknown) {
+			console.error(err)
+			toast.error('Failed to move task to sprint')
+		}
+	}
+
+	const reorderBacklogTasks = async (
+		taskId: string,
+		targetSprintId: string | null,
+		overTaskId?: string
+	): Promise<void> => {
+		const taskToMove = tasks.find(t => t.$id === taskId)
+		if (!taskToMove) return
+
+		const sourceSprintId = taskToMove.sprintId || null
+		const isSameContainer = sourceSprintId === targetSprintId
+		const newStatus = targetSprintId === null ? 'backlog' : (taskToMove.status === 'backlog' ? 'todo' : taskToMove.status)
+
+		const targetTasks = tasks
+			.filter(t => (targetSprintId ? t.sprintId === targetSprintId : !t.sprintId))
+			.sort((a, b) => (a.position || 0) - (b.position || 0))
+
+		let newContainerList: KanbanTask[] = []
+
+		if (isSameContainer) {
+			const oldIndex = targetTasks.findIndex(t => t.$id === taskId)
+			const newIndex = overTaskId ? targetTasks.findIndex(t => t.$id === overTaskId) : -1
+
+			if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+				newContainerList = arrayMove(targetTasks, oldIndex, newIndex)
+			} else {
+				return
+			}
+		} else {
+			const remainingInTarget = targetTasks.filter(t => t.$id !== taskId)
+			const updatedTask = { ...taskToMove, sprintId: targetSprintId, status: newStatus }
+
+			if (overTaskId) {
+				const overIndex = remainingInTarget.findIndex(t => t.$id === overTaskId)
+				if (overIndex !== -1) {
+					newContainerList = [...remainingInTarget]
+					newContainerList.splice(overIndex, 0, updatedTask)
+				} else {
+					newContainerList = [...remainingInTarget, updatedTask]
+				}
+			} else {
+				newContainerList = [...remainingInTarget, updatedTask]
+			}
+		}
+
+		const indexedContainerList = newContainerList.map((t, idx) => ({ ...t, position: idx }))
+
+		setTasks(prev => {
+			const otherTasks = prev
+				.filter(t => (targetSprintId ? t.sprintId !== targetSprintId : !!t.sprintId))
+				.filter(t => t.$id !== taskId)
+			return [...otherTasks, ...indexedContainerList]
+		})
+
+		try {
+			await updateKanbanTask(taskId, {
+				sprintId: targetSprintId,
+				status: newStatus,
+				position: indexedContainerList.find(t => t.$id === taskId)?.position || 0,
+			})
+			await Promise.all(
+				indexedContainerList.map(t => updateKanbanTask(t.$id, { position: t.position } as unknown as Task))
+			)
+			queryClient.invalidateQueries({ queryKey: ['kanban-tasks', projectId] })
+			triggerProjectUpdate()
+		} catch (err) {
+			console.error(err)
+			toast.error('Failed to reorder task')
 		}
 	}
 
@@ -256,6 +344,8 @@ export const useKanban = (project: Project) => {
 		updateTask,
 		deleteTask,
 		moveTask,
+		moveTaskToSprint,
+		reorderBacklogTasks,
 		reorderTasks,
 		updateColumnsMutate,
 		triggerProjectUpdate,

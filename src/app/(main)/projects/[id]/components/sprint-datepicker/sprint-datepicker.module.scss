@@ -1,0 +1,38 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	width: 100%;
+}
+
+.dateButton {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: var(--secondary);
+	border: 1px solid var(--secondaryFull);
+	color: var(--text);
+	padding: 8px 12px;
+	border-radius: 6px;
+	font-size: 14px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: border-color 0.2s, background-color 0.2s;
+	width: 100%;
+
+	&:hover {
+		border-color: color-mix(in srgb, var(--primary, #3b82f6) 50%, transparent);
+	}
+}
+
+.calendarIcon {
+	opacity: 0.6;
+}
+
+.pickerWrapper {
+	padding: 16px;
+	display: flex;
+	justify-content: center;
+	background-color: var(--secondary);
+	border-radius: 12px;
+}
