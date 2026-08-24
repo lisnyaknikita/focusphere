@@ -1,10 +1,11 @@
 .row {
 	display: grid;
-	grid-template-columns: 2.5fr 1.5fr 1fr 120px;
+	grid-template-columns: minmax(150px, 1.8fr) minmax(150px, 2.2fr) 110px 50px;
 	align-items: center;
-	padding: 14px 18px;
+	padding: 10px 16px;
 	border-bottom: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
-	transition: background-color 0.2s;
+	min-width: 420px;
+	transition: background-color 0.15s;
 
 	&:last-child {
 		border-bottom: none;
@@ -13,32 +14,51 @@
 	&:hover {
 		background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
 
-		.moveToTodoBtn {
-			opacity: 1;
-			transform: translateX(0);
-		}
-
 		.deleteTaskBtn {
 			opacity: 1;
 		}
-	}
-
-	@media (max-width: 768px) {
-		min-width: 540px;
 	}
 }
 
 .colTask {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 8px;
 	overflow: hidden;
+}
+
+.dragHandle {
+	background: transparent;
+	border: none;
+	cursor: grab;
+	padding: 4px 2px;
+	color: var(--textSecondary);
+	opacity: 0.3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	flex-shrink: 0;
+
+	&:hover {
+		opacity: 1;
+		background-color: var(--secondaryFull);
+	}
+
+	&:active {
+		cursor: grabbing;
+	}
 }
 
 .circleIcon {
 	color: var(--textSecondary);
 	flex-shrink: 0;
 	opacity: 0.6;
+}
+
+.circleIconDone {
+	flex-shrink: 0;
+	opacity: 0.9;
 }
 
 .taskTitleText {
@@ -56,6 +76,12 @@
 	display: inline-block;
 }
 
+.taskTitleDone {
+	text-decoration: line-through;
+	color: var(--textSecondary);
+	opacity: 0.7;
+}
+
 .inlineTaskInput {
 	width: 100%;
 	background: transparent;
@@ -71,7 +97,17 @@
 .colTags {
 	display: flex;
 	align-items: center;
-	overflow: hidden;
+	overflow-x: auto;
+	width: 100%;
+	min-width: 0;
+	padding-right: 8px;
+
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 .labelsList {
@@ -80,8 +116,12 @@
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	overflow: hidden;
 	white-space: nowrap;
+	flex-shrink: 0;
+
+	> li {
+		flex-shrink: 0;
+	}
 }
 
 .labelTag {
@@ -92,6 +132,7 @@
 	background-color: transparent;
 	font-weight: 500;
 	text-transform: lowercase;
+	flex-shrink: 0;
 }
 
 .emptyValue {
@@ -102,46 +143,19 @@
 .colAdded {
 	display: flex;
 	align-items: center;
+	padding-left: 10px;
 }
 
 .dateText {
 	color: var(--textSecondary);
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .colAction {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-	gap: 10px;
-}
-
-.moveToTodoBtn {
-	background-color: var(--save-button-bg);
-	color: var(--save-button-text);
-	border: none;
-	padding: 6px 12px;
-	border-radius: 6px;
-	font-size: 12px;
-	font-weight: 500;
-	cursor: pointer;
-	transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s;
-	opacity: 0;
-	transform: translateX(5px);
-	white-space: nowrap;
-
-	&:hover {
-		background-color: color-mix(in srgb, var(--save-button-bg) 85%, var(--primary));
-	}
-
-	&:active {
-		transform: scale(0.97);
-	}
-
-	@media (max-width: 768px) {
-		opacity: 1;
-		transform: none;
-	}
+	gap: 6px;
 }
 
 .deleteTaskBtn {
@@ -159,8 +173,8 @@
 	flex-shrink: 0;
 
 	&:hover {
-		color: #dc2626;
-		background-color: rgba(220, 38, 38, 0.109);
+		color: #ef4444;
+		background-color: rgba(239, 68, 68, 0.1);
 	}
 
 	@media (max-width: 768px) {

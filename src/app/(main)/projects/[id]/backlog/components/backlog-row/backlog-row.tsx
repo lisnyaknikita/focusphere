@@ -3,7 +3,10 @@
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { DeleteIcon } from '@/shared/ui/icons/delete-icon'
 import { CircleIcon } from '@/shared/ui/icons/projects/circle-icon'
+import { GripIcon } from '@/shared/ui/icons/projects/grip-icon'
 import { getLabelColor } from '@/shared/utils/get-label-color/get-label-color'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react'
 import classes from './backlog-row.module.scss'
 
@@ -24,13 +27,23 @@ const formatDate = (dateString: string) => {
 interface BacklogRowProps {
 	task: KanbanTask
 	onUpdateTask: (taskId: string, data: Partial<KanbanTask>) => Promise<void>
-	onMoveToTodo: (taskId: string) => Promise<void>
 	onDeleteRequest: (task: KanbanTask) => void
 }
 
-export const BacklogRow = ({ task, onUpdateTask, onMoveToTodo, onDeleteRequest }: BacklogRowProps) => {
+export const BacklogRow = ({ task, onUpdateTask, onDeleteRequest }: BacklogRowProps) => {
 	const [isEditing, setIsEditing] = useState(false)
 	const [title, setTitle] = useState(task.title)
+
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+		id: task.$id,
+		data: { type: 'Task', task },
+	})
+
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+		opacity: isDragging ? 0.3 : 1,
+	}
 
 	const handleBlur = async () => {
 		setIsEditing(false)
@@ -43,10 +56,36 @@ export const BacklogRow = ({ task, onUpdateTask, onMoveToTodo, onDeleteRequest }
 		}
 	}
 
+	const isDone = task.status === 'done'
+
 	return (
-		<div className={classes.row}>
+		<div ref={setNodeRef} style={style} className={classes.row}>
 			<div className={classes.colTask}>
-				<CircleIcon className={classes.circleIcon} />
+				<button
+					type='button'
+					className={classes.dragHandle}
+					{...attributes}
+					{...listeners}
+					title='Drag to reorder/move'
+				>
+					<GripIcon />
+				</button>
+				{isDone ? (
+					<svg
+						width='18'
+						height='18'
+						viewBox='0 0 24 24'
+						fill='none'
+						xmlns='http://www.w3.org/2000/svg'
+						className={classes.circleIconDone}
+					>
+						<title>Done</title>
+						<circle cx='12' cy='12' r='9' fill='#22c55e' />
+						<path d='M8 12l3 3 5-5' stroke='white' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
+					</svg>
+				) : (
+					<CircleIcon className={classes.circleIcon} />
+				)}
 				{isEditing ? (
 					<input
 						type='text'
@@ -64,7 +103,11 @@ export const BacklogRow = ({ task, onUpdateTask, onMoveToTodo, onDeleteRequest }
 						autoFocus
 					/>
 				) : (
-					<span className={classes.taskTitleText} onClick={() => setIsEditing(true)} title={task.title}>
+					<span
+						className={`${classes.taskTitleText} ${isDone ? classes.taskTitleDone : ''}`}
+						onClick={() => setIsEditing(true)}
+						title={task.title}
+					>
 						{task.title}
 					</span>
 				)}
@@ -89,9 +132,6 @@ export const BacklogRow = ({ task, onUpdateTask, onMoveToTodo, onDeleteRequest }
 				<span className={classes.dateText}>{formatDate(task.$createdAt)}</span>
 			</div>
 			<div className={classes.colAction}>
-				<button className={classes.moveToTodoBtn} onClick={() => onMoveToTodo(task.$id)}>
-					→ To Do
-				</button>
 				<button className={classes.deleteTaskBtn} onClick={() => onDeleteRequest(task)} title='Delete task'>
 					<DeleteIcon width={14} height={14} />
 				</button>

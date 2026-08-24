@@ -31,7 +31,6 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 	const [newSubtaskTitle, setNewSubtaskTitle] = useState('')
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
-	const [isBacklogConfirmOpen, setIsBacklogConfirmOpen] = useState(false)
 
 	const { project, createNote } = useProject()
 	const { subtasks, addSubtask, updateSubtask, deleteSubtask } = useSubtasks(task.$id)
@@ -95,17 +94,6 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 		} catch (err: unknown) {
 			console.error('Failed to delete task:', err)
 			toast.error('Failed to delete task')
-		}
-	}
-
-	const handleBacklogConfirm = async () => {
-		try {
-			await onUpdate(task.$id, { status: 'backlog' })
-			setIsBacklogConfirmOpen(false)
-			onClose?.()
-		} catch (err: unknown) {
-			console.error('Failed to move task to backlog:', err)
-			toast.error('Failed to move task to backlog')
 		}
 	}
 
@@ -255,9 +243,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 						<button type='button' className={classes.noteButton} onClick={handleCreateNote}>
 							Create Note
 						</button>
-						<button type='button' className={classes.backlogButton} onClick={() => setIsBacklogConfirmOpen(true)}>
-							Move to Backlog
-						</button>
+
 						<button type='button' className={classes.deleteButton} onClick={() => setIsDeleteConfirmOpen(true)}>
 							Delete Task
 						</button>
@@ -275,17 +261,6 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 				message={
 					<>
 						Are you sure you want to delete task &quot;<span className='highlight'>{task.title}</span>&quot;?
-					</>
-				}
-			/>
-			<ConfirmModal
-				isVisible={isBacklogConfirmOpen}
-				onClose={() => setIsBacklogConfirmOpen(false)}
-				onConfirm={handleBacklogConfirm}
-				title='Move to Backlog'
-				message={
-					<>
-						Are you sure you want to move task &quot;<span className='highlight'>{task.title}</span>&quot; to backlog?
 					</>
 				}
 			/>

@@ -15,6 +15,7 @@ export interface KanbanTask extends Models.Document {
 	labels?: string[]
 	taskCode: string
 	dueDate?: string | null
+	sprintId?: string | null
 }
 
 export interface CreateKanbanTaskPayload {
@@ -29,4 +30,5 @@ export interface CreateKanbanTaskPayload {
 	labels?: string[]
 	taskCode: string
 	dueDate?: string | null
+	sprintId?: string | null
 }
