@@ -35,12 +35,21 @@
 .contentWrapper {
 	min-width: 0;
 	width: 100%;
-	max-width: 100%;
+	margin: 0 auto;
 	padding: 40px 0;
 	display: flex;
 	flex-direction: column;
 	word-wrap: break-word;
 	word-break: break-word;
+	transition: max-width 0.25s ease-in-out;
+
+	&.centered {
+		max-width: 800px;
+	}
+
+	&.fullWidth {
+		max-width: 100%;
+	}
 }
 
 .saveStatus {

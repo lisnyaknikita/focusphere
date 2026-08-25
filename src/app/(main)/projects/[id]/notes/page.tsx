@@ -2,11 +2,14 @@
 
 import { useDeleteNote } from '@/shared/hooks/projects/notes/use-delete-note'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { UndoIcon } from '@/shared/ui/icons/undo-icon'
+import { WidthCenteredIcon } from '@/shared/ui/icons/width-centered-icon'
+import { WidthFullIcon } from '@/shared/ui/icons/width-full-icon'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
 import clsx from 'clsx'
@@ -23,6 +26,8 @@ export default function NotesPage() {
 
 	const { isFocusMode, toggleFocusMode } = useFocusMode('projectNotes')
 	const { activeNote, isNotesLoading, handleDelete } = useDeleteNote()
+	const widthMode = useTextEditorStore(s => s.widthMode)
+	const toggleWidthMode = useTextEditorStore(s => s.toggleWidthMode)
 
 	const handleDeleteClick = () => {
 		setIsConfirmOpen(true)
@@ -58,6 +63,15 @@ export default function NotesPage() {
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>
 									Delete
+								</button>
+							)}
+							{activeNote && (
+								<button
+									className={clsx(classes.widthButton, isFocusMode && classes.focusButtonActive)}
+									onClick={toggleWidthMode}
+									title={widthMode === 'centered' ? 'Full width writing' : 'Centered writing'}
+								>
+									{widthMode === 'centered' ? <WidthFullIcon /> : <WidthCenteredIcon />}
 								</button>
 							)}
 							{activeNote && (
