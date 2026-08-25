@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import { DailyTasksModalWrapper } from '../ui/daily-tasks-modal-wrapper/daily-tasks-modal-warpper'
+import { EveningIdeasPopup } from '../ui/evening-ideas-popup/evening-ideas-popup'
 import { EventModalWrapper } from '../ui/event-modal-wrapper/event-modal-wrapper'
 import { GlobalHotkeys } from '../ui/global-hotkeys/global-hotkeys'
 import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea-modal-wrapper'
@@ -53,6 +54,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 				<EventModalWrapper />
 				<QuickIdeaModalWrapper />
 				<ShortcutsModalWrapper />
+				<EveningIdeasPopup />
 			</Suspense>
 		</QueryClientProvider>
 	)
