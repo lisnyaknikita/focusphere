@@ -1,12 +1,14 @@
 'use client'
 
 import { useTextEditor } from '@/shared/hooks/use-text-editor/use-text-editor'
+import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { filterSuggestionItems } from '@blocknote/core'
 import '@blocknote/core/fonts/inter.css'
 import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/mantine/style.css'
 import { getDefaultReactSlashMenuItems, SuggestionMenuController } from '@blocknote/react'
+import clsx from 'clsx'
 import { forwardRef, useMemo, useRef } from 'react'
 import { EmptyIcon } from '../icons/empty-icon'
 import classes from './text-editor.module.scss'
@@ -24,6 +26,8 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 		handleTitleBlur,
 		handleEditorBlur,
 	} = useTextEditor(ref)
+
+	const widthMode = useTextEditorStore(s => s.widthMode)
 
 	const touchStartY = useRef<number | null>(null)
 
@@ -97,7 +101,7 @@ export const TextEditor = forwardRef<TextEditorRef>((props, ref) => {
 	return (
 		<div className={classes.editor}>
 			<div className={classes.scrollContainer}>
-				<div className={classes.contentWrapper}>
+				<div className={clsx(classes.contentWrapper, widthMode === 'full' ? classes.fullWidth : classes.centered)}>
 					<div className={classes.saveStatus}>
 						{isSaving && <span className={classes.saving}>Saving...</span>}
 						{!isSaving && showSaved && <span className={classes.saved}>✓ Saved</span>}

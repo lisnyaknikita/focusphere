@@ -1,12 +1,15 @@
 import { useBilling } from '@/shared/context/billing-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { UndoIcon } from '@/shared/ui/icons/undo-icon'
+import { WidthCenteredIcon } from '@/shared/ui/icons/width-centered-icon'
+import { WidthFullIcon } from '@/shared/ui/icons/width-full-icon'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
 import clsx from 'clsx'
@@ -24,6 +27,8 @@ export const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpe
 
 	const { isFocusMode, toggleFocusMode } = useFocusMode('generalNotes')
 	const { activeNote, isLoading, deleteNote, notes, searchQuery } = useNotesContext()
+	const widthMode = useTextEditorStore(s => s.widthMode)
+	const toggleWidthMode = useTextEditorStore(s => s.toggleWidthMode)
 
 	const { isPro, openPaywall } = useBilling()
 
@@ -96,6 +101,13 @@ export const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpe
 											Delete
 										</button>
 									)}
+									<button
+										className={clsx(classes.widthButton, isFocusMode && classes.focusButtonActive)}
+										onClick={toggleWidthMode}
+										title={widthMode === 'centered' ? 'Full width writing' : 'Centered writing'}
+									>
+										{widthMode === 'centered' ? <WidthFullIcon /> : <WidthCenteredIcon />}
+									</button>
 									<button
 										className={classes.undoButton}
 										onClick={() => editorRef.current?.undo()}

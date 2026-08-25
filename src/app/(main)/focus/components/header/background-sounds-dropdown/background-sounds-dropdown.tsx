@@ -13,6 +13,7 @@ const SOUNDS = [
 	{ id: 'pink-noise' as const, label: 'Pink noise' },
 	{ id: 'brown-noise' as const, label: 'Brown noise' },
 	{ id: 'lofi' as const, label: 'Lofi' },
+	{ id: 'soundtrack' as const, label: 'Soundtrack' },
 ]
 
 export const BackgroundSoundsDropdown = () => {

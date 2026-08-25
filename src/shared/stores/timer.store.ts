@@ -31,11 +31,22 @@ interface TimerActions {
 
 let finishAudio: HTMLAudioElement | null = null
 
+function setupMediaSessionProtection() {
+	if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+		try {
+			navigator.mediaSession.setActionHandler('play', () => {})
+			navigator.mediaSession.setActionHandler('pause', () => {})
+			navigator.mediaSession.setActionHandler('stop', () => {})
+		} catch {}
+	}
+}
+
 function getFinishAudio(): HTMLAudioElement | null {
 	if (typeof window === 'undefined') return null
 	if (!finishAudio) {
 		finishAudio = new Audio('/ding-sound.webm')
 		finishAudio.volume = 0.5
+		setupMediaSessionProtection()
 	}
 	return finishAudio
 }
@@ -43,6 +54,8 @@ function getFinishAudio(): HTMLAudioElement | null {
 export function unlockAudio() {
 	const audio = getFinishAudio()
 	if (!audio) return
+
+	setupMediaSessionProtection()
 
 	const originalVolume = audio.volume
 	audio.volume = 0
