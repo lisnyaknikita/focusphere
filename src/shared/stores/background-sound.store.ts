@@ -1,18 +1,25 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type SoundOption = 'white-noise' | 'pink-noise' | 'brown-noise' | 'lofi' | null
+export type SoundOption = 'white-noise' | 'pink-noise' | 'brown-noise' | 'lofi' | 'soundtrack' | null
 
 export const SOUND_FILES: Partial<Record<NonNullable<SoundOption>, string>> = {
 	lofi: '/lofi.webm',
+	soundtrack: '/soundtrack.webm',
 }
 
 function generateNoiseBuffer(ctx: AudioContext, type: 'white-noise' | 'pink-noise' | 'brown-noise'): AudioBuffer {
-	const bufferSize = ctx.sampleRate * 5 // 5 seconds loop
+	const bufferSize = ctx.sampleRate * 5
 	const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
 	const output = buffer.getChannelData(0)
 
-	let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0
+	let b0 = 0,
+		b1 = 0,
+		b2 = 0,
+		b3 = 0,
+		b4 = 0,
+		b5 = 0,
+		b6 = 0
 	let lastOut = 0
 
 	for (let i = 0; i < bufferSize; i++) {
@@ -28,11 +35,11 @@ function generateNoiseBuffer(ctx: AudioContext, type: 'white-noise' | 'pink-nois
 			b4 = 0.55 * b4 + white * 0.5329522
 			b5 = -0.7616 * b5 - white * 0.016898
 			output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362
-			output[i] *= 0.11 
+			output[i] *= 0.11
 			b6 = white * 0.115926
 		} else if (type === 'brown-noise') {
 			lastOut = (lastOut + 0.02 * white) / 1.02
-			output[i] = lastOut * 3.5 
+			output[i] = lastOut * 3.5
 		}
 	}
 	return buffer

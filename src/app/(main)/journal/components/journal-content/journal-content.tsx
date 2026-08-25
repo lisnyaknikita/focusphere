@@ -2,12 +2,15 @@ import { useBilling } from '@/shared/context/billing-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useDeleteDiaryNote } from '@/shared/hooks/diary/use-delete-diary-note'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { UndoIcon } from '@/shared/ui/icons/undo-icon'
+import { WidthCenteredIcon } from '@/shared/ui/icons/width-centered-icon'
+import { WidthFullIcon } from '@/shared/ui/icons/width-full-icon'
 import { NotesList } from '@/shared/ui/notes-list/notes-list'
 import { TextEditor } from '@/shared/ui/text-editor/text-editor'
 import clsx from 'clsx'
@@ -25,6 +28,8 @@ export const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModa
 
 	const { isFocusMode, toggleFocusMode } = useFocusMode('journal')
 	const { activeNote, isLoading, handleDelete } = useDeleteDiaryNote()
+	const widthMode = useTextEditorStore(s => s.widthMode)
+	const toggleWidthMode = useTextEditorStore(s => s.toggleWidthMode)
 
 	const { notes } = useNotesContext()
 	const { isPro, openPaywall } = useBilling()
@@ -80,6 +85,15 @@ export const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModa
 							{activeNote && !isFocusMode && (
 								<button className={classes.deleteButton} onClick={handleDeleteClick} disabled={!activeNote}>
 									Delete
+								</button>
+							)}
+							{activeNote && (
+								<button
+									className={clsx(classes.widthButton, isFocusMode && classes.focusButtonActive)}
+									onClick={toggleWidthMode}
+									title={widthMode === 'centered' ? 'Full width writing' : 'Centered writing'}
+								>
+									{widthMode === 'centered' ? <WidthFullIcon /> : <WidthCenteredIcon />}
 								</button>
 							)}
 							{activeNote && (
