@@ -8,9 +8,11 @@ import classes from './event-modal.module.scss'
 
 interface EventModalProps {
 	onClose: () => void
+	initialTitle?: string
+	onSuccess?: () => void
 }
 
-export const EventModal = ({ onClose }: EventModalProps) => {
+export const EventModal = ({ onClose, initialTitle, onSuccess }: EventModalProps) => {
 	const handleCreateEvent = async (data: CreateEventPayload) => {
 		const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
 
@@ -29,10 +31,18 @@ export const EventModal = ({ onClose }: EventModalProps) => {
 		return createEvent(data)
 	}
 
-	const { form, setFormField, handleSubmit } = useEventForm(onClose, undefined, {
-		create: handleCreateEvent,
-		update: updateEvent,
-	})
+	const { form, setFormField, handleSubmit } = useEventForm(
+		() => {
+			onSuccess?.()
+			onClose()
+		},
+		undefined,
+		{
+			create: handleCreateEvent,
+			update: updateEvent,
+		},
+		initialTitle
+	)
 
 	return (
 		<div className={classes.modalInner}>

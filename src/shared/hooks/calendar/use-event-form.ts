@@ -38,7 +38,12 @@ const createISOStringFromForm = (dateString: string, timeString: string): string
 	return date.toISOString()
 }
 
-export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent, actions?: CalendarActions) => {
+export const useEventForm = (
+	onSuccess: () => void,
+	initialEvent?: SXEvent,
+	actions?: CalendarActions,
+	initialTitle?: string
+) => {
 	const [form, setForm] = useState<EventForm>(() => {
 		if (initialEvent) {
 			const startDate = toJSDate(initialEvent.start)
@@ -57,7 +62,7 @@ export const useEventForm = (onSuccess: () => void, initialEvent?: SXEvent, acti
 		const { start, end } = getInitialTimeRange()
 
 		return {
-			title: '',
+			title: initialTitle || '',
 			description: undefined,
 			date: new Date().toISOString().slice(0, 10),
 			startTime: start,
