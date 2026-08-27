@@ -1,3 +1,4 @@
+import { useProjectPermissions } from '@/shared/hooks/projects/use-project-permissions'
 import { PlusIcon } from '@/shared/ui/icons/plus-icon'
 import { Dispatch, SetStateAction } from 'react'
 import classes from './backlog-header.module.scss'
@@ -15,6 +16,8 @@ export const BacklogHeader = ({
 	setIsCreateSprintModalOpen,
 	setAddingToSprintId,
 }: BacklogHeaderProps) => {
+	const { canManageSprints } = useProjectPermissions()
+
 	return (
 		<div className={classes.header}>
 			<div className={classes.stats}>
@@ -22,10 +25,12 @@ export const BacklogHeader = ({
 				<span className={classes.subtitle}>• {sprints} sprints</span>
 			</div>
 			<div className={classes.headerActions}>
-				<button className={classes.createSprintBtn} onClick={() => setIsCreateSprintModalOpen(true)}>
-					<PlusIcon />
-					<span>Create Sprint</span>
-				</button>
+				{canManageSprints && (
+					<button className={classes.createSprintBtn} onClick={() => setIsCreateSprintModalOpen(true)}>
+						<PlusIcon />
+						<span>Create Sprint</span>
+					</button>
+				)}
 				<button className={classes.addButton} onClick={() => setAddingToSprintId(null)}>
 					<PlusIcon />
 					<span>Add to Backlog</span>

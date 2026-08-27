@@ -1,5 +1,6 @@
 'use client'
 
+import { useProjectPermissions } from '@/shared/hooks/projects/use-project-permissions'
 import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
 import { Sprint } from '@/shared/types/sprint'
 import { EditIcon } from '@/shared/ui/icons/edit-icon'
@@ -43,6 +44,10 @@ export const ActiveSprintSection = ({
 	updateTask,
 	handleInlineSubmit,
 }: ActiveSprintSectionProps) => {
+	const { canManageSprints } = useProjectPermissions()
+
+	const isOverdue = new Date(activeSprint.endDate) < new Date()
+
 	const completedCount = activeTasks.filter(t => t.status === 'done').length
 	const progressPct = activeTasks.length > 0 ? Math.round((completedCount / activeTasks.length) * 100) : 0
 	const activeTaskIds = activeTasks.map(t => t.$id)
@@ -57,15 +62,17 @@ export const ActiveSprintSection = ({
 				<div className={classes.sprintHeaderLeft}>
 					<span className={`${classes.statusBadge} ${classes.active}`}>Active</span>
 					<h3 className={classes.sprintTitle}>{activeSprint.name}</h3>
-					<button
-						type='button'
-						className={classes.editSprintBtn}
-						onClick={() => setEditingSprint(activeSprint)}
-						title='Edit sprint details'
-					>
-						<EditIcon width={18} height={18} />
-					</button>
-					<span className={classes.sprintMeta}>
+					{canManageSprints && (
+						<button
+							type='button'
+							className={classes.editSprintBtn}
+							onClick={() => setEditingSprint(activeSprint)}
+							title='Edit sprint details'
+						>
+							<EditIcon width={18} height={18} />
+						</button>
+					)}
+					<span className={`${classes.sprintMeta} ${isOverdue ? classes.overdue : ''}`}>
 						{backlogFormatDateRange(activeSprint.startDate, activeSprint.endDate)}
 					</span>
 				</div>
@@ -79,9 +86,15 @@ export const ActiveSprintSection = ({
 							{completedCount}/{activeTasks.length} Done ({progressPct}%)
 						</span>
 					</div>
-					<button type='button' className={classes.completeSprintBtn} onClick={() => setSprintToComplete(activeSprint)}>
-						Complete Sprint
-					</button>
+					{canManageSprints && (
+						<button
+							type='button'
+							className={classes.completeSprintBtn}
+							onClick={() => setSprintToComplete(activeSprint)}
+						>
+							Complete Sprint
+						</button>
+					)}
 				</div>
 			</div>
 

@@ -2,7 +2,7 @@ import { db } from '@/lib/appwrite'
 import { deleteKanbanTask, getKanbanTasks, updateKanbanTask } from '@/lib/projects/kanban-board-tasks/tasks'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { CreateSprintPayload, Sprint } from '@/shared/types/sprint'
-import { ID, Query } from 'appwrite'
+import { ID, Permission, Query, Role } from 'appwrite'
 
 const DB_ID = process.env.NEXT_PUBLIC_DB_ID!
 const SPRINTS_TABLE = process.env.NEXT_PUBLIC_TABLE_SPRINTS!
@@ -30,7 +30,7 @@ export const getSprints = async (projectId: string) => {
 	}
 }
 
-export const createSprint = async (data: CreateSprintPayload) => {
+export const createSprint = async (data: CreateSprintPayload, ownerId: string, teamId?: string | null) => {
 	const payload: Record<string, unknown> = {
 		projectId: data.projectId,
 		name: data.name,
@@ -43,11 +43,22 @@ export const createSprint = async (data: CreateSprintPayload) => {
 		payload.goal = data.goal
 	}
 
+	const permissions = [
+		Permission.read(Role.user(ownerId)),
+		Permission.update(Role.user(ownerId)),
+		Permission.delete(Role.user(ownerId)),
+	]
+
+	if (teamId) {
+		permissions.push(Permission.read(Role.team(teamId)))
+	}
+
 	return db.createRow({
 		databaseId: DB_ID,
 		tableId: SPRINTS_TABLE,
 		rowId: ID.unique(),
 		data: payload,
+		permissions,
 	})
 }
 

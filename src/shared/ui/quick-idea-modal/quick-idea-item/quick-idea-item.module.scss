@@ -1,22 +1,118 @@
-.item {
+.itemContainer {
+	display: flex;
+	flex-direction: column;
+	background-color: var(--secondaryFull);
+	border: 1px solid transparent;
+	border-radius: 5px;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+	overflow: hidden;
+
+	&:hover,
+	&.expanded {
+		border-color: var(--btn-border);
+
+		.deleteBtn,
+		.expandBtn {
+			opacity: 0.8;
+		}
+	}
+}
+
+.itemHeader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 8px;
 	padding: 4px;
+}
 
-	background-color: var(--secondaryFull);
+.buttonGroup {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.expandBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	margin-top: 2px;
+
+	background: transparent;
 	border: none;
 	border-radius: 5px;
+	cursor: pointer;
+	color: var(--textSecondary);
 
-	transition: border-color 0.15s ease, background-color 0.15s ease;
+	opacity: 0.4;
+	transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+
+	svg {
+		transition: transform 0.2s ease;
+	}
 
 	&:hover {
-		border-color: var(--btn-border);
+		opacity: 1;
+		background-color: var(--hover);
+		color: var(--text);
+	}
+}
 
-		.deleteBtn {
-			opacity: 0.8;
-		}
+.expandBtnActive {
+	opacity: 1 !important;
+	color: var(--text);
+
+	svg {
+		transform: rotate(180deg);
+	}
+}
+
+.actionSection {
+	overflow: hidden;
+}
+
+.actionInner {
+	border-top: 1px solid var(--btn-border);
+	padding: 8px;
+	background-color: var(--secondary);
+}
+
+.actionButtons {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
+}
+
+.actionBtn {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	padding: 5px 8px;
+	font-size: 12px;
+	font-weight: 500;
+	font-family: inherit;
+	color: var(--text);
+	background-color: var(--secondaryFull);
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+
+	&:hover:not(:disabled) {
+		background-color: var(--primary);
+		border-color: var(--textSecondary);
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 }
 

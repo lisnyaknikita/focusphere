@@ -6,6 +6,7 @@ import {
 	startSprint,
 	updateSprint,
 } from '@/lib/projects/sprints/sprints'
+import { useProject } from '@/shared/context/project-context'
 import { CreateSprintPayload, Sprint } from '@/shared/types/sprint'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
@@ -13,6 +14,7 @@ import { toast } from 'sonner'
 
 export const useSprints = (projectId: string | undefined) => {
 	const queryClient = useQueryClient()
+	const { project } = useProject()
 
 	const { data: sprints = [], isLoading } = useQuery<Sprint[]>({
 		queryKey: ['sprints', projectId],
@@ -34,7 +36,10 @@ export const useSprints = (projectId: string | undefined) => {
 	const completedSprints = useMemo(() => sprints.filter(s => s.status === 'completed'), [sprints])
 
 	const createSprintMutation = useMutation({
-		mutationFn: (payload: CreateSprintPayload) => createSprint(payload),
+		mutationFn: (payload: CreateSprintPayload) => {
+			if (!project) throw new Error('Project context is not available')
+			return createSprint(payload, project.ownerId, project.teamId)
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
 			toast.success('Sprint created')

@@ -21,6 +21,19 @@ export const useGeneralNotes = (userId: string) => {
 				setIsLoading(true)
 				const data = await getGeneralNotes(userId)
 				setNotes(data)
+
+				if (typeof window !== 'undefined') {
+					const urlParams = new URLSearchParams(window.location.search)
+					const activeNoteId = urlParams.get('activeNoteId')
+					if (activeNoteId) {
+						const found = data.find(n => n.$id === activeNoteId)
+						if (found) {
+							setActiveNote(found)
+							return
+						}
+					}
+				}
+
 				if (data.length > 0) setActiveNote(data[0])
 			} catch (error) {
 				console.error('Failed to fetch notes:', error)
@@ -29,6 +42,24 @@ export const useGeneralNotes = (userId: string) => {
 			}
 		}
 		fetchNotes()
+	}, [userId])
+
+	useEffect(() => {
+		const handleRefresh = (e: Event) => {
+			const customEvent = e as CustomEvent<{ newNote?: BaseNote }>
+			if (customEvent.detail?.newNote) {
+				const created = customEvent.detail.newNote
+				setNotes(prev => [created, ...prev.filter(n => n.$id !== created.$id)])
+				setActiveNote(created)
+			} else if (userId) {
+				getGeneralNotes(userId).then(data => {
+					setNotes(data)
+				})
+			}
+		}
+
+		window.addEventListener('refresh-general-notes', handleRefresh)
+		return () => window.removeEventListener('refresh-general-notes', handleRefresh)
 	}, [userId])
 
 	const handleCreate = async (title: string = 'New Note') => {

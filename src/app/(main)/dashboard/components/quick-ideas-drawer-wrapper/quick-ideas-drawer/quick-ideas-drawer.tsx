@@ -107,7 +107,13 @@ export const QuickIdeasDrawer = ({ isOpen, onClose }: QuickIdeasDrawerProps) => 
 								</div>
 							) : (
 								filteredIdeas.map((idea: QuickIdea) => (
-									<QuickIdeaItem key={idea.$id} idea={idea} onEdit={handleEditIdea} onDelete={handleDeleteIdea} />
+									<QuickIdeaItem
+										key={idea.$id}
+										idea={idea}
+										onEdit={handleEditIdea}
+										onDelete={handleDeleteIdea}
+										onCloseDrawer={onClose}
+									/>
 								))
 							)}
 						</div>

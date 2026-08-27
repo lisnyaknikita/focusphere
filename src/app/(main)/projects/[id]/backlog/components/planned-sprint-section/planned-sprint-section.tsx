@@ -1,5 +1,6 @@
 'use client'
 
+import { useProjectPermissions } from '@/shared/hooks/projects/use-project-permissions'
 import { CreateKanbanTaskPayload, KanbanTask } from '@/shared/types/kanban-task'
 import { Sprint } from '@/shared/types/sprint'
 import { DeleteIcon } from '@/shared/ui/icons/delete-icon'
@@ -46,6 +47,8 @@ export const PlannedSprintSection = ({
 	setSprintToStart,
 	handleInlineSubmit,
 }: PlannedSprintSectionProps) => {
+	const { canManageSprints } = useProjectPermissions()
+
 	const sprintTaskIds = sprintTasks.map(t => t.$id)
 
 	return (
@@ -58,32 +61,36 @@ export const PlannedSprintSection = ({
 				<div className={classes.sprintHeaderLeft}>
 					<span className={`${classes.statusBadge} ${classes.planned}`}>Planned</span>
 					<h3 className={classes.sprintTitle}>{sprint.name}</h3>
-					<button
-						type='button'
-						className={classes.editSprintBtn}
-						onClick={() => setEditingSprint(sprint)}
-						title='Edit sprint details'
-					>
-						<EditIcon width={18} height={18} />
-					</button>
+					{canManageSprints && (
+						<button
+							type='button'
+							className={classes.editSprintBtn}
+							onClick={() => setEditingSprint(sprint)}
+							title='Edit sprint details'
+						>
+							<EditIcon width={18} height={18} />
+						</button>
+					)}
 					<span className={classes.sprintMeta}>
 						{backlogFormatDateRange(sprint.startDate, sprint.endDate)} • {sprintTasks.length} tasks
 					</span>
 				</div>
 
-				<div className={classes.sprintHeaderRight}>
-					<button type='button' className={classes.startSprintBtn} onClick={() => setSprintToStart(sprint)}>
-						Start Sprint
-					</button>
-					<button
-						type='button'
-						className={classes.deleteSprintBtn}
-						onClick={() => setSprintToDelete(sprint)}
-						title='Delete Sprint'
-					>
-						<DeleteIcon width={14} height={14} />
-					</button>
-				</div>
+				{canManageSprints && (
+					<div className={classes.sprintHeaderRight}>
+						<button type='button' className={classes.startSprintBtn} onClick={() => setSprintToStart(sprint)}>
+							Start Sprint
+						</button>
+						<button
+							type='button'
+							className={classes.deleteSprintBtn}
+							onClick={() => setSprintToDelete(sprint)}
+							title='Delete Sprint'
+						>
+							<DeleteIcon width={14} height={14} />
+						</button>
+					</div>
+				)}
 			</div>
 
 			{sprint.goal && <div className={classes.sprintGoalBanner}>Goal: {sprint.goal}</div>}
