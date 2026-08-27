@@ -1,0 +1,257 @@
+.expandedContainer {
+	position: fixed;
+	bottom: 18px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1000;
+	width: calc(100% - 32px);
+	max-width: 320px;
+}
+
+.pillInner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 12px;
+	gap: 8px;
+
+	background: var(--secondaryFull);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid var(--btn-border);
+	border-radius: 999px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.timeGroup {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	padding: 4px 8px;
+	border-radius: 999px;
+	transition: background-color 0.2s ease;
+	flex-shrink: 0;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.statusEmoji {
+	font-size: 15px;
+	line-height: 1;
+}
+
+.timeText {
+	font-size: 14px;
+	font-weight: 600;
+	font-family: inherit;
+	color: var(--text);
+	font-variant-numeric: tabular-nums;
+}
+
+.controlsGroup {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.actionBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 5px;
+	color: var(--text);
+	cursor: pointer;
+	transition: transform 0.1s ease;
+
+	&:hover {
+		transform: scale(1.1);
+	}
+
+	&:active {
+		transform: scale(0.92);
+	}
+}
+
+.optionsGroup {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex-shrink: 0;
+}
+
+.iconBtn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--textSecondary);
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+
+	&:hover {
+		background-color: var(--hover);
+		color: var(--text);
+	}
+}
+
+.iconBtnActive {
+	background-color: var(--hover);
+	color: var(--text);
+}
+
+.soundContainer {
+	position: relative;
+}
+
+.soundPopover {
+	position: absolute;
+	bottom: calc(100% + 10px);
+	right: 0;
+	min-width: 200px;
+
+	background: var(--secondaryFull);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	border: 1px solid var(--btn-border);
+	border-radius: 12px;
+	padding: 8px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+	z-index: 10;
+}
+
+.popoverLabel {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--textSecondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	padding: 2px 8px 6px;
+	margin: 0;
+}
+
+.soundList {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	margin-bottom: 8px;
+}
+
+.soundItem {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 6px 8px;
+	border: none;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--text);
+	font-size: 13px;
+	font-family: inherit;
+	cursor: pointer;
+	text-align: left;
+	transition: background-color 0.12s ease;
+
+	> span {
+		display: flex;
+	}
+
+	&:hover {
+		background-color: var(--hover);
+	}
+}
+
+.soundItemActive {
+	background-color: var(--hover);
+}
+
+.soundItemLabel {
+	flex: 1;
+	font-weight: 400;
+}
+
+.soundItemCheck {
+	font-size: 12px;
+	color: var(--textSecondary);
+	margin-left: auto;
+}
+
+.volumeRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 8px 2px;
+	border-top: 1px solid var(--btn-border);
+}
+
+.volumeIcon {
+	font-size: 12px;
+	flex-shrink: 0;
+}
+
+.volumeSlider {
+	flex: 1;
+	accent-color: var(--text);
+	cursor: pointer;
+	height: 3px;
+}
+
+.collapsedTrigger {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	z-index: 1000;
+
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+
+	background: var(--secondaryFull);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid var(--btn-border);
+	border-radius: 999px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+
+	transition: transform 0.15s ease, border-color 0.15s ease;
+
+	&:hover {
+		transform: scale(1.04);
+		border-color: var(--textSecondary);
+	}
+
+	&:active {
+		transform: scale(0.96);
+	}
+}
+
+.collapsedEmoji {
+	font-size: 14px;
+}
+
+.collapsedTime {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text);
+	font-variant-numeric: tabular-nums;
+}
+
+.collapsedExpandIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--textSecondary);
+}
