@@ -8,6 +8,7 @@ import { DailyTasksModalWrapper } from '../ui/daily-tasks-modal-wrapper/daily-ta
 import { EveningIdeasPopup } from '../ui/evening-ideas-popup/evening-ideas-popup'
 import { EventModalWrapper } from '../ui/event-modal-wrapper/event-modal-wrapper'
 import { GlobalHotkeys } from '../ui/global-hotkeys/global-hotkeys'
+import { MiniFocusPlayer } from '../ui/mini-focus-player/mini-focus-player'
 import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea-modal-wrapper'
 import { ShortcutsModalWrapper } from '../ui/shortcuts-modal/shortcuts-modal-wrapper'
 import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
@@ -40,6 +41,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 				<GlobalHotkeys />
 			</Suspense>
 			<TimeBlockTracker />
+			<MiniFocusPlayer />
 			<div className={classes.wrapper}>
 				{children}
 				{isLoading && (
