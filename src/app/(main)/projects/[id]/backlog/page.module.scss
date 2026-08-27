@@ -157,6 +157,11 @@
 	color: var(--textSecondary);
 	white-space: nowrap;
 
+	&.overdue {
+		color: #ea580c;
+		font-weight: 600;
+	}
+
 	@media (max-width: 480px) {
 		display: none;
 	}

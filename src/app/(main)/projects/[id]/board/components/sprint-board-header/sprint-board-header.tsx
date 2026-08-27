@@ -28,6 +28,8 @@ export const SprintBoardHeader = ({
 	const [isExpanded, setIsExpanded] = useState(false)
 	const { canManageSprints } = useProjectPermissions()
 
+	const isOverdue = new Date(activeSprint.endDate) < new Date()
+
 	const sprintTasks = tasks.filter(t => t.sprintId === activeSprint.$id)
 	const completedCount = sprintTasks.filter(t => t.status === 'done').length
 	const progressPct = sprintTasks.length > 0 ? Math.round((completedCount / sprintTasks.length) * 100) : 0
@@ -84,7 +86,7 @@ export const SprintBoardHeader = ({
 							<div className={classes.detailsGrid}>
 								<div className={classes.detailItem}>
 									<span className={classes.detailLabel}>Dates:</span>
-									<span className={classes.detailValue}>
+									<span className={clsx(classes.detailValue, isOverdue && classes.overdue)}>
 										{backlogFormatDateRange(activeSprint.startDate, activeSprint.endDate)}
 									</span>
 								</div>

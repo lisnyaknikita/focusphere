@@ -46,6 +46,8 @@ export const ActiveSprintSection = ({
 }: ActiveSprintSectionProps) => {
 	const { canManageSprints } = useProjectPermissions()
 
+	const isOverdue = new Date(activeSprint.endDate) < new Date()
+
 	const completedCount = activeTasks.filter(t => t.status === 'done').length
 	const progressPct = activeTasks.length > 0 ? Math.round((completedCount / activeTasks.length) * 100) : 0
 	const activeTaskIds = activeTasks.map(t => t.$id)
@@ -70,7 +72,7 @@ export const ActiveSprintSection = ({
 							<EditIcon width={18} height={18} />
 						</button>
 					)}
-					<span className={classes.sprintMeta}>
+					<span className={`${classes.sprintMeta} ${isOverdue ? classes.overdue : ''}`}>
 						{backlogFormatDateRange(activeSprint.startDate, activeSprint.endDate)}
 					</span>
 				</div>
