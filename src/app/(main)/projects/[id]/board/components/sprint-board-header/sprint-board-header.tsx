@@ -1,5 +1,6 @@
 'use client'
 
+import { useProjectPermissions } from '@/shared/hooks/projects/use-project-permissions'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { Sprint } from '@/shared/types/sprint'
 import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
@@ -25,6 +26,7 @@ export const SprintBoardHeader = ({
 	onEditSprintClick,
 }: SprintBoardHeaderProps) => {
 	const [isExpanded, setIsExpanded] = useState(false)
+	const { canManageSprints } = useProjectPermissions()
 
 	const sprintTasks = tasks.filter(t => t.sprintId === activeSprint.$id)
 	const completedCount = sprintTasks.filter(t => t.status === 'done').length
@@ -35,7 +37,7 @@ export const SprintBoardHeader = ({
 			<div className={classes.compactBar}>
 				<div className={classes.left}>
 					<span className={classes.sprintName}>🚀 {activeSprint.name}</span>
-					{onEditSprintClick && (
+					{canManageSprints && onEditSprintClick && (
 						<button
 							type='button'
 							className={classes.editBtn}
@@ -61,7 +63,7 @@ export const SprintBoardHeader = ({
 						<span>{isExpanded ? 'Hide' : 'Details'}</span>
 						<ArrowBottomIcon className={clsx(classes.arrowIcon, isExpanded && classes.rotated)} />
 					</button>
-					{activeSprint.status === 'active' && (
+					{canManageSprints && activeSprint.status === 'active' && (
 						<button type='button' className={classes.completeBtn} onClick={() => onCompleteSprintClick(activeSprint)}>
 							Complete Sprint
 						</button>
