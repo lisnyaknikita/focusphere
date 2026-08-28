@@ -2,27 +2,19 @@
 
 import { useBackgroundSound } from '@/shared/hooks/focus/use-background-sound'
 import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
-import { SoundOption } from '@/shared/stores/background-sound.store'
 import { useTimerStore } from '@/shared/stores/timer.store'
-import { ExpandIcon } from '@/shared/ui/icons/expand-icon'
 import { PauseIcon } from '@/shared/ui/icons/focus/pause-icon'
 import { PlayIcon } from '@/shared/ui/icons/focus/play-icon'
 import { ResetIcon } from '@/shared/ui/icons/focus/reset-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
-import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { NoSoundIcon } from '../icons/focus/volume-off-icon'
+import { useEffect, useState } from 'react'
+import { CollapsedPlayer } from './components/collapsed-player/collapsed-player'
+import { SoundPopover } from './components/sound-popover/sound-popover'
 import classes from './mini-focus-player.module.scss'
 
-const SOUNDS: { id: SoundOption; label: string }[] = [
-	{ id: 'white-noise', label: 'White noise' },
-	{ id: 'pink-noise', label: 'Pink noise' },
-	{ id: 'brown-noise', label: 'Brown noise' },
-	{ id: 'lofi', label: 'Lofi' },
-	{ id: 'soundtrack', label: 'Soundtrack' },
-]
+const STORAGE_KEY = 'mini_player_collapsed'
 
 export const MiniFocusPlayer = () => {
 	const pathname = usePathname()
@@ -41,6 +33,18 @@ export const MiniFocusPlayer = () => {
 	const [isSoundOpen, setIsSoundOpen] = useState(false)
 
 	const soundRef = useClickOutside<HTMLDivElement>(() => setIsSoundOpen(false), isSoundOpen)
+
+	useEffect(() => {
+		const saved = localStorage.getItem(STORAGE_KEY)
+		if (saved !== null) {
+			setIsCollapsed(saved === 'true')
+		}
+	}, [])
+
+	const handleToggleCollapse = (collapsed: boolean) => {
+		setIsCollapsed(collapsed)
+		localStorage.setItem(STORAGE_KEY, String(collapsed))
+	}
 
 	if (pathname === '/focus') return null
 	if (status === 'idle' && !activeSound) return null
@@ -63,29 +67,10 @@ export const MiniFocusPlayer = () => {
 		}
 	}
 
-	const handleGoToFocus = () => {
-		router.push('/focus')
-	}
-
 	return (
 		<AnimatePresence>
 			{isCollapsed ? (
-				<motion.div
-					key='collapsed'
-					className={classes.collapsedTrigger}
-					initial={{ scale: 0.8, opacity: 0, y: 20 }}
-					animate={{ scale: 1, opacity: 1, y: 0 }}
-					exit={{ scale: 0.8, opacity: 0, y: 20 }}
-					transition={{ type: 'spring', damping: 22, stiffness: 260 }}
-					onClick={() => setIsCollapsed(false)}
-					title='Expand timer'
-				>
-					<span className={classes.collapsedEmoji}>{emoji}</span>
-					<span className={classes.collapsedTime}>{displayTime}</span>
-					<div className={classes.collapsedExpandIcon}>
-						<ExpandIcon width={14} height={14} />
-					</div>
-				</motion.div>
+				<CollapsedPlayer emoji={emoji} displayTime={displayTime} onExpand={() => handleToggleCollapse(false)} />
 			) : (
 				<motion.div
 					key='expanded'
@@ -96,7 +81,7 @@ export const MiniFocusPlayer = () => {
 					transition={{ type: 'spring', damping: 25, stiffness: 280 }}
 				>
 					<div className={classes.pillInner}>
-						<div className={classes.timeGroup} onClick={handleGoToFocus} title='Open Focus Page'>
+						<div className={classes.timeGroup} onClick={() => router.push('/focus')} title='Open Focus Page'>
 							<span className={classes.statusEmoji}>{emoji}</span>
 							<span className={classes.timeText}>{displayTime}</span>
 						</div>
@@ -119,76 +104,20 @@ export const MiniFocusPlayer = () => {
 						</div>
 
 						<div className={classes.optionsGroup}>
-							<div ref={soundRef} className={classes.soundContainer}>
-								<button
-									type='button'
-									className={clsx(classes.iconBtn, isSoundOpen && classes.iconBtnActive)}
-									onClick={() => setIsSoundOpen(prev => !prev)}
-									title='Sound settings'
-								>
-									<NoSoundIcon width={20} height={20} />
-								</button>
-
-								<AnimatePresence>
-									{isSoundOpen && (
-										<motion.div
-											className={classes.soundPopover}
-											initial={{ opacity: 0, y: 6, scale: 0.95 }}
-											animate={{ opacity: 1, y: 0, scale: 1 }}
-											exit={{ opacity: 0, y: 6, scale: 0.95 }}
-											transition={{ duration: 0.15 }}
-										>
-											<p className={classes.popoverLabel}>Background Sound</p>
-											<div className={classes.soundList}>
-												{SOUNDS.map(sound => (
-													<button
-														key={sound.id}
-														type='button'
-														className={clsx(classes.soundItem, activeSound === sound.id && classes.soundItemActive)}
-														onClick={() => selectSound(sound.id)}
-													>
-														<span className={classes.soundItemLabel}>{sound.label}</span>
-														{activeSound === sound.id && <span className={classes.soundItemCheck}>✓</span>}
-													</button>
-												))}
-
-												<button
-													type='button'
-													className={clsx(classes.soundItem, !activeSound && classes.soundItemActive)}
-													onClick={() => selectSound(activeSound!)}
-												>
-													<span className={classes.soundItemEmoji}>
-														<NoSoundIcon width={14} height={14} />
-													</span>
-													<span className={classes.soundItemLabel}>Off</span>
-													{!activeSound && <span className={classes.soundItemCheck}>✓</span>}
-												</button>
-											</div>
-
-											{activeSound && (
-												<div className={classes.volumeRow}>
-													<span className={classes.volumeIcon}>🔈</span>
-													<input
-														type='range'
-														min={0}
-														max={1}
-														step={0.01}
-														value={volume}
-														onChange={e => setVolume(Number(e.target.value))}
-														className={classes.volumeSlider}
-													/>
-													<span className={classes.volumeIcon}>🔊</span>
-												</div>
-											)}
-										</motion.div>
-									)}
-								</AnimatePresence>
-							</div>
+							<SoundPopover
+								isOpen={isSoundOpen}
+								activeSound={activeSound}
+								volume={volume}
+								soundRef={soundRef}
+								onToggleOpen={() => setIsSoundOpen(prev => !prev)}
+								onSelectSound={selectSound}
+								onSetVolume={setVolume}
+							/>
 
 							<button
 								type='button'
 								className={classes.iconBtn}
-								onClick={() => setIsCollapsed(true)}
+								onClick={() => handleToggleCollapse(true)}
 								title='Collapse player'
 							>
 								<MinimizeIcon width={15} height={15} />
