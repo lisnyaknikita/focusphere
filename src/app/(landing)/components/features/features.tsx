@@ -6,40 +6,59 @@ import classes from './features.module.scss'
 
 const featuresConfig = [
 	{
-		title: 'Kanban Board',
+		number: '01',
+		label: 'Central Control',
+		title: 'Command center & instantaneous idea capture',
 		description:
-			'Visualise your work with drag-and-drop columns and cards. Track progress at a glance — from To Do to Done — and keep your whole team on the same page.',
-		imageBase: 'kanban',
+			"Your personal workspace, organized your way. Track today's tasks and scheduled events alongside customizable widgets — swap seamlessly between Pomodoro stats, time-blocks, and daily motivation. Instantly capture quick ideas the moment they strike so you never forget them, and clear your mind before bed.",
+		imageBase: 'dashboard-feature',
 		width: 620,
 		height: 350,
 		reverse: false,
 	},
 	{
-		title: 'Planner',
+		number: '02',
+		label: 'Time Management',
+		title: 'Time-blocking built for real productivity',
 		description:
-			'Block out your day the way your brain works. Set time blocks, add goals and tasks, and build a daily routine that actually sticks.',
+			'Structure your week around how your brain actually works. Block out deep work sessions, build daily task checklists, and maintain a predictable workflow.',
 		imageBase: 'planner',
 		width: 620,
 		height: 350,
 		reverse: true,
 	},
 	{
-		title: 'Focus Timer',
+		number: '03',
+		label: 'Project Execution',
+		title: 'Sprints, Backlog, and Kanban boards without the bloat',
 		description:
-			'Deep work on demand. Choose from Pink noise, Brown noise, or Lofi music, set your timer, and enter a flow state you can actually sustain.',
-		imageBase: 'timer',
+			'Full-featured Agile workspace built for clarity. Take projects from raw backlog to active sprints, visualize your work on clean Kanban boards, and maintain total control with built-in permission roles',
+		imageBase: 'kanban',
 		width: 620,
-		height: 326,
+		height: 350,
 		reverse: false,
 	},
 	{
-		title: 'Journal',
+		number: '04',
+		label: 'Deep Work',
+		title: 'Deep work timer with focus sounds & mini-player',
 		description:
-			'A private space to reflect. Write guided entries, track how you feel over time, and build the habit of intentional self-reflection.',
+			'Maintain your flow state with ambient focus sounds and a flexible Pomodoro timer. Minimize the player to follow you across any page without interrupting your momentum.',
+		imageBase: 'timer',
+		width: 620,
+		height: 326,
+		reverse: true,
+	},
+	{
+		number: '05',
+		label: 'Knowledge & Reflection',
+		title: 'Notes & customizable journal',
+		description:
+			'Combine notes and personal journaling in one place. Write freely with a powerful rich-text editor, speed up your entry with built-in templates, or design custom ones to fit your style',
 		imageBase: 'journal',
 		width: 620,
 		height: 350,
-		reverse: true,
+		reverse: false,
 	},
 ]
 
@@ -49,20 +68,16 @@ export const Features = () => {
 	return (
 		<section id='features' className={classes.features}>
 			<div className={classes.container}>
-				<div className={classes.header}>
-					<span className={classes.label}>Features</span>
-					<h2 className={classes.title}>Everything in one place</h2>
-					<p className={classes.subtitle}>
-						All your productivity tools, unified in one workspace. No more context-switching.
-					</p>
-				</div>
-
 				{featuresConfig.map((feature, index) => {
-				const src = `/${feature.imageBase}-${theme}.png`
+					const src = `/${feature.imageBase}-${theme}.avif`
 
 					return (
 						<div key={index} className={classes.featureRow} data-reverse={feature.reverse}>
 							<div className={classes.featureContent}>
+								<div className={classes.featureMeta}>
+									<span className={classes.featureNumber}>{feature.number}</span>
+									<span className={classes.featureLabel}>{feature.label}</span>
+								</div>
 								<h3 className={classes.featureTitle}>{feature.title}</h3>
 								<p className={classes.featureDescription}>{feature.description}</p>
 							</div>

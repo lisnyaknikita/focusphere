@@ -3,25 +3,25 @@ import classes from './testimonials.module.scss'
 const testimonials = [
 	{
 		quote:
-			'I replaced Notion, Todoist, and a physical planner with Focusphere. My mornings are completely different now.',
+			'I canceled Notion, Todoist, and my focus sound app. Focusphere replaced them all seamlessly into one clean workflow.',
 		name: 'Anna K.',
-		role: 'Freelance Designer',
+		role: 'Freelance Product Designer',
 		avatar: 'AK',
 		color: 'purple',
 	},
 	{
 		quote:
-			'The focus timer with ambient sounds changed everything. I used to struggle with deep work — now I look forward to it.',
+			'Having our backlog, active sprints, and team chat integrated into one workspace is a game changer. It stripped away all the usual project management bloat for us.',
 		name: 'Marcus Chen',
-		role: 'Software Engineer',
+		role: 'Lead Software Engineer',
 		avatar: 'MC',
 		color: 'blue',
 	},
 	{
 		quote:
-			"Finally, one app for my whole team. We ditched 4 subscriptions and everyone's happier with the unified workspace.",
+			'I love that no idea gets lost anymore. Capturing thoughts instantly and having an evening prompt to process them completely cleared my mind at the end of the day.',
 		name: 'Sarah Rodriguez',
-		role: 'Product Manager',
+		role: 'Founder & Product Lead',
 		avatar: 'SR',
 		color: 'green',
 	},
@@ -43,13 +43,13 @@ export const Testimonials = () => {
 			<div className={classes.container}>
 				<div className={classes.header}>
 					<span className={classes.label}>Testimonials</span>
-					<h2 className={classes.title}>Loved by productive people</h2>
+					<h2 className={classes.title}>Loved by productive professionals</h2>
 				</div>
 				<div className={classes.grid}>
 					{testimonials.map((testimonial, index) => (
 						<div key={index} className={classes.card}>
 							<Stars />
-							<p className={classes.quote}>{testimonial.quote}</p>
+							<p className={classes.quote}>&ldquo;{testimonial.quote}&rdquo;</p>
 							<div className={classes.author}>
 								<div className={classes.avatar} data-color={testimonial.color}>
 									{testimonial.avatar}
