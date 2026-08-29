@@ -51,7 +51,7 @@ export const Footer = () => {
 					</div>
 				</div>
 				<div className={classes.bottom}>
-					<p className={classes.copyright}>2026 Focusphere. All rights reserved.</p>
+					<p className={classes.copyright}>&copy; 2026 Focusphere. All rights reserved.</p>
 					<div className={classes.legal}>
 						<a href='/privacy' className={classes.legalLink}>
 							Privacy Policy

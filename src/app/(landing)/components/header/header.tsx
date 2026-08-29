@@ -12,6 +12,7 @@ import classes from './header.module.scss'
 const navLinks = [
 	{ label: 'Problems', href: '#problems' },
 	{ label: 'Features', href: '#features' },
+	{ label: 'Team', href: '#team' },
 	{ label: 'Testimonials', href: '#testimonials' },
 ]
 

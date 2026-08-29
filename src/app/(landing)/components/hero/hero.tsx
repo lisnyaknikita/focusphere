@@ -42,16 +42,16 @@ export const Hero = () => {
 
 			<motion.div className={classes.container} variants={containerVariants} initial='hidden' animate='visible'>
 				<motion.div variants={fadeInUpVariants} className={classes.badge}>
-					All-in-one productivity workspace
+					100% Free Public Beta &bull; Solo-First, Team-Ready
 				</motion.div>
 
 				<motion.h1 variants={fadeInUpVariants} className={classes.title}>
-					Clarity starts <span className={classes.highlight}>here</span>
+					Clarity starts <span className={classes.highlight}>here.</span>
 				</motion.h1>
 
 				<motion.p variants={fadeInUpVariants} className={classes.subtitle}>
-					Calendar, planner, projects, focus timer, journal, and notes — all in one beautiful workspace. Stop switching
-					apps. Start getting things done.
+					One unified workspace to rule your day. Bring your project sprints, daily time-blocking, focus soundscapes,
+					and rapid idea capture under one roof.
 				</motion.p>
 
 				<motion.div variants={fadeInUpVariants} className={classes.cta}>
@@ -59,7 +59,7 @@ export const Hero = () => {
 						Get started — it&apos;s free
 					</Link>
 					<a href='#features' className={classes.secondaryBtn}>
-						See features ↓
+						Explore workspace ↓
 					</a>
 				</motion.div>
 				<motion.div
@@ -79,8 +79,8 @@ export const Hero = () => {
 					className={classes.imageWrapper}
 				>
 					<Image
-						src={`/dashboard-${theme}.png`}
-						alt='Focusphere dashboard'
+						src={`/dashboard-${theme}.avif`}
+						alt='Focusphere Dashboard with Quick Ideas Drawer, Daily Time-Blocks and Mini Focus Player'
 						width={1200}
 						height={677}
 						className={classes.heroImage}

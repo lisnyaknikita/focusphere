@@ -37,28 +37,25 @@ Most teams juggle 5+ tools: a task tracker, a calendar, a chat app, a note app, 
 
 ## 📸 Screenshots
 
-<!-- SCREENSHOT PLACEHOLDER: Replace the lines below with your actual screenshots -->
-<!-- Tip: use dark & light variants side by side for maximum visual impact -->
-
 ### Dashboard
 
-![Dashboard preview](public/dashboard-dark.png)
+![Dashboard preview](public/dashboard-dark.avif)
 
 ### Planner
 
-![Planner page preview](public/planner-dark.png)
+![Planner page preview](public/planner-dark.avif)
 
 ### Kanban Board
 
-![Kanban board preview](public/kanban-dark.png)
+![Kanban board preview](public/kanban-dark.avif)
 
 ### Team Chat
 
-![Team chat preview](public/chat-dark.png)
+![Team chat preview](public/chat-dark.avif)
 
 ### Journal
 
-![Journal page preview](public/journal-dark.png)
+![Journal page preview](public/journal-dark.avif)
 
 ---
 
