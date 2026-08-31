@@ -28,6 +28,7 @@ interface PlannedSprintSectionProps {
 	setInlineTitle: Dispatch<SetStateAction<string>>
 	setTaskToDelete: Dispatch<SetStateAction<KanbanTask | null>>
 	updateTask: (taskId: string, data: Partial<CreateKanbanTaskPayload>) => Promise<void>
+	deleteTask?: (taskId: string) => Promise<void>
 	handleInlineSubmit: (sprintId?: string | null) => Promise<void>
 }
 
@@ -44,6 +45,7 @@ export const PlannedSprintSection = ({
 	setInlineTitle,
 	setTaskToDelete,
 	updateTask,
+	deleteTask,
 	setSprintToStart,
 	handleInlineSubmit,
 }: PlannedSprintSectionProps) => {
@@ -109,7 +111,13 @@ export const PlannedSprintSection = ({
 							<div className={classes.emptyState}>No tasks in planned sprint. Drag tasks here to assign.</div>
 						) : (
 							sprintTasks.map(task => (
-								<BacklogRow key={task.$id} task={task} onUpdateTask={updateTask} onDeleteRequest={setTaskToDelete} />
+								<BacklogRow
+									key={task.$id}
+									task={task}
+									onUpdateTask={updateTask}
+									onDeleteRequest={setTaskToDelete}
+									onDeleteTask={deleteTask}
+								/>
 							))
 						)}
 

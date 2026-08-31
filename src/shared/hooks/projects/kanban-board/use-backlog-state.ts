@@ -112,6 +112,7 @@ export const useBacklogState = (project: Project) => {
 		completedSprints,
 		isLoading: isKanbanLoading || isSprintsLoading,
 		updateTask,
+		deleteTask,
 		moveTaskToSprint,
 		reorderBacklogTasks,
 		addingToSprintId,

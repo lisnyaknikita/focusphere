@@ -25,6 +25,7 @@ export default function BacklogPage() {
 		plannedSprints,
 		isLoading: isBacklogLoading,
 		updateTask,
+		deleteTask,
 		reorderBacklogTasks,
 		addingToSprintId,
 		setAddingToSprintId,
@@ -107,6 +108,7 @@ export default function BacklogPage() {
 							setInlineTitle={setInlineTitle}
 							setTaskToDelete={setTaskToDelete}
 							updateTask={updateTask}
+							deleteTask={deleteTask}
 							handleInlineSubmit={handleInlineSubmit}
 						/>
 					)}
@@ -132,6 +134,7 @@ export default function BacklogPage() {
 								setInlineTitle={setInlineTitle}
 								setTaskToDelete={setTaskToDelete}
 								updateTask={updateTask}
+								deleteTask={deleteTask}
 								handleInlineSubmit={handleInlineSubmit}
 							/>
 						)
@@ -147,13 +150,19 @@ export default function BacklogPage() {
 						setInlineTitle={setInlineTitle}
 						setTaskToDelete={setTaskToDelete}
 						updateTask={updateTask}
+						deleteTask={deleteTask}
 						handleInlineSubmit={handleInlineSubmit}
 					/>
 				</div>
 
 				<DragOverlay adjustScale={false}>
 					{activeDragTask && (
-						<BacklogRow task={activeDragTask} onUpdateTask={updateTask} onDeleteRequest={setTaskToDelete} />
+						<BacklogRow
+							task={activeDragTask}
+							onUpdateTask={updateTask}
+							onDeleteRequest={setTaskToDelete}
+							onDeleteTask={deleteTask}
+						/>
 					)}
 				</DragOverlay>
 

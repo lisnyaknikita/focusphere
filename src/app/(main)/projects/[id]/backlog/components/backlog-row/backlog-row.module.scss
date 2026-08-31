@@ -5,6 +5,7 @@
 	padding: 10px 16px;
 	border-bottom: 1px solid color-mix(in srgb, var(--line) 15%, transparent);
 	min-width: 420px;
+	cursor: pointer;
 	transition: background-color 0.15s;
 
 	&:last-child {
