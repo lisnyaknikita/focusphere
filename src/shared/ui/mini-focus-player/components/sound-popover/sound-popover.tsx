@@ -1,6 +1,7 @@
 'use client'
 
 import { SoundOption } from '@/shared/stores/background-sound.store'
+import { SoundIcon } from '@/shared/ui/icons/focus/sound-icon'
 import { NoSoundIcon } from '@/shared/ui/icons/focus/volume-off-icon'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -42,7 +43,7 @@ export const SoundPopover = ({
 				onClick={onToggleOpen}
 				title='Sound settings'
 			>
-				<NoSoundIcon width={20} height={20} />
+				{activeSound ? <SoundIcon width={20} height={20} /> : <NoSoundIcon width={20} height={20} />}
 			</button>
 
 			<AnimatePresence>
