@@ -5,6 +5,7 @@ import { updateLegacyNames } from '@/lib/projects/chat/chat'
 import { updateLegacyTaskNames } from '@/lib/projects/kanban-board-tasks/tasks'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { EditIcon } from '@/shared/ui/icons/edit-icon'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import classes from './editable-username.module.scss'
 
@@ -18,6 +19,7 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 	const [username, setUsername] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
 	const inputRef = useRef<HTMLInputElement | null>(null)
+	const queryClient = useQueryClient()
 
 	const { user } = useUser()
 
@@ -46,12 +48,16 @@ export const EditableUsername = ({ displayName, onNameUpdated }: EditableUsernam
 
 			if (user?.$id) {
 				updateLegacyNames(user.$id, newName.trim())
+				updateLegacyTaskNames(previousName, newName.trim(), user.$id)
+			} else {
+				updateLegacyTaskNames(previousName, newName.trim())
 			}
-
-			updateLegacyTaskNames(previousName, newName.trim())
 
 			setUsername(newName.trim())
 			onNameUpdated(newName.trim())
+
+			queryClient.invalidateQueries({ queryKey: ['team-members'] })
+			queryClient.invalidateQueries({ queryKey: ['kanban-tasks'] })
 		} catch (error) {
 			console.error('Failed to update username:', error)
 			alert('Failed to update username. Please try again.')

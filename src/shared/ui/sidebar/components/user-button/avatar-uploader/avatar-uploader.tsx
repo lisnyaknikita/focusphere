@@ -2,6 +2,7 @@
 
 import { UserAvatar } from '@/shared/ui/user-avatar/user-avatar'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import classes from './avatar-uploader.module.scss'
@@ -16,6 +17,7 @@ interface AvatarUploaderProps {
 export const AvatarUploader = ({ avatarUrl, onUploaded, userName = 'User' }: AvatarUploaderProps) => {
 	const [localUrl, setLocalUrl] = useState<string | null>(avatarUrl)
 	const [isAvatarUploaderTooltipOpen, setIsAvatarUploaderTooltipOpen] = useState(false)
+	const queryClient = useQueryClient()
 
 	const inputRef = useRef<HTMLInputElement | null>(null)
 
@@ -40,6 +42,8 @@ export const AvatarUploader = ({ avatarUrl, onUploaded, userName = 'User' }: Ava
 
 			setLocalUrl(newUrl)
 			onUploaded(newUrl)
+			queryClient.invalidateQueries({ queryKey: ['owner-avatar'] })
+			queryClient.invalidateQueries({ queryKey: ['team-members'] })
 		} catch (err) {
 			if (err instanceof Error) {
 				console.error('Upload failed:', err)

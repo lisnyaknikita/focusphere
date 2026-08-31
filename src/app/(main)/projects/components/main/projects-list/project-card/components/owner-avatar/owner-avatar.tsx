@@ -4,7 +4,7 @@ import { useOwnerAvatar } from '@/shared/hooks/projects/owner-avatar/use-owner-a
 import { UserAvatar } from '@/shared/ui/user-avatar/user-avatar'
 import { BeatLoader } from 'react-spinners'
 
-export const OwnerAvatar = ({ userId, size = 30 }: { userId: string; size?: number }) => {
+export const OwnerAvatar = ({ userId, name, size = 30 }: { userId: string; name?: string; size?: number }) => {
 	const { avatarUrl, isLoading } = useOwnerAvatar(userId)
 
 	if (isLoading) {
@@ -14,7 +14,7 @@ export const OwnerAvatar = ({ userId, size = 30 }: { userId: string; size?: numb
 	return (
 		<UserAvatar
 			src={avatarUrl}
-			name={userId}
+			name={name || userId}
 			size={size}
 			style={{ borderRadius: 5, minWidth: size, minHeight: size }}
 		/>

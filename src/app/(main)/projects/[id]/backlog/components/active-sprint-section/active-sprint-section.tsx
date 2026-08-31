@@ -26,6 +26,7 @@ interface ActiveSprintSectionProps {
 	setInlineTitle: Dispatch<SetStateAction<string>>
 	setTaskToDelete: Dispatch<SetStateAction<KanbanTask | null>>
 	updateTask: (taskId: string, data: Partial<CreateKanbanTaskPayload>) => Promise<void>
+	deleteTask?: (taskId: string) => Promise<void>
 	handleInlineSubmit: (sprintId?: string | null) => Promise<void>
 }
 
@@ -42,6 +43,7 @@ export const ActiveSprintSection = ({
 	setInlineTitle,
 	setTaskToDelete,
 	updateTask,
+	deleteTask,
 	handleInlineSubmit,
 }: ActiveSprintSectionProps) => {
 	const { canManageSprints } = useProjectPermissions()
@@ -114,7 +116,13 @@ export const ActiveSprintSection = ({
 							<p className={classes.emptyState}>No tasks in active sprint yet. Drag tasks here to assign.</p>
 						) : (
 							activeTasks.map(task => (
-								<BacklogRow key={task.$id} task={task} onUpdateTask={updateTask} onDeleteRequest={setTaskToDelete} />
+								<BacklogRow
+									key={task.$id}
+									task={task}
+									onUpdateTask={updateTask}
+									onDeleteRequest={setTaskToDelete}
+									onDeleteTask={deleteTask}
+								/>
 							))
 						)}
 
