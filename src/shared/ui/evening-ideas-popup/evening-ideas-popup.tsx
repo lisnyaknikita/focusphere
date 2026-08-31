@@ -4,7 +4,7 @@ import { useQuickIdeas } from '@/shared/hooks/use-quick-ideas/use-quick-ideas'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { IdeaIcon } from '../icons/idea-icon'
 import classes from './evening-ideas-popup.module.scss'
 
@@ -15,21 +15,43 @@ export const EveningIdeasPopup = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 
-	useEffect(() => {
+	const checkTimeAndShow = useCallback(() => {
 		if (isLoading || ideas.length === 0) return
 
 		const now = new Date()
 		const currentHour = now.getHours()
-		const todayStr = now.toISOString().split('T')[0]
+		const todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
 		const isDismissed = localStorage.getItem(`evening_ideas_dismissed_${todayStr}`)
 
 		if (currentHour >= 19 && !isDismissed) {
 			setIsVisible(true)
 		}
-	}, [ideas, isLoading])
+	}, [ideas.length, isLoading])
+
+	useEffect(() => {
+		checkTimeAndShow()
+
+		const intervalId = setInterval(checkTimeAndShow, 60 * 1000)
+
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible') {
+				checkTimeAndShow()
+			}
+		}
+
+		window.addEventListener('visibilitychange', handleVisibilityChange)
+		window.addEventListener('focus', checkTimeAndShow)
+
+		return () => {
+			clearInterval(intervalId)
+			window.removeEventListener('visibilitychange', handleVisibilityChange)
+			window.removeEventListener('focus', checkTimeAndShow)
+		}
+	}, [checkTimeAndShow, pathname])
 
 	const handleDismiss = () => {
-		const todayStr = new Date().toISOString().split('T')[0]
+		const now = new Date()
+		const todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
 		localStorage.setItem(`evening_ideas_dismissed_${todayStr}`, 'true')
 		setIsVisible(false)
 	}
