@@ -1,6 +1,7 @@
 'use client'
 
 import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
+import { useAssigneeName } from '@/shared/hooks/projects/use-assignee-name'
 import { CreateKanbanTaskPayload, KanbanTask, TaskPriority } from '@/shared/types/kanban-task'
 import { ClockIcon } from '@/shared/ui/icons/projects/clock-icon'
 import { Modal } from '@/shared/ui/modal/modal'
@@ -27,6 +28,7 @@ interface KanbanTaskCardProps {
 
 export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: KanbanTaskCardProps) => {
 	const [isTaskModalVisible, setIsTaskModalVisible] = useState(false)
+	const assigneeDisplayName = useAssigneeName(task.assigneeId, task.assigneeName)
 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: task.$id,
@@ -113,8 +115,8 @@ export const KanbanTaskCard = ({ task, onUpdateTask, onDeleteTask, isOverlay }: 
 					)}
 					<footer className={classes.taskCardFooter}>
 						<div className={classes.taskAssignee}>
-							<OwnerAvatar userId={task.assigneeId || ''} size={20} />
-							<span>{task.assigneeName}</span>
+							<OwnerAvatar userId={task.assigneeId || ''} name={assigneeDisplayName} size={20} />
+							<span>{assigneeDisplayName}</span>
 						</div>
 						<span className={classes.priorityIndicator} style={{ backgroundColor: PRIORITY_COLORS[taskPriority] }} />
 						<time className={classes.taskDate}>{formattedDate}</time>

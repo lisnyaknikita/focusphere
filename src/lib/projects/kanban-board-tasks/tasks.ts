@@ -48,12 +48,16 @@ export const deleteKanbanTask = async (taskId: string): Promise<void> => {
 	}
 }
 
-export const updateLegacyTaskNames = async (oldName: string, newName: string) => {
+export const updateLegacyTaskNames = async (oldName: string, newName: string, userId?: string) => {
 	try {
+		const queries = userId
+			? [Query.equal('assigneeId', userId), Query.limit(100)]
+			: [Query.equal('assigneeName', oldName), Query.limit(100)]
+
 		const tasks = await db.listRows({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: process.env.NEXT_PUBLIC_TABLE_KANBAN_TASKS!,
-			queries: [Query.equal('assigneeName', oldName), Query.limit(100)],
+			queries,
 		})
 
 		const promises = tasks.rows.map(task =>

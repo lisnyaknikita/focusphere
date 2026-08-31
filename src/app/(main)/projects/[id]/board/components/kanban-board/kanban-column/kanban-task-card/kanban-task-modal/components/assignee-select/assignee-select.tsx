@@ -2,6 +2,7 @@
 
 import { OwnerAvatar } from '@/app/(main)/projects/components/main/projects-list/project-card/components/owner-avatar/owner-avatar'
 import { useEnrichedTeamMembers } from '@/shared/hooks/projects/kanban-board/use-enriched-team-members'
+import { useAssigneeName } from '@/shared/hooks/projects/use-assignee-name'
 import {
 	autoUpdate,
 	flip,
@@ -33,6 +34,7 @@ export const AssigneeSelect = ({
 	onAssigneeChange,
 }: AssigneeSelectProps) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const resolvedAssigneeName = useAssigneeName(currentAssigneeId, currentAssigneeName)
 
 	const { teammates, isLoading } = useEnrichedTeamMembers(teamId || '')
 
@@ -63,8 +65,8 @@ export const AssigneeSelect = ({
 				{...getReferenceProps()}
 				type='button'
 			>
-				<OwnerAvatar userId={currentAssigneeId || ''} size={24} />
-				<span>{currentAssigneeName || 'Unassigned'}</span>
+				<OwnerAvatar userId={currentAssigneeId || ''} name={resolvedAssigneeName} size={24} />
+				<span>{resolvedAssigneeName}</span>
 			</button>
 
 			{isOpen && teamId && (
