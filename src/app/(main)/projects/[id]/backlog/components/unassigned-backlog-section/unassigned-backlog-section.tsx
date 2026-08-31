@@ -19,6 +19,7 @@ interface UnassignedBacklogSectionProps {
 	setInlineTitle: Dispatch<SetStateAction<string>>
 	setTaskToDelete: Dispatch<SetStateAction<KanbanTask | null>>
 	updateTask: (taskId: string, data: Partial<CreateKanbanTaskPayload>) => Promise<void>
+	deleteTask?: (taskId: string) => Promise<void>
 	handleInlineSubmit: (sprintId?: string | null) => Promise<void>
 }
 
@@ -32,6 +33,7 @@ export const UnassignedBacklogSection = ({
 	setInlineTitle,
 	setTaskToDelete,
 	updateTask,
+	deleteTask,
 	handleInlineSubmit,
 }: UnassignedBacklogSectionProps) => {
 	const unassignedTaskIds = unassignedTasks.map(t => t.$id)
@@ -66,7 +68,13 @@ export const UnassignedBacklogSection = ({
 							<div className={classes.emptyState}>No unassigned tasks in backlog</div>
 						) : (
 							unassignedTasks.map(task => (
-								<BacklogRow key={task.$id} task={task} onUpdateTask={updateTask} onDeleteRequest={setTaskToDelete} />
+								<BacklogRow
+									key={task.$id}
+									task={task}
+									onUpdateTask={updateTask}
+									onDeleteRequest={setTaskToDelete}
+									onDeleteTask={deleteTask}
+								/>
 							))
 						)}
 
