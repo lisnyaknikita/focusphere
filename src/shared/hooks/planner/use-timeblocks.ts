@@ -166,6 +166,45 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		[userId, queryClient]
 	)
 
+	const createQuickBlockWithRange = useCallback(
+		async (startIso: string, endIso: string) => {
+			if (!userId) return null
+			if (isCreatingRef.current) return null
+
+			isCreatingRef.current = true
+			try {
+				const created = await createTimeBlock({
+					title: 'New Block',
+					startDate: startIso,
+					endDate: endIso,
+					color: 'blue',
+					calendarId: getCalendarIdByColor('blue'),
+					userId,
+				})
+
+				queryClient.invalidateQueries({ queryKey: ['timeblocks', userId] })
+
+				const toZDT = (iso: string) => Temporal.Instant.from(iso).toZonedDateTimeISO('UTC')
+
+				return {
+					id: created.$id,
+					title: 'New Block',
+					start: toZDT(startIso),
+					end: toZDT(endIso),
+					color: 'blue',
+					calendarId: getCalendarIdByColor('blue'),
+				}
+			} catch (error) {
+				console.error('Failed to create quick block with range:', error)
+				toast.error('Failed to create quick time block')
+				return null
+			} finally {
+				isCreatingRef.current = false
+			}
+		},
+		[userId, queryClient]
+	)
+
 	useEffect(() => {
 		cleanupOldTimeBlocks()
 	}, [cleanupOldTimeBlocks])
@@ -178,5 +217,6 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		refreshTimeBlocks: getTimeBlocks,
 		pasteTimeBlock,
 		createQuickBlock,
+		createQuickBlockWithRange,
 	}
 }

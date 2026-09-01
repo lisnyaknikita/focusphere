@@ -26,8 +26,11 @@
 	}
 
 	@media screen and (max-width: 768px) {
+		gap: 5px;
 		padding: 5px 15px;
-		transform: translateY(5px);
+		transform: translateY(6px);
+		margin-top: 0;
+		margin-left: 10px;
 	}
 }
 

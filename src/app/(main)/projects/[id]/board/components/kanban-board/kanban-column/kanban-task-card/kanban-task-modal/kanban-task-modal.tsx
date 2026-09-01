@@ -121,7 +121,7 @@ export const KanbanTaskModal = ({ task, onUpdate, onDelete, onClose }: KanbanTas
 					<textarea
 						className={classes.titleInput}
 						value={title}
-						rows={1}
+						rows={2}
 						onChange={e => setTitle(e.target.value)}
 						onKeyDown={e => {
 							if (e.key === 'Enter') {

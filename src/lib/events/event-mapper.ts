@@ -8,9 +8,11 @@ export const mapEventToScheduleX = (event: CalendarEvent) => {
 		return Temporal.Instant.from(iso).toZonedDateTimeISO(Intl.DateTimeFormat().resolvedOptions().timeZone)
 	}
 
+	const displayTitle = event.title.startsWith('📅') ? event.title : `📅 ${event.title}`
+
 	return {
 		id: event.$id,
-		title: event.title,
+		title: displayTitle,
 		description: event.description,
 		start: toZDT(event.startDate),
 		end: toZDT(event.endDate),

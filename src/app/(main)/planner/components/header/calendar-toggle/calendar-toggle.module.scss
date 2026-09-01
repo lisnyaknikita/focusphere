@@ -1,0 +1,64 @@
+.toggleContainer {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	padding: 5px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	color: var(--text);
+	font-size: 16px;
+	font-weight: 400;
+	font-family: inherit;
+	transition: all 0.2s ease;
+	user-select: none;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+
+	&.active {
+		svg {
+			color: #3b82f6;
+		}
+	}
+}
+
+.label {
+	white-space: nowrap;
+
+	@media (max-width: 615px) {
+		display: none;
+	}
+}
+
+.toggle {
+	width: 34px;
+	height: 20px;
+	background-color: var(--theme-toggler-bg);
+	border-radius: 20px;
+	position: relative;
+	transition: background-color 0.2s ease;
+	flex-shrink: 0;
+
+	&::before {
+		content: '';
+		position: absolute;
+		height: 16px;
+		width: 16px;
+		background-color: var(--theme-toggler-circle);
+		border-radius: 50%;
+		top: 2px;
+		left: 2px;
+		transition: left 0.2s ease;
+	}
+
+	&.active {
+		background-color: #3b82f6;
+
+		&::before {
+			left: 16px;
+		}
+	}
+}
