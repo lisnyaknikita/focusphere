@@ -158,10 +158,15 @@
 	cursor: pointer;
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 	gap: 4px;
 	transition: all 0.15s ease;
 	white-space: nowrap;
+	min-width: 75px;
+
+	> svg {
+		transform: translateY(1px);
+	}
 
 	&:hover {
 		color: var(--text);
