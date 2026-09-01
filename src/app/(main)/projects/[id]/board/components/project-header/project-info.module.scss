@@ -10,6 +10,10 @@
 	font-weight: 700;
 	margin-bottom: 5px;
 	color: var(--text);
+
+	@media screen and (max-width: 430px) {
+		margin-bottom: 15px;
+	}
 }
 
 .projectSubtitle {
@@ -17,6 +21,11 @@
 	font-weight: 400;
 	margin-bottom: 15px;
 	color: var(--text);
+
+	@media screen and (max-width: 430px) {
+		display: none;
+		margin-bottom: 0;
+	}
 }
 
 .infoWithIcons {
