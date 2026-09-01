@@ -2,12 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import 'temporal-polyfill/global'
-import { AddTimeBlockButton } from './components/header/create-button/create-button'
-import { WeeklyGoals } from './components/header/weekly-goals/weekly-goals'
-import { PlannerInner } from './components/main/planner-inner/planner-inner'
 
-import { mapTimeBlockToScheduleX } from '@/lib/events/event-mapper'
+import { mapEventToScheduleX, mapTimeBlockToScheduleX } from '@/lib/events/event-mapper'
 import { useBilling } from '@/shared/context/billing-context'
+import { useEvents } from '@/shared/hooks/events/use-events'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
 import { usePlannerCalendar } from '@/shared/hooks/planner/use-planner-calendar'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
@@ -15,7 +13,11 @@ import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { BeatLoader } from 'react-spinners'
+import { CalendarToggle } from './components/header/calendar-toggle/calendar-toggle'
+import { AddTimeBlockButton } from './components/header/create-button/create-button'
+import { WeeklyGoals } from './components/header/weekly-goals/weekly-goals'
 import { PasteBanner } from './components/main/paste-banner/paste-banner'
+import { PlannerInner } from './components/main/planner-inner/planner-inner'
 import { PlannerModals } from './components/main/planner-modals/planner-modals'
 import { CopyModeContext } from './copy-mode-context'
 import { DailyTasksCountByDateContext } from './daily-tasks-count-context'
@@ -25,12 +27,17 @@ export default function Planner() {
 	const [isTimeBlockModalVisible, setIsTimeBlockModalVisible] = useState(false)
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
 	const [quickCreatedEvent, setQuickCreatedEvent] = useState<SXEvent | null>(null)
+	const [showCalendarEvents, setShowCalendarEvents] = useState<boolean>(() => {
+		if (typeof window === 'undefined') return false
+		return localStorage.getItem('focusphere_planner_show_calendar_events') === 'true'
+	})
 
 	const hasDailyTasksChangesRef = useRef(false)
 	const copiedTimeBlockRef = useRef<SXEvent | null>(null)
 
 	const { user } = useUser()
 	const { isPro, openPaywall } = useBilling()
+	const { events: calendarEvents } = useEvents()
 	const {
 		timeBlocks,
 		copiedTimeBlock,
@@ -64,6 +71,14 @@ export default function Planner() {
 
 	const isPageLoading = isBlocksLoading || isGoalsLoading || isTasksLoading
 
+	const handleToggleCalendarEvents = useCallback(() => {
+		setShowCalendarEvents(prev => {
+			const next = !prev
+			localStorage.setItem('focusphere_planner_show_calendar_events', String(next))
+			return next
+		})
+	}, [])
+
 	useEffect(() => {
 		copiedTimeBlockRef.current = copiedTimeBlock
 	}, [copiedTimeBlock])
@@ -74,8 +89,10 @@ export default function Planner() {
 
 	useEffect(() => {
 		if (!eventsService) return
-		eventsService.set(timeBlocks.map(mapTimeBlockToScheduleX))
-	}, [timeBlocks, eventsService])
+		const mappedBlocks = timeBlocks.map(mapTimeBlockToScheduleX)
+		const mappedCalendarEvents = showCalendarEvents ? calendarEvents.map(mapEventToScheduleX) : []
+		eventsService.set([...mappedBlocks, ...mappedCalendarEvents])
+	}, [timeBlocks, calendarEvents, showCalendarEvents, eventsService])
 
 	const handleTimeBlockCreated = useCallback(() => {
 		setIsTimeBlockModalVisible(false)
@@ -120,7 +137,10 @@ export default function Planner() {
 				{copiedTimeBlock && <PasteBanner copiedTimeBlock={copiedTimeBlock} onCancel={() => setCopiedTimeBlock(null)} />}
 				<header className={classes.header}>
 					<WeeklyGoals goals={weeklyGoals} onGoalsChange={refreshWeeklyGoals} />
-					<AddTimeBlockButton setIsModalVisible={handleAddBlockClick} />
+					<div className={classes.headerActions}>
+						<CalendarToggle showCalendarEvents={showCalendarEvents} onToggle={handleToggleCalendarEvents} />
+						<AddTimeBlockButton setIsModalVisible={handleAddBlockClick} />
+					</div>
 				</header>
 				<main className={classes.planner}>
 					{isPageLoading ? (
