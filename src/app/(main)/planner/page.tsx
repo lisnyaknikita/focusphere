@@ -7,6 +7,7 @@ import { mapEventToScheduleX, mapTimeBlockToScheduleX } from '@/lib/events/event
 import { useBilling } from '@/shared/context/billing-context'
 import { useEvents } from '@/shared/hooks/events/use-events'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
+import { useGridDragCreate } from '@/shared/hooks/planner/use-grid-drag-create'
 import { usePlannerCalendar } from '@/shared/hooks/planner/use-planner-calendar'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
 import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
@@ -46,6 +47,7 @@ export default function Planner() {
 		pasteTimeBlock,
 		setCopiedTimeBlock,
 		createQuickBlock,
+		createQuickBlockWithRange,
 	} = useTimeBlocks(user)
 
 	const isProRef = useRef(isPro)
@@ -63,6 +65,14 @@ export default function Planner() {
 		timeBlocks,
 		openPaywall,
 		createQuickBlock,
+		onQuickBlockCreated: setQuickCreatedEvent,
+	})
+
+	const { selectionInfo } = useGridDragCreate({
+		isPro,
+		timeBlocksCount: timeBlocks.length,
+		openPaywall,
+		createQuickBlockWithRange,
 		onQuickBlockCreated: setQuickCreatedEvent,
 	})
 
@@ -156,6 +166,7 @@ export default function Planner() {
 									onDayClick={handleDayClick}
 									onCopyEvent={setCopiedTimeBlock}
 									refreshTimeBlocks={refreshTimeBlocks}
+									selectionInfo={selectionInfo}
 								/>
 							</CopyModeContext.Provider>
 						</DailyTasksCountByDateContext.Provider>

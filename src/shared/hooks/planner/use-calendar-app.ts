@@ -1,5 +1,6 @@
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateTimeBlock } from '@/lib/planner/planner'
+import { checkAndResetDragJustCompleted } from '@/shared/hooks/planner/use-grid-drag-create'
 import { CalendarEvent, createViewDay, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import { createCurrentTimePlugin } from '@schedule-x/current-time'
@@ -61,6 +62,9 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 				}
 			},
 			onClickDateTime(dateTime: Temporal.ZonedDateTime) {
+				if (checkAndResetDragJustCompleted()) {
+					return
+				}
 				if (quickCreateRef.current) {
 					quickCreateRef.current(dateTime)
 				}
