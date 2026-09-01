@@ -38,17 +38,20 @@ export const SprintBoardHeader = ({
 		<div className={classes.headerContainer}>
 			<div className={classes.compactBar}>
 				<div className={classes.left}>
-					<span className={classes.sprintName}>🚀 {activeSprint.name}</span>
-					{canManageSprints && onEditSprintClick && (
-						<button
-							type='button'
-							className={classes.editBtn}
-							onClick={() => onEditSprintClick(activeSprint)}
-							title='Edit sprint details'
-						>
-							<EditIcon width={18} height={18} />
-						</button>
-					)}
+					<div className={classes.sprintTitleGroup}>
+						<span className={classes.sprintEmoji}>🚀</span>
+						<h3 className={classes.sprintName}>{activeSprint.name}</h3>
+						{canManageSprints && onEditSprintClick && (
+							<button
+								type='button'
+								className={classes.editBtn}
+								onClick={() => onEditSprintClick(activeSprint)}
+								title='Edit sprint details'
+							>
+								<EditIcon width={16} height={16} />
+							</button>
+						)}
+					</div>
 					<span className={`${classes.badge} ${classes[activeSprint.status]}`}>{activeSprint.status}</span>
 				</div>
 
@@ -56,20 +59,24 @@ export const SprintBoardHeader = ({
 					<span className={classes.progressPill}>
 						{completedCount}/{sprintTasks.length} Done ({progressPct}%)
 					</span>
-					<button
-						type='button'
-						className={classes.toggleDetailsBtn}
-						onClick={() => setIsExpanded(prev => !prev)}
-						title='Toggle sprint details'
-					>
-						<span>{isExpanded ? 'Hide' : 'Details'}</span>
-						<ArrowBottomIcon className={clsx(classes.arrowIcon, isExpanded && classes.rotated)} />
-					</button>
-					{canManageSprints && activeSprint.status === 'active' && (
-						<button type='button' className={classes.completeBtn} onClick={() => onCompleteSprintClick(activeSprint)}>
-							Complete Sprint
+
+					<div className={classes.actionsGroup}>
+						<button
+							type='button'
+							className={classes.toggleDetailsBtn}
+							onClick={() => setIsExpanded(prev => !prev)}
+							title='Toggle sprint details'
+						>
+							<span>{isExpanded ? 'Hide' : 'Details'}</span>
+							<ArrowBottomIcon className={clsx(classes.arrowIcon, isExpanded && classes.rotated)} />
 						</button>
-					)}
+
+						{canManageSprints && activeSprint.status === 'active' && (
+							<button type='button' className={classes.completeBtn} onClick={() => onCompleteSprintClick(activeSprint)}>
+								Complete
+							</button>
+						)}
+					</div>
 				</div>
 			</div>
 
