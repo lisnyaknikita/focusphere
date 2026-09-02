@@ -5,7 +5,16 @@ import { getCalendarIdByColor } from './calendar-config'
 export const mapEventToScheduleX = (event: CalendarEvent) => {
 	const toZDT = (iso: string) => {
 		if (!iso.includes('T') && iso.length <= 10) return Temporal.PlainDate.from(iso)
-		return Temporal.Instant.from(iso).toZonedDateTimeISO(Intl.DateTimeFormat().resolvedOptions().timeZone)
+
+		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+		const hasTimeZoneOffset = iso.endsWith('Z') || /[+-]\d{2}:?\d{2}$/.test(iso)
+
+		if (!hasTimeZoneOffset) {
+			return Temporal.PlainDateTime.from(iso).toZonedDateTime(timeZone)
+		}
+
+		return Temporal.Instant.from(iso).toZonedDateTimeISO(timeZone)
 	}
 
 	const displayTitle = event.title.startsWith('📅') ? event.title : `📅 ${event.title}`
@@ -18,6 +27,7 @@ export const mapEventToScheduleX = (event: CalendarEvent) => {
 		end: toZDT(event.endDate),
 		color: event.color,
 		calendarId: getCalendarIdByColor(event.color),
+		_isCalendarEvent: true,
 	}
 }
 
