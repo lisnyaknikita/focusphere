@@ -1,6 +1,8 @@
 'use client'
 
 import { createTimeBlock, updateTimeBlock } from '@/lib/planner/planner'
+import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
+import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { DragSelectionInfo } from '@/shared/hooks/planner/use-grid-drag-create'
 import { useTimeBlockDeletion } from '@/shared/hooks/planner/use-timeblock-deletion'
@@ -11,6 +13,7 @@ import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react'
+import { useQueryClient } from '@tanstack/react-query'
 import '@schedule-x/theme-default/dist/index.css'
 import { memo, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -40,8 +43,12 @@ export const PlannerInner = memo(
 		refreshTimeBlocks,
 		selectionInfo,
 	}: PlannerInnerProps) => {
+		const queryClient = useQueryClient()
 		const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
-		const { handleDelete } = useTimeBlockDeletion({ eventsService, eventModal })
+
+		const { handleDelete: handleDeleteTimeBlock } = useTimeBlockDeletion({ eventsService, eventModal })
+		const { handleDelete: handleDeleteCalendarEvent } = useEventDeletion({ eventsService, eventModal })
+		const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
 
 		useCalendarScroll({
 			dependencies: [timeBlocks.length],
@@ -50,35 +57,68 @@ export const PlannerInner = memo(
 
 		const handleConfirmDelete = async () => {
 			if (eventToDelete) {
-				await handleDelete(String(eventToDelete.id))
+				const id = String(eventToDelete.id)
+				const isCalendar = Boolean(
+					eventToDelete._isCalendarEvent || id.startsWith('g_') || eventToDelete.title?.startsWith('📅')
+				)
+				if (isCalendar) {
+					await handleDeleteCalendarEvent(id)
+					queryClient.invalidateQueries({ queryKey: ['events-appwrite'] })
+					queryClient.invalidateQueries({ queryKey: ['events-google'] })
+				} else {
+					await handleDeleteTimeBlock(id)
+				}
 				setEventToDelete(null)
 			}
 		}
 
 		const customComponents = useMemo(
 			() => ({
-				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => (
-					<EventInfoModal
-						event={calendarEvent}
-						isTimeBlock
-						onConfirmDelete={() => setEventToDelete(calendarEvent)}
-						onUpdated={() => {
-							refreshTimeBlocks()
-							eventModal.close()
-						}}
-						onCopy={() => {
-							onCopyEvent(calendarEvent)
-							eventModal.close()
-						}}
-						actions={{
-							create: createTimeBlock,
-							update: updateTimeBlock,
-						}}
-					/>
-				),
+				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => {
+					const isCalendar = Boolean(
+						calendarEvent._isCalendarEvent ||
+							String(calendarEvent.id).startsWith('g_') ||
+							calendarEvent.title?.startsWith('📅')
+					)
+
+					return (
+						<EventInfoModal
+							event={calendarEvent}
+							isTimeBlock={!isCalendar}
+							onConfirmDelete={() => setEventToDelete(calendarEvent)}
+							onUpdated={() => {
+								refreshTimeBlocks()
+								if (isCalendar) {
+									queryClient.invalidateQueries({ queryKey: ['events-appwrite'] })
+									queryClient.invalidateQueries({ queryKey: ['events-google'] })
+								}
+								eventModal.close()
+							}}
+							onCopy={
+								!isCalendar
+									? () => {
+											onCopyEvent(calendarEvent)
+											eventModal.close()
+									  }
+									: undefined
+							}
+							actions={
+								isCalendar
+									? {
+											create: handleCreateEvent,
+											update: handleUpdateEvent,
+									  }
+									: {
+											create: createTimeBlock,
+											update: updateTimeBlock,
+									  }
+							}
+						/>
+					)
+				},
 				weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} onDayClick={onDayClick} />,
 			}),
-			[onDayClick, refreshTimeBlocks, onCopyEvent]
+			[onDayClick, refreshTimeBlocks, onCopyEvent, queryClient, handleCreateEvent, handleUpdateEvent, eventModal]
 		)
 
 		return (
@@ -104,7 +144,14 @@ export const PlannerInner = memo(
 					isVisible={!!eventToDelete}
 					onClose={() => setEventToDelete(null)}
 					onConfirm={handleConfirmDelete}
-					title='Delete Time Block'
+					title={
+						eventToDelete &&
+						(eventToDelete._isCalendarEvent ||
+							String(eventToDelete.id).startsWith('g_') ||
+							eventToDelete.title?.startsWith('📅'))
+							? 'Delete Calendar Event'
+							: 'Delete Time Block'
+					}
 					message={
 						<>
 							Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?

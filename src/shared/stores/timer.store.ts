@@ -18,6 +18,7 @@ interface TimerState {
 	settings: TimerSettings
 	expiry: number | null
 	mode: 'work' | 'break'
+	isPlayerForced: boolean
 }
 
 interface TimerActions {
@@ -26,6 +27,7 @@ interface TimerActions {
 	resetTimer: () => void
 	updateSettings: (newSettings: Partial<TimerSettings>) => void
 	tickLogic: () => void
+	togglePlayer: () => void
 	// jumpToFinish: () => void
 }
 
@@ -91,6 +93,7 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 			currentSession: 1,
 			expiry: null,
 			mode: 'work',
+			isPlayerForced: false,
 			settings: {
 				flowDuration: 50,
 				breakDuration: 10,
@@ -142,6 +145,10 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 					timeLeft: settings.flowDuration * 60,
 					expiry: null,
 				})
+			},
+
+			togglePlayer: () => {
+				set(state => ({ isPlayerForced: !state.isPlayerForced }))
 			},
 
 			updateSettings: newSettings => {

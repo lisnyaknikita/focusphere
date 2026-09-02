@@ -1,6 +1,7 @@
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateTimeBlock } from '@/lib/planner/planner'
 import { checkAndResetDragJustCompleted } from '@/shared/hooks/planner/use-grid-drag-create'
+import { TimeBlock } from '@/shared/types/time-block'
 import { CalendarEvent, createViewDay, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import { createCurrentTimePlugin } from '@schedule-x/current-time'
@@ -41,24 +42,70 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 		callbacks: {
 			async onEventUpdate(updatedEvent: CalendarEvent) {
 				try {
-					const { id, start, end } = updatedEvent
+					const { id, start, end, title, description, color } = updatedEvent
+					const eventId = String(id)
 
 					const formatForAppwrite = (dateObj: string | { toString(): string }): string => {
-						const base = dateObj.toString().replace(' ', 'T').substring(0, 16)
+						const text = dateObj.toString().replace(' ', 'T')
+						if (text.length <= 10) return text
+						const base = text.substring(0, 16)
 						return `${base}:00`
 					}
 
 					const startDate = formatForAppwrite(start)
 					const endDate = formatForAppwrite(end)
 
-					await updateTimeBlock(id as string, {
-						startDate,
-						endDate,
-					})
+					const isGoogle = eventId.startsWith('g_')
+					const isCalendarEvent = Boolean(updatedEvent._isCalendarEvent || updatedEvent.title?.startsWith('📅'))
 
-					queryClient.invalidateQueries({ queryKey: ['timeblocks'] })
+					if (isGoogle) {
+						queryClient.setQueryData<CalendarEvent[]>(['events-google'], oldData => {
+							if (!oldData) return []
+							return oldData.map(item =>
+								item.$id === eventId || item.id === eventId ? { ...item, startDate, endDate } : item
+							)
+						})
+					} else if (isCalendarEvent) {
+						queryClient.setQueryData<CalendarEvent[]>(['events-appwrite'], oldData => {
+							if (!oldData) return []
+							return oldData.map(item => (item.$id === eventId ? { ...item, startDate, endDate } : item))
+						})
+					} else {
+						queryClient.setQueryData<TimeBlock[]>(['timeblocks'], oldData => {
+							if (!oldData) return []
+							return oldData.map(item => (item.$id === eventId ? { ...item, startDate, endDate } : item))
+						})
+					}
+
+					if (isGoogle) {
+						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+						await googleCalendarService.updateEvent(eventId, {
+							summary: title ? title.replace(/^📅\s*/, '') : undefined,
+							description: description as string | undefined,
+							color: color as string | undefined,
+							start: startDate,
+							end: endDate,
+						})
+						queryClient.invalidateQueries({ queryKey: ['events-google'] })
+					} else if (isCalendarEvent) {
+						const { updateEvent } = await import('@/lib/events/events')
+						await updateEvent(eventId, {
+							startDate,
+							endDate,
+						})
+						queryClient.invalidateQueries({ queryKey: ['events-appwrite'] })
+					} else {
+						await updateTimeBlock(eventId, {
+							startDate,
+							endDate,
+						})
+						queryClient.invalidateQueries({ queryKey: ['timeblocks'] })
+					}
 				} catch (error) {
-					console.error('Appwrite update failed:', error)
+					console.error('Event update failed:', error)
+					queryClient.invalidateQueries({ queryKey: ['events-google'] })
+					queryClient.invalidateQueries({ queryKey: ['events-appwrite'] })
+					queryClient.invalidateQueries({ queryKey: ['timeblocks'] })
 				}
 			},
 			onClickDateTime(dateTime: Temporal.ZonedDateTime) {
