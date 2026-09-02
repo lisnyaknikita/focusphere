@@ -22,6 +22,7 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
 			{ label: 'Quick Ideas Drawer', mac: [['⌘', 'I']], win: [['Ctrl', 'I']] },
 			{ label: 'Create Daily Task', mac: [['⌥', 'T']], win: [['Alt', 'T']] },
 			{ label: 'Create Event', mac: [['⌥', 'E']], win: [['Alt', 'E']] },
+			{ label: 'Toggle Focus Timer Player', mac: [['⌥', 'F']], win: [['Alt', 'F']] },
 		],
 	},
 	{

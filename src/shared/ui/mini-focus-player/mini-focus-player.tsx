@@ -26,6 +26,7 @@ export const MiniFocusPlayer = () => {
 	const startTimer = useTimerStore(s => s.startTimer)
 	const pauseTimer = useTimerStore(s => s.pauseTimer)
 	const resetTimer = useTimerStore(s => s.resetTimer)
+	const isPlayerForced = useTimerStore(s => s.isPlayerForced)
 
 	const { activeSound, selectSound, volume, setVolume } = useBackgroundSound()
 
@@ -47,7 +48,8 @@ export const MiniFocusPlayer = () => {
 	}
 
 	if (pathname === '/focus') return null
-	if (status === 'idle' && !activeSound) return null
+	const isActive = status !== 'idle' || !!activeSound
+	if (!isActive && !isPlayerForced) return null
 
 	const mins = Math.floor(timeLeft / 60)
 		.toString()
