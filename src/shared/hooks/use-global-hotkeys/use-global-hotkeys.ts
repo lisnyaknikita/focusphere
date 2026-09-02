@@ -1,6 +1,7 @@
 'use client'
 
 import { useSidebarStore } from '@/shared/stores/sidebar.store'
+import { useTimerStore } from '@/shared/stores/timer.store'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 import { HotkeyConfig, useHotkeys } from '../use-hotkeys/use-hotkeys'
@@ -63,6 +64,11 @@ export const useGlobalHotkeys = () => {
 				key: 'b',
 				ctrl: true,
 				callback: () => useSidebarStore.getState().toggleSidebar(),
+			},
+			{
+				key: 'f',
+				alt: true,
+				callback: () => useTimerStore.getState().togglePlayer(),
 			},
 
 			{ key: '1', alt: true, callback: () => router.push('/dashboard') },

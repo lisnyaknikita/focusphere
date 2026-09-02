@@ -5,8 +5,9 @@ import { useCallback } from 'react'
 export const useCalendarMutations = () => {
 	const handleUpdateEvent = useCallback(async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>) => {
 		const { title, description, color, startDate, endDate, calendarId } = data
+		const cleanTitle = title?.replace(/^📅\s*/, '')
 		const payload: Partial<Omit<CreateEventPayload, 'userId'>> = {
-			...(title !== undefined && { title }),
+			...(cleanTitle !== undefined && { title: cleanTitle }),
 			...(description !== undefined && { description }),
 			...(color !== undefined && { color }),
 			...(startDate !== undefined && { startDate }),
@@ -17,7 +18,7 @@ export const useCalendarMutations = () => {
 		if (eventId.startsWith('g_')) {
 			const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
 			await googleCalendarService.updateEvent(eventId, {
-				summary: title,
+				summary: cleanTitle,
 				description,
 				color,
 				start: startDate ?? new Date().toISOString(),
