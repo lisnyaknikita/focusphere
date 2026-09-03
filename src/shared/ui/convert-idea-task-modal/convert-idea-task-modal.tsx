@@ -1,10 +1,10 @@
 'use client'
 
 import { createDailyTask } from '@/lib/planner/planner'
-import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
-import { Modal } from '@/shared/ui/modal/modal'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
-import { SprintDatePicker } from '@/app/(main)/projects/[id]/components/sprint-datepicker/sprint-datepicker'
+import { Modal } from '@/shared/ui/modal/modal'
+import { SprintDatePicker } from '@/shared/ui/sprint-datepicker/sprint-datepicker'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -28,20 +28,20 @@ export const ConvertIdeaToTaskModal = ({
 	const [title, setTitle] = useState(ideaText)
 	const [selectedDate, setSelectedDate] = useState(() => format(new Date(), 'yyyy-MM-dd'))
 	const [isSubmitting, setIsSubmitting] = useState(false)
+	const { user } = useUser()
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
-		if (!title.trim() || isSubmitting) return
+		if (!title.trim() || isSubmitting || !user) return
 
 		setIsSubmitting(true)
 		try {
-			const userId = await getCurrentUserId()
 			await createDailyTask({
 				title: title.trim(),
 				date: selectedDate,
 				isCompleted: false,
 				order: Date.now(),
-				userId,
+				userId: user.$id,
 			})
 
 			if (typeof window !== 'undefined') {

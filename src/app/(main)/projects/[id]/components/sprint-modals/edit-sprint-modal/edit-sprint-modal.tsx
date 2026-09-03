@@ -2,9 +2,9 @@
 
 import { useSprints } from '@/shared/hooks/projects/sprints/use-sprints'
 import { Sprint } from '@/shared/types/sprint'
+import { SprintDatePicker } from '@/shared/ui/sprint-datepicker/sprint-datepicker'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { SprintDatePicker } from '../../sprint-datepicker/sprint-datepicker'
 import classes from './edit-sprint-modal.module.scss'
 
 interface EditSprintModalProps {
