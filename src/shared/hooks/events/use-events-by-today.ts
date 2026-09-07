@@ -1,10 +1,11 @@
 import { db } from '@/lib/appwrite'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
-import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { useQuery } from '@tanstack/react-query'
 import { Query } from 'appwrite'
+import { useMemo } from 'react'
 import 'temporal-polyfill/global'
+import { useUser } from '../use-user/use-user'
 
 const reverseColorMap: Record<string, string> = {
 	'5': '#D79716',
@@ -23,24 +24,24 @@ const getTodayRange = () => {
 	return { startOfDay, endOfDay }
 }
 
-const fetchAppwriteEventsToday = async (): Promise<CalendarEvent[]> => {
-	const userId = await getCurrentUserId()
+const fetchAppwriteEventsToday = async (userId: string): Promise<CalendarEvent[]> => {
 	const { startOfDay, endOfDay } = getTodayRange()
 
 	const appwriteRes = await db.listRows({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
-		queries: [Query.equal('userId', userId), Query.limit(5000)],
+		queries: [
+			Query.equal('userId', userId),
+			Query.lessThan('startDate', endOfDay),
+			Query.greaterThan('endDate', startOfDay),
+			Query.orderAsc('startDate'),
+		],
 	})
 
-	const allAppwriteEvents = appwriteRes.rows as unknown as CalendarEvent[]
-	return allAppwriteEvents
-		.filter(event => event.startDate < endOfDay && event.endDate > startOfDay)
-		.sort((a, b) => a.startDate.localeCompare(b.startDate))
+	return appwriteRes.rows as unknown as CalendarEvent[]
 }
 
-const fetchGoogleEventsToday = async (): Promise<CalendarEvent[]> => {
-	const userId = await getCurrentUserId()
+const fetchGoogleEventsToday = async (userId: string): Promise<CalendarEvent[]> => {
 	const { startOfDay, endOfDay } = getTodayRange()
 
 	const googleEventsRaw = await googleCalendarService.fetchEvents(new Date(startOfDay), new Date(endOfDay))
@@ -77,32 +78,42 @@ const fetchGoogleEventsToday = async (): Promise<CalendarEvent[]> => {
 }
 
 export const useEventsByToday = () => {
+	const { user, loading: isUserLoading } = useUser()
+	const userId = user?.$id
+
 	const {
 		data: appwriteEvents = [],
 		isLoading: isAppwriteLoading,
 		refetch: refetchAppwrite,
 	} = useQuery({
 		queryKey: ['events-today-appwrite'],
-		queryFn: fetchAppwriteEventsToday,
+		queryFn: () => fetchAppwriteEventsToday(userId!),
+		enabled: !!userId,
 		staleTime: 1000 * 60 * 5,
 	})
 
 	const {
 		data: googleEvents = [],
+		isLoading: isGoogleInitialLoading,
 		isFetching: isGoogleLoading,
 		refetch: refetchGoogle,
 	} = useQuery({
 		queryKey: ['events-today-google'],
-		queryFn: fetchGoogleEventsToday,
+		queryFn: () => fetchGoogleEventsToday(userId!),
+		enabled: !!userId,
 		staleTime: 1000 * 60 * 5,
 	})
 
-	const events = [...appwriteEvents, ...googleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
+	const events = useMemo(() => {
+		return [...appwriteEvents, ...googleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
+	}, [appwriteEvents, googleEvents])
+
+	const isLoading = isUserLoading || !userId || isAppwriteLoading || isGoogleInitialLoading
 
 	return {
 		events,
-		isLoading: isAppwriteLoading,
-		isGoogleLoading,
+		isLoading,
+		isGoogleLoading: isGoogleLoading,
 		refresh: async () => {
 			await Promise.all([refetchAppwrite(), refetchGoogle()])
 		},
