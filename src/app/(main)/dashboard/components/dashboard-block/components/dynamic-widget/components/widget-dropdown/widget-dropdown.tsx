@@ -26,7 +26,7 @@ export const WidgetDropdown = ({ value, onChange }: WidgetDropdownProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const dropdownRef = useRef<HTMLDivElement>(null)
 
-	const currentLabel = WIDGET_OPTIONS.find(opt => opt.value === value)?.label || 'Quotes'
+	const currentLabel = WIDGET_OPTIONS.find(opt => opt.value === value)?.label || 'Pomodoro'
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -51,6 +51,7 @@ export const WidgetDropdown = ({ value, onChange }: WidgetDropdownProps) => {
 				className={clsx(classes.triggerButton, isOpen && classes.active)}
 				onClick={() => setIsOpen(prev => !prev)}
 				aria-label='Select widget view'
+				title='Select widget view'
 			>
 				<span>{currentLabel}</span>
 				<motion.svg

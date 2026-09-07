@@ -1,9 +1,9 @@
 'use client'
 
 import { createGeneralNote } from '@/lib/notes/notes'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { QuickIdea } from '@/shared/types/quick-idea'
 import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
-import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
@@ -26,6 +26,7 @@ export const QuickIdeaItem = React.memo(({ idea, onEdit, onDelete, onCloseDrawer
 	const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
 	const [isConvertingNote, setIsConvertingNote] = useState(false)
 	const [text, setText] = useState(idea.text)
+	const { user } = useUser()
 	const textareaRef = useRef<HTMLTextAreaElement>(null)
 
 	const router = useRouter()
@@ -71,7 +72,7 @@ export const QuickIdeaItem = React.memo(({ idea, onEdit, onDelete, onCloseDrawer
 	const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault()
-			handleSave()
+			e.currentTarget.blur()
 		}
 		if (e.key === 'Escape') {
 			setText(idea.text)
@@ -86,14 +87,13 @@ export const QuickIdeaItem = React.memo(({ idea, onEdit, onDelete, onCloseDrawer
 	}
 
 	const handleConvertToNote = async () => {
-		if (isConvertingNote) return
+		if (isConvertingNote || !user) return
 		setIsConvertingNote(true)
 		try {
-			const userId = await getCurrentUserId()
 			const newNote = await createGeneralNote({
 				title: idea.text,
 				content: '',
-				userId,
+				userId: user.$id,
 			})
 			await onDelete(idea.$id)
 			toast.success('Converted to Note!')

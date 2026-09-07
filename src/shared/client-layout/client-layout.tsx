@@ -13,6 +13,7 @@ import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea
 import { ShortcutsModalWrapper } from '../ui/shortcuts-modal/shortcuts-modal-wrapper'
 import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
 import classes from './client-layout.module.scss'
+import { DailyTasksCleanupWorker } from './daily-tasks-cleanup-worker/daily-tasks-cleanup-worker'
 
 export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 	const [isLoading, setIsLoading] = useState(true)
@@ -37,6 +38,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<QueryClientProvider client={queryClient}>
+			<DailyTasksCleanupWorker />
 			<Suspense fallback={null}>
 				<GlobalHotkeys />
 			</Suspense>

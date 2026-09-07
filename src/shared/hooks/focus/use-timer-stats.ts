@@ -1,6 +1,7 @@
 import { FOCUS_SESSION_RECORDED_EVENT, getFocusSessionsByDateRange } from '@/lib/focus/stats'
 import { FocusSessionRow } from '@/shared/types/focus-sessions'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface DayStat {
 	dayName: string
@@ -33,92 +34,57 @@ export const formatMinutesToHours = (minutes: number): string => {
 }
 
 export const useTimerStats = (userId: string | null | undefined) => {
+	const queryClient = useQueryClient()
 	const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => getStartOfWeek(new Date()))
-	const [sessions, setSessions] = useState<FocusSessionRow[]>([])
-	const [isLoading, setIsLoading] = useState(false)
-
-	const cacheRef = useRef<Map<string, FocusSessionRow[]>>(new Map())
-
-	const currentWeekStartISO = useMemo(() => getStartOfWeek(new Date()).toISOString(), [])
-	const isCurrentWeek = currentWeekStart.toISOString() === currentWeekStartISO
 
 	const weekRange = useMemo(() => {
 		const start = new Date(currentWeekStart)
 		const end = new Date(currentWeekStart)
 		end.setDate(start.getDate() + 6)
 		end.setHours(23, 59, 59, 999)
-		return { start, end, cacheKey: `${userId}_${start.toISOString()}` }
-	}, [currentWeekStart, userId])
+		return { start, end }
+	}, [currentWeekStart])
 
-	const fetchStats = useCallback(
-		async (silent = false) => {
-			if (!userId) {
-				setSessions([])
-				return
-			}
+	const isCurrentWeek = useMemo(() => {
+		const nowStart = getStartOfWeek(new Date())
+		return currentWeekStart.getTime() === nowStart.getTime()
+	}, [currentWeekStart])
 
-			const cached = cacheRef.current.get(weekRange.cacheKey)
-
-			if (cached && !silent) {
-				setSessions(cached)
-				getFocusSessionsByDateRange(userId, weekRange.start, weekRange.end).then(fresh => {
-					cacheRef.current.set(weekRange.cacheKey, fresh)
-					setSessions(fresh)
-				})
-				return
-			}
-
-			if (!silent) {
-				setIsLoading(true)
-			}
-
-			try {
-				const data = await getFocusSessionsByDateRange(userId, weekRange.start, weekRange.end)
-				cacheRef.current.set(weekRange.cacheKey, data)
-				setSessions(data)
-			} catch (error) {
-				console.error('Error loading focus stats:', error)
-			} finally {
-				if (!silent) {
-					setIsLoading(false)
-				}
-			}
-		},
-		[userId, weekRange]
-	)
-
-	useEffect(() => {
-		fetchStats()
-	}, [fetchStats])
+	const {
+		data: sessions = [],
+		isLoading,
+		refetch,
+	} = useQuery<FocusSessionRow[]>({
+		queryKey: ['focus-sessions', userId, weekRange.start.toISOString()],
+		queryFn: () => getFocusSessionsByDateRange(userId!, weekRange.start, weekRange.end),
+		enabled: !!userId,
+		staleTime: 1000 * 60 * 5,
+	})
 
 	useEffect(() => {
 		const handleSessionRecorded = () => {
-			if (userId) {
-				const currentWeekKey = `${userId}_${getStartOfWeek(new Date()).toISOString()}`
-				cacheRef.current.delete(currentWeekKey)
-				fetchStats(true)
-			}
+			queryClient.invalidateQueries({ queryKey: ['focus-sessions', userId] })
 		}
 
 		window.addEventListener(FOCUS_SESSION_RECORDED_EVENT, handleSessionRecorded)
 		return () => window.removeEventListener(FOCUS_SESSION_RECORDED_EVENT, handleSessionRecorded)
-	}, [userId, fetchStats])
+	}, [userId, queryClient])
 
-	const goToPreviousWeek = () => {
+	const goToPreviousWeek = useCallback(() => {
 		setCurrentWeekStart(prev => {
 			const next = new Date(prev)
 			next.setDate(next.getDate() - 7)
 			return next
 		})
-	}
+	}, [])
 
-	const goToNextWeek = () => {
+	const goToNextWeek = useCallback(() => {
 		setCurrentWeekStart(prev => {
 			const next = new Date(prev)
 			next.setDate(next.getDate() + 7)
 			return next
 		})
-	}
+	}, [])
 
 	const dailyStats = useMemo<DayStat[]>(() => {
 		const sessionsByDate = new Map<string, FocusSessionRow[]>()
@@ -191,7 +157,7 @@ export const useTimerStats = (userId: string | null | undefined) => {
 		currentWeekStart,
 		isCurrentWeek,
 		dateRangeLabel,
-		isLoading,
+		isLoading: isLoading || !userId,
 		dailyStats,
 		totalMinutes,
 		formattedTotalTime: formatMinutesToHours(totalMinutes),
@@ -201,6 +167,6 @@ export const useTimerStats = (userId: string | null | undefined) => {
 		maxDailyMinutes,
 		goToPreviousWeek,
 		goToNextWeek,
-		refetchStats: fetchStats,
+		refetchStats: refetch,
 	}
 }

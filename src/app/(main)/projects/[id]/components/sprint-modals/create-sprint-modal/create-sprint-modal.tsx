@@ -1,9 +1,9 @@
 'use client'
 
 import { useSprints } from '@/shared/hooks/projects/sprints/use-sprints'
+import { SprintDatePicker } from '@/shared/ui/sprint-datepicker/sprint-datepicker'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { SprintDatePicker } from '../../sprint-datepicker/sprint-datepicker'
 import classes from './create-sprint-modal.module.scss'
 
 interface CreateSprintModalProps {

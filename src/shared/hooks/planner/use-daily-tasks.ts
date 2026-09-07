@@ -3,12 +3,11 @@
 import { db } from '@/lib/appwrite'
 import { createDailyTask, deleteDailyTask, updateDailyTask } from '@/lib/planner/planner'
 import { DailyTask } from '@/shared/types/daily-task'
-import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Query } from 'appwrite'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useUser } from '../use-user/use-user'
 
-const CLEANUP_THRESHOLD_DAYS = 21
 const BATCH_SIZE = 10
 const REORDER_DEBOUNCE_DELAY = 1000
 
@@ -18,23 +17,20 @@ interface UseDailyTasksProps {
 
 export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 	const queryClient = useQueryClient()
-	const [userId, setUserId] = useState<string | null>(null)
-	const [isCreating, setIsCreating] = useState(false)
-	const [newTaskTitle, setNewTaskTitle] = useState('')
-	const [isSaving, setIsSaving] = useState(false)
+	const { user, loading: isUserLoading } = useUser()
+	const userId = user?.$id
 
+	const queryKey = useMemo(() => ['daily-tasks', date, userId], [date, userId])
 	const reorderTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-	useEffect(() => {
-		getCurrentUserId().then(setUserId)
-	}, [])
-
-	const { data: tasks = [], isLoading, refetch: getDailyTasks } = useQuery<DailyTask[]>({
-		queryKey: ['daily-tasks', date, userId],
+	const {
+		data: tasks = [],
+		isLoading: isQueryLoading,
+		refetch: getDailyTasks,
+	} = useQuery<DailyTask[]>({
+		queryKey,
 		queryFn: async () => {
-			if (!userId) return []
-
-			const queries = [Query.equal('userId', userId), Query.equal('date', date), Query.orderAsc('order')]
+			const queries = [Query.equal('userId', userId!), Query.equal('date', date), Query.orderAsc('order')]
 
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
@@ -47,152 +43,141 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		enabled: !!userId,
 	})
 
-	const handleAddTask = async () => {
-		if (!newTaskTitle.trim() || !userId) {
-			setIsCreating(false)
-			return
-		}
+	const toggleTaskMutation = useMutation({
+		mutationFn: ({ taskId, newStatus }: { taskId: string; newStatus: boolean }) =>
+			updateDailyTask(taskId, { isCompleted: newStatus }),
+		onMutate: async ({ taskId, newStatus }) => {
+			await queryClient.cancelQueries({ queryKey })
+			const previousTasks = queryClient.getQueryData<DailyTask[]>(queryKey) ?? []
 
-		const payload = {
-			title: newTaskTitle,
-			date,
-			isCompleted: false,
-			order: tasks.length,
-			userId,
-		}
+			queryClient.setQueryData<DailyTask[]>(queryKey, (old = []) =>
+				old.map(item => (item.$id === taskId ? { ...item, isCompleted: newStatus } : item))
+			)
 
-		try {
-			setIsSaving(true)
-			const newTask = (await createDailyTask(payload)) as unknown as DailyTask
-			queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) => [...old, newTask])
+			return { previousTasks }
+		},
+		onError: (_, __, context) => {
+			if (context?.previousTasks) {
+				queryClient.setQueryData(queryKey, context.previousTasks)
+			}
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
-			setNewTaskTitle('')
-			setIsCreating(false)
-		} catch (error) {
-			console.error('Failed to create task:', error)
-		} finally {
-			setIsSaving(false)
-		}
-	}
+		},
+	})
 
-	const handleToggleTask = async (taskId: string, newStatus: boolean) => {
-		const previousTasks = [...tasks]
-		queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) =>
-			old.map(item => (item.$id === taskId ? { ...item, isCompleted: newStatus } : item))
-		)
+	const deleteTaskMutation = useMutation({
+		mutationFn: (taskId: string) => deleteDailyTask(taskId),
+		onMutate: async taskId => {
+			await queryClient.cancelQueries({ queryKey })
+			const previousTasks = queryClient.getQueryData<DailyTask[]>(queryKey) ?? []
 
-		try {
-			await updateDailyTask(taskId, { isCompleted: newStatus })
+			queryClient.setQueryData<DailyTask[]>(queryKey, (old = []) => old.filter(item => item.$id !== taskId))
+
+			return { previousTasks }
+		},
+		onError: (_, __, context) => {
+			if (context?.previousTasks) {
+				queryClient.setQueryData(queryKey, context.previousTasks)
+			}
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
-		} catch (error) {
-			console.error('Failed to update task status:', error)
-			queryClient.setQueryData(['daily-tasks', date, userId], previousTasks)
-		}
-	}
+		},
+	})
 
-	const handleEditTask = async (taskId: string, newTitle: string) => {
-		const trimmed = newTitle.trim()
-		if (!trimmed) return
-
-		const previousTasks = [...tasks]
-		queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) =>
-			old.map(item => (item.$id === taskId ? { ...item, title: trimmed } : item))
-		)
-
-		try {
-			await updateDailyTask(taskId, { title: trimmed })
-		} catch (error) {
-			console.error('Failed to edit task:', error)
-			queryClient.setQueryData(['daily-tasks', date, userId], previousTasks)
-		}
-	}
-
-	const handleDeleteTask = async (taskId: string) => {
-		const previousTasks = [...tasks]
-		queryClient.setQueryData(['daily-tasks', date, userId], (old: DailyTask[] = []) =>
-			old.filter(item => item.$id !== taskId)
-		)
-
-		try {
-			await deleteDailyTask(taskId)
+	const addTaskMutation = useMutation({
+		mutationFn: (title: string) =>
+			createDailyTask({
+				title,
+				date,
+				isCompleted: false,
+				order: tasks.length,
+				userId: userId!,
+			}),
+		onSuccess: newTask => {
+			queryClient.setQueryData<DailyTask[]>(queryKey, (old = []) => [...old, newTask as unknown as DailyTask])
 			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
-		} catch (error) {
-			console.error('Failed to delete task:', error)
-			queryClient.setQueryData(['daily-tasks', date, userId], previousTasks)
-		}
-	}
+		},
+	})
+
+	const editTaskMutation = useMutation({
+		mutationFn: ({ taskId, title }: { taskId: string; title: string }) => updateDailyTask(taskId, { title }),
+		onMutate: async ({ taskId, title }) => {
+			await queryClient.cancelQueries({ queryKey })
+			const previousTasks = queryClient.getQueryData<DailyTask[]>(queryKey) ?? []
+
+			queryClient.setQueryData<DailyTask[]>(queryKey, (old = []) =>
+				old.map(item => (item.$id === taskId ? { ...item, title } : item))
+			)
+
+			return { previousTasks }
+		},
+		onError: (_, __, context) => {
+			if (context?.previousTasks) {
+				queryClient.setQueryData(queryKey, context.previousTasks)
+			}
+		},
+	})
 
 	const sortedTasks = useMemo(() => {
 		return [...tasks].sort((a, b) => a.order - b.order)
 	}, [tasks])
 
-	const handleReorder = (newTasks: DailyTask[]) => {
-		const tasksWithNewOrder = newTasks.map((task, index) => ({ ...task, order: index }))
+	const handleToggleTask = useCallback(
+		(taskId: string, newStatus: boolean) => {
+			toggleTaskMutation.mutate({ taskId, newStatus })
+		},
+		[toggleTaskMutation]
+	)
 
-		queryClient.setQueryData(['daily-tasks', date, userId], tasksWithNewOrder)
+	const handleDeleteTask = useCallback(
+		(taskId: string) => {
+			deleteTaskMutation.mutate(taskId)
+		},
+		[deleteTaskMutation]
+	)
 
-		if (reorderTimeoutRef.current) {
-			clearTimeout(reorderTimeoutRef.current)
-		}
+	const handleEditTask = useCallback(
+		(taskId: string, newTitle: string) => {
+			const trimmed = newTitle.trim()
+			if (!trimmed) return
+			editTaskMutation.mutate({ taskId, title: trimmed })
+		},
+		[editTaskMutation]
+	)
 
-		reorderTimeoutRef.current = setTimeout(async () => {
-			try {
-				for (let i = 0; i < tasksWithNewOrder.length; i += BATCH_SIZE) {
-					const batch = tasksWithNewOrder.slice(i, i + BATCH_SIZE)
-					await Promise.all(batch.map(task => updateDailyTask(task.$id, { order: task.order })))
-				}
-			} catch (error) {
-				console.error('Failed to save new order:', error)
-				queryClient.invalidateQueries({ queryKey: ['daily-tasks', date, userId] })
-			}
-		}, REORDER_DEBOUNCE_DELAY)
-	}
+	const handleAddTask = useCallback(
+		async (title: string) => {
+			if (!title.trim() || !userId) return
+			await addTaskMutation.mutateAsync(title)
+		},
+		[addTaskMutation, userId]
+	)
 
-	const cleanupOldTasks = useCallback(async () => {
-		if (!userId) return
+	const handleReorder = useCallback(
+		(newTasks: DailyTask[]) => {
+			const tasksWithNewOrder = newTasks.map((task, index) => ({ ...task, order: index }))
+			queryClient.setQueryData(queryKey, tasksWithNewOrder)
 
-		const lastCleanup = localStorage.getItem('last_task_cleanup')
-		const today = new Date().toISOString().split('T')[0]
-		if (lastCleanup === today) return
-
-		try {
-			const thresholdDate = new Date()
-			thresholdDate.setDate(thresholdDate.getDate() - CLEANUP_THRESHOLD_DAYS)
-			const thresholdDateStr = thresholdDate.toISOString().split('T')[0]
-
-			const response = await db.listRows({
-				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-				tableId: process.env.NEXT_PUBLIC_TABLE_DAILY_TASKS!,
-				queries: [
-					Query.equal('userId', userId),
-					Query.lessThan('date', thresholdDateStr),
-					Query.limit(100),
-					Query.select(['$id']),
-				],
-			})
-
-			if (response.rows.length > 0) {
-				const ids = response.rows.map(task => task.$id)
-
-				for (let i = 0; i < ids.length; i += BATCH_SIZE) {
-					const batch = ids.slice(i, i + BATCH_SIZE)
-					await Promise.allSettled(batch.map(id => deleteDailyTask(id)))
-				}
-
-				console.log(`[Auto-Cleanup] Removed ${response.rows.length} old tasks.`)
-				queryClient.invalidateQueries({ queryKey: ['daily-tasks', date, userId] })
-				queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
+			if (reorderTimeoutRef.current) {
+				clearTimeout(reorderTimeoutRef.current)
 			}
 
-			localStorage.setItem('last_task_cleanup', today)
-		} catch (error) {
-			console.error('[Auto-Cleanup] Error:', error)
-		}
-	}, [userId, date, queryClient])
-
-	useEffect(() => {
-		cleanupOldTasks()
-	}, [cleanupOldTasks])
+			reorderTimeoutRef.current = setTimeout(async () => {
+				try {
+					for (let i = 0; i < tasksWithNewOrder.length; i += BATCH_SIZE) {
+						const batch = tasksWithNewOrder.slice(i, i + BATCH_SIZE)
+						await Promise.all(batch.map(task => updateDailyTask(task.$id, { order: task.order })))
+					}
+				} catch (error) {
+					console.error('Failed to save new order:', error)
+					queryClient.invalidateQueries({ queryKey })
+				}
+			}, REORDER_DEBOUNCE_DELAY)
+		},
+		[queryClient, queryKey]
+	)
 
 	useEffect(() => {
 		return () => {
@@ -200,24 +185,17 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		}
 	}, [])
 
-	useEffect(() => {
-		const handleRefresh = () => getDailyTasks()
-		window.addEventListener('refresh-daily-tasks', handleRefresh)
-		return () => window.removeEventListener('refresh-daily-tasks', handleRefresh)
-	}, [getDailyTasks])
+	const isLoading = isUserLoading || isQueryLoading || !userId
 
 	return {
 		tasks: sortedTasks,
 		isLoading,
-		isCreating,
-		setIsCreating,
-		newTaskTitle,
-		setNewTaskTitle,
-		isSaving,
+		isSaving: addTaskMutation.isPending,
 		handleAddTask,
 		handleToggleTask,
 		handleDeleteTask,
 		handleEditTask,
 		handleReorder,
+		refetch: getDailyTasks,
 	}
 }
