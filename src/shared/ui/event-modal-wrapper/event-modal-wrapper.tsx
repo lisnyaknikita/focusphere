@@ -1,17 +1,22 @@
 'use client'
 
-import { deleteQuickIdea } from '@/lib/quick-ideas/quick-ideas'
 import { EventModal } from '@/app/(main)/calendar/components/event-modal/event-modal'
+import { deleteQuickIdea } from '@/lib/quick-ideas/quick-ideas'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useQueryClient } from '@tanstack/react-query'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 const EventModalContent = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const queryClient = useQueryClient()
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const isOpen = searchParams.get('modal') === 'create-event'
 	const titleParam = searchParams.get('title') || undefined
@@ -28,7 +33,6 @@ const EventModalContent = () => {
 
 		queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] })
 		queryClient.invalidateQueries({ queryKey: ['events-today-google'] })
-		router.refresh()
 	}
 
 	const handleSuccess = async () => {
@@ -36,14 +40,13 @@ const EventModalContent = () => {
 			try {
 				await deleteQuickIdea(fromIdeaId)
 				queryClient.invalidateQueries({ queryKey: ['quick-ideas'] })
-				if (typeof window !== 'undefined') {
-					window.dispatchEvent(new CustomEvent('refresh-quick-ideas'))
-				}
 			} catch (err) {
 				console.error('Failed to delete converted quick idea', err)
 			}
 		}
 	}
+
+	if (!isMounted) return null
 
 	return (
 		<Modal isVisible={isOpen} onClose={handleClose}>

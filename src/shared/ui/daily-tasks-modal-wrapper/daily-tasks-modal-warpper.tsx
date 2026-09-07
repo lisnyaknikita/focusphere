@@ -3,7 +3,7 @@
 import { DailyTasksModal } from '@/app/(main)/planner/components/main/daily-tasks-modal/daily-tasks-modal'
 import { useToday } from '@/shared/hooks/date/use-today'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Modal } from '../modal/modal'
 
 const DailyTasksModalContent = () => {
@@ -11,6 +11,11 @@ const DailyTasksModalContent = () => {
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const today = useToday()
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const isOpen = searchParams.get('modal') === 'create-daily-task'
 
@@ -20,14 +25,13 @@ const DailyTasksModalContent = () => {
 		const queryString = params.toString()
 
 		router.push(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false })
-
-		const event = new CustomEvent('refresh-daily-tasks')
-		window.dispatchEvent(event)
 	}
+
+	if (!isMounted || !today?.iso) return null
 
 	return (
 		<Modal isVisible={isOpen} onClose={handleClose}>
-			<DailyTasksModal date={today ? today?.iso : ''} onClose={handleClose} autoCreate />
+			<DailyTasksModal date={today.iso} onClose={handleClose} autoCreate />
 		</Modal>
 	)
 }
