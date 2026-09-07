@@ -1,3 +1,5 @@
+'use client'
+
 import { useDailyTasks } from '@/shared/hooks/planner/use-daily-tasks'
 import { DailyTask } from '@/shared/types/daily-task'
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
@@ -33,13 +35,12 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 	const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 	const [editingTitle, setEditingTitle] = useState('')
 
+	const [isCreating, setIsCreating] = useState(false)
+	const [newTaskTitle, setNewTaskTitle] = useState('')
+
 	const {
 		tasks,
 		isLoading,
-		isCreating,
-		setIsCreating,
-		newTaskTitle,
-		setNewTaskTitle,
 		isSaving,
 		handleAddTask,
 		handleToggleTask,
@@ -74,9 +75,9 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 		}
 	}
 
-	const confirmDelete = () => {
+	const confirmDelete = async () => {
 		if (taskToDelete) {
-			handleDeleteTask(taskToDelete.$id)
+			await handleDeleteTask(taskToDelete.$id)
 			setTaskToDelete(null)
 			onTasksChanged?.()
 		}
@@ -100,11 +101,21 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 		setEditingTitle('')
 	}
 
+	const handleCreateTask = async () => {
+		const trimmedTitle = newTaskTitle.trim()
+		if (trimmedTitle) {
+			await handleAddTask(trimmedTitle)
+			setNewTaskTitle('')
+			onTasksChanged?.()
+		}
+		setIsCreating(false)
+	}
+
 	useEffect(() => {
 		if (autoCreate) {
 			setIsCreating(true)
 		}
-	}, [autoCreate, setIsCreating])
+	}, [autoCreate])
 
 	return (
 		<>
@@ -162,16 +173,14 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 												placeholder='What needs to be done?'
 												value={newTaskTitle}
 												onChange={e => setNewTaskTitle(e.target.value)}
-												onBlur={async () => {
-													const hasTitle = !!newTaskTitle.trim()
-													await handleAddTask()
-													if (hasTitle) {
-														onTasksChanged?.()
-													}
-												}}
+												onBlur={handleCreateTask}
 												onKeyDown={e => {
 													if (e.key === 'Enter') {
 														e.currentTarget.blur()
+													}
+													if (e.key === 'Escape') {
+														setNewTaskTitle('')
+														setIsCreating(false)
 													}
 												}}
 												disabled={isSaving}

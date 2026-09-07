@@ -2,13 +2,18 @@
 
 import { Modal } from '@/shared/ui/modal/modal'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { QuickIdeaModal } from '../quick-idea-modal/quick-idea-modal'
 
 const QuickIdeaModalContent = () => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
 
 	const isOpen = searchParams.get('modal') === 'quick-idea'
 
@@ -21,6 +26,8 @@ const QuickIdeaModalContent = () => {
 
 		router.push(targetUrl, { scroll: false })
 	}
+
+	if (!isMounted) return null
 
 	return (
 		<Modal isVisible={isOpen} onClose={handleClose}>

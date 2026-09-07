@@ -14,10 +14,10 @@ export const TasksBlock = () => {
 	return (
 		<section className={classes.tasks} ref={sectionRef}>
 			<h2>Tasks for today:</h2>
-			{tasks.length === 0 && !isLoading ? (
-				<p className={classes.noTasksMessage}>No tasks for today</p>
-			) : tasks.length === 0 ? (
+			{isLoading ? (
 				<BeatLoader color='#aaa' size={10} className={classes.loader} />
+			) : tasks.length === 0 ? (
+				<p className={classes.noTasksMessage}>No tasks for today</p>
 			) : (
 				<ul className={classes.tasksList} style={{ maxHeight: `${listHeight}px` }}>
 					{tasks.map(item => (

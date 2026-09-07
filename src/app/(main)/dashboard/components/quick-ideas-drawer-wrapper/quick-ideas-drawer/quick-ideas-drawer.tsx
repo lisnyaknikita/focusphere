@@ -16,9 +16,9 @@ interface QuickIdeasDrawerProps {
 }
 
 export const QuickIdeasDrawer = ({ isOpen, onClose }: QuickIdeasDrawerProps) => {
-	const { ideas, isLoading, newIdeaText, setNewIdeaText, isSaving, handleAddIdea, handleEditIdea, handleDeleteIdea } =
-		useQuickIdeas()
+	const { ideas, isLoading, isSaving, handleAddIdea, handleEditIdea, handleDeleteIdea } = useQuickIdeas()
 
+	const [newIdeaText, setNewIdeaText] = useState('')
 	const [searchQuery, setSearchQuery] = useState('')
 
 	const filteredIdeas = useMemo(() => {
@@ -29,10 +29,13 @@ export const QuickIdeasDrawer = ({ isOpen, onClose }: QuickIdeasDrawerProps) => 
 	const handleCreateInDrawer = async (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault()
-			if (!newIdeaText.trim() || isSaving) return
+			const trimmedText = newIdeaText.trim()
+
+			if (!trimmedText || isSaving) return
 
 			try {
-				await handleAddIdea()
+				await handleAddIdea(trimmedText)
+				setNewIdeaText('')
 				toast.success('Idea added!')
 			} catch (error) {
 				if (error instanceof Error) {

@@ -2,19 +2,16 @@
 
 import { createQuickIdea, deleteQuickIdea, getQuickIdeas, updateQuickIdea } from '@/lib/quick-ideas/quick-ideas'
 import { QuickIdea } from '@/shared/types/quick-idea'
-import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
+import { useUser } from '../use-user/use-user'
 
 export const useQuickIdeas = () => {
 	const queryClient = useQueryClient()
-	const [userId, setUserId] = useState<string | null>(null)
-	const [newIdeaText, setNewIdeaText] = useState('')
-	const [isSaving, setIsSaving] = useState(false)
+	const { user } = useUser()
+	const userId = user?.$id
 
-	useEffect(() => {
-		getCurrentUserId().then(setUserId)
-	}, [])
+	const queryKey = ['quick-ideas', userId]
 
 	const {
 		data: ideas = [],
@@ -22,88 +19,80 @@ export const useQuickIdeas = () => {
 		isFetched,
 		refetch: refetchIdeas,
 	} = useQuery<QuickIdea[]>({
-		queryKey: ['quick-ideas', userId],
-		queryFn: async () => {
-			if (!userId) return []
-			return await getQuickIdeas(userId)
-		},
+		queryKey,
+		queryFn: () => getQuickIdeas(userId!),
 		enabled: !!userId,
 	})
 
-	const handleAddIdea = useCallback(
-		async (textToSave?: string) => {
-			const text = textToSave ?? newIdeaText
-			const trimmedText = text.trim()
+	const addMutation = useMutation({
+		mutationFn: (text: string) => createQuickIdea({ text, userId: userId! }),
+		onSuccess: newIdea => {
+			queryClient.setQueryData<QuickIdea[]>(queryKey, (prev = []) => [newIdea, ...prev])
+		},
+	})
 
-			if (!trimmedText || !userId) return
+	const editMutation = useMutation({
+		mutationFn: ({ ideaId, text }: { ideaId: string; text: string }) => updateQuickIdea(ideaId, { text }),
+		onMutate: async ({ ideaId, text }) => {
+			await queryClient.cancelQueries({ queryKey })
+			const previousIdeas = queryClient.getQueryData<QuickIdea[]>(queryKey) ?? []
 
-			try {
-				setIsSaving(true)
-				const newIdea = await createQuickIdea({
-					text: trimmedText,
-					userId,
-				})
+			queryClient.setQueryData<QuickIdea[]>(queryKey, (prev = []) =>
+				prev.map(item => (item.$id === ideaId ? { ...item, text } : item))
+			)
 
-				queryClient.setQueryData<QuickIdea[]>(['quick-ideas', userId], (prev = []) => [newIdea, ...prev])
-				setNewIdeaText('')
-			} catch (error) {
-				console.error('Failed to create quick idea:', error)
-				throw error
-			} finally {
-				setIsSaving(false)
+			return { previousIdeas }
+		},
+		onError: (_, __, context) => {
+			if (context?.previousIdeas) {
+				queryClient.setQueryData(queryKey, context.previousIdeas)
 			}
 		},
-		[newIdeaText, userId, queryClient]
+	})
+
+	const deleteMutation = useMutation({
+		mutationFn: (ideaId: string) => deleteQuickIdea(ideaId),
+		onMutate: async ideaId => {
+			await queryClient.cancelQueries({ queryKey })
+			const previousIdeas = queryClient.getQueryData<QuickIdea[]>(queryKey) ?? []
+
+			queryClient.setQueryData<QuickIdea[]>(queryKey, (prev = []) => prev.filter(item => item.$id !== ideaId))
+
+			return { previousIdeas }
+		},
+		onError: (_, __, context) => {
+			if (context?.previousIdeas) {
+				queryClient.setQueryData(queryKey, context.previousIdeas)
+			}
+		},
+	})
+
+	const handleAddIdea = useCallback(
+		async (text: string) => {
+			await addMutation.mutateAsync(text)
+		},
+		[addMutation]
 	)
 
 	const handleEditIdea = useCallback(
-		async (ideaId: string, newText: string) => {
-			const trimmed = newText.trim()
-			if (!trimmed || !userId) return
-
-			const previousIdeas = queryClient.getQueryData<QuickIdea[]>(['quick-ideas', userId]) ?? []
-
-			queryClient.setQueryData<QuickIdea[]>(['quick-ideas', userId], (prev = []) =>
-				prev.map(item => (item.$id === ideaId ? { ...item, text: trimmed } : item))
-			)
-
-			try {
-				await updateQuickIdea(ideaId, { text: trimmed })
-			} catch (error) {
-				console.error('Failed to edit quick idea:', error)
-				queryClient.setQueryData(['quick-ideas', userId], previousIdeas)
-			}
+		async (ideaId: string, text: string) => {
+			await editMutation.mutateAsync({ ideaId, text })
 		},
-		[userId, queryClient]
+		[editMutation]
 	)
 
 	const handleDeleteIdea = useCallback(
 		async (ideaId: string) => {
-			if (!userId) return
-
-			const previousIdeas = queryClient.getQueryData<QuickIdea[]>(['quick-ideas', userId]) ?? []
-
-			queryClient.setQueryData<QuickIdea[]>(['quick-ideas', userId], (prev = []) =>
-				prev.filter(item => item.$id !== ideaId)
-			)
-
-			try {
-				await deleteQuickIdea(ideaId)
-			} catch (error) {
-				console.error('Failed to delete quick idea:', error)
-				queryClient.setQueryData(['quick-ideas', userId], previousIdeas)
-			}
+			await deleteMutation.mutateAsync(ideaId)
 		},
-		[userId, queryClient]
+		[deleteMutation]
 	)
 
 	return {
 		ideas,
 		isLoading,
 		isFetched,
-		newIdeaText,
-		setNewIdeaText,
-		isSaving,
+		isSaving: addMutation.isPending,
 		handleAddIdea,
 		handleEditIdea,
 		handleDeleteIdea,
