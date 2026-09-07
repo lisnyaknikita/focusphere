@@ -1,15 +1,15 @@
 'use client'
 
-import { useUserFromContext } from '@/shared/context/user-context'
 import { formatMinutesToHours, useTimerStats } from '@/shared/hooks/focus/use-timer-stats'
+import { useUser } from '@/shared/hooks/use-user/use-user'
 import { ChevronLeftIcon } from '@/shared/ui/icons/focus/chevron-left-icon'
 import { ChevronRightIcon } from '@/shared/ui/icons/focus/chevron-right-icon'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { BeatLoader } from 'react-spinners'
 import classes from './pomodoro-stats.module.scss'
 
 export const PomodoroStats = () => {
-	const { user } = useUserFromContext()
+	const { user } = useUser()
 
 	const {
 		isCurrentWeek,
@@ -23,14 +23,6 @@ export const PomodoroStats = () => {
 		goToPreviousWeek,
 		goToNextWeek,
 	} = useTimerStats(user?.$id)
-
-	if (isLoading && dailyStats.length === 0) {
-		return (
-			<div className={classes.loaderWrapper}>
-				<BeatLoader color='var(--textSecondary)' size={8} />
-			</div>
-		)
-	}
 
 	return (
 		<div className={classes.pomodoroStats}>
@@ -74,42 +66,41 @@ export const PomodoroStats = () => {
 						<BeatLoader color='var(--textSecondary)' size={8} />
 					</div>
 				) : (
-					<AnimatePresence mode='wait'>
-						{dailyStats.map(day => {
-							const heightPct = maxDailyMinutes > 0 ? (day.totalMinutes / maxDailyMinutes) * 100 : 0
-							const hasData = day.totalMinutes > 0
-							const barHeight = hasData ? Math.max(heightPct, 4) : 4
+					dailyStats.map(day => {
+						const heightPct = maxDailyMinutes > 0 ? (day.totalMinutes / maxDailyMinutes) * 100 : 0
+						const hasData = day.totalMinutes > 0
+						const barHeight = hasData ? Math.max(heightPct, 4) : 4
+						const itemKey = day.fullDate.toISOString()
 
-							return (
-								<div key={day.shortDate} className={classes.barCol}>
-									<div className={classes.barTrack}>
-										<div className={classes.tooltip} style={{ bottom: `calc(${barHeight}% + 6px)` }}>
-											<span className={classes.tooltipTitle}>{day.shortDate}</span>
-											<span className={classes.tooltipValue}>
-												{hasData ? formatMinutesToHours(day.totalMinutes) : 'No sessions'}
+						return (
+							<div key={itemKey} className={classes.barCol}>
+								<div className={classes.barTrack}>
+									<div className={classes.tooltip} style={{ bottom: `calc(${barHeight}% + 6px)` }}>
+										<span className={classes.tooltipTitle}>{day.shortDate}</span>
+										<span className={classes.tooltipValue}>
+											{hasData ? formatMinutesToHours(day.totalMinutes) : 'No sessions'}
+										</span>
+										{day.sessionCount > 0 && (
+											<span className={classes.tooltipSub}>
+												{day.sessionCount} session{day.sessionCount !== 1 ? 's' : ''}
 											</span>
-											{day.sessionCount > 0 && (
-												<span className={classes.tooltipSub}>
-													{day.sessionCount} session{day.sessionCount !== 1 ? 's' : ''}
-												</span>
-											)}
-										</div>
-
-										<motion.div
-											className={`${classes.bar} ${hasData ? classes.active : ''} ${day.isToday ? classes.today : ''}`}
-											initial={{ height: 0 }}
-											animate={{ height: `${barHeight}%` }}
-											transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.02 }}
-											style={{ opacity: hasData ? 1 : 0.25 }}
-										/>
+										)}
 									</div>
 
-									<span className={`${classes.dayLabel} ${day.isToday ? classes.todayLabel : ''}`}>{day.dayName}</span>
-									<span className={classes.dateSublabel}>{day.fullDate.getDate()}</span>
+									<motion.div
+										className={`${classes.bar} ${hasData ? classes.active : ''} ${day.isToday ? classes.today : ''}`}
+										initial={{ height: 0 }}
+										animate={{ height: `${barHeight}%` }}
+										transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.02 }}
+										style={{ opacity: hasData ? 1 : 0.25 }}
+									/>
 								</div>
-							)
-						})}
-					</AnimatePresence>
+
+								<span className={`${classes.dayLabel} ${day.isToday ? classes.todayLabel : ''}`}>{day.dayName}</span>
+								<span className={classes.dateSublabel}>{day.fullDate.getDate()}</span>
+							</div>
+						)
+					})
 				)}
 			</div>
 		</div>
