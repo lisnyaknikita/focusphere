@@ -17,7 +17,7 @@ export const useDailyTasksCounters = () => {
 					Query.equal('userId', userId),
 					Query.equal('isCompleted', false),
 					Query.select(['date']),
-					Query.limit(500),
+					Query.limit(150),
 				],
 			})
 
@@ -30,6 +30,7 @@ export const useDailyTasksCounters = () => {
 
 			return map
 		},
+		staleTime: 5 * 60 * 1000,
 	})
 
 	return {

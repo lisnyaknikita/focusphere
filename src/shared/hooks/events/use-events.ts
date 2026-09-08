@@ -49,7 +49,15 @@ const mapGoogleEvent = (gEvent: GoogleCalendarEvent, userId: string): CalendarEv
 
 const fetchAppwriteEvents = async (): Promise<CalendarEvent[]> => {
 	const userId = await getCurrentUserId()
-	const filters = [Query.equal('userId', userId), Query.limit(5000)]
+
+	const twoMonthsAgo = new Date()
+	twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2)
+
+	const filters = [
+		Query.equal('userId', userId),
+		Query.greaterThanEqual('startDate', twoMonthsAgo.toISOString()),
+		Query.limit(300),
+	]
 
 	const appwriteRes = await db.listRows({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,

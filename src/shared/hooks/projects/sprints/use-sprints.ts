@@ -24,9 +24,9 @@ export const useSprints = (projectId: string | undefined) => {
 			return (res?.rows || []) as unknown as Sprint[]
 		},
 		enabled: !!projectId,
-		staleTime: 5000,
+		staleTime: 5 * 60 * 1000,
 		retry: 1,
-		refetchOnWindowFocus: true,
+		refetchOnWindowFocus: false,
 	})
 
 	const activeSprint = useMemo(() => sprints.find(s => s.status === 'active'), [sprints])

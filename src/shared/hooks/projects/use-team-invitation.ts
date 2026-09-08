@@ -11,7 +11,7 @@ export const useTeamInvitation = (projectId: string | null) => {
 		queryKey: ['project', projectId],
 		queryFn: () => getProjectById(projectId!),
 		enabled: !!projectId,
-		staleTime: 0,
+		staleTime: 2 * 60 * 1000,
 	})
 
 	const teamId = project?.teamId ?? null
