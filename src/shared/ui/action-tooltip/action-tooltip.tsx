@@ -7,9 +7,17 @@ interface ActionTooltipProps {
 	isActive?: boolean
 	placement?: Placement
 	style?: CSSProperties
+	className?: string
 }
 
-export const ActionTooltip = ({ children, text, isActive = true, placement = 'top', style }: ActionTooltipProps) => {
+export const ActionTooltip = ({
+	children,
+	text,
+	isActive = true,
+	placement = 'top',
+	style,
+	className,
+}: ActionTooltipProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 
 	const { refs, floatingStyles, context } = useFloating({
@@ -23,7 +31,7 @@ export const ActionTooltip = ({ children, text, isActive = true, placement = 'to
 	const { getReferenceProps, getFloatingProps } = useInteractions([useHover(context)])
 
 	return (
-		<div style={{ display: 'inline-block', ...style }}>
+		<div className={className} style={{ display: 'inline-block', ...style }}>
 			{children(refs.setReference, getReferenceProps())}
 			{isOpen && isActive && (
 				<div

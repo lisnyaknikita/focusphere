@@ -10,7 +10,7 @@
 	width: 40px;
 	height: 34px;
 
-	&:global(.expanded) {
+	&.expanded {
 		width: 250px;
 		background-color: var(--background);
 	}
