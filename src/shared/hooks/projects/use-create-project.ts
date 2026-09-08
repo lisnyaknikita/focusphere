@@ -12,7 +12,7 @@ export const useProjectOperations = (projectId: string | null) => {
 		queryKey: ['project', projectId],
 		queryFn: () => getProjectById(projectId!),
 		enabled: !!projectId,
-		staleTime: 0,
+		staleTime: 2 * 60 * 1000,
 	})
 
 	const { mutateAsync: createMutate, isPending: isCreating } = useMutation({

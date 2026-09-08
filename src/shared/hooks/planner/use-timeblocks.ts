@@ -28,9 +28,9 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 		queryFn: async () => {
 			const uId = await getCurrentUserId()
 
-			const thirtyDaysAgo = new Date()
-			thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-			const thresholdDate = thirtyDaysAgo.toISOString()
+			const fourteenDaysAgo = new Date()
+			fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14)
+			const thresholdDate = fourteenDaysAgo.toISOString()
 
 			const response = await db.listRows({
 				databaseId: process.env.NEXT_PUBLIC_DB_ID!,
@@ -38,13 +38,14 @@ export const useTimeBlocks = (user: CustomUser | null) => {
 				queries: [
 					Query.equal('userId', uId),
 					Query.greaterThanEqual('startDate', thresholdDate),
-					Query.limit(1000),
+					Query.limit(300),
 				],
 			})
 
 			return response.rows as unknown as TimeBlock[]
 		},
 		enabled: !!userId,
+		staleTime: 5 * 60 * 1000,
 	})
 
 	const pasteTimeBlock = useCallback(

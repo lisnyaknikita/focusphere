@@ -23,23 +23,27 @@ export default function Projects() {
 	const [debouncedSearch, setDebouncedSearch] = useState('')
 	const [currentPage, setCurrentPage] = useState(1)
 	const [favoritesOnly, setFavoritesOnly] = useState(false)
-	const [isMobile, setIsMobile] = useState(false)
 
 	const { isPro, isBillingLoading, openPaywall } = useBilling()
 
 	useEffect(() => {
-		const mediaQuery = window.matchMedia('(max-width: 767px)')
-		setIsMobile(mediaQuery.matches)
+		if (isBillingLoading) return
 
-		const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
-		mediaQuery.addEventListener('change', handler)
+		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
+		const initialView = saved === 'team' && !isPro ? 'solo' : saved ?? 'solo'
+		setView(initialView)
+	}, [isPro, isBillingLoading])
 
-		return () => mediaQuery.removeEventListener('change', handler)
-	}, [])
+	useEffect(() => {
+		if (view) {
+			localStorage.setItem(VIEW_KEY, view)
+		}
+	}, [view])
 
 	useEffect(() => {
 		const handler = setTimeout(() => {
 			setDebouncedSearch(searchQuery)
+			setCurrentPage(1)
 		}, 400)
 
 		return () => clearTimeout(handler)
@@ -52,32 +56,18 @@ export default function Projects() {
 		favoritesOnly
 	)
 
-	useEffect(() => {
-		if (isBillingLoading) return
-
-		const saved = localStorage.getItem(VIEW_KEY) as ProjectsView | null
-
-		if (saved === 'team' && !isPro) {
-			setView('solo')
-		} else {
-			setView(saved ?? 'solo')
-		}
-	}, [isPro, isBillingLoading])
-
-	useEffect(() => {
-		if (view) localStorage.setItem(VIEW_KEY, view)
-	}, [view])
-
-	useEffect(() => {
-		setCurrentPage(1)
-	}, [view, searchQuery, favoritesOnly])
-
 	const handleTabChange = (newView: ProjectsView) => {
 		if (!isPro && newView === 'team') {
 			openPaywall('projects_team')
 			return
 		}
+		setCurrentPage(1)
 		setView(newView)
+	}
+
+	const handleToggleFavorites = () => {
+		setCurrentPage(1)
+		setFavoritesOnly(prev => !prev)
 	}
 
 	const handleCreateClickCapture = (e: React.MouseEvent) => {
@@ -103,14 +93,14 @@ export default function Projects() {
 						/>
 						<Search value={searchQuery} onChange={setSearchQuery} />
 						<ActionTooltip
+							className={classes.favoriteTooltip}
 							text={favoritesOnly ? 'Show all projects' : 'Show favorites only'}
-							style={isMobile ? { marginLeft: 'auto' } : undefined}
 						>
 							{(setRef, refProps) => (
 								<button
 									ref={setRef}
 									className={clsx(classes.favoriteButton, favoritesOnly && 'active')}
-									onClick={() => setFavoritesOnly(!favoritesOnly)}
+									onClick={handleToggleFavorites}
 									{...refProps}
 								>
 									<FavoriteIcon />

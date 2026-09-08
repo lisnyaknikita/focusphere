@@ -4,7 +4,7 @@ import { useHotkeys } from '@/shared/hooks/use-hotkeys/use-hotkeys'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { SearchIcon } from '@/shared/ui/icons/search-icon'
 import clsx from 'clsx'
-import { KeyboardEvent, useMemo, useRef, useState } from 'react'
+import { KeyboardEvent, useCallback, useMemo, useRef, useState } from 'react'
 import classes from './search.module.scss'
 
 interface SearchProps {
@@ -13,40 +13,50 @@ interface SearchProps {
 }
 
 export const Search = ({ value, onChange }: SearchProps) => {
-	const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
-	const [isExpanded, setIsExpanded] = useState(isMobile)
+	const [isExpanded, setIsExpanded] = useState(false)
 	const inputRef = useRef<HTMLInputElement>(null)
 
-	const handleExpand = () => {
+	const handleExpand = useCallback(() => {
 		setIsExpanded(true)
-		setTimeout(() => {
+		requestAnimationFrame(() => {
 			inputRef.current?.focus()
 			inputRef.current?.select()
-		}, 50)
-	}
+		})
+	}, [])
 
 	const handleCollapse = () => {
-		if (!value && !isMobile) setIsExpanded(false)
+		if (!value) {
+			setIsExpanded(false)
+		}
 	}
 
 	const searchShortcuts = useMemo(
 		() => [
 			{
 				key: '/',
-				callback: () => handleExpand(),
+				callback: (e?: Event) => {
+					e?.preventDefault()
+					handleExpand()
+				},
 			},
 			{
 				key: 'f',
 				meta: true,
-				callback: () => handleExpand(),
+				callback: (e?: Event) => {
+					e?.preventDefault()
+					handleExpand()
+				},
 			},
 			{
 				key: 'f',
 				ctrl: true,
-				callback: () => handleExpand(),
+				callback: (e?: Event) => {
+					e?.preventDefault()
+					handleExpand()
+				},
 			},
 		],
-		[]
+		[handleExpand]
 	)
 
 	useHotkeys(searchShortcuts)
@@ -61,11 +71,23 @@ export const Search = ({ value, onChange }: SearchProps) => {
 		}
 	}
 
+	const handleClear = () => {
+		onChange('')
+		inputRef.current?.focus()
+	}
+
 	return (
-		<div className={clsx(classes.searchWrapper, isExpanded && 'expanded')}>
-			<ActionTooltip text='Search projects (/ or ⌘F)' isActive={!isExpanded}>
+		<div className={clsx(classes.searchWrapper, (isExpanded || !!value) && classes.expanded)}>
+			<ActionTooltip text='Search projects (/ or ⌘F)' isActive={!isExpanded && !value}>
 				{(setRef, refProps) => (
-					<button ref={setRef} className={classes.searchIcon} onClick={handleExpand} aria-label='Search' {...refProps}>
+					<button
+						ref={setRef}
+						className={classes.searchIcon}
+						onClick={handleExpand}
+						aria-label='Search'
+						type='button'
+						{...refProps}
+					>
 						<SearchIcon />
 					</button>
 				)}
@@ -77,11 +99,18 @@ export const Search = ({ value, onChange }: SearchProps) => {
 				placeholder='Search project...'
 				value={value}
 				onChange={e => onChange(e.target.value)}
+				onFocus={() => setIsExpanded(true)}
 				onBlur={handleCollapse}
 				onKeyDown={handleKeyDown}
 			/>
 			{value && (
-				<button onClick={() => onChange('')} className={classes.clearBtn} onMouseDown={e => e.preventDefault()}>
+				<button
+					type='button'
+					onClick={handleClear}
+					className={classes.clearBtn}
+					onMouseDown={e => e.preventDefault()}
+					aria-label='Clear search'
+				>
 					✕
 				</button>
 			)}

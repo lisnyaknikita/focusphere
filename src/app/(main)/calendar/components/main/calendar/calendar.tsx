@@ -12,7 +12,7 @@ import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { CalendarView } from '../../../constants/calendar.constants'
 
 interface CalendarInnerProps {
@@ -27,6 +27,7 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 	const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
 
 	const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
+	const isFirstRender = useRef(true)
 
 	useCalendarScroll({ dependencies: [view] })
 
@@ -36,6 +37,22 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 			setEventToDelete(null)
 		}
 	}
+
+	const mappedEvents = useMemo(() => {
+		return events.map(mapEventToScheduleX)
+	}, [events])
+
+	useEffect(() => {
+		eventsService.set(mappedEvents)
+	}, [mappedEvents, eventsService])
+
+	useEffect(() => {
+		if (isFirstRender.current) {
+			isFirstRender.current = false
+			return
+		}
+		setView(view)
+	}, [view, setView])
 
 	const customComponents = useMemo(
 		() => ({
@@ -55,20 +72,12 @@ export const CalendarInner = memo(({ events, view, getEvents }: CalendarInnerPro
 			),
 			weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} />,
 		}),
-		[getEvents, handleCreateEvent, handleUpdateEvent]
+		[getEvents, handleCreateEvent, handleUpdateEvent, eventModal]
 	)
-
-	useEffect(() => {
-		eventsService.set(events.map(mapEventToScheduleX))
-	}, [events, eventsService])
-
-	useEffect(() => {
-		setView(view)
-	}, [view, setView])
 
 	return (
 		<>
-			<ScheduleXCalendar customComponents={customComponents} calendarApp={calendar} />
+			<ScheduleXCalendar key={view} customComponents={customComponents} calendarApp={calendar} />
 			<ConfirmModal
 				isVisible={!!eventToDelete}
 				onClose={() => setEventToDelete(null)}

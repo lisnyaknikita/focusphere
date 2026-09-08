@@ -1,5 +1,5 @@
 import { db } from '@/lib/appwrite'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 interface SubscriptionDocument {
 	userId: string
@@ -8,41 +8,29 @@ interface SubscriptionDocument {
 	stripeCustomerId?: string
 }
 
-export const useProStatus = (userId: string) => {
-	const [isPro, setIsPro] = useState<boolean>(false)
-	const [isBillingLoading, setIsBillingLoading] = useState<boolean>(true)
-	const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null)
-
-	useEffect(() => {
-		if (!userId) {
-			setIsPro(false)
-			setStripeCustomerId(null)
-			setIsBillingLoading(false)
-			return
-		}
-
-		const checkStatus = async () => {
-			setIsBillingLoading(true)
-
+export const useProStatus = (userId: string | undefined, enabled = true) => {
+	const { data, isLoading } = useQuery({
+		queryKey: ['pro-status', userId],
+		queryFn: async () => {
+			if (!userId) return null
 			try {
 				const subDoc = (await db.getRow({
 					databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 					tableId: process.env.NEXT_PUBLIC_TABLE_SUBSCRIPTIONS!,
 					rowId: userId,
 				})) as unknown as SubscriptionDocument | null
-
-				setIsPro(!!subDoc?.isPro)
-				setStripeCustomerId(subDoc?.stripeCustomerId ?? null)
+				return subDoc
 			} catch {
-				setIsPro(false)
-				setStripeCustomerId(null)
-			} finally {
-				setIsBillingLoading(false)
+				return null
 			}
-		}
+		},
+		enabled: !!userId && enabled,
+		staleTime: 15 * 60 * 1000,
+	})
 
-		checkStatus()
-	}, [userId])
-
-	return { isPro, isBillingLoading, stripeCustomerId }
+	return {
+		isPro: !!data?.isPro,
+		isBillingLoading: isLoading,
+		stripeCustomerId: data?.stripeCustomerId ?? null,
+	}
 }

@@ -12,9 +12,17 @@
 		justify-content: center;
 		border-top: 1px solid var(--btn-border);
 		border-bottom: 1px solid var(--btn-border);
+		background: transparent;
+		cursor: pointer;
+		transition: background-color 0.15s ease, opacity 0.15s ease;
 
-		&:hover {
+		&:hover:not(:disabled) {
 			background-color: var(--secondary);
+		}
+
+		&:disabled {
+			opacity: 0.3;
+			cursor: not-allowed;
 		}
 	}
 }

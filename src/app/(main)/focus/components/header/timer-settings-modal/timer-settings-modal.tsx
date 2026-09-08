@@ -6,7 +6,7 @@ export const TimerSettingsModal = () => {
 		<div className={classes.modalInner}>
 			<h3 className={classes.title}>Pomodoro settings</h3>
 			<h6 className={classes.subtitle}>Customize your focus flow</h6>
-			<form className={classes.settingsForm}>
+			<form className={classes.settingsForm} onSubmit={e => e.preventDefault()}>
 				<div className={classes.formItem}>
 					<span className={classes.label}>Flow duration</span>
 					<DurationPicker type='flow' />

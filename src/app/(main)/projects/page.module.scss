@@ -71,6 +71,12 @@
 	}
 }
 
+.favoriteTooltip {
+	@media (max-width: 767px) {
+		margin-left: auto;
+	}
+}
+
 .projects {
 	width: 100%;
 	height: 100%;

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 const VIEW_KEY = 'calendarView'
 
 export const useCalendarView = () => {
-	const [view, setView] = useState<CalendarView>('week')
+	const [view, setView] = useState<CalendarView>('month')
 	const [isMobile, setIsMobile] = useState(false)
 
 	useEffect(() => {
