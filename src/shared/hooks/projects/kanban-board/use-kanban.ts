@@ -43,8 +43,8 @@ export const useKanban = (project: Project) => {
 			return res.rows as unknown as KanbanTask[]
 		},
 		enabled: !!projectId,
-		refetchOnWindowFocus: true,
-		staleTime: 0,
+		refetchOnWindowFocus: false,
+		staleTime: 5 * 60 * 1000,
 	})
 
 	useEffect(() => {

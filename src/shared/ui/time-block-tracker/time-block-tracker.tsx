@@ -10,11 +10,10 @@ import classes from './time-block-tracker.module.scss'
 
 export const TimeBlockTracker = () => {
 	const [isOpen, setIsOpen] = useState(false)
-	const { user } = useUser()
-	const { timeBlocks, isLoading } = useTimeBlocks(user)
-	const { activeBlock, progress } = useActiveBlockLogic(timeBlocks)
-
 	const { isEnabled } = useTimeBlockUIStore()
+	const { user } = useUser()
+	const { timeBlocks, isLoading } = useTimeBlocks(isEnabled ? user : null)
+	const { activeBlock, progress } = useActiveBlockLogic(timeBlocks)
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isOpen,
