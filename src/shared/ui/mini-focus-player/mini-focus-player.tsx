@@ -103,10 +103,10 @@ export const MiniFocusPlayer = () => {
 							{status !== 'idle' && (
 								<>
 									<button type='button' className={classes.actionBtn} onClick={skipSession} title='Skip session'>
-										<SkipIcon width={16} height={16} />
+										<SkipIcon width={18} height={18} />
 									</button>
 									<button type='button' className={classes.actionBtn} onClick={resetTimer} title='Reset timer'>
-										<ResetIcon width={16} height={16} />
+										<ResetIcon width={18} height={18} />
 									</button>
 								</>
 							)}
