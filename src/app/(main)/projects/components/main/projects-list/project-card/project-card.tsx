@@ -22,11 +22,12 @@ export const getRelativeTime = (date: string | Date) => {
 
 export const ProjectCard = ({ project }: ProjectCardProps) => {
 	const { handleToggleFavorite } = useToggleFavorite(project)
-	const { data: teammates = [], isLoading } = useTeamMembers(project.teamId)
+
+	const isTeam = project.type === 'team'
+	const { data: teammates = [], isLoading } = useTeamMembers(project.teamId, isTeam)
 
 	const projectColor = project.color || CALENDAR_COLORS.GOLD
-
-	const displayMembers = project.type === 'solo' ? [{ userId: project.ownerId }] : teammates.slice(0, 3)
+	const displayMembers = !isTeam ? [{ userId: project.ownerId }] : teammates.slice(0, 3)
 
 	return (
 		<li className={classes.projectCard}>
@@ -43,12 +44,12 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 						<FavoriteIcon width={16} height={16} />
 					</button>
 				</div>
-				<p className={classes.description} title={project.description || ''}>
+				<p className={classes.description} title={project.description || 'No description'}>
 					{project.description || 'No description'}
 				</p>
 				<div className={classes.moreInfo}>
 					<ul className={classes.teamMembers}>
-						{isLoading && project.type === 'team' ? (
+						{isLoading && isTeam ? (
 							<li className={classes.avatar}>
 								<BeatLoader color='#aaa' size={10} style={{ height: 34.5 }} />
 							</li>
@@ -59,11 +60,13 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 								</li>
 							))
 						)}
-						{!isLoading && project.type === 'team' && teammates.length > 3 && (
+						{!isLoading && isTeam && teammates.length > 3 && (
 							<li className={classes.moreCount}>+{teammates.length - 3}</li>
 						)}
 					</ul>
-					<div className={classes.updateDate}>Updated {getRelativeTime(project.$updatedAt)}</div>
+					<div className={classes.updateDate} suppressHydrationWarning>
+						Updated {getRelativeTime(project.$updatedAt)}
+					</div>
 				</div>
 			</main>
 		</li>

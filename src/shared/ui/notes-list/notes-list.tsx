@@ -3,7 +3,8 @@ import { BaseNote } from '@/shared/types/project-note'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { SidebarIcon } from '../icons/sidebar-icon'
+import { SidebarIconLeft } from '../icons/sidebar-icon-left'
+import { SidebarIconRight } from '../icons/sidebar-icon-right'
 import { NotesListItem } from './components/notes-list-item/notes-list-item'
 import classes from './notes-list.module.scss'
 
@@ -94,7 +95,7 @@ export const NotesList = ({ storageKey, allowPinning }: NotesListProps) => {
 					)}
 				</ul>
 				<button className={classes.sidebarButton} onClick={toggleCollapsed}>
-					<SidebarIcon />
+					{isCollapsed ? <SidebarIconRight /> : <SidebarIconLeft />}
 				</button>
 			</div>
 		</div>

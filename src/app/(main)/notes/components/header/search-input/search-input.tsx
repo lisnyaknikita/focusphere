@@ -2,6 +2,7 @@
 
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useHotkeys } from '@/shared/hooks/use-hotkeys/use-hotkeys'
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { SearchIcon } from '@/shared/ui/icons/search-icon'
 import clsx from 'clsx'
@@ -9,6 +10,7 @@ import { KeyboardEvent, useMemo, useRef, useState } from 'react'
 import classes from './search-input.module.scss'
 
 export const SearchInput = () => {
+	const isMac = useIsMac()
 	const { searchQuery, setSearchQuery } = useNotesContext()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const inputRef = useRef<HTMLInputElement>(null)
@@ -61,7 +63,7 @@ export const SearchInput = () => {
 
 	return (
 		<div className={clsx(classes.searchWrapper, isExpanded && 'expanded')}>
-			<ActionTooltip text='Search notes (/ or ⌘F)' isActive={!isExpanded}>
+			<ActionTooltip text={`Search notes (/ or ${isMac ? '⌘F' : 'Ctrl+F'})`} isActive={!isExpanded}>
 				{(setRef, refProps) => (
 					<button ref={setRef} className={classes.searchIcon} onClick={handleExpand} aria-label='Search' {...refProps}>
 						<SearchIcon />

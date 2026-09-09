@@ -5,15 +5,26 @@ import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
 import { useUser } from '@/shared/hooks/use-user/use-user'
 import { useTimeBlockUIStore } from '@/shared/stores/time-block-ui-store'
 import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import classes from './time-block-tracker.module.scss'
 
 export const TimeBlockTracker = () => {
 	const [isOpen, setIsOpen] = useState(false)
+	const [animatedProgress, setAnimatedProgress] = useState(0)
+
 	const { isEnabled } = useTimeBlockUIStore()
 	const { user } = useUser()
 	const { timeBlocks, isLoading } = useTimeBlocks(isEnabled ? user : null)
 	const { activeBlock, progress } = useActiveBlockLogic(timeBlocks)
+
+	useEffect(() => {
+		if (!isLoading && isEnabled) {
+			const frame = requestAnimationFrame(() => {
+				setAnimatedProgress(progress)
+			})
+			return () => cancelAnimationFrame(frame)
+		}
+	}, [isLoading, isEnabled, progress])
 
 	const { refs, floatingStyles, context } = useFloating({
 		open: isOpen,
@@ -34,7 +45,7 @@ export const TimeBlockTracker = () => {
 				<div
 					className={classes.progressLine}
 					style={{
-						width: `${progress}%`,
+						width: `${animatedProgress}%`,
 						backgroundColor: activeBlock?.color ?? 'transparent',
 					}}
 				/>

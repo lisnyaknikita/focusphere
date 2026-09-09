@@ -220,6 +220,37 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		}
 	}, [editor])
 
+	useEffect(() => {
+		if (!editor || !editor.prosemirrorView) return
+
+		const view = editor.prosemirrorView
+		const dom = view.dom
+
+		const handleCopy = (event: ClipboardEvent) => {
+			if (!event.clipboardData) return
+
+			const { selection } = view.state
+			if (selection.empty) return
+
+			try {
+				const fragment = selection.content().content
+				const plainText = fragment.textBetween(0, fragment.size, '\n')
+
+				if (plainText) {
+					event.clipboardData.setData('text/plain', plainText)
+				}
+			} catch (error) {
+				console.error('Failed to clean copy plain text:', error)
+			}
+		}
+
+		dom.addEventListener('copy', handleCopy)
+
+		return () => {
+			dom.removeEventListener('copy', handleCopy)
+		}
+	}, [editor])
+
 	const onTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const nextTitle = e.target.value
 		setLocalTitle(nextTitle)

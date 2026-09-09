@@ -25,6 +25,7 @@ interface TimerActions {
 	startTimer: () => void
 	pauseTimer: () => void
 	resetTimer: () => void
+	skipSession: () => void
 	updateSettings: (newSettings: Partial<TimerSettings>) => void
 	tickLogic: () => void
 	togglePlayer: () => void
@@ -145,6 +146,58 @@ export const useTimerStore = create<TimerState & TimerActions>()(
 					timeLeft: settings.flowDuration * 60,
 					expiry: null,
 				})
+			},
+
+			skipSession: () => {
+				const { status, mode, timeLeft, settings, currentSession } = get()
+				if (status === 'idle' || status === 'completed') return
+
+				const currentActiveMode = status === 'paused' ? mode : status
+				const isRunning = status === 'work' || status === 'break'
+
+				if (currentActiveMode === 'work') {
+					const totalSeconds = settings.flowDuration * 60
+					const spentSeconds = Math.max(0, totalSeconds - timeLeft)
+					const spentMinutes = Math.floor(spentSeconds / 60)
+
+					if (spentMinutes >= 1) {
+						getCurrentUserId()
+							.then(userId => recordFocusSession(userId, spentMinutes))
+							.catch(() => {})
+					}
+
+					if (currentSession < settings.totalSessions) {
+						const nextSeconds = settings.breakDuration * 60
+						set({
+							mode: 'break',
+							status: isRunning ? 'break' : 'paused',
+							timeLeft: nextSeconds,
+							expiry: isRunning ? Date.now() + nextSeconds * 1000 : null,
+						})
+					} else {
+						set({
+							status: 'completed',
+							expiry: null,
+						})
+					}
+				} else if (currentActiveMode === 'break') {
+					const nextSession = currentSession + 1
+					if (nextSession <= settings.totalSessions) {
+						const nextSeconds = settings.flowDuration * 60
+						set({
+							mode: 'work',
+							status: isRunning ? 'work' : 'paused',
+							currentSession: nextSession,
+							timeLeft: nextSeconds,
+							expiry: isRunning ? Date.now() + nextSeconds * 1000 : null,
+						})
+					} else {
+						set({
+							status: 'completed',
+							expiry: null,
+						})
+					}
+				}
 			},
 
 			togglePlayer: () => {

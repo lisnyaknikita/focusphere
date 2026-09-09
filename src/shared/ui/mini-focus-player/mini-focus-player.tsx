@@ -6,6 +6,7 @@ import { useTimerStore } from '@/shared/stores/timer.store'
 import { PauseIcon } from '@/shared/ui/icons/focus/pause-icon'
 import { PlayIcon } from '@/shared/ui/icons/focus/play-icon'
 import { ResetIcon } from '@/shared/ui/icons/focus/reset-icon'
+import { SkipIcon } from '@/shared/ui/icons/focus/skip-icon'
 import { MinimizeIcon } from '@/shared/ui/icons/minimize-icon'
 import { AnimatePresence, motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
@@ -26,6 +27,7 @@ export const MiniFocusPlayer = () => {
 	const startTimer = useTimerStore(s => s.startTimer)
 	const pauseTimer = useTimerStore(s => s.pauseTimer)
 	const resetTimer = useTimerStore(s => s.resetTimer)
+	const skipSession = useTimerStore(s => s.skipSession)
 	const isPlayerForced = useTimerStore(s => s.isPlayerForced)
 
 	const { activeSound, selectSound, volume, setVolume } = useBackgroundSound()
@@ -99,9 +101,14 @@ export const MiniFocusPlayer = () => {
 							</button>
 
 							{status !== 'idle' && (
-								<button type='button' className={classes.actionBtn} onClick={resetTimer} title='Reset timer'>
-									<ResetIcon />
-								</button>
+								<>
+									<button type='button' className={classes.actionBtn} onClick={skipSession} title='Skip session'>
+										<SkipIcon width={18} height={18} />
+									</button>
+									<button type='button' className={classes.actionBtn} onClick={resetTimer} title='Reset timer'>
+										<ResetIcon width={18} height={18} />
+									</button>
+								</>
 							)}
 						</div>
 

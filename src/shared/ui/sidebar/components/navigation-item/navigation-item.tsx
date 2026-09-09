@@ -1,3 +1,4 @@
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { NavItem } from '@/shared/types/navigation'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import clsx from 'clsx'
@@ -12,6 +13,7 @@ type NavigationItemProps = {
 }
 
 export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: NavigationItemProps) => {
+	const isMac = useIsMac()
 	const icon = item.isButton
 		? isCollapsed
 			? item.showIconSvg || item.iconSvg
@@ -19,7 +21,13 @@ export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: Nav
 		: item.iconSvg
 
 	const label = item.isButton && !isCollapsed ? 'Hide' : item.label
-	const tooltipText = item.shortcut ? `${label} (${item.shortcut})` : label
+	const shortcutStr =
+		typeof item.shortcut === 'object'
+			? isMac
+				? item.shortcut.mac
+				: item.shortcut.win
+			: item.shortcut
+	const tooltipText = shortcutStr ? `${label} (${shortcutStr})` : label
 
 	const content = (
 		<>
