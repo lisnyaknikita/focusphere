@@ -25,6 +25,7 @@ interface ChatAreaProps {
 	currentUserId: string | undefined
 	currentUserName?: string
 	isLoading: boolean
+	isChatSidebarOpen?: boolean
 	onToggleChatSidebar: () => void
 	activeUnreadThresholdId?: string | null
 }
@@ -42,6 +43,7 @@ export const ChatArea = ({
 	currentUserId,
 	currentUserName,
 	isLoading,
+	isChatSidebarOpen,
 	onToggleChatSidebar,
 	activeUnreadThresholdId,
 }: ChatAreaProps) => {
@@ -209,6 +211,7 @@ export const ChatArea = ({
 				onUpdateChannel={onUpdateChannel}
 				onDeleteChannel={onDeleteChannel}
 				currentUserId={currentUserId}
+				isChatSidebarOpen={isChatSidebarOpen}
 				onToggleChatSidebar={onToggleChatSidebar}
 				displayName={getDisplayName()}
 			/>

@@ -3,7 +3,8 @@
 import { ChatChannel } from '@/shared/types/chat'
 import { ArrowBottomIcon } from '@/shared/ui/icons/arrow-bottom-icon'
 import { ChannelIcon } from '@/shared/ui/icons/projects/channel-icon'
-import { SidebarIcon } from '@/shared/ui/icons/sidebar-icon'
+import { SidebarIconLeft } from '@/shared/ui/icons/sidebar-icon-left'
+import { SidebarIconRight } from '@/shared/ui/icons/sidebar-icon-right'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useState } from 'react'
 import { ChannelInfoModal } from './components/channel-info-modal/channel-info-modal'
@@ -14,6 +15,7 @@ interface HeaderProps {
 	onUpdateChannel: (id: string, name: string) => Promise<void>
 	onDeleteChannel: (id: string) => Promise<void>
 	currentUserId: string | undefined
+	isChatSidebarOpen?: boolean
 	onToggleChatSidebar: () => void
 	displayName?: string
 }
@@ -23,6 +25,7 @@ export const Header = ({
 	onUpdateChannel,
 	onDeleteChannel,
 	currentUserId,
+	isChatSidebarOpen,
 	onToggleChatSidebar,
 	displayName,
 }: HeaderProps) => {
@@ -41,7 +44,7 @@ export const Header = ({
 					aria-label='Open channels sidebar'
 					type='button'
 				>
-					<SidebarIcon />
+					{isChatSidebarOpen ? <SidebarIconLeft /> : <SidebarIconRight />}
 				</button>
 
 				{activeChannel &&

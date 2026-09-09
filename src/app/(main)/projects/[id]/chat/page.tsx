@@ -75,6 +75,7 @@ export default function ChatPage() {
 					currentUserId={user?.$id}
 					currentUserName={user?.name || user?.email?.split('@')[0] || 'User'}
 					isLoading={chat.isLoadingMessages}
+					isChatSidebarOpen={isChatSidebarOpen}
 					onToggleChatSidebar={() => setIsChatSidebarOpen(prev => !prev)}
 					activeUnreadThresholdId={chat.activeUnreadThresholdId}
 				/>
