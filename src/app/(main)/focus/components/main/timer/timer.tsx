@@ -5,6 +5,7 @@ import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { PauseIcon } from '@/shared/ui/icons/focus/pause-icon'
 import { PlayIcon } from '@/shared/ui/icons/focus/play-icon'
 import { ResetIcon } from '@/shared/ui/icons/focus/reset-icon'
+import { SkipIcon } from '@/shared/ui/icons/focus/skip-icon'
 import clsx from 'clsx'
 import classes from './timer.module.scss'
 
@@ -14,6 +15,7 @@ export const Timer = () => {
 	const startTimer = useTimerStore(s => s.startTimer)
 	const pauseTimer = useTimerStore(s => s.pauseTimer)
 	const resetTimer = useTimerStore(s => s.resetTimer)
+	const skipSession = useTimerStore(s => s.skipSession)
 	const currentSession = useTimerStore(s => s.currentSession)
 	const settings = useTimerStore(s => s.settings)
 	// const jumpToFinish = useTimerStore(s => s.jumpToFinish)
@@ -66,15 +68,22 @@ export const Timer = () => {
 				{isRunning ? <PauseIcon /> : <PlayIcon />}
 			</button>
 			{status !== 'idle' && (
-				<>
-					<ActionTooltip text='Reset timer'>
+				<div className={classes.secondaryControls}>
+					<ActionTooltip text='Skip session'>
 						{(setRef, refProps) => (
-							<button ref={setRef} className={classes.resetButton} onClick={resetTimer} {...refProps}>
-								<ResetIcon />
+							<button ref={setRef} className={classes.secondaryButton} onClick={skipSession} {...refProps}>
+								<SkipIcon width={24} height={24} />
 							</button>
 						)}
 					</ActionTooltip>
-				</>
+					<ActionTooltip text='Reset timer'>
+						{(setRef, refProps) => (
+							<button ref={setRef} className={classes.secondaryButton} onClick={resetTimer} {...refProps}>
+								<ResetIcon width={24} height={24} />
+							</button>
+						)}
+					</ActionTooltip>
+				</div>
 			)}
 			{/* {(status === 'work' || status === 'break') && (
 				<button
