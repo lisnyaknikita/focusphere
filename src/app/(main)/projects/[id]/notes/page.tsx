@@ -2,6 +2,7 @@
 
 import { useDeleteNote } from '@/shared/hooks/projects/notes/use-delete-note'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
@@ -19,6 +20,7 @@ import { BeatLoader } from 'react-spinners'
 import classes from './page.module.scss'
 
 export default function NotesPage() {
+	const isMac = useIsMac()
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 	const [isHydrated, setIsHydrated] = useState(false)
 
@@ -75,7 +77,7 @@ export default function NotesPage() {
 								</button>
 							)}
 							{activeNote && (
-								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
+								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title={`Undo (${isMac ? '⌘Z' : 'Ctrl+Z'})`}>
 									<UndoIcon />
 								</button>
 							)}
@@ -83,7 +85,7 @@ export default function NotesPage() {
 								<button
 									className={clsx(classes.focusButton, isFocusMode && classes.focusButtonActive)}
 									onClick={() => toggleFocusMode('projectNotes')}
-									title={isFocusMode ? 'Exit focus mode (Esc)' : 'Focus mode (Ctrl+Shift+F)'}
+									title={isFocusMode ? 'Exit focus mode (Esc)' : `Focus mode (${isMac ? '⌘ShiftF' : 'Ctrl+Shift+F'})`}
 								>
 									{isFocusMode ? <MinimizeIcon /> : <ExpandIcon />}
 								</button>

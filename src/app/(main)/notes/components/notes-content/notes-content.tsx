@@ -1,6 +1,7 @@
 import { useBilling } from '@/shared/context/billing-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
@@ -20,6 +21,7 @@ import { SearchInput } from '../header/search-input/search-input'
 import classes from './notes-content.module.scss'
 
 export const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpened: (v: boolean) => void }) => {
+	const isMac = useIsMac()
 	const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 	const [isHydrated, setIsHydrated] = useState(false)
 
@@ -111,14 +113,14 @@ export const NotesContent = ({ setIsNewNoteModalOpened }: { setIsNewNoteModalOpe
 									<button
 										className={classes.undoButton}
 										onClick={() => editorRef.current?.undo()}
-										title='Undo (Ctrl+Z)'
+										title={`Undo (${isMac ? '⌘Z' : 'Ctrl+Z'})`}
 									>
 										<UndoIcon />
 									</button>
 									<button
 										className={clsx(classes.focusButton, isFocusMode && classes.focusButtonActive)}
 										onClick={() => toggleFocusMode('generalNotes')}
-										title={isFocusMode ? 'Exit focus mode (Esc)' : 'Focus mode (Ctrl+Shift+F)'}
+										title={isFocusMode ? 'Exit focus mode (Esc)' : `Focus mode (${isMac ? '⌘ShiftF' : 'Ctrl+Shift+F'})`}
 									>
 										{isFocusMode ? <MinimizeIcon /> : <ExpandIcon />}
 									</button>

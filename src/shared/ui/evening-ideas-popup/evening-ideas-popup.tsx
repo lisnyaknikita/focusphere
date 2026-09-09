@@ -1,5 +1,6 @@
 'use client'
 
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { useQuickIdeas } from '@/shared/hooks/use-quick-ideas/use-quick-ideas'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -9,6 +10,7 @@ import { IdeaIcon } from '../icons/idea-icon'
 import classes from './evening-ideas-popup.module.scss'
 
 export const EveningIdeasPopup = () => {
+	const isMac = useIsMac()
 	const { ideas, isLoading } = useQuickIdeas()
 	const [isVisible, setIsVisible] = useState(false)
 
@@ -93,7 +95,7 @@ export const EveningIdeasPopup = () => {
 
 					<div className={classes.shortcutHint}>
 						<span>Also available via </span>
-						<kbd className={classes.kbd}>⌘I</kbd> / <kbd className={classes.kbd}>Ctrl+I</kbd>
+						<kbd className={classes.kbd}>{isMac ? '⌘I' : 'Ctrl+I'}</kbd>
 						<span> or Dashboard</span>
 					</div>
 

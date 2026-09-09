@@ -1,7 +1,7 @@
 'use client'
 
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
-import { useEffect, useState } from 'react'
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import classes from './shortcuts-modal.module.scss'
 
 interface ShortcutItem {
@@ -54,14 +54,7 @@ interface ShortcutsModalProps {
 }
 
 export const ShortcutsModal = ({ onClose }: ShortcutsModalProps) => {
-	const [isMac, setIsMac] = useState(true)
-
-	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			const userAgent = window.navigator.userAgent.toUpperCase()
-			setIsMac(userAgent.includes('MAC'))
-		}
-	}, [])
+	const isMac = useIsMac()
 
 	return (
 		<div className={classes.modalInner}>

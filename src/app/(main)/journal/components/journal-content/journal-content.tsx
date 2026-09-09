@@ -2,6 +2,7 @@ import { useBilling } from '@/shared/context/billing-context'
 import { useNotesContext } from '@/shared/context/notes-context'
 import { useDeleteDiaryNote } from '@/shared/hooks/diary/use-delete-diary-note'
 import { useFocusMode } from '@/shared/hooks/use-focus-mode/use-focus-mode'
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { useTextEditorStore } from '@/shared/stores/text-editor.store'
 import { TextEditorRef } from '@/shared/types/text-editor'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
@@ -21,6 +22,7 @@ import { TemplatesDropdown } from '../header/components/templates-dropdown/templ
 import classes from './journal-content.module.scss'
 
 export const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModalOpened: (v: boolean) => void }) => {
+	const isMac = useIsMac()
 	const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 	const [isHydrated, setIsHydrated] = useState(false)
 
@@ -97,7 +99,7 @@ export const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModa
 								</button>
 							)}
 							{activeNote && (
-								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title='Undo (Ctrl+Z)'>
+								<button className={classes.undoButton} onClick={() => editorRef.current?.undo()} title={`Undo (${isMac ? '⌘Z' : 'Ctrl+Z'})`}>
 									<UndoIcon />
 								</button>
 							)}
@@ -105,7 +107,7 @@ export const JournalContent = ({ setIsNewEntryModalOpened }: { setIsNewEntryModa
 								<button
 									className={clsx(classes.focusButton, isFocusMode && classes.focusButtonActive)}
 									onClick={() => toggleFocusMode('journal')}
-									title={isFocusMode ? 'Exit focus mode (Esc)' : 'Focus mode (Ctrl+Shift+F)'}
+									title={isFocusMode ? 'Exit focus mode (Esc)' : `Focus mode (${isMac ? '⌘ShiftF' : 'Ctrl+Shift+F'})`}
 								>
 									{isFocusMode ? <MinimizeIcon /> : <ExpandIcon />}
 								</button>

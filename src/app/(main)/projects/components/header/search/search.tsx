@@ -1,6 +1,7 @@
 'use client'
 
 import { useHotkeys } from '@/shared/hooks/use-hotkeys/use-hotkeys'
+import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { SearchIcon } from '@/shared/ui/icons/search-icon'
 import clsx from 'clsx'
@@ -13,6 +14,7 @@ interface SearchProps {
 }
 
 export const Search = ({ value, onChange }: SearchProps) => {
+	const isMac = useIsMac()
 	const [isExpanded, setIsExpanded] = useState(false)
 	const inputRef = useRef<HTMLInputElement>(null)
 
@@ -78,7 +80,7 @@ export const Search = ({ value, onChange }: SearchProps) => {
 
 	return (
 		<div className={clsx(classes.searchWrapper, (isExpanded || !!value) && classes.expanded)}>
-			<ActionTooltip text='Search projects (/ or ⌘F)' isActive={!isExpanded && !value}>
+			<ActionTooltip text={`Search projects (/ or ${isMac ? '⌘F' : 'Ctrl+F'})`} isActive={!isExpanded && !value}>
 				{(setRef, refProps) => (
 					<button
 						ref={setRef}
