@@ -1,6 +1,7 @@
 import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/constants/calendar.constants'
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateEvent } from '@/lib/events/events'
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { CalendarEvent, createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import { createCurrentTimePlugin } from '@schedule-x/current-time'
@@ -9,13 +10,14 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface UseCalendarAppProps {
 	defaultView: CalendarView
 }
 
 export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
 	const [eventModal] = useState(() => createEventModalPlugin())
@@ -23,10 +25,13 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 	const [resizePlugin] = useState(() => createResizePlugin(15))
 
 	const calendar = useNextCalendarApp({
+		locale: timeFormat === '12h' ? 'en-US' : 'en-GB',
 		views: [createViewMonthGrid(), createViewWeek(), createViewDay()],
 		defaultView: VIEW_TO_SX[defaultView],
 		weekOptions: {
 			gridHeight: 1032,
+			timeAxisFormatOptions:
+				timeFormat === '12h' ? { hour: 'numeric' } : { hour: '2-digit', minute: '2-digit', hour12: false },
 		},
 		events: [],
 		plugins: [eventsService, calendarControls, dragAndDropPlugin, resizePlugin, createCurrentTimePlugin(), eventModal],
@@ -71,6 +76,18 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 		//@ts-expect-error timezone type ignored
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 	})
+
+	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const calendarApp = (calendar as any)?._app
+		if (!calendarApp) return
+		const is12h = timeFormat === '12h'
+		calendarApp.config.locale.value = is12h ? 'en-US' : 'en-GB'
+		calendarApp.config.weekOptions.value = {
+			...calendarApp.config.weekOptions.value,
+			timeAxisFormatOptions: is12h ? { hour: 'numeric' } : { hour: '2-digit', minute: '2-digit', hour12: false },
+		}
+	}, [calendar, timeFormat])
 
 	const setView = (view: CalendarView) => {
 		calendarControls?.setView(VIEW_TO_SX[view])

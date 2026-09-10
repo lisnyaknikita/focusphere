@@ -7,6 +7,7 @@ import { useBilling } from '@/shared/context/billing-context'
 import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { useTimeBlockUIStore } from '@/shared/stores/time-block-ui-store'
 import { FeedbackModal } from '@/shared/ui/feedback-section/feedback-modal/feedback-modal'
 import { FeedbackSection } from '@/shared/ui/feedback-section/feedback-section'
@@ -37,6 +38,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isSettingsTooltipOpen, setIsSettingsTooltipOpen] = useState(false)
 	const { user, logout, updateUserData, isGoogleConnected, isLoggingOut } = useUser()
 	const { isEnabled, setEnabled } = useTimeBlockUIStore()
+	const { timeFormat, setTimeFormat } = useSettingsStore()
 
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)
 	const { isDark, handleToggle } = useThemeToggle()
@@ -177,6 +179,25 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 										className={clsx(classes.toggle, isEnabled && classes.active)}
 										onClick={() => setEnabled(!isEnabled)}
 									></div>
+								</div>
+								<div className={classes.settingsCard}>
+									<span>Time format</span>
+									<div className={classes.timeFormatControl}>
+										<button
+											type='button'
+											className={clsx(classes.timeFormatBtn, timeFormat === '24h' && classes.timeFormatBtnActive)}
+											onClick={() => setTimeFormat('24h')}
+										>
+											24H
+										</button>
+										<button
+											type='button'
+											className={clsx(classes.timeFormatBtn, timeFormat === '12h' && classes.timeFormatBtnActive)}
+											onClick={() => setTimeFormat('12h')}
+										>
+											12H
+										</button>
+									</div>
 								</div>
 							</div>
 						</section>

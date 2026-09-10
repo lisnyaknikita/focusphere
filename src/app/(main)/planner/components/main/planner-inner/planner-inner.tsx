@@ -13,8 +13,8 @@ import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { ScheduleXCalendar, useNextCalendarApp } from '@schedule-x/react'
-import { useQueryClient } from '@tanstack/react-query'
 import '@schedule-x/theme-default/dist/index.css'
+import { useQueryClient } from '@tanstack/react-query'
 import { memo, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import 'temporal-polyfill/global'
@@ -44,66 +44,54 @@ export const PlannerInner = memo(
 		selectionInfo,
 	}: PlannerInnerProps) => {
 		const queryClient = useQueryClient()
-		const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
-
 		const { handleDelete: handleDeleteTimeBlock } = useTimeBlockDeletion({ eventsService, eventModal })
 		const { handleDelete: handleDeleteCalendarEvent } = useEventDeletion({ eventsService, eventModal })
 		const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
 
-		useCalendarScroll({
-			dependencies: [timeBlocks.length],
-			scrollOnlyOnce: true,
-		})
+		const [itemToDelete, setItemToDelete] = useState<{ id: string; title: string; isCalendarEvent: boolean } | null>(
+			null
+		)
+
+		useCalendarScroll({ dependencies: [timeBlocks] })
 
 		const handleConfirmDelete = async () => {
-			if (eventToDelete) {
-				const id = String(eventToDelete.id)
-				const isCalendar = Boolean(
-					eventToDelete._isCalendarEvent || id.startsWith('g_') || eventToDelete.title?.startsWith('📅')
-				)
-				if (isCalendar) {
+			if (itemToDelete) {
+				const id = String(itemToDelete.id)
+				if (itemToDelete.isCalendarEvent) {
 					await handleDeleteCalendarEvent(id)
 					queryClient.invalidateQueries({ queryKey: ['events-appwrite'] })
 					queryClient.invalidateQueries({ queryKey: ['events-google'] })
 				} else {
 					await handleDeleteTimeBlock(id)
 				}
-				setEventToDelete(null)
+				setItemToDelete(null)
 			}
 		}
 
 		const customComponents = useMemo(
 			() => ({
 				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) => {
-					const isCalendar = Boolean(
-						calendarEvent._isCalendarEvent ||
-							String(calendarEvent.id).startsWith('g_') ||
-							calendarEvent.title?.startsWith('📅')
-					)
+					const isCalendarEvent = Boolean(calendarEvent._isCalendarEvent || calendarEvent.title?.startsWith('📅'))
+					const isTimeBlock = !isCalendarEvent && !String(calendarEvent.id).startsWith('g_')
 
 					return (
 						<EventInfoModal
 							event={calendarEvent}
-							isTimeBlock={!isCalendar}
-							onConfirmDelete={() => setEventToDelete(calendarEvent)}
+							isTimeBlock={isTimeBlock}
+							onConfirmDelete={() => {
+								setItemToDelete({
+									id: String(calendarEvent.id),
+									title: calendarEvent.title || '',
+									isCalendarEvent,
+								})
+							}}
 							onUpdated={() => {
 								refreshTimeBlocks()
-								if (isCalendar) {
-									queryClient.invalidateQueries({ queryKey: ['events-appwrite'] })
-									queryClient.invalidateQueries({ queryKey: ['events-google'] })
-								}
 								eventModal.close()
 							}}
-							onCopy={
-								!isCalendar
-									? () => {
-											onCopyEvent(calendarEvent)
-											eventModal.close()
-									  }
-									: undefined
-							}
+							onCopy={isTimeBlock ? () => onCopyEvent(calendarEvent) : undefined}
 							actions={
-								isCalendar
+								isCalendarEvent
 									? {
 											create: handleCreateEvent,
 											update: handleUpdateEvent,
@@ -141,20 +129,13 @@ export const PlannerInner = memo(
 						selectionInfo.columnEl
 					)}
 				<ConfirmModal
-					isVisible={!!eventToDelete}
-					onClose={() => setEventToDelete(null)}
+					isVisible={!!itemToDelete}
+					onClose={() => setItemToDelete(null)}
 					onConfirm={handleConfirmDelete}
-					title={
-						eventToDelete &&
-						(eventToDelete._isCalendarEvent ||
-							String(eventToDelete.id).startsWith('g_') ||
-							eventToDelete.title?.startsWith('📅'))
-							? 'Delete Calendar Event'
-							: 'Delete Time Block'
-					}
+					title={itemToDelete?.isCalendarEvent ? 'Delete Calendar Event' : 'Delete Time Block'}
 					message={
 						<>
-							Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
+							Are you sure you want to delete &quot;<span className='highlight'>{itemToDelete?.title}</span>&quot;?
 						</>
 					}
 				/>

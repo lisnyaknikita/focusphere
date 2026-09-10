@@ -2,6 +2,7 @@
 
 import { useUserFromContext } from '@/shared/context/user-context'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { formatTimeRange, getBlockStatus } from '@/shared/utils/timeblock-timeline-helpers/timeblock-timeline-helpers'
 import clsx from 'clsx'
 import { motion } from 'framer-motion'
@@ -23,6 +24,7 @@ const COLOR_MAP: Record<string, string> = {
 }
 
 export const TimeBlocksTimeline = () => {
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const { user } = useUserFromContext()
 	const router = useRouter()
 	const { timeBlocks, isLoading } = useTimeBlocks(user)
@@ -86,7 +88,9 @@ export const TimeBlocksTimeline = () => {
 							<div className={classes.cardHeader}>
 								<div className={classes.timeInfo}>
 									<span className={classes.dot} style={{ backgroundColor: colorHex }} />
-									<span className={classes.timeRange}>{formatTimeRange(block.startDate, block.endDate)}</span>
+									<span className={classes.timeRange}>
+										{formatTimeRange(block.startDate, block.endDate, timeFormat)}
+									</span>
 								</div>
 								{isCurrent && <span className={classes.nowBadge}>NOW</span>}
 							</div>

@@ -1,3 +1,4 @@
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateTimeBlock } from '@/lib/planner/planner'
 import { checkAndResetDragJustCompleted } from '@/shared/hooks/planner/use-grid-drag-create'
@@ -18,6 +19,7 @@ interface CalendarAppProps {
 }
 
 export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const queryClient = useQueryClient()
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
@@ -32,10 +34,14 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 	const defaultView = isMobile ? 'day' : 'week'
 
 	const calendar = useNextCalendarApp({
+		locale: timeFormat === '12h' ? 'en-US' : 'en-GB',
 		views: [createViewWeek(), createViewDay()],
 		defaultView,
 		weekOptions: {
 			gridHeight: 1032,
+			timeAxisFormatOptions: timeFormat === '12h'
+				? { hour: 'numeric' }
+				: { hour: '2-digit', minute: '2-digit', hour12: false },
 		},
 		events: [],
 		plugins: [eventsService, calendarControls, createCurrentTimePlugin(), dragAndDropPlugin, resizePlugin, eventModal],
@@ -121,6 +127,20 @@ export const useCalendarApp = ({ onQuickCreate }: CalendarAppProps) => {
 		//@ts-expect-error timezone type ignored
 		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 	})
+
+	useEffect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const calendarApp = (calendar as any)?._app
+		if (!calendarApp) return
+		const is12h = timeFormat === '12h'
+		calendarApp.config.locale.value = is12h ? 'en-US' : 'en-GB'
+		calendarApp.config.weekOptions.value = {
+			...calendarApp.config.weekOptions.value,
+			timeAxisFormatOptions: is12h
+				? { hour: 'numeric' }
+				: { hour: '2-digit', minute: '2-digit', hour12: false },
+		}
+	}, [calendar, timeFormat])
 
 	useEffect(() => {
 		const handleResize = () => {

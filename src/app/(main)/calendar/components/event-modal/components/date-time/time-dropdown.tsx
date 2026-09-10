@@ -1,5 +1,7 @@
 'use client'
 
+import { useSettingsStore } from '@/shared/stores/settings.store'
+import { formatTimeString } from '@/shared/utils/format-time/format-time'
 import { getDurationString, TIME_OPTIONS } from '@/shared/utils/time/time'
 import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
@@ -12,6 +14,7 @@ interface TimeDropdownProps {
 }
 
 export const TimeDropdown = ({ value, onChange, compareTime }: TimeDropdownProps) => {
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [isOpen, setIsOpen] = useState(false)
 	const [focusedIndex, setFocusedIndex] = useState(-1)
 
@@ -101,7 +104,7 @@ export const TimeDropdown = ({ value, onChange, compareTime }: TimeDropdownProps
 				aria-haspopup='listbox'
 				aria-expanded={isOpen}
 			>
-				{value}
+				{formatTimeString(value, timeFormat)}
 			</button>
 
 			{isOpen && (
@@ -122,7 +125,7 @@ export const TimeDropdown = ({ value, onChange, compareTime }: TimeDropdownProps
 								role='option'
 								aria-selected={isSelected}
 							>
-								<span className={classes.timeText}>{time}</span>
+								<span className={classes.timeText}>{formatTimeString(time, timeFormat)}</span>
 								{duration && <span className={classes.durationText}>{duration}</span>}
 							</button>
 						)
