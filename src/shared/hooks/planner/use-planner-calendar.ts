@@ -1,47 +1,56 @@
 import { useCalendarApp } from '@/shared/hooks/planner/use-calendar-app'
+import { InitialTimeBlockValues } from '@/shared/hooks/planner/use-timeblock-form'
 import { TimeBlock } from '@/shared/types/time-block'
-import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useCallback, useEffect, useRef } from 'react'
 
 interface UsePlannerCalendarProps {
 	isPro: boolean
 	timeBlocks: TimeBlock[]
 	openPaywall: (id: string) => void
-	createQuickBlock: (dateTime: Temporal.ZonedDateTime) => Promise<SXEvent | null>
-	onQuickBlockCreated: (event: SXEvent) => void
+	onRequestCreateModal: (initialValues: InitialTimeBlockValues) => void
 }
 
 export const usePlannerCalendar = ({
 	isPro,
 	timeBlocks,
 	openPaywall,
-	createQuickBlock,
-	onQuickBlockCreated,
+	onRequestCreateModal,
 }: UsePlannerCalendarProps) => {
 	const isProRef = useRef(isPro)
 	const timeBlocksRef = useRef(timeBlocks)
 	const openPaywallRef = useRef(openPaywall)
-	const createQuickBlockRef = useRef(createQuickBlock)
-	const onQuickBlockCreatedRef = useRef(onQuickBlockCreated)
+	const onRequestCreateModalRef = useRef(onRequestCreateModal)
 
 	useEffect(() => {
 		isProRef.current = isPro
 		timeBlocksRef.current = timeBlocks
 		openPaywallRef.current = openPaywall
-		createQuickBlockRef.current = createQuickBlock
-		onQuickBlockCreatedRef.current = onQuickBlockCreated
-	}, [isPro, timeBlocks, openPaywall, createQuickBlock, onQuickBlockCreated])
+		onRequestCreateModalRef.current = onRequestCreateModal
+	}, [isPro, timeBlocks, openPaywall, onRequestCreateModal])
 
-	const handleQuickCreate = useCallback(async (dateTime: Temporal.ZonedDateTime) => {
+	const handleQuickCreate = useCallback((dateTime: Temporal.ZonedDateTime) => {
 		if (!isProRef.current && timeBlocksRef.current.length >= 50) {
 			openPaywallRef.current('planner_blocks_unlimited')
 			return
 		}
 
-		const event = await createQuickBlockRef.current(dateTime)
-		if (event) {
-			onQuickBlockCreatedRef.current(event)
-		}
+		const roundedMinutes = Math.round(dateTime.minute / 15) * 15
+		const startZoned = dateTime.with({ minute: 0, second: 0, millisecond: 0 }).add({ minutes: roundedMinutes })
+		const endZoned = startZoned.add({ minutes: 30 })
+
+		const yyyy = String(startZoned.year).padStart(4, '0')
+		const mm = String(startZoned.month).padStart(2, '0')
+		const dd = String(startZoned.day).padStart(2, '0')
+		const dateStr = `${yyyy}-${mm}-${dd}`
+
+		const startStr = `${String(startZoned.hour).padStart(2, '0')}:${String(startZoned.minute).padStart(2, '0')}`
+		const endStr = `${String(endZoned.hour).padStart(2, '0')}:${String(endZoned.minute).padStart(2, '0')}`
+
+		onRequestCreateModalRef.current({
+			date: dateStr,
+			startTime: startStr,
+			endTime: endStr,
+		})
 	}, [])
 
 	const calendarData = useCalendarApp({

@@ -5,6 +5,7 @@ import 'temporal-polyfill/global'
 
 import { useEvents } from '@/shared/hooks/events/use-events'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
+import { InitialTimeBlockValues } from '@/shared/hooks/planner/use-timeblock-form'
 import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
 import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
 import { useUser } from '@/shared/hooks/use-user/use-user'
@@ -23,8 +24,8 @@ import classes from './page.module.scss'
 
 export default function Planner() {
 	const [isTimeBlockModalVisible, setIsTimeBlockModalVisible] = useState(false)
+	const [timeBlockModalInitialValues, setTimeBlockModalInitialValues] = useState<InitialTimeBlockValues | null>(null)
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
-	const [quickCreatedEvent, setQuickCreatedEvent] = useState<SXEvent | null>(null)
 	const [showCalendarEvents, setShowCalendarEvents] = useState<boolean>(() => {
 		if (typeof window === 'undefined') return false
 		return localStorage.getItem('focusphere_planner_show_calendar_events') === 'true'
@@ -43,8 +44,6 @@ export default function Planner() {
 		refreshTimeBlocks,
 		pasteTimeBlock,
 		setCopiedTimeBlock,
-		createQuickBlock,
-		createQuickBlockWithRange,
 	} = useTimeBlocks(user)
 
 	useEffect(() => {
@@ -68,14 +67,25 @@ export default function Planner() {
 		hasDailyTasksChangesRef.current = true
 	}, [])
 
-	const handleTimeBlockCreated = useCallback(() => {
+	const handleTimeBlockModalClose = useCallback(() => {
 		setIsTimeBlockModalVisible(false)
+		setTimeBlockModalInitialValues(null)
+	}, [])
+
+	const handleTimeBlockCreated = useCallback(() => {
+		handleTimeBlockModalClose()
 		refreshTimeBlocks()
-	}, [refreshTimeBlocks])
+	}, [handleTimeBlockModalClose, refreshTimeBlocks])
 
 	const handleAddBlockClick = () => {
+		setTimeBlockModalInitialValues(null)
 		setIsTimeBlockModalVisible(true)
 	}
+
+	const handleRequestCreateTimeBlock = useCallback((initialValues: InitialTimeBlockValues) => {
+		setTimeBlockModalInitialValues(initialValues)
+		setIsTimeBlockModalVisible(true)
+	}, [])
 
 	const handleDayClick = useCallback(
 		async (date: string) => {
@@ -122,9 +132,7 @@ export default function Planner() {
 									onDayClick={handleDayClick}
 									onCopyEvent={setCopiedTimeBlock}
 									refreshTimeBlocks={refreshTimeBlocks}
-									createQuickBlock={createQuickBlock}
-									createQuickBlockWithRange={createQuickBlockWithRange}
-									onQuickBlockCreated={setQuickCreatedEvent}
+									onRequestCreateTimeBlock={handleRequestCreateTimeBlock}
 								/>
 							</CopyModeContext.Provider>
 						</DailyTasksCountByDateContext.Provider>
@@ -133,14 +141,12 @@ export default function Planner() {
 			</div>
 			<PlannerModals
 				isTimeBlockOpen={isTimeBlockModalVisible}
-				onTimeBlockClose={() => setIsTimeBlockModalVisible(false)}
+				timeBlockModalInitialValues={timeBlockModalInitialValues}
+				onTimeBlockClose={handleTimeBlockModalClose}
 				onTimeBlockCreated={handleTimeBlockCreated}
 				selectedDate={selectedDate}
 				onTaskModalClose={handleTaskModalClose}
 				handleDailyTasksChanged={handleDailyTasksChanged}
-				quickCreatedEvent={quickCreatedEvent}
-				onQuickEventClose={setQuickCreatedEvent}
-				refreshTimeBlocks={refreshTimeBlocks}
 			/>
 		</>
 	)

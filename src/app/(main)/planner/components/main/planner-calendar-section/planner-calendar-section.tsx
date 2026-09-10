@@ -4,6 +4,7 @@ import { mapEventToScheduleX, mapTimeBlockToScheduleX } from '@/lib/events/event
 import { useBilling } from '@/shared/context/billing-context'
 import { useGridDragCreate } from '@/shared/hooks/planner/use-grid-drag-create'
 import { usePlannerCalendar } from '@/shared/hooks/planner/use-planner-calendar'
+import { InitialTimeBlockValues } from '@/shared/hooks/planner/use-timeblock-form'
 import { CalendarEvent } from '@/shared/types/event'
 import { TimeBlock } from '@/shared/types/time-block'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
@@ -17,9 +18,7 @@ interface PlannerCalendarSectionProps {
 	onDayClick: (date: string) => void
 	onCopyEvent: (event: SXEvent) => void
 	refreshTimeBlocks: () => void
-	createQuickBlock: (dateTime: Temporal.ZonedDateTime) => Promise<SXEvent | null>
-	createQuickBlockWithRange: (startIso: string, endIso: string) => Promise<SXEvent | null>
-	onQuickBlockCreated: (event: SXEvent) => void
+	onRequestCreateTimeBlock: (initialValues: InitialTimeBlockValues) => void
 }
 
 export const PlannerCalendarSection = ({
@@ -29,9 +28,7 @@ export const PlannerCalendarSection = ({
 	onDayClick,
 	onCopyEvent,
 	refreshTimeBlocks,
-	createQuickBlock,
-	createQuickBlockWithRange,
-	onQuickBlockCreated,
+	onRequestCreateTimeBlock,
 }: PlannerCalendarSectionProps) => {
 	const { isPro, openPaywall } = useBilling()
 
@@ -39,16 +36,14 @@ export const PlannerCalendarSection = ({
 		isPro,
 		timeBlocks,
 		openPaywall,
-		createQuickBlock,
-		onQuickBlockCreated,
+		onRequestCreateModal: onRequestCreateTimeBlock,
 	})
 
 	const { selectionInfo } = useGridDragCreate({
 		isPro,
 		timeBlocksCount: timeBlocks.length,
 		openPaywall,
-		createQuickBlockWithRange,
-		onQuickBlockCreated,
+		onRequestCreateModal: onRequestCreateTimeBlock,
 	})
 
 	useEffect(() => {
