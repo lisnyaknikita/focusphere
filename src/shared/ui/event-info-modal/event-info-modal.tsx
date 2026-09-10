@@ -1,5 +1,6 @@
 import { useBilling } from '@/shared/context/billing-context'
 import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import clsx from 'clsx'
@@ -36,6 +37,7 @@ export const EventInfoModal = ({
 	onCancelCreate,
 	isTimeBlock,
 }: EventInfoModalProps) => {
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
 	const [isRecurrenceModalOpen, setIsRecurrenceModalOpen] = useState(false)
 
@@ -50,7 +52,7 @@ export const EventInfoModal = ({
 		actions
 	)
 
-	const formattedDate = formatDateRange(event.start, event.end)
+	const formattedDate = formatDateRange(event.start, event.end, timeFormat)
 	const isReadOnly = !onConfirmDelete
 
 	const handleDelete = () => {

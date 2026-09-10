@@ -1,8 +1,10 @@
 'use client'
 
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { ChatMessage } from '@/shared/types/chat'
 import { KanbanTask } from '@/shared/types/kanban-task'
 import { ImagePreviewModal } from '@/shared/ui/image-preview-modal/image-preview-modal'
+import { formatTime } from '@/shared/utils/format-time/format-time'
 import { renderParsedContent } from '@/shared/utils/parse-message-content/parse-message-content'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
 import clsx from 'clsx'
@@ -35,6 +37,7 @@ export const MessageContent = ({
 	repliedToMessage,
 	tasks = [],
 }: MessageContentProps) => {
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [isMounted, setIsMounted] = useState(false)
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 
@@ -44,11 +47,8 @@ export const MessageContent = ({
 
 	const formattedTime = useMemo(() => {
 		if (isContinuation) return ''
-		return new Date(message.$createdAt).toLocaleTimeString([], {
-			hour: '2-digit',
-			minute: '2-digit',
-		})
-	}, [message.$createdAt, isContinuation])
+		return formatTime(message.$createdAt, timeFormat)
+	}, [message.$createdAt, isContinuation, timeFormat])
 
 	const repliedImageSrc = useMemo(() => {
 		if (!repliedToMessage?.content) return null

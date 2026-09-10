@@ -1,5 +1,5 @@
-'use client'
-
+import { useSettingsStore } from '@/shared/stores/settings.store'
+import { formatTimeString } from '@/shared/utils/format-time/format-time'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useEffect, useRef, useState } from 'react'
 
@@ -137,7 +137,8 @@ export const useGridDragCreate = ({
 			const formatTime = (mins: number) => {
 				const h = Math.floor(mins / 60)
 				const m = mins % 60
-				return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+				const raw = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+				return formatTimeString(raw, useSettingsStore.getState().timeFormat)
 			}
 
 			setSelectionInfo({
