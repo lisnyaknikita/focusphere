@@ -369,3 +369,34 @@
 		opacity: 1;
 	}
 }
+
+.timeFormatControl {
+	display: flex;
+	gap: 2px;
+	background-color: var(--primary);
+	border-radius: 5px;
+	padding: 3px;
+}
+
+.timeFormatBtn {
+	flex: 1;
+	padding: 5px 14px;
+	font-size: 13px;
+	font-weight: 500;
+	font-family: inherit;
+	color: var(--tab-bg);
+	background: transparent;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	&:hover {
+		color: var(--text);
+	}
+}
+
+.timeFormatBtnActive {
+	background-color: var(--secondary);
+	color: var(--text);
+}

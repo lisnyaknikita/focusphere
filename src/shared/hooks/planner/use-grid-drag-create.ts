@@ -1,6 +1,6 @@
-'use client'
-
-import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
+import { InitialTimeBlockValues } from '@/shared/hooks/planner/use-timeblock-form'
+import { useSettingsStore } from '@/shared/stores/settings.store'
+import { formatTimeString } from '@/shared/utils/format-time/format-time'
 import { useEffect, useRef, useState } from 'react'
 
 export interface DragSelectionInfo {
@@ -15,8 +15,7 @@ interface UseGridDragCreateProps {
 	isPro: boolean
 	timeBlocksCount: number
 	openPaywall: (id: string) => void
-	createQuickBlockWithRange: (startIso: string, endIso: string) => Promise<SXEvent | null>
-	onQuickBlockCreated: (event: SXEvent) => void
+	onRequestCreateModal: (initialValues: InitialTimeBlockValues) => void
 }
 
 let globalIsDragJustCompleted = false
@@ -40,8 +39,7 @@ export const useGridDragCreate = ({
 	isPro,
 	timeBlocksCount,
 	openPaywall,
-	createQuickBlockWithRange,
-	onQuickBlockCreated,
+	onRequestCreateModal,
 }: UseGridDragCreateProps) => {
 	const [selectionInfo, setSelectionInfo] = useState<DragSelectionInfo | null>(null)
 
@@ -56,16 +54,14 @@ export const useGridDragCreate = ({
 	const isProRef = useRef(isPro)
 	const timeBlocksCountRef = useRef(timeBlocksCount)
 	const openPaywallRef = useRef(openPaywall)
-	const createQuickBlockWithRangeRef = useRef(createQuickBlockWithRange)
-	const onQuickBlockCreatedRef = useRef(onQuickBlockCreated)
+	const onRequestCreateModalRef = useRef(onRequestCreateModal)
 
 	useEffect(() => {
 		isProRef.current = isPro
 		timeBlocksCountRef.current = timeBlocksCount
 		openPaywallRef.current = openPaywall
-		createQuickBlockWithRangeRef.current = createQuickBlockWithRange
-		onQuickBlockCreatedRef.current = onQuickBlockCreated
-	}, [isPro, timeBlocksCount, openPaywall, createQuickBlockWithRange, onQuickBlockCreated])
+		onRequestCreateModalRef.current = onRequestCreateModal
+	}, [isPro, timeBlocksCount, openPaywall, onRequestCreateModal])
 
 	useEffect(() => {
 		const handlePointerDown = (e: PointerEvent) => {
@@ -137,7 +133,8 @@ export const useGridDragCreate = ({
 			const formatTime = (mins: number) => {
 				const h = Math.floor(mins / 60)
 				const m = mins % 60
-				return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+				const raw = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+				return formatTimeString(raw, useSettingsStore.getState().timeFormat)
 			}
 
 			setSelectionInfo({
@@ -173,12 +170,10 @@ export const useGridDragCreate = ({
 				const minMin = Math.min(startMin, clampedCurrentMin)
 				const maxMin = Math.max(startMin, clampedCurrentMin) + 15
 
-				const formatIso = (mins: number) => {
+				const formatHHMM = (mins: number) => {
 					const h = Math.floor(mins / 60)
 					const m = mins % 60
-					const [year, month, day] = date.split('-').map(Number)
-					const d = new Date(year, month - 1, day, h, m, 0, 0)
-					return d.toISOString()
+					return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 				}
 
 				if (!isProRef.current && timeBlocksCountRef.current >= 50) {
@@ -186,13 +181,11 @@ export const useGridDragCreate = ({
 					return
 				}
 
-				const startIso = formatIso(minMin)
-				const endIso = formatIso(maxMin)
-
-				const event = await createQuickBlockWithRangeRef.current(startIso, endIso)
-				if (event) {
-					onQuickBlockCreatedRef.current(event)
-				}
+				onRequestCreateModalRef.current({
+					date,
+					startTime: formatHHMM(minMin),
+					endTime: formatHHMM(maxMin),
+				})
 			}
 		}
 

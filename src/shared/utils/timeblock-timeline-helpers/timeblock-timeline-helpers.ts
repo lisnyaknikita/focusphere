@@ -1,3 +1,6 @@
+import { TimeFormat, useSettingsStore } from '@/shared/stores/settings.store'
+import { formatTime } from '@/shared/utils/format-time/format-time'
+
 type BlockStatus = 'past' | 'current' | 'upcoming'
 
 export const getBlockStatus = (startDateStr: string, endDateStr: string): BlockStatus => {
@@ -10,9 +13,9 @@ export const getBlockStatus = (startDateStr: string, endDateStr: string): BlockS
 	return 'upcoming'
 }
 
-export const formatTimeRange = (startStr: string, endStr: string) => {
-	const start = new Date(startStr)
-	const end = new Date(endStr)
-	const format = (d: Date) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
-	return `${format(start)} – ${format(end)}`
+export const formatTimeRange = (startStr: string, endStr: string, timeFormat?: TimeFormat) => {
+	const format = timeFormat || useSettingsStore.getState().timeFormat
+	const start = formatTime(startStr, format)
+	const end = formatTime(endStr, format)
+	return `${start} – ${end}`
 }

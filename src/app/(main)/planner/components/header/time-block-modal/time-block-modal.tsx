@@ -1,15 +1,16 @@
 import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/components/color-picker/color-picker'
 import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
-import { useTimeBlockForm } from '@/shared/hooks/planner/use-timeblock-form'
+import { InitialTimeBlockValues, useTimeBlockForm } from '@/shared/hooks/planner/use-timeblock-form'
 import { RecurrencePicker } from '../recurrence-picker/recurrence-picker'
 import classes from './time-block-modal.module.scss'
 
 interface TimeBlockModalProps {
 	onClose: () => void
+	initialValues?: InitialTimeBlockValues
 }
 
-export const TimeBlockModal = ({ onClose }: TimeBlockModalProps) => {
-	const { form, setFormField, handleSubmit } = useTimeBlockForm(onClose)
+export const TimeBlockModal = ({ onClose, initialValues }: TimeBlockModalProps) => {
+	const { form, setFormField, handleSubmit } = useTimeBlockForm(onClose, initialValues)
 
 	return (
 		<div className={classes.modalInner}>

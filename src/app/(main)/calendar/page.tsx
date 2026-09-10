@@ -2,6 +2,7 @@
 
 import { useCalendarView } from '@/shared/hooks/calendar/use-calendar-view'
 import { useEvents } from '@/shared/hooks/events/use-events'
+import { useSettingsStore } from '@/shared/stores/settings.store'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { Modal } from '@/shared/ui/modal/modal'
 import { Tabs } from '@/shared/ui/tabs/tabs'
@@ -15,6 +16,7 @@ import classes from './page.module.scss'
 
 export default function Calendar() {
 	const [isModalVisible, setIsModalVisible] = useState(false)
+	const timeFormat = useSettingsStore(state => state.timeFormat)
 
 	const { events, getEvents, isLoading, isGoogleLoading } = useEvents()
 	const { view, isMobile, handleViewChange } = useCalendarView()
@@ -48,7 +50,7 @@ export default function Calendar() {
 							<CreateButton setIsModalVisible={setIsModalVisible} text='Add event' />
 						</header>
 						<main className={classes.calendar}>
-							<CalendarInner events={events} view={view} getEvents={getEvents} />
+							<CalendarInner key={`${view}-${timeFormat}`} events={events} view={view} getEvents={getEvents} />
 						</main>
 					</>
 				)}

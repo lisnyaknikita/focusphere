@@ -1,3 +1,5 @@
+import { useSettingsStore, TimeFormat } from '@/shared/stores/settings.store'
+import { formatTime } from '@/shared/utils/format-time/format-time'
 import { BaseNote, ProjectNote } from '@/shared/types/project-note'
 import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
 import { PinIcon } from '@/shared/ui/icons/pin-icon'
@@ -6,13 +8,13 @@ import clsx from 'clsx'
 import { memo } from 'react'
 import classes from './notes-list-item.module.scss'
 
-const formatDate = (dateString: string) => {
+const formatDate = (dateString: string, timeFormat: TimeFormat) => {
 	const date = new Date(dateString)
 
 	return {
 		day: date.toLocaleDateString('en-US', { weekday: 'short' }),
 		number: date.getDate().toString().padStart(2, '0'),
-		time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+		time: formatTime(date, timeFormat),
 	}
 }
 
@@ -25,7 +27,8 @@ interface NotesListItemProps {
 }
 
 export const NotesListItem = memo(({ note, isActive, onSelect, allowPinning, onTogglePin }: NotesListItemProps) => {
-	const { day, number, time } = formatDate(note.$createdAt)
+	const timeFormat = useSettingsStore(state => state.timeFormat)
+	const { day, number, time } = formatDate(note.$createdAt, timeFormat)
 	const previewText = getBlockNotePreview(note.content)
 
 	const handlePinClick = (e: React.MouseEvent) => {

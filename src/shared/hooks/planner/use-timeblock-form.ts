@@ -53,9 +53,20 @@ export const getDateForDayOfWeek = (baseDateString: string, targetDayIndex: numb
 	return `${yyyy}-${mm}-${dd}`
 }
 
-export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) => {
+export interface InitialTimeBlockValues {
+	title?: string
+	date?: string
+	startTime?: string
+	endTime?: string
+	color?: string
+}
+
+export const useTimeBlockForm = (onSuccess: () => void, initialValues?: InitialTimeBlockValues | SXEvent) => {
+	const isEditMode = Boolean(initialValues && 'id' in initialValues && (initialValues as SXEvent).id)
+
 	const [form, setForm] = useState<TimeBlockForm>(() => {
-		if (initialEvent) {
+		if (initialValues && 'id' in initialValues) {
+			const initialEvent = initialValues as SXEvent
 			const startDate = toJSDate(initialEvent.start)
 			const endDate = toJSDate(initialEvent.end)
 
@@ -69,14 +80,15 @@ export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) 
 			}
 		}
 
+		const initVals = initialValues as InitialTimeBlockValues | undefined
 		const { start, end } = getInitialTimeRange()
 
 		return {
-			title: '',
-			date: new Date().toISOString().slice(0, 10),
-			startTime: start,
-			endTime: end,
-			color: '#D79716',
+			title: initVals?.title || '',
+			date: initVals?.date || new Date().toISOString().slice(0, 10),
+			startTime: initVals?.startTime || start,
+			endTime: initVals?.endTime || end,
+			color: initVals?.color || '#D79716',
 			repeatDays: [],
 		}
 	})
@@ -96,7 +108,8 @@ export const useTimeBlockForm = (onSuccess: () => void, initialEvent?: SXEvent) 
 		}
 
 		try {
-			if (initialEvent?.id && !isRepeating) {
+			if (isEditMode && !isRepeating) {
+				const initialEvent = initialValues as SXEvent
 				const startDateISO = createISOStringFromForm(form.date, form.startTime)
 				const endDateISO = createISOStringFromForm(form.date, form.endTime)
 
