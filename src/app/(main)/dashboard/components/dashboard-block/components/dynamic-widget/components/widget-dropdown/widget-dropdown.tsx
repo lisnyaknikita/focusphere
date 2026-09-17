@@ -13,7 +13,7 @@ interface WidgetOption {
 
 const WIDGET_OPTIONS: WidgetOption[] = [
 	{ value: 'quotes', label: 'Quotes' },
-	{ value: 'timeblocks', label: 'Timeblocks' },
+	{ value: 'schedule', label: 'Current schedule' },
 	{ value: 'pomodoro', label: 'Pomodoro' },
 ]
 

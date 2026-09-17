@@ -73,6 +73,9 @@ const fetchGoogleEventsToday = async (userId: string): Promise<CalendarEvent[]> 
 			color: gEvent.colorId ? reverseColorMap[gEvent.colorId] ?? '#4285F4' : '#4285F4',
 			calendarId: 'google-calendar',
 			userId,
+			source: 'google',
+			googleEventId: gEvent.id,
+			syncStatus: 'synced',
 		}
 	}) as unknown as CalendarEvent[]
 }
@@ -105,7 +108,9 @@ export const useEventsByToday = () => {
 	})
 
 	const events = useMemo(() => {
-		return [...appwriteEvents, ...googleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
+		const linkedGoogleIds = new Set(appwriteEvents.map(event => event.googleEventId).filter(Boolean))
+		const uniqueGoogleEvents = googleEvents.filter(event => !linkedGoogleIds.has(event.googleEventId))
+		return [...appwriteEvents, ...uniqueGoogleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
 	}, [appwriteEvents, googleEvents])
 
 	const isLoading = isUserLoading || !userId || isAppwriteLoading || isGoogleInitialLoading

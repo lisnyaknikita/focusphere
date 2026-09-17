@@ -1,5 +1,8 @@
 import { Models } from 'appwrite'
 
+export type EventSource = 'local' | 'google'
+export type EventSyncStatus = 'not_synced' | 'pending' | 'synced' | 'failed'
+
 export interface CalendarEvent extends Models.Document {
 	title: string
 	description?: string
@@ -8,6 +11,9 @@ export interface CalendarEvent extends Models.Document {
 	color: string
 	calendarId: string
 	userId: string
+	source?: EventSource
+	googleEventId?: string
+	syncStatus?: EventSyncStatus
 }
 
 export interface CreateEventPayload {
@@ -18,6 +24,9 @@ export interface CreateEventPayload {
 	color: string
 	calendarId: string
 	userId: string
+	source?: EventSource
+	googleEventId?: string
+	syncStatus?: EventSyncStatus
 }
 
 export interface EventForm {
@@ -27,4 +36,5 @@ export interface EventForm {
 	startTime: string
 	endTime: string
 	color: string
+	repeatDays?: number[]
 }

@@ -1,0 +1,110 @@
+.monthDayHeader {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	background: transparent;
+	border: none;
+	padding: 2px 6px;
+	border-radius: 6px;
+	cursor: pointer;
+	color: var(--text);
+	font-size: 13px;
+	font-weight: 500;
+	transition: all 0.15s ease;
+	line-height: 1.2;
+
+	&:hover {
+		background-color: var(--secondary);
+
+		.counter {
+			background-color: var(--secondaryFull);
+			border: 1px solid var(--btn-border);
+			color: var(--text);
+		}
+	}
+
+	&:global(.today) {
+		color: #ffffff;
+		font-weight: 700;
+		background-color: var(--accent-color, #3b82f6);
+		box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+
+		&:hover {
+			background-color: var(--accent-color, #3b82f6);
+		}
+	}
+}
+
+.dateNumber {
+	display: inline-block;
+}
+
+.counter {
+	position: absolute;
+	top: -0px;
+	right: -6px;
+	transform: translate(50%, -50%);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	font-size: 10px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	color: var(--text, #ffffff);
+	background-color: var(--date-bg, #1a1b20);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9999px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+	backdrop-filter: blur(4px);
+	pointer-events: none;
+	user-select: none;
+	transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.copyMode {
+	cursor: copy;
+	border: 1px dashed var(--btn-border);
+
+	&:hover {
+		border-color: var(--text);
+		background-color: var(--secondary);
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.monthDayHeader {
+		font-size: 11px;
+		padding: 1px 4px;
+		border-radius: 4px;
+	}
+
+	.counter {
+		min-width: 14px;
+		height: 14px;
+		font-size: 8.5px;
+		padding: 0 3px;
+		right: -4px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.monthDayHeader {
+		font-size: 10px;
+		padding: 1px 3px;
+		border-radius: 3px;
+	}
+
+	.counter {
+		min-width: 12px;
+		height: 12px;
+		font-size: 7.5px;
+		padding: 0 2px;
+		right: -3px;
+	}
+}

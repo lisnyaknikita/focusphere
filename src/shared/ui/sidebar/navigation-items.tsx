@@ -122,13 +122,6 @@ export const navItems: NavItem[] = [
 		shortcut: { mac: '⌥2', win: 'Alt+2' },
 	},
 	{
-		label: 'Planner',
-		href: '/planner',
-		iconSvg: PlannerIcon,
-		iconAlt: 'planner',
-		shortcut: { mac: '⌥3', win: 'Alt+3' },
-	},
-	{
 		label: 'Projects',
 		href: '/projects',
 		iconSvg: ProjectsIcon,

@@ -73,7 +73,6 @@ export const useGlobalHotkeys = () => {
 
 			{ key: '1', alt: true, callback: () => router.push('/dashboard') },
 			{ key: '2', alt: true, callback: () => router.push('/calendar') },
-			{ key: '3', alt: true, callback: () => router.push('/planner') },
 			{ key: '4', alt: true, callback: () => router.push('/projects') },
 			{ key: '5', alt: true, callback: () => router.push('/focus') },
 			{ key: '6', alt: true, callback: () => router.push('/journal') },

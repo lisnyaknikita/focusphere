@@ -7,11 +7,11 @@ import { BeatLoader } from 'react-spinners'
 import { DailyTasksModalWrapper } from '../ui/daily-tasks-modal-wrapper/daily-tasks-modal-warpper'
 import { EveningIdeasPopup } from '../ui/evening-ideas-popup/evening-ideas-popup'
 import { EventModalWrapper } from '../ui/event-modal-wrapper/event-modal-wrapper'
+import { EventTracker } from '../ui/event-tracker/event-tracker'
 import { GlobalHotkeys } from '../ui/global-hotkeys/global-hotkeys'
 import { MiniFocusPlayer } from '../ui/mini-focus-player/mini-focus-player'
 import { QuickIdeaModalWrapper } from '../ui/quick-idea-modal-wrapper/quick-idea-modal-wrapper'
 import { ShortcutsModalWrapper } from '../ui/shortcuts-modal/shortcuts-modal-wrapper'
-import { TimeBlockTracker } from '../ui/time-block-tracker/time-block-tracker'
 import classes from './client-layout.module.scss'
 import { DailyTasksCleanupWorker } from './daily-tasks-cleanup-worker/daily-tasks-cleanup-worker'
 
@@ -42,7 +42,7 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 			<Suspense fallback={null}>
 				<GlobalHotkeys />
 			</Suspense>
-			<TimeBlockTracker />
+			<EventTracker />
 			<MiniFocusPlayer />
 			<div className={classes.wrapper}>
 				{children}

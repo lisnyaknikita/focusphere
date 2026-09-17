@@ -7,8 +7,8 @@ import { useBilling } from '@/shared/context/billing-context'
 import { useAvatarUrl } from '@/shared/hooks/avatar-url/use-avatar-url'
 import { useThemeToggle } from '@/shared/hooks/use-theme-toggle/use-theme-toggle'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { useEventTrackerUIStore } from '@/shared/stores/event-tracker-ui-store'
 import { useSettingsStore } from '@/shared/stores/settings.store'
-import { useTimeBlockUIStore } from '@/shared/stores/time-block-ui-store'
 import { FeedbackModal } from '@/shared/ui/feedback-section/feedback-modal/feedback-modal'
 import { FeedbackSection } from '@/shared/ui/feedback-section/feedback-section'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
@@ -37,7 +37,7 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
 	const [isSettingsTooltipOpen, setIsSettingsTooltipOpen] = useState(false)
 	const { user, logout, updateUserData, isGoogleConnected, isLoggingOut } = useUser()
-	const { isEnabled, setEnabled } = useTimeBlockUIStore()
+	const { isEnabled, setEnabled } = useEventTrackerUIStore()
 	const { timeFormat, setTimeFormat } = useSettingsStore()
 
 	const { avatarUrl, setAvatarUrl } = useAvatarUrl(user)

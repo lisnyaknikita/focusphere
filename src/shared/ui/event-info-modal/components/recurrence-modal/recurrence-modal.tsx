@@ -1,16 +1,21 @@
 'use client'
 
-import { RecurrencePicker } from '@/app/(main)/planner/components/header/recurrence-picker/recurrence-picker'
 import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
 import { CalendarActions } from '@/shared/hooks/calendar/use-event-form'
-import { getDateForDayOfWeek } from '@/shared/hooks/planner/use-timeblock-form'
-import { TimeBlockForm } from '@/shared/types/time-block'
 import { Modal } from '@/shared/ui/modal/modal'
+import { localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import 'temporal-polyfill/global'
 import classes from '../../event-info-modal.module.scss'
+
+const getDateForDayOfWeek = (baseDateString: string, targetDay: number): string => {
+	const plainDate = Temporal.PlainDate.from(baseDateString)
+	const currentDay = plainDate.dayOfWeek
+	return plainDate.add({ days: targetDay - currentDay }).toString()
+}
 
 interface RecurrenceModalProps {
 	isOpen: boolean
@@ -30,9 +35,9 @@ export const RecurrenceModal = ({ isOpen, onClose, event, createAction, onUpdate
 	const startTime = startStr.match(/(\d{2}:\d{2})/)?.[1] || '09:00'
 	const endTime = endStr.match(/(\d{2}:\d{2})/)?.[1] || '10:00'
 	const baseDateMatch = startStr.match(/(\d{4}-\d{2}-\d{2})/)
-	const baseDateString = baseDateMatch ? baseDateMatch[1] : new Date().toISOString().slice(0, 10)
+	const baseDateString = baseDateMatch ? baseDateMatch[1] : Temporal.Now.plainDateISO().toString()
 
-	const currentEventDayIndex = new Date(baseDateString + 'T00:00:00').getDay()
+	// const currentEventDayIndex = Temporal.PlainDate.from(baseDateString).dayOfWeek
 
 	const handleApplyRecurrence = async () => {
 		if (repeatForm.repeatDays.length === 0) return
@@ -42,11 +47,12 @@ export const RecurrenceModal = ({ isOpen, onClose, event, createAction, onUpdate
 			const createPromises = repeatForm.repeatDays.map(dayIndex => {
 				const targetDate = getDateForDayOfWeek(baseDateString, dayIndex)
 				return createAction({
-					title: event.title || 'Untitled Block',
-					startDate: `${targetDate}T${startTime}:00.000Z`,
-					endDate: `${targetDate}T${endTime}:00.000Z`,
-					color: event.color || '#D79716',
-					calendarId: getCalendarIdByColor(event.color || '#D79716'),
+					title: event.title || 'Untitled event',
+					description: event.description as string | undefined,
+					startDate: localDateTimeToInstant(targetDate, startTime),
+					endDate: localDateTimeToInstant(targetDate, endTime),
+					color: (event.color as string) || '#D79716',
+					calendarId: getCalendarIdByColor((event.color as string) || '#D79716'),
 					userId,
 				})
 			})
@@ -54,9 +60,9 @@ export const RecurrenceModal = ({ isOpen, onClose, event, createAction, onUpdate
 			const batchExecution = Promise.all(createPromises)
 
 			toast.promise(batchExecution, {
-				loading: 'Duplicating time block...',
-				success: 'Time block duplicated successfully',
-				error: 'Failed to duplicate time block',
+				loading: 'Creating event copies...',
+				success: 'Event copies created',
+				error: 'Failed to create event copies',
 			})
 
 			await batchExecution
@@ -71,16 +77,16 @@ export const RecurrenceModal = ({ isOpen, onClose, event, createAction, onUpdate
 	return (
 		<Modal isVisible={isOpen} onClose={onClose}>
 			<div className={classes.recurrenceModalInner}>
-				<h5>Duplicate Block</h5>
+				<h5>Repeat event</h5>
 				<p className={classes.recurrenceDesc}>
 					Select days of the current week to repeat this event with the same time.
 				</p>
 
-				<RecurrencePicker
-					form={repeatForm as TimeBlockForm}
+				{/* <RecurrencePicker
+					form={repeatForm as EventForm}
 					setFormField={(key, value) => setRepeatForm(prev => ({ ...prev, [key]: value }))}
 					disabledDay={currentEventDayIndex}
-				/>
+				/> */}
 
 				<div className={classes.recurrenceActions}>
 					<button onClick={onClose} className={classes.cancelBtn}>

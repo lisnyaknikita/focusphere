@@ -8,11 +8,10 @@ interface EventEditViewProps {
 	form: EventForm
 	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
 	handleSubmit: (e: React.FormEvent) => void
-	isTimeBlock?: boolean
 	onCancel: () => void
 }
 
-export const EventEditView = ({ form, setFormField, handleSubmit, isTimeBlock, onCancel }: EventEditViewProps) => {
+export const EventEditView = ({ form, setFormField, handleSubmit, onCancel }: EventEditViewProps) => {
 	return (
 		<form onSubmit={handleSubmit} className={classes.editForm}>
 			<input
@@ -23,7 +22,7 @@ export const EventEditView = ({ form, setFormField, handleSubmit, isTimeBlock, o
 				autoFocus
 			/>
 			<DateTime form={form} setFormField={setFormField} />
-			{!isTimeBlock && <Description form={form} setFormField={setFormField} />}
+			<Description form={form} setFormField={setFormField} />
 			<ColorPicker form={form} setFormField={setFormField} />
 
 			<div className={classes.actions}>

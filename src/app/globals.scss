@@ -23,6 +23,12 @@
 	--sx-internal-color-text: #1c1b1b;
 	--sx-color-neutral: #1c1b1ba7;
 	--sx-border: 0.3px solid #c7c7c7;
+	--sx-color-on-gold-container: #fff !important;
+	--sx-color-on-red-container: #fff !important;
+	--sx-color-on-green-container: #fff !important;
+	--sx-color-on-blue-container: #fff !important;
+	--sx-color-on-purple-container: #fff !important;
+	--sx-color-on-cyan-container: #fff !important;
 }
 
 :root.light {
@@ -51,6 +57,12 @@
 	--sx-internal-color-text: #1c1b1b;
 	--sx-color-neutral: #1c1b1ba7;
 	--sx-border: 0.3px solid #c7c7c7;
+	--sx-color-on-gold-container: #fff !important;
+	--sx-color-on-red-container: #fff !important;
+	--sx-color-on-green-container: #fff !important;
+	--sx-color-on-blue-container: #fff !important;
+	--sx-color-on-purple-container: #fff !important;
+	--sx-color-on-cyan-container: #fff !important;
 }
 
 :root.dark {
@@ -78,7 +90,13 @@
 	--sx-color-primary: #ffffff;
 	--sx-internal-color-text: #ffffff;
 	--sx-color-neutral: #ffffffa1;
-	--sx-border: 0.3px solid #c7c7c7;
+	--sx-border: 0.3px solid #454545;
+	--sx-color-on-gold-container: #000 !important;
+	--sx-color-on-red-container: #000 !important;
+	--sx-color-on-green-container: #000 !important;
+	--sx-color-on-blue-container: #000 !important;
+	--sx-color-on-purple-container: #000 !important;
+	--sx-color-on-cyan-container: #000 !important;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -108,6 +126,12 @@
 		--sx-internal-color-text: #ffffff;
 		--sx-color-neutral: #ffffffa1;
 		--sx-border: 0.3px solid #c7c7c7;
+		--sx-color-on-gold-container: #000 !important;
+		--sx-color-on-red-container: #000 !important;
+		--sx-color-on-green-container: #000 !important;
+		--sx-color-on-blue-container: #000 !important;
+		--sx-color-on-purple-container: #000 !important;
+		--sx-color-on-cyan-container: #000 !important;
 	}
 }
 
@@ -282,10 +306,18 @@ ul {
 .sx__time-grid-event {
 	padding: 0 4px !important;
 	min-height: 15px !important;
+	border: none !important;
 }
 
 .sx__time-grid-event-title {
 	font-size: 11px !important;
+	display: -webkit-box !important;
+	-webkit-line-clamp: 2 !important;
+	-webkit-box-orient: vertical !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+	word-break: break-word !important;
+	line-height: 1.2 !important;
 }
 
 .sx__time-grid-event-time {
@@ -327,9 +359,7 @@ ul {
 }
 
 .sx__calendar-header {
-	@media screen and (max-width: 768px) {
-		padding: 8px !important;
-	}
+	padding: 4px 8px !important;
 
 	@media screen and (max-width: 430px) {
 		padding: 3px !important;
@@ -370,50 +400,67 @@ div:has(> .bn-side-menu),
 	}
 }
 
-@media screen and (max-width: 768px) {
-	.sx__month-grid-event {
-		position: relative !important;
-		top: auto !important;
-		left: auto !important;
-		right: auto !important;
-		bottom: auto !important;
-		width: 8px !important;
-		height: 8px !important;
-		border-radius: 50% !important;
-		margin: 0 !important;
-		color: transparent !important;
-		overflow: hidden;
-		padding: 0 !important;
-		border: none !important;
-		min-height: unset !important;
-		display: block !important;
-	}
+.sx__month-grid-day {
+	// max-height: 118.5px !important;
+	overflow: hidden !important;
+	min-width: 0 !important;
+}
 
-	.sx__month-grid-event * {
-		display: none !important;
-	}
+.sx__month-grid-day__header {
+	margin-bottom: 2px !important;
+}
 
-	.sx__month-grid-day__events {
-		display: flex !important;
-		flex-direction: row !important;
-		flex-wrap: wrap !important;
-		justify-content: center !important;
-		align-content: flex-start !important;
-		align-items: center !important;
-		gap: 4px !important;
-		padding-top: 5px !important;
-		padding-bottom: 5px !important;
-	}
+.sx__month-grid-cell {
+	height: clamp(18px, 1.2rem, 24px) !important;
+}
 
-	.sx__week-grid__date-axis {
-		padding-left: 0 !important;
-	}
+.sx__month-grid-event {
+	padding: 2px 4px !important;
+	font-size: 12px !important;
+	line-height: 1.2 !important;
+	cursor: pointer !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+	white-space: nowrap !important;
+	min-width: 0 !important;
+}
 
-	.sx__is-calendar-small .sx__forward-backward-navigation,
-	.is-list-view .sx__forward-backward-navigation {
-		display: flex !important;
-		padding-left: 0px !important;
+.sx__month-grid-day__events-more {
+	font-size: 10px !important;
+	padding: 1px 4px !important;
+	margin: 0 !important;
+	transform: translateY(-2px) !important;
+	color: var(--textSecondary) !important;
+	background-color: var(--secondary) !important;
+	border-radius: 5px !important;
+	cursor: pointer !important;
+	transition: background-color 0.15s ease, color 0.15s ease !important;
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+
+	&:hover {
+		color: var(--text) !important;
+		background-color: var(--primary) !important;
 	}
+}
+
+.sx__current-time-indicator {
+	z-index: 1 !important;
+}
+
+.sx__time-grid-event {
+	cursor: pointer !important;
+}
+
+.sx__today-button {
+	padding: 10px 6px !important;
+}
+
+.sx__is-calendar-small .sx__forward-backward-navigation,
+.is-list-view .sx__forward-backward-navigation {
+	display: flex;
+	align-items: center;
 }
 
 .rdp-root {
@@ -429,12 +476,75 @@ div:has(> .bn-side-menu),
 	}
 }
 
-@media screen and (max-width: 430px) {
-	.sx__week-grid__time-axis {
-		width: calc(100% - 48px) !important;
+@media screen and (max-width: 768px) {
+	.sx__month-grid-day {
+		padding: 2px 1px !important;
 	}
 
-	.sx__week-grid {
+	.sx__month-grid-cell {
+		height: 18px !important;
+	}
+
+	.sx__month-grid-event {
+		padding: 1px 3px !important;
+		font-size: 10.5px !important;
+		border-radius: 3px !important;
+		height: 18px !important;
+		min-height: 18px !important;
+		display: flex !important;
+		align-items: center !important;
+	}
+
+	.sx__month-grid-event-title {
+		font-size: 10.5px !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+		white-space: nowrap !important;
+	}
+
+	.sx__month-grid-day__events-more {
+		font-size: 9.5px !important;
+		padding: 1px 2px !important;
+		border-radius: 3px !important;
+		line-height: 1.1 !important;
+	}
+
+	.sx__is-calendar-small .sx__forward-backward-navigation,
+	.is-list-view .sx__forward-backward-navigation {
+		display: flex !important;
+		padding-left: 0px !important;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.sx__month-grid-event {
+		font-size: 9.5px !important;
+		padding: 0 2px !important;
+		height: 16px !important;
+		min-height: 16px !important;
+	}
+
+	.sx__month-grid-event-title {
+		font-size: 9.5px !important;
+	}
+
+	.sx__month-grid-cell {
+		height: 16px !important;
+	}
+
+	.sx__month-grid-day__events-more {
+		font-size: 9px !important;
+		padding: 0 2px !important;
+	}
+}
+
+@media screen and (max-width: 430px) {
+	.sx__week-grid,
+	.sx__week-grid__date-axis {
 		padding-left: 55px !important;
+	}
+
+	.sx__week-grid__time-axis {
+		width: calc(100% - 48px) !important;
 	}
 }

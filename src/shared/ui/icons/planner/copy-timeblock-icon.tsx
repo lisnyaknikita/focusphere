@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-export const CopyTimeBlockIcon = (props: SVGProps<SVGSVGElement>) => (
+export const CopyEventIcon = (props: SVGProps<SVGSVGElement>) => (
 	<svg
 		{...props}
 		xmlns='http://www.w3.org/2000/svg'

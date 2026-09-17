@@ -2,6 +2,7 @@ import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/constants/calend
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateEvent } from '@/lib/events/events'
 import { useSettingsStore } from '@/shared/stores/settings.store'
+import { scheduleXDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { CalendarEvent, createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
 import { createCurrentTimePlugin } from '@schedule-x/current-time'
@@ -10,24 +11,35 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
 interface UseCalendarAppProps {
 	defaultView: CalendarView
+	onQuickCreate?: (dateTime: Temporal.ZonedDateTime) => void
+	onDateClick?: (date: Temporal.PlainDate) => void
+	onRangeUpdate?: (range: { start: { toString(): string }; end: { toString(): string } }) => void
 }
 
-export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
+export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRangeUpdate }: UseCalendarAppProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
+	const queryClient = useQueryClient()
+
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
 	const [eventModal] = useState(() => createEventModalPlugin())
 	const [dragAndDropPlugin] = useState(() => createDragAndDropPlugin())
 	const [resizePlugin] = useState(() => createResizePlugin(15))
 
+	// const initialEventsPerDay = typeof window !== 'undefined' && window.innerWidth <= 768 ? 2 : 3
+
 	const calendar = useNextCalendarApp({
 		locale: timeFormat === '12h' ? 'en-US' : 'en-GB',
 		views: [createViewMonthGrid(), createViewWeek(), createViewDay()],
 		defaultView: VIEW_TO_SX[defaultView],
+		monthGridOptions: {
+			nEventsPerDay: 3,
+		},
 		weekOptions: {
 			gridHeight: 1032,
 			timeAxisFormatOptions:
@@ -36,39 +48,70 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 		events: [],
 		plugins: [eventsService, calendarControls, dragAndDropPlugin, resizePlugin, createCurrentTimePlugin(), eventModal],
 		callbacks: {
+			onRangeUpdate(range) {
+				onRangeUpdate?.(range)
+			},
+			onClickDateTime(dateTime) {
+				onQuickCreate?.(dateTime)
+			},
+			onClickDate(date) {
+				onDateClick?.(date)
+			},
 			async onEventUpdate(updatedEvent: CalendarEvent) {
+				const { id, start, end, title, description, color } = updatedEvent
+				const eventId = String(id)
+				const googleEventId = (updatedEvent as unknown as { googleEventId?: string }).googleEventId
+				const isGoogleLinked = eventId.startsWith('g_') || Boolean(googleEventId)
+
+				const startDate = scheduleXDateTimeToInstant(start)
+				const endDate = scheduleXDateTimeToInstant(end)
+
+				const updateQueryData = (oldData: unknown) => {
+					if (!Array.isArray(oldData)) return oldData
+					return oldData.map((item: { $id?: string; id?: string; [key: string]: unknown }) => {
+						if (String(item.$id || item.id) === eventId) {
+							return {
+								...item,
+								startDate,
+								endDate,
+							}
+						}
+						return item
+					})
+				}
+
+				queryClient.setQueriesData({ queryKey: ['calendar-events-month'] }, updateQueryData)
+				queryClient.setQueriesData({ queryKey: ['calendar-google-events-month'] }, updateQueryData)
+				queryClient.setQueriesData({ queryKey: ['calendar-events'] }, updateQueryData)
+
 				try {
-					const { id, start, end, title, description, color } = updatedEvent
-					const eventId = String(id)
-
-					const formatForAppwrite = (dateObj: string | { toString(): string }): string => {
-						const text = dateObj.toString().replace(' ', 'T')
-						if (text.length <= 10) return text
-						const base = text.substring(0, 16)
-						return `${base}:00`
-					}
-
-					const startDate = formatForAppwrite(start)
-					const endDate = formatForAppwrite(end)
-
-					if (eventId.startsWith('g_')) {
+					if (isGoogleLinked) {
 						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
 
-						await googleCalendarService.updateEvent(eventId, {
+						await googleCalendarService.updateEvent(googleEventId || eventId, {
 							summary: title,
 							description: description as string | undefined,
 							color: color as string | undefined,
 							start: startDate,
 							end: endDate,
 						})
-					} else {
+					}
+					if (!eventId.startsWith('g_')) {
 						await updateEvent(eventId, {
 							startDate,
 							endDate,
 						})
 					}
+					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] })
 				} catch (error) {
 					console.error('Event update failed:', error)
+					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] })
 				}
 			},
 		},
@@ -85,7 +128,25 @@ export const useCalendarApp = ({ defaultView }: UseCalendarAppProps) => {
 		calendarApp.config.locale.value = is12h ? 'en-US' : 'en-GB'
 		calendarApp.config.weekOptions.value = {
 			...calendarApp.config.weekOptions.value,
+			eventOverlap: false,
 			timeAxisFormatOptions: is12h ? { hour: 'numeric' } : { hour: '2-digit', minute: '2-digit', hour12: false },
+		}
+
+		const handleResize = () => {
+			if (typeof window === 'undefined') return
+			const targetCount = window.innerWidth <= 768 ? 2 : 3
+			if (calendarApp.config.monthGridOptions?.value?.nEventsPerDay !== targetCount) {
+				calendarApp.config.monthGridOptions.value = {
+					...calendarApp.config.monthGridOptions.value,
+					nEventsPerDay: targetCount,
+				}
+			}
+		}
+
+		handleResize()
+		window.addEventListener('resize', handleResize)
+		return () => {
+			window.removeEventListener('resize', handleResize)
 		}
 	}, [calendar, timeFormat])
 

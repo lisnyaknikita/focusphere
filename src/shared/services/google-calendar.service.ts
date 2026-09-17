@@ -223,6 +223,15 @@ class GoogleCalendarService {
 			})
 
 			if (!res.ok) {
+				if (res.status === 404 || res.status === 410) {
+					return
+				}
+
+				if (res.status === 401) {
+					this.showAuthError()
+					return
+				}
+
 				console.error('Google Calendar delete error:', await res.text())
 			}
 		} catch (error) {

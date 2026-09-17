@@ -1,7 +1,6 @@
 'use client'
 
-import { useUserFromContext } from '@/shared/context/user-context'
-import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
+import { useEventsByToday } from '@/shared/hooks/events/use-events-by-today'
 import { useSettingsStore } from '@/shared/stores/settings.store'
 import { formatTimeRange, getBlockStatus } from '@/shared/utils/timeblock-timeline-helpers/timeblock-timeline-helpers'
 import clsx from 'clsx'
@@ -25,17 +24,13 @@ const COLOR_MAP: Record<string, string> = {
 
 export const TimeBlocksTimeline = () => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
-	const { user } = useUserFromContext()
 	const router = useRouter()
-	const { timeBlocks, isLoading } = useTimeBlocks(user)
+	const { events, isLoading } = useEventsByToday()
 	const currentBlockRef = useRef<HTMLDivElement>(null)
 
 	const todayBlocks = useMemo(() => {
-		const todayStr = new Date().toDateString()
-		return timeBlocks
-			.filter(block => new Date(block.startDate).toDateString() === todayStr)
-			.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-	}, [timeBlocks])
+		return [...events].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+	}, [events])
 
 	useEffect(() => {
 		if (currentBlockRef.current) {
@@ -54,9 +49,9 @@ export const TimeBlocksTimeline = () => {
 	if (todayBlocks.length === 0) {
 		return (
 			<div className={classes.emptyState}>
-				<p className={classes.emptyTitle}>No time blocks scheduled for today</p>
-				<button type='button' className={classes.plannerBtn} onClick={() => router.push('/planner')}>
-					Go to Planner
+				<p className={classes.emptyTitle}>No events scheduled for today</p>
+				<button type='button' className={classes.plannerBtn} onClick={() => router.push('/calendar')}>
+					Open Calendar
 				</button>
 			</div>
 		)
@@ -66,7 +61,7 @@ export const TimeBlocksTimeline = () => {
 		<div className={classes.timelineWrapper}>
 			<div className={classes.timelineHeader}>
 				<span className={classes.title}>Today&apos;s Schedule</span>
-				<span className={classes.countBadge}>{todayBlocks.length} blocks</span>
+				<span className={classes.countBadge}>{todayBlocks.length} events</span>
 			</div>
 
 			<div className={classes.timelineStream}>
@@ -102,8 +97,8 @@ export const TimeBlocksTimeline = () => {
 					<div className={classes.endDivider}>
 						<span>End of schedule · Free time</span>
 					</div>
-					<button type='button' className={classes.actionPlannerCard} onClick={() => router.push('/planner')}>
-						<span>Open Planner to manage blocks</span>
+					<button type='button' className={classes.actionPlannerCard} onClick={() => router.push('/calendar')}>
+						<span>Open Calendar to manage events</span>
 						<span className={classes.arrowIcon}>→</span>
 					</button>
 				</div>
