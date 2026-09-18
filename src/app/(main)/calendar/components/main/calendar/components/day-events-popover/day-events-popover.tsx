@@ -1,8 +1,9 @@
 'use client'
 
+import { CALENDARS_CONFIG, getCalendarIdByColor } from '@/lib/events/calendar-config'
 import { useSettingsStore } from '@/shared/stores/settings.store'
 import { CloseIcon } from '@/shared/ui/icons/close-icon'
-import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/react'
+import { autoUpdate, flip, offset, shift, useDismiss, useFloating, useInteractions } from '@floating-ui/react'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
@@ -17,6 +18,12 @@ interface DayEventsPopoverProps {
 	onEventClick?: (event: SXEvent) => void
 }
 
+const getDisplayColor = (color: string): string => {
+	const calendarId = getCalendarIdByColor(color)
+	const config = CALENDARS_CONFIG[calendarId as keyof typeof CALENDARS_CONFIG]
+	return config?.darkColors.container || color
+}
+
 export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventClick }: DayEventsPopoverProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [isMounted, setIsMounted] = useState(false)
@@ -25,7 +32,11 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 		setIsMounted(true)
 	}, [])
 
-	const { x, y, refs, strategy } = useFloating({
+	const isOpen = Boolean(dateStr && anchorEl)
+
+	const { x, y, refs, strategy, context } = useFloating({
+		open: isOpen,
+		onOpenChange: open => !open && onClose(),
 		strategy: 'fixed',
 		placement: 'bottom-start',
 		elements: {
@@ -35,34 +46,23 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 		whileElementsMounted: autoUpdate,
 	})
 
-	useEffect(() => {
-		if (!dateStr || !anchorEl) return
+	const dismiss = useDismiss(context, {
+		outsidePress: true,
+		escapeKey: true,
+	})
 
-		const handleMouseDownOutside = (event: MouseEvent) => {
-			const target = event.target as Node
-			const popoverEl = refs.floating.current
-
-			if (popoverEl && !popoverEl.contains(target) && !anchorEl.contains(target)) {
-				onClose()
-			}
-		}
-
-		document.addEventListener('mousedown', handleMouseDownOutside)
-		return () => {
-			document.removeEventListener('mousedown', handleMouseDownOutside)
-		}
-	}, [dateStr, anchorEl, onClose, refs.floating])
+	const { getFloatingProps } = useInteractions([dismiss])
 
 	const { weekday, dayNum, dayEvents } = useMemo(() => {
 		if (!dateStr) return { weekday: '', dayNum: '', dayEvents: [] }
 
-		const dateObj = new Date(`${dateStr}T00:00:00`)
+		const [year, month, day] = dateStr.split('-').map(Number)
+		const dateObj = new Date(year, month - 1, day)
 		const weekdayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
-		const dayNumber = String(dateObj.getDate())
 
 		const filtered = events.filter(ev => String(ev.start).startsWith(dateStr))
 
-		return { weekday: weekdayName, dayNum: dayNumber, dayEvents: filtered }
+		return { weekday: weekdayName, dayNum: String(day), dayEvents: filtered }
 	}, [dateStr, events])
 
 	const formatTime = (startVal: unknown) => {
@@ -86,7 +86,7 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 
 	return createPortal(
 		<AnimatePresence>
-			{dateStr && anchorEl && (
+			{isOpen && (
 				<motion.div
 					ref={refs.setFloating}
 					style={{
@@ -99,6 +99,7 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 					animate={{ opacity: 1, scale: 1, y: 0 }}
 					exit={{ opacity: 0, scale: 0.94, y: -4 }}
 					transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+					{...getFloatingProps()}
 				>
 					<div className={classes.header}>
 						<button type='button' className={classes.closeBtn} onClick={onClose} title='Close'>
@@ -120,7 +121,7 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 							>
 								<span
 									className={classes.colorBadge}
-									style={{ backgroundColor: (event.color as string) || '#D79716' }}
+									style={{ backgroundColor: getDisplayColor(String(event.color || '')) }}
 								/>
 								<span className={classes.eventTime}>{formatTime(event.start)}</span>
 								<span className={classes.eventTitle} title={event.title}>

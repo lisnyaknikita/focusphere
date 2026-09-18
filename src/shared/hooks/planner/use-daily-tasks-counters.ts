@@ -5,8 +5,10 @@ import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { Query } from 'appwrite'
 import { useMemo } from 'react'
 
+export const DAILY_TASKS_COUNTERS_KEY = 'daily-tasks-counters-month'
+
 export const dailyTasksCountersMonthQueryKey = (userId: string, monthKey: string) =>
-	['daily-tasks-counters-month', userId, monthKey] as const
+	[DAILY_TASKS_COUNTERS_KEY, userId, monthKey] as const
 
 export const fetchDailyTasksCounters = async (
 	userId: string,
@@ -69,7 +71,7 @@ export const useDailyTasksCounters = ({ userId, start, end }: UseDailyTasksCount
 	const isLoading = queries.some(q => q.isLoading)
 
 	const refreshDailyTasksCounters = async () => {
-		await queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters-month'] })
+		await queryClient.invalidateQueries({ queryKey: [DAILY_TASKS_COUNTERS_KEY] })
 	}
 
 	return {

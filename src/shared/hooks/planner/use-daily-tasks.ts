@@ -2,6 +2,7 @@
 
 import { db } from '@/lib/appwrite'
 import { createDailyTask, deleteDailyTask, updateDailyTask } from '@/lib/planner/planner'
+import { DAILY_TASKS_COUNTERS_KEY } from '@/shared/hooks/planner/use-daily-tasks-counters'
 import { DailyTask } from '@/shared/types/daily-task'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Query } from 'appwrite'
@@ -43,6 +44,10 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 		enabled: !!userId,
 	})
 
+	const invalidateCounters = useCallback(() => {
+		queryClient.invalidateQueries({ queryKey: [DAILY_TASKS_COUNTERS_KEY] })
+	}, [queryClient])
+
 	const toggleTaskMutation = useMutation({
 		mutationFn: ({ taskId, newStatus }: { taskId: string; newStatus: boolean }) =>
 			updateDailyTask(taskId, { isCompleted: newStatus }),
@@ -62,7 +67,7 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
+			invalidateCounters()
 		},
 	})
 
@@ -82,7 +87,7 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
+			invalidateCounters()
 		},
 	})
 
@@ -97,7 +102,7 @@ export const useDailyTasks = ({ date }: UseDailyTasksProps) => {
 			}),
 		onSuccess: newTask => {
 			queryClient.setQueryData<DailyTask[]>(queryKey, (old = []) => [...old, newTask as unknown as DailyTask])
-			queryClient.invalidateQueries({ queryKey: ['daily-tasks-counters'] })
+			invalidateCounters()
 		},
 	})
 

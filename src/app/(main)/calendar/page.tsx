@@ -19,16 +19,16 @@ export default function Calendar() {
 	const [initialValues, setInitialValues] = useState<InitialEventValues | null>(null)
 	const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
+
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	// const { weeklyGoals, refreshWeeklyGoals } = useWeeklyGoals()
 	const queryClient = useQueryClient()
+	const { view, handleViewChange } = useCalendarView()
 
 	const handleEventCreated = async () => {
 		await queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
 		setInitialValues(null)
 	}
-
-	const { view, handleViewChange } = useCalendarView()
 
 	return (
 		<>

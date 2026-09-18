@@ -18,7 +18,7 @@ import {
 } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { KeyboardEvent, useRef, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
 import classes from './daily-tasks-modal.module.scss'
 import { SortableTaskItem } from './sortable-task-item/sortable-task-item'
@@ -35,8 +35,10 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 	const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 	const [editingTitle, setEditingTitle] = useState('')
 
-	const [isCreating, setIsCreating] = useState(false)
+	const [isCreating, setIsCreating] = useState(Boolean(autoCreate))
 	const [newTaskTitle, setNewTaskTitle] = useState('')
+
+	const isSubmittingRef = useRef(false)
 
 	const {
 		tasks,
@@ -50,17 +52,8 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 	} = useDailyTasks({ date })
 
 	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: {
-				distance: 8,
-			},
-		}),
-		useSensor(TouchSensor, {
-			activationConstraint: {
-				delay: 250,
-				tolerance: 5,
-			},
-		})
+		useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+		useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
 	)
 
 	const handleDragEnd = (event: DragEndEvent) => {
@@ -89,33 +82,46 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 	}
 
 	const commitEdit = async () => {
-		if (editingTaskId) {
-			const previousTitle = tasks.find(task => task.$id === editingTaskId)?.title
-			const nextTitle = editingTitle.trim()
-			await handleEditTask(editingTaskId, editingTitle)
-			if (nextTitle && previousTitle !== nextTitle) {
-				onTasksChanged?.()
-			}
+		if (isSubmittingRef.current || !editingTaskId) return
+		isSubmittingRef.current = true
+
+		const previousTitle = tasks.find(task => task.$id === editingTaskId)?.title
+		const nextTitle = editingTitle.trim()
+
+		if (nextTitle && previousTitle !== nextTitle) {
+			await handleEditTask(editingTaskId, nextTitle)
+			onTasksChanged?.()
 		}
+
 		setEditingTaskId(null)
 		setEditingTitle('')
+		isSubmittingRef.current = false
 	}
 
 	const handleCreateTask = async () => {
+		if (isSubmittingRef.current) return
+		isSubmittingRef.current = true
+
 		const trimmedTitle = newTaskTitle.trim()
 		if (trimmedTitle) {
 			await handleAddTask(trimmedTitle)
 			setNewTaskTitle('')
 			onTasksChanged?.()
 		}
+
 		setIsCreating(false)
+		isSubmittingRef.current = false
 	}
 
-	useEffect(() => {
-		if (autoCreate) {
-			setIsCreating(true)
+	const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>, onCommit: () => void, onCancel: () => void) => {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			onCommit()
+		} else if (e.key === 'Escape') {
+			e.preventDefault()
+			onCancel()
 		}
-	}, [autoCreate])
+	}
 
 	return (
 		<>
@@ -138,13 +144,12 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 														value={editingTitle}
 														onChange={e => setEditingTitle(e.target.value)}
 														onBlur={commitEdit}
-														onKeyDown={e => {
-															if (e.key === 'Enter') e.currentTarget.blur()
-															if (e.key === 'Escape') {
+														onKeyDown={e =>
+															handleInputKeyDown(e, commitEdit, () => {
 																setEditingTaskId(null)
 																setEditingTitle('')
-															}
-														}}
+															})
+														}
 													/>
 												) : (
 													<CheckboxCard
@@ -165,6 +170,7 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 											</div>
 										</SortableTaskItem>
 									))}
+
 									{isCreating && (
 										<li className={classes.newTaskItem}>
 											<input
@@ -174,15 +180,12 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 												value={newTaskTitle}
 												onChange={e => setNewTaskTitle(e.target.value)}
 												onBlur={handleCreateTask}
-												onKeyDown={e => {
-													if (e.key === 'Enter') {
-														e.currentTarget.blur()
-													}
-													if (e.key === 'Escape') {
+												onKeyDown={e =>
+													handleInputKeyDown(e, handleCreateTask, () => {
 														setNewTaskTitle('')
 														setIsCreating(false)
-													}
-												}}
+													})
+												}
 												disabled={isSaving}
 											/>
 										</li>
@@ -194,16 +197,19 @@ export const DailyTasksModal = ({ onClose, date, onTasksChanged, autoCreate }: D
 
 					{!isLoading && tasks.length === 0 && !isCreating && <p className={classes.emptyMessage}>No tasks</p>}
 				</div>
+
 				<button className={classes.addTaskButton} onClick={() => setIsCreating(true)} disabled={isCreating || isSaving}>
 					<PlusIcon />
 					<span>Add new task</span>
 				</button>
-				<button className={classes.closeButton} onClick={() => onClose()} aria-label='Close modal' type='button'>
+
+				<button className={classes.closeButton} onClick={onClose} aria-label='Close modal' type='button'>
 					<CloseIcon width={20} height={20} />
 				</button>
 			</div>
+
 			<ConfirmModal
-				isVisible={!!taskToDelete}
+				isVisible={Boolean(taskToDelete)}
 				onClose={() => setTaskToDelete(null)}
 				onConfirm={confirmDelete}
 				title='Delete Daily Task'
