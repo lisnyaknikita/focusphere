@@ -60,15 +60,25 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 		const dateObj = new Date(year, month - 1, day)
 		const weekdayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
 
-		const filtered = events.filter(ev => String(ev.start).startsWith(dateStr))
+		const filtered = events.filter(ev => {
+			const startStr = String(ev.start).slice(0, 10)
+			const endStr = String(ev.end).slice(0, 10)
+			return startStr <= dateStr && dateStr <= endStr
+		})
 
 		return { weekday: weekdayName, dayNum: String(day), dayEvents: filtered }
 	}, [dateStr, events])
 
-	const formatTime = (startVal: unknown) => {
+	const formatTime = (startVal: unknown, endVal: unknown) => {
 		const startStr = String(startVal ?? '')
+		const endStr = String(endVal ?? '')
+		const startDay = startStr.slice(0, 10)
+		const endDay = endStr.slice(0, 10)
+
 		const timeMatch = startStr.match(/\d{2}:\d{2}/)
-		if (!timeMatch) return 'All day'
+		if (!timeMatch || (startDay !== endDay && dateStr && startDay < dateStr && endDay > dateStr)) {
+			return 'All day'
+		}
 
 		const [hoursStr, minutesStr] = timeMatch[0].split(':')
 		let hours = parseInt(hoursStr, 10)
@@ -123,7 +133,7 @@ export const DayEventsPopover = ({ dateStr, anchorEl, events, onClose, onEventCl
 									className={classes.colorBadge}
 									style={{ backgroundColor: getDisplayColor(String(event.color || '')) }}
 								/>
-								<span className={classes.eventTime}>{formatTime(event.start)}</span>
+								<span className={classes.eventTime}>{formatTime(event.start, event.end)}</span>
 								<span className={classes.eventTitle} title={event.title}>
 									{event.title}
 								</span>

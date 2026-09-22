@@ -156,29 +156,48 @@ export const CalendarInner = memo(
 			[handleCreateEvent, handleUpdateEvent, setCopiedEvent]
 		)
 
+		const isCopyModeRef = useRef(isCopyMode)
+		isCopyModeRef.current = isCopyMode
+
+		const handleDateClickRef = useRef(handleDateClick)
+		handleDateClickRef.current = handleDateClick
+
+		const onDayClickRef = useRef(onDayClick)
+		onDayClickRef.current = onDayClick
+
+		const renderEventInfoModalRef = useRef(renderEventInfoModal)
+		renderEventInfoModalRef.current = renderEventInfoModal
+
+		const eventModalRef = useRef(eventModal)
+		eventModalRef.current = eventModal
+
+		const handleHeaderDayClick = useCallback((selectedDate: string) => {
+			if (isCopyModeRef.current) {
+				handleDateClickRef.current(Temporal.PlainDate.from(selectedDate))
+			} else {
+				onDayClickRef.current(selectedDate)
+			}
+		}, [])
+
 		const customComponents = useMemo(
 			() => ({
 				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) =>
-					renderEventInfoModal(calendarEvent, () => eventModal.close()),
+					renderEventInfoModalRef.current(calendarEvent, () => eventModalRef.current.close()),
 				weekGridDate: ({ date }: { date: string }) => (
 					<WeekDayHeader
 						date={date}
-						onDayClick={selectedDate =>
-							isCopyMode ? handleDateClick(Temporal.PlainDate.from(selectedDate)) : onDayClick(selectedDate)
-						}
+						onDayClick={handleHeaderDayClick}
 					/>
 				),
 				monthGridDate: ({ date, jsDate }: { date: number; jsDate: Date }) => (
 					<MonthDayHeader
 						date={date}
 						jsDate={jsDate}
-						onDayClick={selectedDate =>
-							isCopyMode ? handleDateClick(Temporal.PlainDate.from(selectedDate)) : onDayClick(selectedDate)
-						}
+						onDayClick={handleHeaderDayClick}
 					/>
 				),
 			}),
-			[eventModal, handleDateClick, isCopyMode, onDayClick, renderEventInfoModal]
+			[handleHeaderDayClick]
 		)
 
 		return (

@@ -51,11 +51,17 @@ const fetchGoogleEventsToday = async (userId: string): Promise<CalendarEvent[]> 
 		let startDate = gEvent.start?.dateTime ?? ''
 		let endDate = gEvent.end?.dateTime ?? ''
 
-		if (isAllDay) {
+		if (isAllDay && gEvent.end?.date) {
 			startDate = gEvent.start.date!
-			const endObj = new Date(gEvent.end.date!)
-			endObj.setDate(endObj.getDate() - 1)
-			endDate = endObj.toISOString().split('T')[0]
+			try {
+				const endPlainDate = Temporal.PlainDate.from(gEvent.end.date).subtract({ days: 1 })
+				const startPlainDate = Temporal.PlainDate.from(startDate)
+				endDate = Temporal.PlainDate.compare(endPlainDate, startPlainDate) >= 0 ? endPlainDate.toString() : startDate
+			} catch {
+				const endObj = new Date(gEvent.end.date)
+				endObj.setDate(endObj.getDate() - 1)
+				endDate = endObj.toISOString().split('T')[0]
+			}
 		}
 
 		return {

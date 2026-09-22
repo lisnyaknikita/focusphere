@@ -15,6 +15,7 @@ interface CheckboxCardProps {
 	withRemoval?: boolean
 	withEditing?: boolean
 	preventLineThrough?: boolean
+	lineClamp?: number
 }
 
 export function CheckboxCard({
@@ -27,6 +28,7 @@ export function CheckboxCard({
 	withEditing,
 	onEdit,
 	preventLineThrough,
+	lineClamp,
 }: CheckboxCardProps) {
 	const shouldApplyCheckedClass = checked && !preventLineThrough
 
@@ -38,7 +40,14 @@ export function CheckboxCard({
 		>
 			<input type='checkbox' checked={checked} onChange={e => onCheck(e.target.checked)} className={classes.checkbox} />
 			<span className={classes.customCheckbox}></span>
-			<span className={clsx(classes.label, shouldApplyCheckedClass && 'checked')}>{label}</span>
+			<span
+				className={clsx(classes.label, shouldApplyCheckedClass && 'checked')}
+				style={{
+					...(lineClamp ? { WebkitLineClamp: lineClamp, lineClamp } : {}),
+				}}
+			>
+				{label}
+			</span>
 			<div className={classes.buttons}>
 				{withEditing ? (
 					<button className={classes.editButton} type='button' onClick={onEdit}>

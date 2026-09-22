@@ -21,10 +21,16 @@ export const mapGoogleEvent = (event: GoogleCalendarEvent, userId: string): Cale
 	const startDate = allDay ? event.start.date! : event.start.dateTime || ''
 	let endDate = allDay ? event.end.date! : event.end.dateTime || ''
 
-	if (allDay) {
-		const end = new Date(endDate)
-		end.setDate(end.getDate() - 1)
-		endDate = end.toISOString().slice(0, 10)
+	if (allDay && endDate) {
+		try {
+			const endPlainDate = Temporal.PlainDate.from(endDate).subtract({ days: 1 })
+			const startPlainDate = Temporal.PlainDate.from(startDate)
+			endDate = Temporal.PlainDate.compare(endPlainDate, startPlainDate) >= 0 ? endPlainDate.toString() : startDate
+		} catch {
+			const end = new Date(endDate)
+			end.setDate(end.getDate() - 1)
+			endDate = end.toISOString().slice(0, 10)
+		}
 	}
 
 	return {
@@ -157,4 +163,3 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 		isGoogleLoading,
 	}
 }
-

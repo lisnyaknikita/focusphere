@@ -12,7 +12,7 @@ import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface UseCalendarAppProps {
 	defaultView: CalendarView
@@ -24,6 +24,13 @@ interface UseCalendarAppProps {
 export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRangeUpdate }: UseCalendarAppProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const queryClient = useQueryClient()
+
+	const onQuickCreateRef = useRef(onQuickCreate)
+	onQuickCreateRef.current = onQuickCreate
+	const onDateClickRef = useRef(onDateClick)
+	onDateClickRef.current = onDateClick
+	const onRangeUpdateRef = useRef(onRangeUpdate)
+	onRangeUpdateRef.current = onRangeUpdate
 
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
@@ -49,13 +56,13 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 		plugins: [eventsService, calendarControls, dragAndDropPlugin, resizePlugin, createCurrentTimePlugin(), eventModal],
 		callbacks: {
 			onRangeUpdate(range) {
-				onRangeUpdate?.(range)
+				onRangeUpdateRef.current?.(range)
 			},
 			onClickDateTime(dateTime) {
-				onQuickCreate?.(dateTime)
+				onQuickCreateRef.current?.(dateTime)
 			},
 			onClickDate(date) {
-				onDateClick?.(date)
+				onDateClickRef.current?.(date)
 			},
 			async onEventUpdate(updatedEvent: CalendarEvent) {
 				const { id, start, end, title, description, color } = updatedEvent

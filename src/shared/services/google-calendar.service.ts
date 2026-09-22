@@ -1,6 +1,7 @@
 import { account } from '@/lib/appwrite'
 import { OAuthProvider } from 'appwrite'
 import { toast } from 'sonner'
+import 'temporal-polyfill/global'
 import { APP_URL } from '../constants/app'
 
 type GoogleDate = { date: string } | { dateTime: string; timeZone?: string }
@@ -168,9 +169,14 @@ class GoogleCalendarService {
 
 		if (isAllDay) {
 			startBody = { date: payload.start }
-			const endObj = new Date(payload.end)
-			endObj.setDate(endObj.getDate() + 1)
-			endBody = { date: endObj.toISOString().split('T')[0] }
+			try {
+				const endPlainDate = Temporal.PlainDate.from(payload.end).add({ days: 1 })
+				endBody = { date: endPlainDate.toString() }
+			} catch {
+				const endObj = new Date(payload.end)
+				endObj.setDate(endObj.getDate() + 1)
+				endBody = { date: endObj.toISOString().split('T')[0] }
+			}
 		} else {
 			const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 			const startIso = this.formatIso(payload.start)
@@ -250,9 +256,14 @@ class GoogleCalendarService {
 
 		if (isAllDay) {
 			startBody = { date: payload.start }
-			const endObj = new Date(payload.end)
-			endObj.setDate(endObj.getDate() + 1)
-			endBody = { date: endObj.toISOString().split('T')[0] }
+			try {
+				const endPlainDate = Temporal.PlainDate.from(payload.end).add({ days: 1 })
+				endBody = { date: endPlainDate.toString() }
+			} catch {
+				const endObj = new Date(payload.end)
+				endObj.setDate(endObj.getDate() + 1)
+				endBody = { date: endObj.toISOString().split('T')[0] }
+			}
 		} else {
 			const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 			const startIso = this.formatIso(payload.start)
