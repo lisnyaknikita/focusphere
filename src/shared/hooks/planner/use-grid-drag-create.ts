@@ -1,4 +1,4 @@
-import { InitialTimeBlockValues } from '@/shared/hooks/planner/use-timeblock-form'
+import { InitialEventValues } from '@/shared/hooks/calendar/use-event-form'
 import { useSettingsStore } from '@/shared/stores/settings.store'
 import { formatTimeString } from '@/shared/utils/format-time/format-time'
 import { useEffect, useRef, useState } from 'react'
@@ -15,7 +15,7 @@ interface UseGridDragCreateProps {
 	isPro: boolean
 	timeBlocksCount: number
 	openPaywall: (id: string) => void
-	onRequestCreateModal: (initialValues: InitialTimeBlockValues) => void
+	onRequestCreateModal: (initialValues: InitialEventValues) => void
 }
 
 let globalIsDragJustCompleted = false

@@ -1,5 +1,5 @@
-import { useCopyMode } from '@/app/(main)/planner/copy-mode-context'
 import { useDailyTasksCountForDate } from '@/app/(main)/planner/daily-tasks-count-context'
+import { useCalendarCopyMode } from '@/features/calendar/calendar-copy-mode-context'
 import clsx from 'clsx'
 import { useMemo } from 'react'
 import classes from './week-day-header.module.scss'
@@ -12,7 +12,7 @@ interface WeekDayHeaderProps {
 
 export const WeekDayHeader = ({ date, onDayClick, incompleteTasksCount }: WeekDayHeaderProps) => {
 	const incompleteFromContext = useDailyTasksCountForDate(date)
-	const isCopyMode = useCopyMode()
+	const isCopyMode = useCalendarCopyMode()
 
 	const incompleteTasksDisplay = incompleteTasksCount ?? incompleteFromContext
 

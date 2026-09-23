@@ -1,13 +1,12 @@
-import { CALENDAR_COLORS } from '@/lib/events/calendar-config'
+import { CALENDAR_COLORS, CALENDARS_CONFIG, getCalendarIdByColor } from '@/lib/events/calendar-config'
 import { useClickOutside } from '@/shared/hooks/use-click-outside/use-click-outside'
 import { EventForm } from '@/shared/types/event'
-import { TimeBlockForm } from '@/shared/types/time-block'
 import { ArrowBottomIcon } from '@/shared/ui/icons/calendar/arrow-bottom-icon'
 import { ArrowTopIcon } from '@/shared/ui/icons/calendar/arrow-top-icon'
 import { useState } from 'react'
 import classes from './color-picker.module.scss'
 
-type FormType = EventForm | TimeBlockForm
+type FormType = EventForm
 
 interface ColorPickerProps<T extends FormType> {
 	form: T
@@ -16,7 +15,13 @@ interface ColorPickerProps<T extends FormType> {
 
 const COLORS = Object.values(CALENDAR_COLORS)
 
-export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setFormField }: ColorPickerProps<T>) => {
+const getDisplayColor = (color: string): string => {
+	const calendarId = getCalendarIdByColor(color)
+	const config = CALENDARS_CONFIG[calendarId as keyof typeof CALENDARS_CONFIG]
+	return config?.darkColors.container || color
+}
+
+export const ColorPicker = <T extends EventForm>({ form, setFormField }: ColorPickerProps<T>) => {
 	const [open, setOpen] = useState(false)
 
 	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
@@ -39,7 +44,10 @@ export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setForm
 	return (
 		<div className={classes.colorPicker} ref={dropdownRef}>
 			<button className={classes.triggerButton} onClick={handleTriggerClick} type='button'>
-				<span className={classes.selectedColorCircle} style={{ backgroundColor: selectedColor }}></span>
+				<span
+					className={classes.selectedColorCircle}
+					style={{ backgroundColor: getDisplayColor(selectedColor) }}
+				></span>
 				<span className={classes.arrow}>{open ? <ArrowTopIcon /> : <ArrowBottomIcon />}</span>
 			</button>
 
@@ -50,7 +58,7 @@ export const ColorPicker = <T extends EventForm | TimeBlockForm>({ form, setForm
 							type='button'
 							key={color}
 							className={classes.colorOption}
-							style={{ backgroundColor: color }}
+							style={{ backgroundColor: getDisplayColor(color) }}
 							onClick={e => handleColorSelect(e, color)}
 						/>
 					))}

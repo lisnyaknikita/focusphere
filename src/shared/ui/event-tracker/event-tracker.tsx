@@ -1,27 +1,22 @@
 'use client'
 
-import { useActiveBlockLogic } from '@/shared/hooks/active-block/use-active-block-logic'
-import { useTimeBlocks } from '@/shared/hooks/planner/use-timeblocks'
-import { useUser } from '@/shared/hooks/use-user/use-user'
-import { useTimeBlockUIStore } from '@/shared/stores/time-block-ui-store'
+import { useActiveEventLogic } from '@/shared/hooks/active-event/use-active-event-logic'
+import { useEventsByToday } from '@/shared/hooks/events/use-events-by-today'
+import { useEventTrackerUIStore } from '@/shared/stores/event-tracker-ui-store'
 import { autoUpdate, flip, offset, shift, useFloating, useHover, useInteractions } from '@floating-ui/react'
 import { useEffect, useState } from 'react'
-import classes from './time-block-tracker.module.scss'
+import classes from '../time-block-tracker/time-block-tracker.module.scss'
 
-export const TimeBlockTracker = () => {
+export const EventTracker = () => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [animatedProgress, setAnimatedProgress] = useState(0)
-
-	const { isEnabled } = useTimeBlockUIStore()
-	const { user } = useUser()
-	const { timeBlocks, isLoading } = useTimeBlocks(isEnabled ? user : null)
-	const { activeBlock, progress } = useActiveBlockLogic(timeBlocks)
+	const { isEnabled } = useEventTrackerUIStore()
+	const { events, isLoading } = useEventsByToday()
+	const { activeEvent, progress } = useActiveEventLogic(events)
 
 	useEffect(() => {
 		if (!isLoading && isEnabled) {
-			const frame = requestAnimationFrame(() => {
-				setAnimatedProgress(progress)
-			})
+			const frame = requestAnimationFrame(() => setAnimatedProgress(progress))
 			return () => cancelAnimationFrame(frame)
 		}
 	}, [isLoading, isEnabled, progress])
@@ -33,10 +28,8 @@ export const TimeBlockTracker = () => {
 		whileElementsMounted: autoUpdate,
 		middleware: [offset(10), flip(), shift()],
 	})
-
 	const hover = useHover(context)
 	const { getReferenceProps, getFloatingProps } = useInteractions([hover])
-
 	if (!isEnabled || isLoading) return null
 
 	return (
@@ -44,13 +37,9 @@ export const TimeBlockTracker = () => {
 			<div ref={refs.setReference} className={classes.lineWrapper} {...getReferenceProps()}>
 				<div
 					className={classes.progressLine}
-					style={{
-						width: `${animatedProgress}%`,
-						backgroundColor: activeBlock?.color ?? 'transparent',
-					}}
+					style={{ width: `${animatedProgress}%`, backgroundColor: activeEvent?.color ?? 'transparent' }}
 				/>
 			</div>
-
 			{isOpen && (
 				<div
 					ref={refs.setFloating}
@@ -67,14 +56,14 @@ export const TimeBlockTracker = () => {
 					className={classes.tooltip}
 					{...getFloatingProps()}
 				>
-					{activeBlock ? (
+					{activeEvent ? (
 						<>
-							<span className={classes.tooltipLabel}>Current session: </span>
-							<span className={classes.tooltipTitle}>{activeBlock.title}</span>
+							<span className={classes.tooltipLabel}>Current event: </span>
+							<span className={classes.tooltipTitle}>{activeEvent.title}</span>
 							<span className={classes.tooltipProgress}> · {Math.round(progress)}% completed</span>
 						</>
 					) : (
-						<span>No active sessions</span>
+						<span>No active events</span>
 					)}
 				</div>
 			)}

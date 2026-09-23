@@ -20,8 +20,10 @@
 .goalsList {
 	display: flex;
 	flex-direction: column;
-	gap: 3px;
+	gap: 6px;
 	margin-bottom: 20px;
+	padding: 0;
+	list-style: none;
 
 	> li {
 		font-size: 16px;
@@ -45,7 +47,9 @@
 	border-radius: 5px;
 	display: inline-block;
 	font-family: inherit;
-	transition: background-color 0.2s;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 
 	&:hover {
 		background-color: #aaa;
@@ -60,7 +64,8 @@
 	padding: 4px 8px;
 	font-size: 16px;
 	font-family: inherit;
-	transition: background-color 0.2s;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
 
 	&:hover {
 		background-color: var(--secondary);

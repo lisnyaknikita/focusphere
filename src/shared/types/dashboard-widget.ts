@@ -1,1 +1,1 @@
-export type DashboardWidgetType = 'quotes' | 'timeblocks' | 'pomodoro'
+export type DashboardWidgetType = 'quotes' | 'schedule' | 'pomodoro'

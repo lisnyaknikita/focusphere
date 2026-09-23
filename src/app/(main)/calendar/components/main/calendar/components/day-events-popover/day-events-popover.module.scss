@@ -1,0 +1,127 @@
+.popover {
+	z-index: 9999;
+	width: 300px;
+	background: var(--primary);
+	border: 1px solid var(--btn-border);
+	border-radius: 16px;
+	padding: 16px;
+	box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+	backdrop-filter: blur(16px);
+	color: var(--text);
+	user-select: none;
+}
+
+.header {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-bottom: 12px;
+	margin-bottom: 12px;
+	border-bottom: 1px solid var(--line);
+}
+
+.closeBtn {
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 28px;
+	height: 28px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	color: var(--close-button-fill);
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background-color: var(--close-button-bg);
+		color: var(--text);
+	}
+}
+
+.weekday {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--textSecondary);
+	letter-spacing: 1px;
+}
+
+.dayNumber {
+	font-size: 26px;
+	font-weight: 700;
+	color: var(--text);
+	line-height: 1.1;
+	margin-top: 2px;
+}
+
+.eventsList {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-height: 260px;
+	overflow-y: auto;
+	padding-right: 4px;
+	padding-top: 2px;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: var(--line);
+		border-radius: 4px;
+	}
+	&::-webkit-scrollbar-thumb:hover {
+		background: var(--textSecondary);
+	}
+}
+
+.eventItem {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border-radius: 10px;
+	background: var(--secondary);
+	border: 1px solid transparent;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	&:hover {
+		background: var(--secondaryFull);
+		border-color: var(--line);
+		transform: translateY(-1px);
+	}
+}
+
+.colorBadge {
+	width: 4px;
+	height: 16px;
+	border-radius: 2px;
+	flex-shrink: 0;
+}
+
+.eventTime {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--textSecondary);
+	white-space: nowrap;
+	min-width: 56px;
+	font-variant-numeric: tabular-nums;
+}
+
+.eventTitle {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

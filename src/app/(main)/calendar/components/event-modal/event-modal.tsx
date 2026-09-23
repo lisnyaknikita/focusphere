@@ -1,6 +1,6 @@
-import { createEvent, updateEvent } from '@/lib/events/events'
-import { useEventForm } from '@/shared/hooks/calendar/use-event-form'
-import { CreateEventPayload } from '@/shared/types/event'
+import { updateEvent } from '@/lib/events/events'
+import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
+import { InitialEventValues, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
 import { Description } from './components/description/description'
@@ -10,33 +10,18 @@ interface EventModalProps {
 	onClose: () => void
 	initialTitle?: string
 	onSuccess?: () => void
+	initialValues?: InitialEventValues
 }
 
-export const EventModal = ({ onClose, initialTitle, onSuccess }: EventModalProps) => {
-	const handleCreateEvent = async (data: CreateEventPayload) => {
-		const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-
-		const googleEvent = await googleCalendarService.createEvent({
-			summary: data.title,
-			description: data.description,
-			color: data.color,
-			start: data.startDate,
-			end: data.endDate,
-		})
-
-		if (googleEvent) {
-			return googleEvent
-		}
-
-		return createEvent(data)
-	}
+export const EventModal = ({ onClose, initialTitle, onSuccess, initialValues }: EventModalProps) => {
+	const { handleCreateEvent } = useCalendarMutations()
 
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
 			onSuccess?.()
 			onClose()
 		},
-		undefined,
+		initialValues,
 		{
 			create: handleCreateEvent,
 			update: updateEvent,
@@ -59,6 +44,7 @@ export const EventModal = ({ onClose, initialTitle, onSuccess }: EventModalProps
 				<DateTime form={form} setFormField={setFormField} />
 				<Description form={form} setFormField={setFormField} />
 				<ColorPicker form={form} setFormField={setFormField} />
+				{/* <RecurrencePicker form={form} setFormField={setFormField} /> */}
 				<button type='submit' className={classes.saveButton}>
 					Save
 				</button>

@@ -4,47 +4,51 @@
 	flex-direction: column;
 	gap: 4px;
 	align-items: center;
+	justify-content: center;
 	text-align: center;
-	color: var(--sx-color-neutral);
+	color: var(--textSecondary);
 	cursor: pointer;
 	position: relative;
-	padding: 10px 2px;
-	transition: background-color 0.2s;
+	padding: 6px 2px;
+	background: transparent;
+	border: none;
+	border-radius: 10px;
+	transition: all 0.15s ease;
 
 	&:global(.static) {
 		cursor: default;
+	}
 
-		&:hover {
-			background-color: transparent;
+	&:hover:not(:global(.static)) {
+		background-color: var(--primary);
+
+		.counter {
+			background-color: var(--secondaryFull);
+			border: 1px solid var(--btn-border);
+			color: var(--text);
 		}
 	}
 
 	&:global(.today) {
 		.weekdayText {
-			color: var(--sx-color-primary);
-			font-weight: 500;
+			color: var(--accent-color, #3b82f6);
+			font-weight: 700;
 		}
 
 		.day {
-			color: var(--sx-color-primary);
-			background-color: transparent;
-			border-radius: 0;
-			font-weight: 600;
-			border-bottom: 2px solid var(--sx-color-primary);
-			padding-bottom: 3px;
+			background-color: var(--accent-color, #3b82f6);
+			color: #fff;
+			font-weight: 500;
+			box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
 		}
-	}
 
-	&:hover {
-		background-color: var(--primary);
+		&:hover:not(:global(.static)) {
+			background-color: var(--primary);
 
-		.counter {
-			background-color: var(--secondary);
+			.day {
+				filter: brightness(1.1);
+			}
 		}
-	}
-
-	@media screen and (max-width: 430px) {
-		gap: 0;
 	}
 }
 
@@ -57,66 +61,162 @@
 }
 
 .weekdayText {
-	font-size: 12px;
-	font-weight: 400;
+	font-size: 11px;
+	font-weight: 600;
 	text-transform: uppercase;
-	line-height: 1;
+	line-height: 1.2;
+	color: var(--textSecondary);
+	letter-spacing: 0.5px;
+	transition: color 0.15s ease;
 }
 
 .day {
 	font-size: 20px;
-	font-weight: 400;
-	padding: 5px 8px;
+	font-weight: 500;
+	color: var(--text);
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 40px;
-	min-width: 40px;
-	transition: background-color 0.2s, border-radius 0.2s;
+	transition: background-color 0.15s ease, color 0.15s ease, filter 0.15s ease;
 }
 
 .counter {
 	position: absolute;
-	top: 0;
-	right: 0;
-	transform: translate(100%, -50%);
-	background-color: var(--primary);
-	color: var(--text);
-	font-size: 12px;
-	font-weight: 400;
-	min-width: 16px;
-	height: 16px;
-	padding: 0 4px;
-	border-radius: 10px;
-	display: flex;
+	top: 3px;
+	right: -8px;
+	transform: translate(50%, -50%);
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.2s;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	font-size: 10px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	color: var(--text, #ffffff);
+	background-color: var(--primary);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 9999px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+	backdrop-filter: blur(4px);
 	pointer-events: none;
+	user-select: none;
+	transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease,
+		box-shadow 0.15s ease;
 }
 
 .copyMode {
 	cursor: copy;
 
 	.day {
-		border: 1.5px dashed var(--sx-color-neutral);
-		border-radius: 6px;
+		border: 1.5px dashed var(--btn-border);
+		border-radius: 50%;
 		opacity: 0.7;
 		transition: opacity 0.2s, border-color 0.2s, background-color 0.2s;
 	}
 
 	&:hover {
-		background-color: transparent;
+		background-color: var(--secondary);
 
 		.day {
 			opacity: 1;
-			border-color: var(--sx-color-primary);
+			border-color: var(--text);
+			color: var(--text);
 			border-style: solid;
-			background-color: var(--primary);
+			background-color: transparent;
 		}
 
 		.weekdayText {
-			color: var(--sx-color-primary);
+			color: var(--text);
 		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.weekday {
+		padding: 4px 1px;
+		gap: 3px;
+		border-radius: 8px;
+	}
+
+	.weekdayText {
+		font-size: 10px;
+		letter-spacing: 0.2px;
+	}
+
+	.day {
+		width: 30px;
+		height: 30px;
+		font-size: 15px;
+	}
+
+	.counter {
+		top: 3px;
+		right: -6px;
+		min-width: 15px;
+		height: 15px;
+		font-size: 9px;
+		padding: 0 4px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.weekday {
+		padding: 3px 0;
+		gap: 2px;
+		border-radius: 6px;
+	}
+
+	.weekdayText {
+		font-size: 9px;
+		letter-spacing: 0;
+	}
+
+	.day {
+		width: 25px;
+		height: 25px;
+		font-size: 13px;
+	}
+
+	.counter {
+		top: 3px;
+		right: -5px;
+		min-width: 13px;
+		height: 13px;
+		font-size: 8px;
+		padding: 0 3px;
+	}
+}
+
+@media screen and (max-width: 400px) {
+	.weekday {
+		padding: 2px 0;
+		gap: 1px;
+		border-radius: 4px;
+	}
+
+	.weekdayText {
+		font-size: 8px;
+		letter-spacing: 0;
+	}
+
+	.day {
+		width: 22px;
+		height: 22px;
+		font-size: 11px;
+	}
+
+	.counter {
+		top: 3px;
+		right: -4px;
+		min-width: 11px;
+		height: 11px;
+		font-size: 7.5px;
+		padding: 0 2px;
 	}
 }
