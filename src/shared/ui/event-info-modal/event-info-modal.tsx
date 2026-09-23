@@ -1,3 +1,4 @@
+import { CALENDARS_CONFIG, getCalendarIdByColor } from '@/lib/events/calendar-config'
 import { useBilling } from '@/shared/context/billing-context'
 import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { useSettingsStore } from '@/shared/stores/settings.store'
@@ -10,8 +11,7 @@ import { DateTimeIcon } from '../icons/calendar/date-time-icon'
 import { DescriptionIcon } from '../icons/calendar/description-icon'
 import { DeleteIcon } from '../icons/delete-icon'
 import { EditIcon } from '../icons/edit-icon'
-import { CopyTimeBlockIcon } from '../icons/planner/copy-timeblock-icon'
-import { RepeatIcon } from '../icons/planner/repeat-icon'
+import { CopyEventIcon } from '../icons/planner/copy-timeblock-icon'
 import { EventEditView } from './components/event-edit-view/event-edit-view'
 import { RecurrenceModal } from './components/recurrence-modal/recurrence-modal'
 import classes from './event-info-modal.module.scss'
@@ -24,7 +24,12 @@ interface EventInfoModalProps {
 	actions?: CalendarActions
 	initialEditing?: boolean
 	onCancelCreate?: () => void
-	isTimeBlock?: boolean
+}
+
+const getDisplayColor = (color: string): string => {
+	const calendarId = getCalendarIdByColor(color)
+	const config = CALENDARS_CONFIG[calendarId as keyof typeof CALENDARS_CONFIG]
+	return config?.darkColors.container || color
 }
 
 export const EventInfoModal = ({
@@ -35,7 +40,6 @@ export const EventInfoModal = ({
 	actions,
 	initialEditing,
 	onCancelCreate,
-	isTimeBlock,
 }: EventInfoModalProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
@@ -68,7 +72,6 @@ export const EventInfoModal = ({
 					form={form}
 					setFormField={setFormField}
 					handleSubmit={handleSubmit}
-					isTimeBlock={isTimeBlock}
 					onCancel={() => (initialEditing && onCancelCreate ? onCancelCreate() : setIsEditing(false))}
 				/>
 			</div>
@@ -81,7 +84,7 @@ export const EventInfoModal = ({
 				{!isReadOnly && (
 					<>
 						{onCopy && (
-							<ActionTooltip text={isPro ? 'Copy this time block' : 'Copy this time block (PRO)'} isActive={isPro}>
+							<ActionTooltip text={isPro ? 'Copy this event' : 'Copy this event (PRO)'} isActive={isPro}>
 								{(setRef, refProps) => (
 									<button
 										ref={setRef}
@@ -90,13 +93,13 @@ export const EventInfoModal = ({
 										onClick={() => (!isPro ? openPaywall('planner_copying') : onCopy())}
 										{...refProps}
 									>
-										<CopyTimeBlockIcon />
+										<CopyEventIcon />
 									</button>
 								)}
 							</ActionTooltip>
 						)}
-						{isTimeBlock && (
-							<ActionTooltip text={isPro ? 'Repeat this block' : 'Repeat this block (PRO)'} isActive={isPro}>
+						{/* {onCopy && (
+							<ActionTooltip text={isPro ? 'Repeat this event' : 'Repeat this event (PRO)'} isActive={isPro}>
 								{(setRef, refProps) => (
 									<button
 										ref={setRef}
@@ -109,7 +112,7 @@ export const EventInfoModal = ({
 									</button>
 								)}
 							</ActionTooltip>
-						)}
+						)} */}
 
 						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<EditIcon />
@@ -122,7 +125,7 @@ export const EventInfoModal = ({
 			</div>
 			<div className={classes.modalContent}>
 				<div className={classes.title}>
-					<span style={{ backgroundColor: `${event.color}` }}></span>
+					<span style={{ backgroundColor: getDisplayColor(String(event.color || '')) }}></span>
 					<h6>{event.title}</h6>
 				</div>
 				<div className={classes.date}>

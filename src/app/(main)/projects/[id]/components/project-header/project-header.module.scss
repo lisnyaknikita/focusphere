@@ -9,7 +9,8 @@
 	@media screen and (max-width: 768px) {
 		padding-left: 50px;
 		padding-right: 0px;
-		padding-top: 8px;
+		padding-top: 0px;
+		transform: translateY(-3px);
 	}
 
 	> button {
@@ -20,5 +21,9 @@
 				display: none;
 			}
 		}
+	}
+
+	@media screen and (max-width: 430px) {
+		transform: translateY(8px);
 	}
 }

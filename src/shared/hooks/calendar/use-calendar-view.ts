@@ -13,13 +13,13 @@ export const useCalendarView = () => {
 			setIsMobile(mobile)
 
 			const saved = localStorage.getItem(VIEW_KEY) as CalendarView
-			const currentView = saved || (mobile ? 'day' : 'week')
+			const currentView = saved || 'week'
 
-			if (mobile && currentView === 'week') {
-				setView('day')
-			} else {
-				setView(currentView)
-			}
+			// if (mobile && currentView === 'week') {
+			// 	setView('day')
+			// } else {
+			setView(currentView)
+			// }
 		}
 
 		calculateLayout()

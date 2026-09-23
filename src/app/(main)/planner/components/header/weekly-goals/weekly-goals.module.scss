@@ -6,6 +6,14 @@
 			transform: rotate(180deg);
 		}
 	}
+
+	@media screen and (max-width: 768px) {
+		transform: translateX(40px);
+	}
+
+	@media screen and (max-width: 430px) {
+		transform: translateX(50px);
+	}
 }
 
 .trigger {
@@ -29,9 +37,9 @@
 		transition: transform 0.2s;
 	}
 
-	@media screen and (max-width: 430px) {
-		margin-left: 50px;
-	}
+	// @media screen and (max-width: 430px) {
+	// 	margin-left: 50px;
+	// }
 }
 
 .dropdown {

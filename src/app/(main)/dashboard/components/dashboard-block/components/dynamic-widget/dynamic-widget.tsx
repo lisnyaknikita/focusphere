@@ -15,7 +15,7 @@ export const DynamicWidget = () => {
 
 	useEffect(() => {
 		const saved = localStorage.getItem(STORAGE_KEY) as DashboardWidgetType | null
-		if (saved && ['quotes', 'timeblocks', 'pomodoro'].includes(saved)) {
+		if (saved && ['quotes', 'schedule', 'pomodoro'].includes(saved)) {
 			setWidgetType(saved)
 		}
 	}, [])
@@ -33,7 +33,7 @@ export const DynamicWidget = () => {
 
 			<div className={classes.content}>
 				{widgetType === 'quotes' && <QuotesView />}
-				{widgetType === 'timeblocks' && <TimeBlocksTimeline />}
+				{widgetType === 'schedule' && <TimeBlocksTimeline />}
 				{widgetType === 'pomodoro' && <PomodoroStats />}
 			</div>
 		</section>

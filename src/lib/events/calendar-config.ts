@@ -20,49 +20,79 @@ export const CALENDARS_CONFIG = {
 	gold: {
 		colorName: 'gold',
 		lightColors: {
-			main: CALENDAR_COLORS.GOLD,
-			container: '#FFF4DC',
-			onContainer: '#4A3300',
+			main: '#C87F20',
+			container: '#eba446',
+			onContainer: '#000',
+		},
+		darkColors: {
+			main: '#C87F20',
+			container: '#E0993B',
+			onContainer: '#000',
 		},
 	},
 	red: {
 		colorName: 'red',
 		lightColors: {
-			main: CALENDAR_COLORS.RED,
-			container: '#FFE0E0',
-			onContainer: '#4A0000',
+			main: '#B73F22',
+			container: '#f5532a',
+			onContainer: '#000',
+		},
+		darkColors: {
+			main: '#B73F22',
+			container: '#D85838',
+			onContainer: '#000',
 		},
 	},
 	green: {
 		colorName: 'green',
 		lightColors: {
-			main: CALENDAR_COLORS.GREEN,
-			container: '#E0F5DE',
-			onContainer: '#0A3006',
+			main: '#2F7A4B',
+			container: '#4B9B69',
+			onContainer: '#000',
+		},
+		darkColors: {
+			main: '#2F7A4B',
+			container: '#4B9B69',
+			onContainer: '#000',
 		},
 	},
 	blue: {
 		colorName: 'blue',
 		lightColors: {
-			main: CALENDAR_COLORS.BLUE,
-			container: '#DCE9FF',
-			onContainer: '#001D4A',
+			main: '#2B78B3',
+			container: '#4A9CD6',
+			onContainer: '#000',
+		},
+		darkColors: {
+			main: '#2B78B3',
+			container: '#4A9CD6',
+			onContainer: '#000',
 		},
 	},
 	purple: {
 		colorName: 'purple',
 		lightColors: {
-			main: CALENDAR_COLORS.PURPLE,
-			container: '#FFE0F5',
-			onContainer: '#3D0030',
+			main: '#853D94',
+			container: '#A85CB8',
+			onContainer: '#000',
+		},
+		darkColors: {
+			main: '#853D94',
+			container: '#A85CB8',
+			onContainer: '#000',
 		},
 	},
 	cyan: {
 		colorName: 'cyan',
 		lightColors: {
-			main: CALENDAR_COLORS.CYAN,
-			container: '#DCF4FF',
-			onContainer: '#003D4A',
+			main: '#4E57A6',
+			container: '#6E77CA',
+			onContainer: '#000',
+		},
+		darkColors: {
+			main: '#4E57A6',
+			container: '#6E77CA',
+			onContainer: '#000',
 		},
 	},
 }

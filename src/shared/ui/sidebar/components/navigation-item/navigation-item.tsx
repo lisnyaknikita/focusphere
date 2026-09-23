@@ -22,11 +22,7 @@ export const NavigationItem = ({ item, isCollapsed, isActive, onHideClick }: Nav
 
 	const label = item.isButton && !isCollapsed ? 'Hide' : item.label
 	const shortcutStr =
-		typeof item.shortcut === 'object'
-			? isMac
-				? item.shortcut.mac
-				: item.shortcut.win
-			: item.shortcut
+		typeof item.shortcut === 'object' ? (isMac ? item.shortcut.mac : item.shortcut.win) : item.shortcut
 	const tooltipText = shortcutStr ? `${label} (${shortcutStr})` : label
 
 	const content = (

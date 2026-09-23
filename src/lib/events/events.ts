@@ -1,5 +1,5 @@
-import { CreateEventPayload } from '@/shared/types/event'
-import { ID } from 'appwrite'
+import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
+import { ID, Query } from 'appwrite'
 import { db } from '../appwrite'
 
 export const createEvent = async (data: CreateEventPayload) => {
@@ -7,7 +7,11 @@ export const createEvent = async (data: CreateEventPayload) => {
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
 		rowId: ID.unique(),
-		data,
+		data: {
+			...data,
+			source: data.source ?? 'local',
+			syncStatus: data.syncStatus ?? 'not_synced',
+		},
 	})
 }
 
@@ -27,3 +31,50 @@ export const deleteEvent = async (eventId: string): Promise<void> => {
 		rowId: eventId,
 	})
 }
+
+export const getEventsByRange = async (userId: string, visibleStart: string, visibleEnd: string) => {
+	const response = await db.listRows({
+		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
+		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
+		queries: [
+			Query.equal('userId', userId),
+			Query.lessThanEqual('startDate', visibleEnd),
+			Query.greaterThanEqual('endDate', visibleStart),
+			Query.select([
+				'$id',
+				'$createdAt',
+				'$updatedAt',
+				'title',
+				'description',
+				'startDate',
+				'endDate',
+				'color',
+				'calendarId',
+				'userId',
+				'source',
+				'googleEventId',
+				'syncStatus',
+			]),
+			Query.orderAsc('startDate'),
+			Query.limit(300),
+		],
+	})
+
+	return response.rows as unknown as CalendarEvent[]
+}
+
+export const copyEvent = async (event: CalendarEvent, startDate: string, endDate: string) =>
+	createEvent({
+		title: event.title,
+		description: event.description,
+		startDate,
+		endDate,
+		color: event.color,
+		calendarId: event.calendarId,
+		userId: event.userId,
+	})
+
+export const createEventCopiesForDays = async (
+	event: CalendarEvent,
+	copies: Array<{ startDate: string; endDate: string }>
+) => Promise.all(copies.map(copy => copyEvent(event, copy.startDate, copy.endDate)))

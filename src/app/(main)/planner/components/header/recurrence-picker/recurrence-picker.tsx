@@ -1,9 +1,9 @@
-import { TimeBlockForm } from '@/shared/types/time-block'
+import { EventForm } from '@/shared/types/event'
 import classes from './reccurence-picker.module.scss'
 
 interface RecurrencePickerProps {
-	form: TimeBlockForm
-	setFormField: <K extends keyof TimeBlockForm>(key: K, value: TimeBlockForm[K]) => void
+	form: EventForm
+	setFormField: <K extends keyof EventForm>(key: K, value: EventForm[K]) => void
 	disabledDay?: number | string
 }
 
@@ -17,13 +17,15 @@ const DAYS = [
 	{ label: 'Sunday', short: 'Su', value: 7 },
 ]
 
+import 'temporal-polyfill/global'
+
 export const RecurrencePicker = ({ form, setFormField, disabledDay }: RecurrencePickerProps) => {
 	const getTargetDisabledDay = (): number | undefined => {
 		if (disabledDay !== undefined && disabledDay !== null) {
 			return Number(disabledDay)
 		}
 		if ('date' in form && form.date) {
-			return new Date(form.date + 'T00:00:00').getDay()
+			return Temporal.PlainDate.from(form.date).dayOfWeek
 		}
 		return undefined
 	}
