@@ -3,8 +3,8 @@ import { getEventsByRange } from '@/lib/events/events'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
 import { getMonthsInRange } from '@/shared/utils/calendar/calendar-month-range'
-import { useQueries, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
+import { useQueries } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import 'temporal-polyfill/global'
 
 const googleColor: Record<string, string> = {
@@ -68,7 +68,6 @@ interface UseCalendarEventsProps {
 }
 
 export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps) => {
-	const queryClient = useQueryClient()
 	const monthChunks = useMemo(() => getMonthsInRange(start, end), [start, end])
 
 	const localQueries = useQueries({
@@ -93,39 +92,6 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 			gcTime: 60 * 60 * 1000,
 		})),
 	})
-
-	useEffect(() => {
-		if (!userId || !monthChunks.length) return
-		const firstChunk = monthChunks[0]
-		const lastChunk = monthChunks[monthChunks.length - 1]
-
-		const firstDate = new Date(firstChunk.startIso)
-		const prevDate = new Date(Date.UTC(firstDate.getUTCFullYear(), firstDate.getUTCMonth() - 1, 1))
-		const prevKey = `${prevDate.getUTCFullYear()}-${String(prevDate.getUTCMonth() + 1).padStart(2, '0')}`
-		const prevStart = new Date(Date.UTC(prevDate.getUTCFullYear(), prevDate.getUTCMonth(), 1)).toISOString()
-		const prevEnd = new Date(
-			Date.UTC(prevDate.getUTCFullYear(), prevDate.getUTCMonth() + 1, 0, 23, 59, 59, 999)
-		).toISOString()
-
-		const lastDate = new Date(lastChunk.startIso)
-		const nextDate = new Date(Date.UTC(lastDate.getUTCFullYear(), lastDate.getUTCMonth() + 1, 1))
-		const nextKey = `${nextDate.getUTCFullYear()}-${String(nextDate.getUTCMonth() + 1).padStart(2, '0')}`
-		const nextStart = new Date(Date.UTC(nextDate.getUTCFullYear(), nextDate.getUTCMonth(), 1)).toISOString()
-		const nextEnd = new Date(
-			Date.UTC(nextDate.getUTCFullYear(), nextDate.getUTCMonth() + 1, 0, 23, 59, 59, 999)
-		).toISOString()
-
-		queryClient.prefetchQuery({
-			queryKey: calendarEventsMonthQueryKey(userId, prevKey),
-			queryFn: () => getEventsByRange(userId, prevStart, prevEnd),
-			staleTime: 10 * 60 * 1000,
-		})
-		queryClient.prefetchQuery({
-			queryKey: calendarEventsMonthQueryKey(userId, nextKey),
-			queryFn: () => getEventsByRange(userId, nextStart, nextEnd),
-			staleTime: 10 * 60 * 1000,
-		})
-	}, [userId, monthChunks, queryClient])
 
 	const events = useMemo(() => {
 		const localEventsMap = new Map<string, CalendarEvent>()

@@ -57,17 +57,14 @@ export const useEventDeletion = ({ eventsService, eventModal }: DeletionDependen
 
 			try {
 				await deletePromise
+			} catch (error) {
+				console.error('Error deleting event:', error)
 				await Promise.all([
 					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] }),
 					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] }),
-					queryClient.invalidateQueries({ queryKey: ['calendar-events'] }),
-					queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] }),
 					queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] }),
 					queryClient.invalidateQueries({ queryKey: ['events-today-google'] }),
 				])
-			} catch (error) {
-				console.error('Error deleting event:', error)
-				queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })
 			}
 		},
 		[eventsService, eventModal, queryClient]

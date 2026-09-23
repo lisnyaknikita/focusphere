@@ -2,23 +2,42 @@ import { createEvent, updateEvent } from '@/lib/events/events'
 import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import { calendarEventsMonthQueryKey, calendarGoogleEventsMonthQueryKey } from '../events/use-calendar-events'
+
+const getAffectedMonthKeys = (startDate: string, endDate?: string): string[] => {
+	const keys: string[] = []
+	const start = new Date(startDate)
+	const end = endDate ? new Date(endDate) : start
+
+	let cur = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1))
+	const limit = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), 1))
+
+	while (cur <= limit) {
+		const key = `${cur.getUTCFullYear()}-${String(cur.getUTCMonth() + 1).padStart(2, '0')}`
+		if (!keys.includes(key)) keys.push(key)
+		cur = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth() + 1, 1))
+	}
+	return keys
+}
 
 export const useCalendarMutations = () => {
 	const queryClient = useQueryClient()
 
-	const invalidateCalendarQueries = useCallback(async () => {
-		await Promise.all([
-			queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] }),
-			queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] }),
-			queryClient.invalidateQueries({ queryKey: ['calendar-events'] }),
-			queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] }),
-			queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] }),
-			queryClient.invalidateQueries({ queryKey: ['events-today-google'] }),
-		])
-	}, [queryClient])
+	const invalidateEventMonths = useCallback(
+		async (userId: string, startDate: string, endDate?: string) => {
+			const monthKeys = getAffectedMonthKeys(startDate, endDate)
+			await Promise.all(
+				monthKeys.flatMap(monthKey => [
+					queryClient.invalidateQueries({ queryKey: calendarEventsMonthQueryKey(userId, monthKey) }),
+					queryClient.invalidateQueries({ queryKey: calendarGoogleEventsMonthQueryKey(userId, monthKey) }),
+				])
+			)
+		},
+		[queryClient]
+	)
 
 	const handleUpdateEvent = useCallback(
-		async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>, googleEventId?: string) => {
+		async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>, googleEventId?: string, userId?: string) => {
 			const { title, description, color, startDate, endDate, calendarId } = data
 			const cleanTitle = title
 			const payload: Partial<Omit<CreateEventPayload, 'userId'>> = {
@@ -42,14 +61,17 @@ export const useCalendarMutations = () => {
 			}
 			if (!eventId.startsWith('g_')) await updateEvent(eventId, payload)
 
-			await invalidateCalendarQueries()
+			if (userId && startDate) {
+				await invalidateEventMonths(userId, startDate, endDate)
+			}
 		},
-		[invalidateCalendarQueries]
+		[invalidateEventMonths]
 	)
 
 	const handleCreateEvent = useCallback(
 		async (data: CreateEventPayload) => {
-			const created = await createEvent(data)
+			let googleEventId: string | undefined
+			let syncStatus: 'synced' | 'failed' | 'not_synced' = 'not_synced'
 			try {
 				const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
 				const googleEvent = await googleCalendarService.createEvent({
@@ -59,15 +81,24 @@ export const useCalendarMutations = () => {
 					start: data.startDate,
 					end: data.endDate,
 				})
-				if (googleEvent?.id) await updateEvent(created.$id, { googleEventId: googleEvent.id, syncStatus: 'synced' })
+				if (googleEvent?.id) {
+					googleEventId = googleEvent.id
+					syncStatus = 'synced'
+				}
 			} catch {
-				await updateEvent(created.$id, { syncStatus: 'failed' })
+				syncStatus = 'failed'
 			}
 
-			await invalidateCalendarQueries()
+			const created = await createEvent({
+				...data,
+				...(googleEventId && { googleEventId }),
+				syncStatus,
+			})
+
+			await invalidateEventMonths(data.userId, data.startDate, data.endDate)
 			return created
 		},
-		[invalidateCalendarQueries]
+		[invalidateEventMonths]
 	)
 
 	return { handleCreateEvent, handleUpdateEvent }

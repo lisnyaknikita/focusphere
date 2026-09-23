@@ -38,8 +38,6 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 	const [dragAndDropPlugin] = useState(() => createDragAndDropPlugin())
 	const [resizePlugin] = useState(() => createResizePlugin(15))
 
-	// const initialEventsPerDay = typeof window !== 'undefined' && window.innerWidth <= 768 ? 2 : 3
-
 	const calendar = useNextCalendarApp({
 		locale: timeFormat === '12h' ? 'en-US' : 'en-GB',
 		views: [createViewMonthGrid(), createViewWeek(), createViewDay()],
@@ -109,10 +107,6 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 							endDate,
 						})
 					}
-					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] })
 				} catch (error) {
 					console.error('Event update failed:', error)
 					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })

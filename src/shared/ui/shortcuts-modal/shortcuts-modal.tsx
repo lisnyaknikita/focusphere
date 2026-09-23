@@ -1,7 +1,7 @@
 'use client'
 
-import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { useIsMac } from '@/shared/hooks/use-is-mac/use-is-mac'
+import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import classes from './shortcuts-modal.module.scss'
 
 interface ShortcutItem {
@@ -41,9 +41,9 @@ const SHORTCUT_GROUPS: ShortcutGroup[] = [
 				win: [['/'], ['Ctrl', 'F']],
 			},
 			{
-				label: 'Switch Pages (1...7)',
-				mac: [['⌥', '1...7']],
-				win: [['Alt', '1...7']],
+				label: 'Switch Pages (1...6)',
+				mac: [['⌥', '1...6']],
+				win: [['Alt', '1...6']],
 			},
 		],
 	},

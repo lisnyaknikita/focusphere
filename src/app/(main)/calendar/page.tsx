@@ -7,7 +7,6 @@ import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { Modal } from '@/shared/ui/modal/modal'
 import { Tabs } from '@/shared/ui/tabs/tabs'
 import '@schedule-x/theme-default/dist/index.css'
-import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import 'temporal-polyfill/global'
 import { DailyTasksModal } from '../planner/components/main/daily-tasks-modal/daily-tasks-modal'
@@ -22,11 +21,9 @@ export default function Calendar() {
 
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	// const { weeklyGoals, refreshWeeklyGoals } = useWeeklyGoals()
-	const queryClient = useQueryClient()
 	const { view, handleViewChange } = useCalendarView()
 
-	const handleEventCreated = async () => {
-		await queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
+	const handleEventCreated = () => {
 		setInitialValues(null)
 	}
 
