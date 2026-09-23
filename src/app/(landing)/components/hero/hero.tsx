@@ -50,8 +50,7 @@ export const Hero = () => {
 				</motion.h1>
 
 				<motion.p variants={fadeInUpVariants} className={classes.subtitle}>
-					One unified workspace to rule your day. Bring your project sprints, daily time-blocking, focus soundscapes,
-					and rapid idea capture under one roof.
+					Bring your calendar, projects, focus timer, and rapid idea capture under one roof.
 				</motion.p>
 
 				<motion.div variants={fadeInUpVariants} className={classes.cta}>

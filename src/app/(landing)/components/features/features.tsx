@@ -10,7 +10,7 @@ const featuresConfig = [
 		label: 'Central Control',
 		title: 'Command center & instantaneous idea capture',
 		description:
-			"Your personal workspace, organized your way. Track today's tasks and scheduled events alongside customizable widgets — swap seamlessly between Pomodoro stats, time-blocks, and daily motivation. Instantly capture quick ideas the moment they strike so you never forget them, and clear your mind before bed.",
+			'Your personal workspace, organized your way. Track your weekly focus goals and daily tasks alongside your calendar schedule and customizable widgets – swap seamlessly between timer stats and daily motivation. Instantly capture quick ideas the moment they strike so you never forget them, and clear your mind before bed.',
 		imageBase: 'dashboard-feature',
 		width: 620,
 		height: 350,
@@ -19,9 +19,9 @@ const featuresConfig = [
 	{
 		number: '02',
 		label: 'Time Management',
-		title: 'Time-blocking built for real productivity',
+		title: 'Calendar scheduling built for real productivity',
 		description:
-			'Structure your week around how your brain actually works. Block out deep work sessions, build daily task checklists, and maintain a predictable workflow.',
+			'Structure your life around how your brain actually works. Align your weekly focus with daily task checklists and a clear calendar schedule to maintain a predictable workflow.',
 		imageBase: 'planner',
 		width: 620,
 		height: 350,
