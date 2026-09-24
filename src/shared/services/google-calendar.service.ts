@@ -156,7 +156,7 @@ class GoogleCalendarService {
 
 	async updateEvent(
 		googleEventId: string,
-		payload: { summary?: string; description?: string; color?: string; start: string; end: string }
+		payload: { summary?: string; description?: string; color?: string; start?: string; end?: string }
 	) {
 		const token = await this.getProviderToken()
 		if (!token) return
@@ -164,42 +164,45 @@ class GoogleCalendarService {
 		const realId = googleEventId.replace('g_', '')
 		const url = `${GOOGLE_CALENDAR_API}/calendars/primary/events/${realId}`
 
-		const isAllDay = payload.start.length <= 10
-		let startBody: GoogleDate, endBody: GoogleDate
+		const requestBody: Record<string, unknown> = {}
+		if (payload.summary !== undefined) requestBody.summary = payload.summary
+		if (payload.description !== undefined) requestBody.description = payload.description
+		if (payload.color !== undefined) requestBody.colorId = this.mapColorToId(payload.color)
 
-		if (isAllDay) {
-			startBody = { date: payload.start }
-			try {
-				const endPlainDate = Temporal.PlainDate.from(payload.end).add({ days: 1 })
-				endBody = { date: endPlainDate.toString() }
-			} catch {
-				const endObj = new Date(payload.end)
-				endObj.setDate(endObj.getDate() + 1)
-				endBody = { date: endObj.toISOString().split('T')[0] }
+		if (payload.start && payload.end) {
+			const isAllDay = payload.start.length <= 10
+			let startBody: GoogleDate, endBody: GoogleDate
+
+			if (isAllDay) {
+				startBody = { date: payload.start }
+				try {
+					const endPlainDate = Temporal.PlainDate.from(payload.end).add({ days: 1 })
+					endBody = { date: endPlainDate.toString() }
+				} catch {
+					const endObj = new Date(payload.end)
+					endObj.setDate(endObj.getDate() + 1)
+					endBody = { date: endObj.toISOString().split('T')[0] }
+				}
+			} else {
+				const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+				const startIso = this.formatIso(payload.start)
+				const endIso = this.formatIso(payload.end)
+
+				startBody = { dateTime: startIso, timeZone }
+				endBody = { dateTime: endIso, timeZone }
 			}
-		} else {
-			const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-			const startIso = this.formatIso(payload.start)
-			const endIso = this.formatIso(payload.end)
-
-			startBody = { dateTime: startIso, timeZone }
-			endBody = { dateTime: endIso, timeZone }
+			requestBody.start = startBody
+			requestBody.end = endBody
 		}
 
 		try {
 			const res = await fetch(url, {
-				method: 'PUT',
+				method: 'PATCH',
 				headers: {
 					Authorization: `Bearer ${token}`,
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({
-					summary: payload.summary,
-					description: payload.description,
-					colorId: this.mapColorToId(payload.color),
-					start: startBody,
-					end: endBody,
-				}),
+				body: JSON.stringify(requestBody),
 			})
 
 			if (!res.ok) {
