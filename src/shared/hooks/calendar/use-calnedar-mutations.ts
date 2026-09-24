@@ -2,46 +2,29 @@ import { createEvent, updateEvent } from '@/lib/events/events'
 import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
-import { calendarEventsMonthQueryKey, calendarGoogleEventsMonthQueryKey } from '../events/use-calendar-events'
-
-const getAffectedMonthKeys = (startDate: string, endDate?: string): string[] => {
-	const keys: string[] = []
-	const start = new Date(startDate)
-	const end = endDate ? new Date(endDate) : start
-
-	let cur = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1))
-	const limit = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), 1))
-
-	while (cur <= limit) {
-		const key = `${cur.getUTCFullYear()}-${String(cur.getUTCMonth() + 1).padStart(2, '0')}`
-		if (!keys.includes(key)) keys.push(key)
-		cur = new Date(Date.UTC(cur.getUTCFullYear(), cur.getUTCMonth() + 1, 1))
-	}
-	return keys
-}
 
 export const useCalendarMutations = () => {
 	const queryClient = useQueryClient()
 
-	const invalidateEventMonths = useCallback(
-		async (userId: string, startDate: string, endDate?: string) => {
-			const monthKeys = getAffectedMonthKeys(startDate, endDate)
-			await Promise.all(
-				monthKeys.flatMap(monthKey => [
-					queryClient.invalidateQueries({ queryKey: calendarEventsMonthQueryKey(userId, monthKey) }),
-					queryClient.invalidateQueries({ queryKey: calendarGoogleEventsMonthQueryKey(userId, monthKey) }),
-				])
-			)
-		},
-		[queryClient]
-	)
+	const invalidateActiveMonths = useCallback(async () => {
+		await Promise.all([
+			queryClient.invalidateQueries({
+				queryKey: ['calendar-events-month'],
+				type: 'active',
+			}),
+			queryClient.invalidateQueries({
+				queryKey: ['calendar-google-events-month'],
+				type: 'active',
+			}),
+		])
+	}, [queryClient])
 
 	const handleUpdateEvent = useCallback(
-		async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>, googleEventId?: string, userId?: string) => {
+		async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>, googleEventId?: string) => {
 			const { title, description, color, startDate, endDate, calendarId } = data
-			const cleanTitle = title
+
 			const payload: Partial<Omit<CreateEventPayload, 'userId'>> = {
-				...(cleanTitle !== undefined && { title: cleanTitle }),
+				...(title !== undefined && { title }),
 				...(description !== undefined && { description }),
 				...(color !== undefined && { color }),
 				...(startDate !== undefined && { startDate }),
@@ -49,23 +32,44 @@ export const useCalendarMutations = () => {
 				...(calendarId !== undefined && { calendarId }),
 			}
 
-			if (eventId.startsWith('g_') || googleEventId) {
-				const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-				await googleCalendarService.updateEvent(googleEventId || eventId, {
-					summary: cleanTitle,
-					description,
-					color,
-					start: startDate ?? new Date().toISOString(),
-					end: endDate ?? new Date().toISOString(),
+			const updateCache = (oldData: unknown) => {
+				if (!Array.isArray(oldData)) return oldData
+				return oldData.map((event: CalendarEvent) => {
+					if (event.$id === eventId || (googleEventId && event.googleEventId === googleEventId)) {
+						return {
+							...event,
+							...payload,
+						}
+					}
+					return event
 				})
 			}
-			if (!eventId.startsWith('g_')) await updateEvent(eventId, payload)
 
-			if (userId && startDate) {
-				await invalidateEventMonths(userId, startDate, endDate)
+			queryClient.setQueriesData({ queryKey: ['calendar-events-month'] }, updateCache)
+			queryClient.setQueriesData({ queryKey: ['calendar-google-events-month'] }, updateCache)
+
+			try {
+				if (eventId.startsWith('g_') || googleEventId) {
+					const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+					await googleCalendarService.updateEvent(googleEventId || eventId, {
+						summary: title,
+						description,
+						color,
+						...(startDate ? { start: startDate } : {}),
+						...(endDate ? { end: endDate } : {}),
+					})
+				}
+
+				if (!eventId.startsWith('g_')) {
+					await updateEvent(eventId, payload)
+				}
+			} catch (error) {
+				console.error('Failed to update event:', error)
+			} finally {
+				await invalidateActiveMonths()
 			}
 		},
-		[invalidateEventMonths]
+		[queryClient, invalidateActiveMonths]
 	)
 
 	const handleCreateEvent = useCallback(
@@ -95,10 +99,10 @@ export const useCalendarMutations = () => {
 				syncStatus,
 			})
 
-			await invalidateEventMonths(data.userId, data.startDate, data.endDate)
+			await invalidateActiveMonths()
 			return created
 		},
-		[invalidateEventMonths]
+		[invalidateActiveMonths]
 	)
 
 	return { handleCreateEvent, handleUpdateEvent }
