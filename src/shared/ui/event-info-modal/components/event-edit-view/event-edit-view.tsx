@@ -2,6 +2,7 @@ import { ColorPicker } from '@/app/(main)/calendar/components/event-modal/compon
 import { DateTime } from '@/app/(main)/calendar/components/event-modal/components/date-time/date-time'
 import { Description } from '@/app/(main)/calendar/components/event-modal/components/description/description'
 import { EventForm } from '@/shared/types/event'
+import { RecurrencePicker } from '@/shared/ui/recurrence-picker/recurrence-picker'
 import classes from './event-edit-view.module.scss'
 
 interface EventEditViewProps {
@@ -24,6 +25,7 @@ export const EventEditView = ({ form, setFormField, handleSubmit, onCancel }: Ev
 			<DateTime form={form} setFormField={setFormField} />
 			<Description form={form} setFormField={setFormField} />
 			<ColorPicker form={form} setFormField={setFormField} />
+			<RecurrencePicker form={form} setFormField={setFormField} />
 
 			<div className={classes.actions}>
 				<button type='button' className={classes.cancelBtn} onClick={onCancel}>

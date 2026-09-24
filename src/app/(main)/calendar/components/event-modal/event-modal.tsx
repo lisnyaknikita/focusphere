@@ -1,5 +1,6 @@
 import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
 import { InitialEventValues, useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { RecurrencePicker } from '@/shared/ui/recurrence-picker/recurrence-picker'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
 import { Description } from './components/description/description'
@@ -43,7 +44,7 @@ export const EventModal = ({ onClose, initialTitle, onSuccess, initialValues }: 
 				<DateTime form={form} setFormField={setFormField} />
 				<Description form={form} setFormField={setFormField} />
 				<ColorPicker form={form} setFormField={setFormField} />
-				{/* <RecurrencePicker form={form} setFormField={setFormField} /> */}
+				<RecurrencePicker form={form} setFormField={setFormField} />
 				<button type='submit' className={classes.saveButton}>
 					Save
 				</button>

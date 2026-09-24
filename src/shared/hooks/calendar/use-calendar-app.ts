@@ -2,6 +2,7 @@ import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/constants/calend
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { updateEvent } from '@/lib/events/events'
 import { useSettingsStore } from '@/shared/stores/settings.store'
+import { isRecurrenceInstanceId, parseRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { scheduleXDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { CalendarEvent, createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
@@ -90,6 +91,34 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 				queryClient.setQueriesData({ queryKey: ['calendar-events'] }, updateQueryData)
 
 				try {
+					if (isRecurrenceInstanceId(eventId)) {
+						const parsed = parseRecurrenceInstanceId(eventId)
+						if (parsed) {
+							const { addRecurrenceException, createEvent } = await import('@/lib/events/events')
+							const { getCurrentUserId } = await import('@/shared/utils/get-current-userid/get-current-userid')
+							const { getCalendarIdByColor } = await import('@/lib/events/color-to-calendar')
+
+							await addRecurrenceException(parsed.masterEventId, parsed.instanceDate)
+							const userId = await getCurrentUserId()
+							await createEvent({
+								title: title || 'Untitled event',
+								description: description as string | undefined,
+								color: (color as string) || '#D79716',
+								startDate,
+								endDate,
+								calendarId: getCalendarIdByColor((color as string) || '#D79716'),
+								userId,
+								source: 'local',
+								syncStatus: 'not_synced',
+							})
+							await Promise.all([
+								queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] }),
+								queryClient.invalidateQueries({ queryKey: ['calendar-recurring-events'] }),
+							])
+							return
+						}
+					}
+
 					if (isGoogleLinked) {
 						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
 
@@ -111,6 +140,7 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 					console.error('Event update failed:', error)
 					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })
 					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] })
+					queryClient.invalidateQueries({ queryKey: ['calendar-recurring-events'] })
 					queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
 					queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] })
 				}

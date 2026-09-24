@@ -1,11 +1,12 @@
-import { getEventsByRange } from '@/lib/events/events'
+import { getEventsByRange, getRecurringEvents } from '@/lib/events/events'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
+import { expandRecurrence } from '@/shared/utils/calendar/recurrence'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import 'temporal-polyfill/global'
 import { useUser } from '../use-user/use-user'
-import { calendarEventsMonthQueryKey, mapGoogleEvent } from './use-calendar-events'
+import { calendarEventsMonthQueryKey, calendarRecurringEventsQueryKey, mapGoogleEvent } from './use-calendar-events'
 
 const getTodayRange = () => {
 	const today = Temporal.Now.plainDateISO()
@@ -51,7 +52,7 @@ export const useEventsByToday = () => {
 		? queryClient.getQueryData<CalendarEvent[]>(calendarEventsMonthQueryKey(userId, getCurrentMonthKey())) ?? null
 		: null
 
-	const { todayStr } = getTodayRange()
+	const { todayStr, startOfDay, endOfDay } = getTodayRange()
 	const cachedTodayEvents = useMemo(() => {
 		if (!cachedMonthData) return null
 		return cachedMonthData.filter(ev => isTodayEvent(ev, todayStr))
@@ -66,6 +67,13 @@ export const useEventsByToday = () => {
 		queryFn: () => fetchAppwriteEventsToday(userId!),
 		enabled: !!userId && cachedTodayEvents === null,
 		staleTime: 1000 * 60 * 5,
+	})
+
+	const { data: recurringEvents = [] } = useQuery({
+		queryKey: calendarRecurringEventsQueryKey(userId || ''),
+		queryFn: () => getRecurringEvents(userId!),
+		enabled: !!userId,
+		staleTime: 10 * 60 * 1000,
 	})
 
 	const {
@@ -83,10 +91,18 @@ export const useEventsByToday = () => {
 	const appwriteSource = cachedTodayEvents !== null ? cachedTodayEvents : appwriteEvents
 
 	const events = useMemo(() => {
-		const linkedGoogleIds = new Set(appwriteSource.map(event => event.googleEventId).filter(Boolean))
+		const nonRecurringAppwrite = appwriteSource.filter(e => !e.recurrenceRule)
+
+		const todayStart = new Date(startOfDay)
+		const todayEnd = new Date(endOfDay)
+		const recurringInstancesToday = recurringEvents.flatMap(rev => expandRecurrence(rev, todayStart, todayEnd))
+
+		const allLocal = [...nonRecurringAppwrite, ...recurringInstancesToday]
+		const linkedGoogleIds = new Set(allLocal.map(event => event.googleEventId).filter(Boolean))
 		const uniqueGoogleEvents = googleEvents.filter(event => !linkedGoogleIds.has(event.googleEventId))
-		return [...appwriteSource, ...uniqueGoogleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
-	}, [appwriteSource, googleEvents])
+
+		return [...allLocal, ...uniqueGoogleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
+	}, [appwriteSource, recurringEvents, googleEvents, startOfDay, endOfDay])
 
 	const isLoading =
 		isUserLoading || !userId || (cachedTodayEvents === null && isAppwriteLoading) || isGoogleInitialLoading
