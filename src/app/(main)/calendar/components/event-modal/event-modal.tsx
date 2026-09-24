@@ -1,4 +1,3 @@
-import { updateEvent } from '@/lib/events/events'
 import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
 import { InitialEventValues, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { ColorPicker } from './components/color-picker/color-picker'
@@ -14,7 +13,7 @@ interface EventModalProps {
 }
 
 export const EventModal = ({ onClose, initialTitle, onSuccess, initialValues }: EventModalProps) => {
-	const { handleCreateEvent } = useCalendarMutations()
+	const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
 
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
@@ -24,7 +23,7 @@ export const EventModal = ({ onClose, initialTitle, onSuccess, initialValues }: 
 		initialValues,
 		{
 			create: handleCreateEvent,
-			update: updateEvent,
+			update: handleUpdateEvent,
 		},
 		initialTitle
 	)
