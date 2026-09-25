@@ -1,5 +1,6 @@
 import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
-import { CreateEventPayload, EventForm } from '@/shared/types/event'
+import { CreateEventPayload, EventForm, RecurrenceConfig } from '@/shared/types/event'
+import { configToRRule, rruleToConfig } from '@/shared/utils/calendar/recurrence'
 import { localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
@@ -9,7 +10,12 @@ import 'temporal-polyfill/global'
 
 export interface CalendarActions {
 	create: (data: CreateEventPayload) => Promise<unknown>
-	update: (id: string, data: Partial<Omit<CreateEventPayload, 'userId'>>, googleEventId?: string) => Promise<unknown>
+	update: (
+		id: string,
+		data: Partial<Omit<CreateEventPayload, 'userId'>>,
+		googleEventId?: string,
+		scope?: 'this' | 'all'
+	) => Promise<unknown>
 }
 
 export interface InitialEventValues {
@@ -35,17 +41,12 @@ const formatDateTimeForAppwrite = (dateString: string, timeString: string): stri
 	return localDateTimeToInstant(dateString, timeString)
 }
 
-const getDateForDayOfWeek = (baseDateString: string, targetDay: number): string => {
-	const plainDate = Temporal.PlainDate.from(baseDateString)
-	const currentDay = plainDate.dayOfWeek
-	return plainDate.add({ days: targetDay - currentDay }).toString()
-}
-
 export const useEventForm = (
 	onSuccess: () => void,
 	initialEvent?: SXEvent | InitialEventValues,
 	actions?: CalendarActions,
-	initialTitle?: string
+	initialTitle?: string,
+	updateScope: 'this' | 'all' = 'this'
 ) => {
 	const [form, setForm] = useState<EventForm>(() => {
 		if (initialEvent && 'id' in initialEvent) {
@@ -55,6 +56,11 @@ export const useEventForm = (
 			const startTime = startStr.match(/(\d{2}:\d{2})/)?.[1] || '09:00'
 			const endTime = endStr.match(/(\d{2}:\d{2})/)?.[1] || '10:00'
 
+			const initialRecurrenceRule = (initialEvent as unknown as { recurrenceRule?: string }).recurrenceRule
+			const recurrence: RecurrenceConfig = initialRecurrenceRule
+				? rruleToConfig(initialRecurrenceRule)
+				: { frequency: 'none', interval: 1, endType: 'never' }
+
 			return {
 				title: initialEvent.title || '',
 				description: initialEvent.description as string | undefined,
@@ -62,7 +68,7 @@ export const useEventForm = (
 				startTime,
 				endTime,
 				color: (initialEvent.color as string) || '#D79716',
-				repeatDays: [],
+				recurrence,
 			}
 		}
 
@@ -75,7 +81,7 @@ export const useEventForm = (
 			startTime: initialEvent?.startTime || start,
 			endTime: initialEvent?.endTime || end,
 			color: '#D79716',
-			repeatDays: [],
+			recurrence: { frequency: 'none', interval: 1, endType: 'never' },
 		}
 	})
 
@@ -83,8 +89,8 @@ export const useEventForm = (
 		setForm(prev => ({ ...prev, [key]: value }))
 	}
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault()
+	const handleSubmit = async (e?: React.FormEvent, scope: 'this' | 'all' = updateScope) => {
+		e?.preventDefault()
 		if (!actions) return
 
 		const trimmedTitle = form.title.trim()
@@ -97,6 +103,11 @@ export const useEventForm = (
 		const endDateISO = formatDateTimeForAppwrite(form.date, form.endTime)
 		const userId = await getCurrentUserId()
 
+		let recurrenceRule: string | undefined
+		if (form.recurrence && form.recurrence.frequency !== 'none') {
+			recurrenceRule = configToRRule(form.recurrence, startDateISO)
+		}
+
 		const eventData: CreateEventPayload = {
 			title: trimmedTitle,
 			description: form.description,
@@ -105,6 +116,7 @@ export const useEventForm = (
 			color: form.color,
 			calendarId: getCalendarIdByColor(form.color),
 			userId,
+			...(recurrenceRule ? { recurrenceRule } : {}),
 		}
 
 		try {
@@ -116,12 +128,14 @@ export const useEventForm = (
 					endDate: eventData.endDate,
 					color: eventData.color,
 					calendarId: eventData.calendarId,
+					recurrenceRule,
 				}
 
 				const updatePromise = actions.update(
 					String(initialEvent.id),
 					updateData,
-					initialEvent.googleEventId as string | undefined
+					initialEvent.googleEventId as string | undefined,
+					scope
 				)
 				toast.promise(updatePromise, {
 					loading: 'Updating event...',
@@ -130,23 +144,10 @@ export const useEventForm = (
 				})
 				await updatePromise
 			} else {
-				const currentDay = Temporal.PlainDate.from(form.date).dayOfWeek
-				const days = [currentDay, ...(form.repeatDays || [])]
-				const uniqueDays = [...new Set(days)]
-
-				const createPromise = Promise.all(
-					uniqueDays.map(day => {
-						const date = getDateForDayOfWeek(form.date, day)
-						return actions.create({
-							...eventData,
-							startDate: formatDateTimeForAppwrite(date, form.startTime),
-							endDate: formatDateTimeForAppwrite(date, form.endTime),
-						})
-					})
-				)
+				const createPromise = actions.create(eventData)
 				toast.promise(createPromise, {
 					loading: 'Creating event...',
-					success: form.repeatDays?.length ? 'Event copies created' : 'Event created',
+					success: recurrenceRule ? 'Recurring event created' : 'Event created',
 					error: 'Failed to create event',
 				})
 				await createPromise

@@ -42,6 +42,7 @@
 		"react-spinners": "^0.17.0",
 		"react-time-picker": "^8.0.2",
 		"resend": "^6.12.3",
+		"rrule": "^2.8.1",
 		"sonner": "^2.0.7",
 		"stripe": "^22.2.0",
 		"temporal-polyfill": "^0.3.0",

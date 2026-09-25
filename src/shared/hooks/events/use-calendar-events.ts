@@ -1,9 +1,10 @@
 import { CalendarView } from '@/app/(main)/calendar/constants/calendar.constants'
-import { getEventsByRange } from '@/lib/events/events'
+import { getEventsByRange, getRecurringEvents } from '@/lib/events/events'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
 import { getMonthsInRange } from '@/shared/utils/calendar/calendar-month-range'
-import { useQueries } from '@tanstack/react-query'
+import { expandRecurrence } from '@/shared/utils/calendar/recurrence'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import 'temporal-polyfill/global'
 
@@ -60,6 +61,8 @@ export const calendarEventsMonthQueryKey = (userId: string, monthKey: string) =>
 export const calendarGoogleEventsMonthQueryKey = (userId: string, monthKey: string) =>
 	['calendar-google-events-month', userId, monthKey] as const
 
+export const calendarRecurringEventsQueryKey = (userId: string) => ['calendar-recurring-events', userId] as const
+
 interface UseCalendarEventsProps {
 	userId?: string
 	start: string
@@ -78,6 +81,14 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 			staleTime: 10 * 60 * 1000,
 			gcTime: 60 * 60 * 1000,
 		})),
+	})
+
+	const recurringQuery = useQuery({
+		queryKey: calendarRecurringEventsQueryKey(userId || ''),
+		queryFn: () => getRecurringEvents(userId!),
+		enabled: Boolean(userId),
+		staleTime: 10 * 60 * 1000,
+		gcTime: 60 * 60 * 1000,
 	})
 
 	const googleQueries = useQueries({
@@ -104,6 +115,26 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 		}
 
 		const localEvents = Array.from(localEventsMap.values())
+		const nonRecurringEvents = localEvents.filter(e => !e.recurrenceRule)
+
+		const recurringMastersMap = new Map<string, CalendarEvent>()
+		if (recurringQuery.data) {
+			for (const rev of recurringQuery.data) {
+				recurringMastersMap.set(rev.$id, rev)
+			}
+		}
+		for (const lev of localEvents) {
+			if (lev.recurrenceRule) {
+				recurringMastersMap.set(lev.$id, lev)
+			}
+		}
+
+		const rangeStart = new Date(start)
+		const rangeEnd = new Date(end)
+		const expandedInstances = Array.from(recurringMastersMap.values()).flatMap(master =>
+			expandRecurrence(master, rangeStart, rangeEnd)
+		)
+
 		const linkedGoogleIds = new Set(localEvents.map(event => event.googleEventId).filter(Boolean))
 
 		const googleEventsMap = new Map<string, CalendarEvent>()
@@ -117,10 +148,11 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 			}
 		}
 
-		return [...localEvents, ...Array.from(googleEventsMap.values())]
-	}, [localQueries, googleQueries])
+		return [...nonRecurringEvents, ...expandedInstances, ...Array.from(googleEventsMap.values())]
+	}, [localQueries, recurringQuery.data, googleQueries, start, end])
 
-	const isLoading = localQueries.some(q => q.isLoading) || googleQueries.some(q => q.isLoading)
+	const isLoading =
+		localQueries.some(q => q.isLoading) || recurringQuery.isLoading || googleQueries.some(q => q.isLoading)
 	const isGoogleLoading = googleQueries.some(q => q.isFetching)
 
 	return {

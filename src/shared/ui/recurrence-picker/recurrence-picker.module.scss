@@ -1,0 +1,111 @@
+.recurrenceContainer {
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.selectRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.label {
+	font-size: 14px;
+	color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	user-select: none;
+}
+
+.proBadge {
+	font-size: 10px;
+	font-weight: 600;
+	background: linear-gradient(135deg, #f59e0b, #ec4899);
+	color: #fff;
+	padding: 1px 5px;
+	border-radius: 4px;
+	letter-spacing: 0.5px;
+}
+
+.dropdownWrapper {
+	position: relative;
+	z-index: 5;
+
+	&:global(.opened) {
+		> .trigger svg {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.trigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 13px;
+	font-family: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.2s, border-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+
+	> svg {
+		width: 12px;
+		height: 12px;
+		transition: transform 0.2s;
+	}
+}
+
+.dropdown {
+	min-width: 210px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	background-color: var(--secondaryFull);
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	position: absolute;
+	top: 34px;
+	right: 0;
+	z-index: 10;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.optionItem {
+	font-family: inherit;
+	text-align: left;
+	width: 100%;
+	border: none;
+	background: transparent;
+	border-radius: 5px;
+	padding: 7px 10px;
+	font-size: 13px;
+	font-weight: 400;
+	cursor: pointer;
+	color: var(--text);
+	white-space: nowrap;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	&:global(.activeOption) {
+		background-color: var(--hover);
+		font-weight: 600;
+	}
+}

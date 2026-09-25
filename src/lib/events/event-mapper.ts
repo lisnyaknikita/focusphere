@@ -26,5 +26,10 @@ export const mapEventToScheduleX = (event: CalendarEvent) => {
 		calendarId: getCalendarIdByColor(event.color),
 		source: event.source ?? 'local',
 		googleEventId: event.googleEventId,
+		recurrenceRule: event.recurrenceRule,
+		recurrenceExDates: event.recurrenceExDates,
+		_masterEventId: event._masterEventId,
+		_isRecurrenceInstance: event._isRecurrenceInstance,
+		_instanceDate: event._instanceDate,
 	}
 }

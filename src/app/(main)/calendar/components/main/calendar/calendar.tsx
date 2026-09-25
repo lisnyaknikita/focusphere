@@ -17,6 +17,8 @@ import { useUser } from '@/shared/hooks/use-user/use-user'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { Modal } from '@/shared/ui/modal/modal'
+import { RecurrenceActionModal } from '@/shared/ui/recurrence-action-modal/recurrence-action-modal'
+import { isRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -183,18 +185,9 @@ export const CalendarInner = memo(
 			() => ({
 				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) =>
 					renderEventInfoModalRef.current(calendarEvent, () => eventModalRef.current.close()),
-				weekGridDate: ({ date }: { date: string }) => (
-					<WeekDayHeader
-						date={date}
-						onDayClick={handleHeaderDayClick}
-					/>
-				),
+				weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} onDayClick={handleHeaderDayClick} />,
 				monthGridDate: ({ date, jsDate }: { date: number; jsDate: Date }) => (
-					<MonthDayHeader
-						date={date}
-						jsDate={jsDate}
-						onDayClick={handleHeaderDayClick}
-					/>
+					<MonthDayHeader date={date} jsDate={jsDate} onDayClick={handleHeaderDayClick} />
 				),
 			}),
 			[handleHeaderDayClick]
@@ -242,17 +235,32 @@ export const CalendarInner = memo(
 					{selectedEventForModal && renderEventInfoModal(selectedEventForModal, () => setSelectedEventForModal(null))}
 				</Modal>
 
-				<ConfirmModal
-					isVisible={Boolean(eventToDelete)}
-					onClose={() => setEventToDelete(null)}
-					onConfirm={handleConfirmDelete}
-					title='Delete Event'
-					message={
-						<>
-							Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
-						</>
-					}
-				/>
+				{eventToDelete &&
+				(isRecurrenceInstanceId(eventToDelete.id) ||
+					Boolean((eventToDelete as unknown as { recurrenceRule?: string }).recurrenceRule)) ? (
+					<RecurrenceActionModal
+						isVisible={Boolean(eventToDelete)}
+						actionType='delete'
+						eventTitle={eventToDelete.title}
+						onClose={() => setEventToDelete(null)}
+						onConfirm={async scope => {
+							await handleDelete(String(eventToDelete.id), eventToDelete.googleEventId as string | undefined, scope)
+							setEventToDelete(null)
+						}}
+					/>
+				) : (
+					<ConfirmModal
+						isVisible={Boolean(eventToDelete)}
+						onClose={() => setEventToDelete(null)}
+						onConfirm={handleConfirmDelete}
+						title='Delete Event'
+						message={
+							<>
+								Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
+							</>
+						}
+					/>
+				)}
 			</>
 		)
 	}
