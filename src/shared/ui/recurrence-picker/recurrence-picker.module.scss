@@ -31,140 +31,81 @@
 	letter-spacing: 0.5px;
 }
 
-.select {
-	background-color: var(--secondary);
-	color: var(--text);
-	border: 1px solid var(--btn-border);
-	border-radius: 6px;
-	padding: 5px 8px;
-	font-size: 13px;
-	font-family: inherit;
-	outline: none;
-	cursor: pointer;
-	max-width: 190px;
-	transition: border-color 0.2s;
+.dropdownWrapper {
+	position: relative;
+	z-index: 5;
 
-	&:focus {
-		border-color: var(--text);
+	&:global(.opened) {
+		> .trigger svg {
+			transform: rotate(180deg);
+		}
 	}
 }
 
-.customPanel {
-	background-color: color-mix(in srgb, var(--secondary) 60%, transparent);
-	border: 1px solid var(--btn-border);
-	border-radius: 8px;
-	padding: 10px;
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.customRow {
+.trigger {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-}
-
-.subLabel {
-	font-size: 12px;
-	color: var(--textSecondary, #888);
-	white-space: nowrap;
-}
-
-.intervalInput {
-	width: 50px;
-	background-color: var(--background, #1a1a1a);
-	border: 1px solid var(--btn-border);
-	border-radius: 4px;
-	color: var(--text);
-	padding: 3px 6px;
-	font-size: 13px;
-	text-align: center;
-	outline: none;
-}
-
-.unitSelect {
-	background-color: var(--background, #1a1a1a);
-	border: 1px solid var(--btn-border);
-	border-radius: 4px;
-	color: var(--text);
-	padding: 3px 6px;
-	font-size: 13px;
-	outline: none;
-	cursor: pointer;
-}
-
-.weekDaysRow {
-	display: flex;
-	gap: 4px;
 	justify-content: space-between;
-}
-
-.dayBtn {
-	width: 28px;
-	height: 28px;
-	border-radius: 50%;
-	border: 1px solid var(--btn-border);
-	background: transparent;
+	gap: 8px;
 	color: var(--text);
-	font-size: 11px;
-	font-weight: 500;
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 13px;
+	font-family: inherit;
 	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: all 0.15s ease;
+	white-space: nowrap;
+	transition: background-color 0.2s, border-color 0.2s;
 
 	&:hover {
 		background-color: var(--secondary);
 	}
 
-	&.activeDay {
-		background-color: var(--text);
-		color: var(--background, #000);
-		border-color: var(--text);
-		font-weight: 700;
+	> svg {
+		width: 12px;
+		height: 12px;
+		transition: transform 0.2s;
 	}
 }
 
-.endsSection {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.endsOptions {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.radioLabel {
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	font-size: 12px;
-	color: var(--text);
-	cursor: pointer;
-
-	input[type='radio'] {
-		cursor: pointer;
-		accent-color: var(--text);
-	}
-}
-
-.dateInput,
-.countInput {
-	background-color: var(--background, #1a1a1a);
+.dropdown {
+	min-width: 210px;
 	border: 1px solid var(--btn-border);
-	border-radius: 4px;
-	color: var(--text);
-	padding: 2px 6px;
-	font-size: 12px;
-	outline: none;
+	border-radius: 5px;
+	background-color: var(--secondaryFull);
+	padding: 5px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	position: absolute;
+	top: 34px;
+	right: 0;
+	z-index: 10;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
-.countInput {
-	width: 50px;
-	text-align: center;
+.optionItem {
+	font-family: inherit;
+	text-align: left;
+	width: 100%;
+	border: none;
+	background: transparent;
+	border-radius: 5px;
+	padding: 7px 10px;
+	font-size: 13px;
+	font-weight: 400;
+	cursor: pointer;
+	color: var(--text);
+	white-space: nowrap;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	&:global(.activeOption) {
+		background-color: var(--hover);
+		font-weight: 600;
+	}
 }
