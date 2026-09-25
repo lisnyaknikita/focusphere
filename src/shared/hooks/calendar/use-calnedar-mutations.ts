@@ -1,5 +1,7 @@
-import { createEvent, updateEvent } from '@/lib/events/events'
+import { addRecurrenceException, createEvent, updateEvent } from '@/lib/events/events'
 import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
+import { isRecurrenceInstanceId, parseRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
+import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
@@ -16,12 +18,20 @@ export const useCalendarMutations = () => {
 				queryKey: ['calendar-google-events-month'],
 				type: 'active',
 			}),
+			queryClient.invalidateQueries({
+				queryKey: ['calendar-recurring-events'],
+			}),
 		])
 	}, [queryClient])
 
 	const handleUpdateEvent = useCallback(
-		async (eventId: string, data: Partial<Omit<CalendarEvent, 'userId'>>, googleEventId?: string) => {
-			const { title, description, color, startDate, endDate, calendarId } = data
+		async (
+			eventId: string,
+			data: Partial<Omit<CalendarEvent, 'userId'>>,
+			googleEventId?: string,
+			scope: 'this' | 'all' = 'this'
+		) => {
+			const { title, description, color, startDate, endDate, calendarId, recurrenceRule } = data
 
 			const payload: Partial<Omit<CreateEventPayload, 'userId'>> = {
 				...(title !== undefined && { title }),
@@ -30,6 +40,7 @@ export const useCalendarMutations = () => {
 				...(startDate !== undefined && { startDate }),
 				...(endDate !== undefined && { endDate }),
 				...(calendarId !== undefined && { calendarId }),
+				...(recurrenceRule !== undefined && { recurrenceRule }),
 			}
 
 			const updateCache = (oldData: unknown) => {
@@ -49,19 +60,42 @@ export const useCalendarMutations = () => {
 			queryClient.setQueriesData({ queryKey: ['calendar-google-events-month'] }, updateCache)
 
 			try {
-				if (eventId.startsWith('g_') || googleEventId) {
-					const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-					await googleCalendarService.updateEvent(googleEventId || eventId, {
-						summary: title,
-						description,
-						color,
-						...(startDate ? { start: startDate } : {}),
-						...(endDate ? { end: endDate } : {}),
-					})
-				}
+				if (isRecurrenceInstanceId(eventId)) {
+					const parsed = parseRecurrenceInstanceId(eventId)
+					if (parsed) {
+						if (scope === 'all') {
+							await updateEvent(parsed.masterEventId, payload)
+						} else {
+							await addRecurrenceException(parsed.masterEventId, parsed.instanceDate)
+							const userId = await getCurrentUserId()
+							await createEvent({
+								title: title || 'Untitled event',
+								description,
+								startDate: startDate || '',
+								endDate: endDate || '',
+								color: color || '#D79716',
+								calendarId: calendarId || 'default',
+								userId,
+								source: 'local',
+								syncStatus: 'not_synced',
+							})
+						}
+					}
+				} else {
+					if (eventId.startsWith('g_') || googleEventId) {
+						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+						await googleCalendarService.updateEvent(googleEventId || eventId, {
+							summary: title,
+							description,
+							color,
+							...(startDate ? { start: startDate } : {}),
+							...(endDate ? { end: endDate } : {}),
+						})
+					}
 
-				if (!eventId.startsWith('g_')) {
-					await updateEvent(eventId, payload)
+					if (!eventId.startsWith('g_')) {
+						await updateEvent(eventId, payload)
+					}
 				}
 			} catch (error) {
 				console.error('Failed to update event:', error)
@@ -76,21 +110,26 @@ export const useCalendarMutations = () => {
 		async (data: CreateEventPayload) => {
 			let googleEventId: string | undefined
 			let syncStatus: 'synced' | 'failed' | 'not_synced' = 'not_synced'
-			try {
-				const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-				const googleEvent = await googleCalendarService.createEvent({
-					summary: data.title,
-					description: data.description,
-					color: data.color,
-					start: data.startDate,
-					end: data.endDate,
-				})
-				if (googleEvent?.id) {
-					googleEventId = googleEvent.id
-					syncStatus = 'synced'
+
+			const isRecurring = Boolean(data.recurrenceRule && data.recurrenceRule.trim())
+
+			if (!isRecurring) {
+				try {
+					const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
+					const googleEvent = await googleCalendarService.createEvent({
+						summary: data.title,
+						description: data.description,
+						color: data.color,
+						start: data.startDate,
+						end: data.endDate,
+					})
+					if (googleEvent?.id) {
+						googleEventId = googleEvent.id
+						syncStatus = 'synced'
+					}
+				} catch {
+					syncStatus = 'failed'
 				}
-			} catch {
-				syncStatus = 'failed'
 			}
 
 			const created = await createEvent({

@@ -1,0 +1,134 @@
+.recurrenceActionModal {
+	width: 420px;
+}
+
+.content {
+	margin-bottom: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	h3 {
+		font-size: 18px;
+		font-weight: 600;
+		color: var(--text);
+	}
+}
+
+.eventTitle {
+	font-size: 14px;
+	color: var(--textSecondary, #888);
+
+	span {
+		color: var(--text);
+		font-weight: 500;
+	}
+}
+
+.description {
+	font-size: 13px;
+	color: var(--textSecondary, #999);
+	line-height: 1.4;
+}
+
+.options {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+.optionLabel {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 10px 12px;
+	border: 1px solid var(--btn-border);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+
+	&:hover {
+		background-color: var(--secondary);
+		border-color: var(--textSecondary, #666);
+	}
+
+	input[type='radio'] {
+		margin-top: 3px;
+		cursor: pointer;
+		accent-color: var(--text);
+	}
+}
+
+.optionText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+
+	strong {
+		font-size: 14px;
+		color: var(--text);
+	}
+
+	span {
+		font-size: 12px;
+		color: var(--textSecondary, #888);
+	}
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+}
+
+.cancelButton {
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 6px;
+	padding: 6px 12px;
+	font-size: 14px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
+
+.confirmButton {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--save-button-text);
+	padding: 6px 14px;
+	background-color: var(--save-button-bg);
+	border: none;
+	border-radius: 6px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #aaa;
+	}
+}
+
+.deleteButton {
+	font-size: 14px;
+	font-weight: 500;
+	color: #fff;
+	padding: 6px 14px;
+	background-color: #ef4444;
+	border: none;
+	border-radius: 6px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: #dc2626;
+	}
+}

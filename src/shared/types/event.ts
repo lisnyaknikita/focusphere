@@ -14,6 +14,11 @@ export interface CalendarEvent extends Models.Document {
 	source?: EventSource
 	googleEventId?: string
 	syncStatus?: EventSyncStatus
+	recurrenceRule?: string
+	recurrenceExDates?: string[]
+	_masterEventId?: string
+	_isRecurrenceInstance?: boolean
+	_instanceDate?: string
 }
 
 export interface CreateEventPayload {
@@ -27,6 +32,19 @@ export interface CreateEventPayload {
 	source?: EventSource
 	googleEventId?: string
 	syncStatus?: EventSyncStatus
+	recurrenceRule?: string
+	recurrenceExDates?: string[]
+}
+
+export type RecurrenceFrequency = 'none' | 'daily' | 'weekly' | 'weekdays' | 'monthly'
+
+export interface RecurrenceConfig {
+	frequency: RecurrenceFrequency
+	interval: number
+	weekDays?: number[]
+	endType: 'never' | 'until' | 'count'
+	endDate?: string
+	count?: number
 }
 
 export interface EventForm {
@@ -37,4 +55,5 @@ export interface EventForm {
 	endTime: string
 	color: string
 	repeatDays?: number[]
+	recurrence?: RecurrenceConfig
 }

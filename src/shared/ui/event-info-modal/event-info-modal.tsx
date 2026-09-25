@@ -2,6 +2,8 @@ import { CALENDARS_CONFIG, getCalendarIdByColor } from '@/lib/events/calendar-co
 import { useBilling } from '@/shared/context/billing-context'
 import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { useSettingsStore } from '@/shared/stores/settings.store'
+import { RecurrenceActionModal, RecurrenceScope } from '@/shared/ui/recurrence-action-modal/recurrence-action-modal'
+import { getRecurrenceSummary, isRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import clsx from 'clsx'
@@ -12,8 +14,8 @@ import { DescriptionIcon } from '../icons/calendar/description-icon'
 import { DeleteIcon } from '../icons/delete-icon'
 import { EditIcon } from '../icons/edit-icon'
 import { CopyEventIcon } from '../icons/planner/copy-timeblock-icon'
+import { RepeatIcon } from '../icons/planner/repeat-icon'
 import { EventEditView } from './components/event-edit-view/event-edit-view'
-import { RecurrenceModal } from './components/recurrence-modal/recurrence-modal'
 import classes from './event-info-modal.module.scss'
 
 interface EventInfoModalProps {
@@ -43,7 +45,7 @@ export const EventInfoModal = ({
 }: EventInfoModalProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
-	const [isRecurrenceModalOpen, setIsRecurrenceModalOpen] = useState(false)
+	const [isRecurrenceEditModalOpen, setIsRecurrenceEditModalOpen] = useState(false)
 
 	const { isPro, openPaywall } = useBilling()
 
@@ -59,22 +61,47 @@ export const EventInfoModal = ({
 	const formattedDate = formatDateRange(event.start, event.end, timeFormat)
 	const isReadOnly = !onConfirmDelete
 
+	const recurrenceRule = (event as unknown as { recurrenceRule?: string }).recurrenceRule
+	const recurrenceSummary = recurrenceRule ? getRecurrenceSummary(recurrenceRule) : null
+
 	const handleDelete = () => {
 		if (onConfirmDelete) {
 			onConfirmDelete(String(event.id))
 		}
 	}
 
+	const handleEditSubmit = (e: React.FormEvent) => {
+		e.preventDefault()
+		if (isRecurrenceInstanceId(event.id)) {
+			setIsRecurrenceEditModalOpen(true)
+		} else {
+			handleSubmit(e)
+		}
+	}
+
+	const handleRecurrenceEditConfirm = (scope: RecurrenceScope) => {
+		handleSubmit(undefined, scope)
+	}
+
 	if (isEditing) {
 		return (
-			<div className={classes.modalInner}>
-				<EventEditView
-					form={form}
-					setFormField={setFormField}
-					handleSubmit={handleSubmit}
-					onCancel={() => (initialEditing && onCancelCreate ? onCancelCreate() : setIsEditing(false))}
+			<>
+				<div className={classes.modalInner}>
+					<EventEditView
+						form={form}
+						setFormField={setFormField}
+						handleSubmit={handleEditSubmit}
+						onCancel={() => (initialEditing && onCancelCreate ? onCancelCreate() : setIsEditing(false))}
+					/>
+				</div>
+				<RecurrenceActionModal
+					isVisible={isRecurrenceEditModalOpen}
+					actionType='edit'
+					eventTitle={event.title}
+					onClose={() => setIsRecurrenceEditModalOpen(false)}
+					onConfirm={handleRecurrenceEditConfirm}
 				/>
-			</div>
+			</>
 		)
 	}
 
@@ -98,21 +125,6 @@ export const EventInfoModal = ({
 								)}
 							</ActionTooltip>
 						)}
-						{/* {onCopy && (
-							<ActionTooltip text={isPro ? 'Repeat this event' : 'Repeat this event (PRO)'} isActive={isPro}>
-								{(setRef, refProps) => (
-									<button
-										ref={setRef}
-										type='button'
-										className={clsx(classes.recurrenceBtn, !isPro && classes.proAction)}
-										onClick={() => (!isPro ? openPaywall('planner_recurrence') : setIsRecurrenceModalOpen(true))}
-										{...refProps}
-									>
-										<RepeatIcon />
-									</button>
-								)}
-							</ActionTooltip>
-						)} */}
 
 						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
 							<EditIcon />
@@ -134,6 +146,14 @@ export const EventInfoModal = ({
 					</span>
 					<p>{formattedDate}</p>
 				</div>
+				{recurrenceSummary && recurrenceSummary !== 'Does not repeat' && (
+					<div className={classes.recurrenceRow}>
+						<span>
+							<RepeatIcon width={18} height={18} />
+						</span>
+						<p>{recurrenceSummary}</p>
+					</div>
+				)}
 				{event.description && event.description.trim() !== '' && (
 					<div className={classes.description} title={event.description}>
 						<span>
@@ -143,13 +163,6 @@ export const EventInfoModal = ({
 					</div>
 				)}
 			</div>
-			<RecurrenceModal
-				isOpen={isRecurrenceModalOpen}
-				onClose={() => setIsRecurrenceModalOpen(false)}
-				event={event}
-				createAction={actions?.create}
-				onUpdated={onUpdated}
-			/>
 		</div>
 	)
 }
