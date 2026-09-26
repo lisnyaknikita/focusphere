@@ -1,5 +1,5 @@
 import { CreateEventPayload } from '@/shared/types/event'
-import { localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
+import { extractDateTimeComponents, localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useCallback, useRef, useState } from 'react'
 
@@ -22,39 +22,34 @@ export const useCalendarCopyPaste = ({ user, quickCreate, handleCreateEvent }: U
 			}
 
 			const currentCopied = copiedEventRef.current
-			const startStr = currentCopied.start.toString()
-			const endStr = currentCopied.end.toString()
+			const startParsed = extractDateTimeComponents(currentCopied.start)
+			const endParsed = extractDateTimeComponents(currentCopied.end)
 			const dateIso = date.toString()
 
 			setCopiedEvent(null)
 
-			const isAllDay = !startStr.includes('T') && startStr.length <= 10
 			let startDate: string
 			let endDate: string
 
-			if (isAllDay) {
-				const origStartDate = Temporal.PlainDate.from(startStr.slice(0, 10))
-				const origEndDate = Temporal.PlainDate.from(endStr.slice(0, 10))
+			if (startParsed.isAllDay) {
+				const origStartDate = Temporal.PlainDate.from(startParsed.date)
+				const origEndDate = Temporal.PlainDate.from(endParsed.date)
 				const durationDays = origStartDate.until(origEndDate, { largestUnit: 'days' }).days
 				startDate = dateIso
 				endDate = date.add({ days: Math.max(0, durationDays) }).toString()
 			} else {
-				const startTime = startStr.match(/(\d{2}:\d{2})/)?.[1] || '09:00'
-				const endTime = endStr.match(/(\d{2}:\d{2})/)?.[1] || '10:00'
-				const startDay = startStr.slice(0, 10)
-				const endDay = endStr.slice(0, 10)
 				let endTargetDate = dateIso
 				try {
-					const sDay = Temporal.PlainDate.from(startDay)
-					const eDay = Temporal.PlainDate.from(endDay)
+					const sDay = Temporal.PlainDate.from(startParsed.date)
+					const eDay = Temporal.PlainDate.from(endParsed.date)
 					const diffDays = sDay.until(eDay, { largestUnit: 'days' }).days
 					if (diffDays > 0) {
 						endTargetDate = date.add({ days: diffDays }).toString()
 					}
 				} catch {}
 
-				startDate = localDateTimeToInstant(dateIso, startTime)
-				endDate = localDateTimeToInstant(endTargetDate, endTime)
+				startDate = localDateTimeToInstant(dateIso, startParsed.time)
+				endDate = localDateTimeToInstant(endTargetDate, endParsed.time)
 			}
 
 			await handleCreateEvent({

@@ -1,7 +1,7 @@
 import { getCalendarIdByColor } from '@/lib/events/color-to-calendar'
 import { CreateEventPayload, EventForm, RecurrenceConfig } from '@/shared/types/event'
 import { configToRRule, rruleToConfig } from '@/shared/utils/calendar/recurrence'
-import { localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
+import { extractDateTimeComponents, localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useState } from 'react'
@@ -50,11 +50,8 @@ export const useEventForm = (
 ) => {
 	const [form, setForm] = useState<EventForm>(() => {
 		if (initialEvent && 'id' in initialEvent) {
-			const startStr = initialEvent.start.toString()
-			const endStr = initialEvent.end.toString()
-			const date = startStr.match(/(\d{4}-\d{2}-\d{2})/)?.[1] || Temporal.Now.plainDateISO().toString()
-			const startTime = startStr.match(/(\d{2}:\d{2})/)?.[1] || '09:00'
-			const endTime = endStr.match(/(\d{2}:\d{2})/)?.[1] || '10:00'
+			const startParsed = extractDateTimeComponents(initialEvent.start)
+			const endParsed = extractDateTimeComponents(initialEvent.end)
 
 			const initialRecurrenceRule = (initialEvent as unknown as { recurrenceRule?: string }).recurrenceRule
 			const recurrence: RecurrenceConfig = initialRecurrenceRule
@@ -64,9 +61,9 @@ export const useEventForm = (
 			return {
 				title: initialEvent.title || '',
 				description: initialEvent.description as string | undefined,
-				date,
-				startTime,
-				endTime,
+				date: startParsed.date,
+				startTime: startParsed.time,
+				endTime: endParsed.time,
 				color: (initialEvent.color as string) || '#D79716',
 				recurrence,
 			}
