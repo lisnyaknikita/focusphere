@@ -4,6 +4,7 @@ import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/go
 import { CalendarEvent } from '@/shared/types/event'
 import { getMonthsInRange } from '@/shared/utils/calendar/calendar-month-range'
 import { expandRecurrence } from '@/shared/utils/calendar/recurrence'
+import { subtractDaysFromDateString } from '@/shared/utils/event-date-time/event-date-time'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import 'temporal-polyfill/global'
@@ -23,15 +24,11 @@ export const mapGoogleEvent = (event: GoogleCalendarEvent, userId: string): Cale
 	let endDate = allDay ? event.end.date! : event.end.dateTime || ''
 
 	if (allDay && endDate) {
-		try {
-			const endPlainDate = Temporal.PlainDate.from(endDate).subtract({ days: 1 })
-			const startPlainDate = Temporal.PlainDate.from(startDate)
-			endDate = Temporal.PlainDate.compare(endPlainDate, startPlainDate) >= 0 ? endPlainDate.toString() : startDate
-		} catch {
-			const end = new Date(endDate)
-			end.setDate(end.getDate() - 1)
-			endDate = end.toISOString().slice(0, 10)
-		}
+		const endPlainDateStr = subtractDaysFromDateString(endDate, 1)
+		const isEndAfterOrEqualStart =
+			Temporal.PlainDate.compare(Temporal.PlainDate.from(endPlainDateStr), Temporal.PlainDate.from(startDate)) >= 0
+
+		endDate = isEndAfterOrEqualStart ? endPlainDateStr : startDate
 	}
 
 	return {
@@ -95,7 +92,7 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 		queries: monthChunks.map(chunk => ({
 			queryKey: calendarGoogleEventsMonthQueryKey(userId || '', chunk.monthKey),
 			queryFn: async () =>
-				(await googleCalendarService.fetchEvents(new Date(chunk.startIso), new Date(chunk.endIso))).map(event =>
+				(await googleCalendarService.fetchEvents(chunk.startIso, chunk.endIso)).map(event =>
 					mapGoogleEvent(event, userId!)
 				),
 			enabled: Boolean(userId),

@@ -1,31 +1,18 @@
+'use client'
+
 import { CalendarView } from '@/app/(main)/calendar/constants/calendar.constants'
 import { useEffect, useState } from 'react'
 
-const VIEW_KEY = 'calendarView'
+const VIEW_KEY = 'focusphere_calendar_view'
 
 export const useCalendarView = () => {
 	const [view, setView] = useState<CalendarView>('month')
-	const [isMobile, setIsMobile] = useState(false)
 
 	useEffect(() => {
-		const calculateLayout = () => {
-			const mobile = window.innerWidth <= 768
-			setIsMobile(mobile)
-
-			const saved = localStorage.getItem(VIEW_KEY) as CalendarView
-			const currentView = saved || 'week'
-
-			// if (mobile && currentView === 'week') {
-			// 	setView('day')
-			// } else {
-			setView(currentView)
-			// }
+		const saved = localStorage.getItem(VIEW_KEY) as CalendarView
+		if (saved && ['month', 'week', 'day'].includes(saved)) {
+			setView(saved)
 		}
-
-		calculateLayout()
-		window.addEventListener('resize', calculateLayout)
-
-		return () => window.removeEventListener('resize', calculateLayout)
 	}, [])
 
 	const handleViewChange = (nextView: CalendarView) => {
@@ -33,5 +20,5 @@ export const useCalendarView = () => {
 		localStorage.setItem(VIEW_KEY, nextView)
 	}
 
-	return { view, isMobile, handleViewChange }
+	return { view, handleViewChange }
 }

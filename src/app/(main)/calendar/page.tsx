@@ -20,7 +20,6 @@ export default function Calendar() {
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
 	const timeFormat = useSettingsStore(state => state.timeFormat)
-	// const { weeklyGoals, refreshWeeklyGoals } = useWeeklyGoals()
 	const { view, handleViewChange } = useCalendarView()
 
 	const handleEventCreated = () => {
@@ -33,7 +32,6 @@ export default function Calendar() {
 				<>
 					<header className={classes.header}>
 						<div className={classes.headerLeft}>
-							{/* <WeeklyGoals goals={weeklyGoals} onGoalsChange={refreshWeeklyGoals} /> */}
 							<Tabs tabs={['month', 'week', 'day']} activeTab={view} onChange={handleViewChange} />
 							{isGoogleLoading && (
 								<span className={classes.syncingIndicator}>
