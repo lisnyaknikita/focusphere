@@ -1,6 +1,6 @@
 'use client'
 
-import { DailyTasksModal } from '@/app/(main)/planner/components/main/daily-tasks-modal/daily-tasks-modal'
+import { DailyTasksModal } from '@/app/(main)/calendar/components/main/calendar/components/daily-tasks-modal/daily-tasks-modal'
 import { useToday } from '@/shared/hooks/date/use-today'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'

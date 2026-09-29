@@ -1,4 +1,4 @@
-import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
+import { useCalendarMutations } from '@/shared/hooks/calendar/use-calendar-mutations'
 import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'

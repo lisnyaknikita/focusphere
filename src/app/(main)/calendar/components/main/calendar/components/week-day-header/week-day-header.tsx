@@ -1,4 +1,4 @@
-import { useDailyTasksCountForDate } from '@/app/(main)/planner/daily-tasks-count-context'
+import { useDailyTasksCountForDate } from '@/app/(main)/calendar/components/main/calendar/daily-tasks-count-context'
 import { useCalendarCopyMode } from '@/features/calendar/calendar-copy-mode-context'
 import clsx from 'clsx'
 import { useMemo } from 'react'

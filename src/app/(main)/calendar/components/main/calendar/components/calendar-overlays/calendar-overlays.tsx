@@ -1,5 +1,5 @@
 import { EventPasteBanner } from '@/features/calendar/event-paste-banner'
-import { DragSelectionInfo } from '@/shared/hooks/planner/use-grid-drag-create'
+import { DragSelectionInfo } from '@/shared/hooks/calendar/use-grid-drag-create'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { Modal } from '@/shared/ui/modal/modal'
 import { RecurrenceActionModal } from '@/shared/ui/recurrence-action-modal/recurrence-action-modal'

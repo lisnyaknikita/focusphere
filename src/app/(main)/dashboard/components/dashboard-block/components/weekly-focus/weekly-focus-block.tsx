@@ -1,13 +1,13 @@
 'use client'
 
-import { EmptyGoalSlot } from '@/app/(main)/planner/components/header/weekly-goals/components/empty-goal-slot/empty-goal-slot'
-import { WeeklyResetModal } from '@/app/(main)/planner/components/header/weekly-goals/components/weekly-reset-modal/weekly-reset-modal'
 import { useWeeklyGoals } from '@/shared/hooks/planner/use-weekly-goals'
 import { useWeeklyGoalsMutations } from '@/shared/hooks/planner/use-weekly-goals-mutations'
 import { CheckboxCard } from '@/shared/ui/checkbox-card/checkbox-card'
 import { Modal } from '@/shared/ui/modal/modal'
 import { useMemo, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
+import { EmptyGoalSlot } from './components/empty-goal-slot/empty-goal-slot'
+import { WeeklyResetModal } from './components/weekly-reset-modal/weekly-reset-modal'
 import classes from './weekly-focus-block.module.scss'
 
 export const WeeklyFocusBlock = () => {

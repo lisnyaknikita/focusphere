@@ -1,6 +1,6 @@
 'use client'
 
-import classes from '@/app/(main)/planner/components/main/paste-banner/paste-banner.module.scss'
+import classes from '@/app/(main)/calendar/components/main/calendar/components/paste-banner.module.scss'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { useEffect } from 'react'
 

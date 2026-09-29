@@ -9,9 +9,9 @@ import { Tabs } from '@/shared/ui/tabs/tabs'
 import '@schedule-x/theme-default/dist/index.css'
 import { useState } from 'react'
 import 'temporal-polyfill/global'
-import { DailyTasksModal } from '../planner/components/main/daily-tasks-modal/daily-tasks-modal'
 import { EventModal } from './components/event-modal/event-modal'
 import { CalendarInner } from './components/main/calendar/calendar'
+import { DailyTasksModal } from './components/main/calendar/components/daily-tasks-modal/daily-tasks-modal'
 import classes from './page.module.scss'
 
 export default function Calendar() {
