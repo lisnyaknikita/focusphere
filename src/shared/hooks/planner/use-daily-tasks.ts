@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/appwrite'
 import { createDailyTask, deleteDailyTask, updateDailyTask } from '@/lib/planner/planner'
-import { DAILY_TASKS_COUNTERS_KEY } from '@/shared/hooks/planner/use-daily-tasks-counters'
+import { DAILY_TASKS_COUNTERS_KEY } from '@/shared/hooks/calendar/use-daily-tasks-counters'
 import { DailyTask } from '@/shared/types/daily-task'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Query } from 'appwrite'

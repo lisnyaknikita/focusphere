@@ -162,23 +162,6 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 			eventOverlap: false,
 			timeAxisFormatOptions: is12h ? { hour: 'numeric' } : { hour: '2-digit', minute: '2-digit', hour12: false },
 		}
-
-		const handleResize = () => {
-			if (typeof window === 'undefined') return
-			const targetCount = window.innerWidth <= 768 ? 2 : 3
-			if (calendarApp.config.monthGridOptions?.value?.nEventsPerDay !== targetCount) {
-				calendarApp.config.monthGridOptions.value = {
-					...calendarApp.config.monthGridOptions.value,
-					nEventsPerDay: targetCount,
-				}
-			}
-		}
-
-		handleResize()
-		window.addEventListener('resize', handleResize)
-		return () => {
-			window.removeEventListener('resize', handleResize)
-		}
 	}, [calendar, timeFormat])
 
 	const setView = (view: CalendarView) => {
