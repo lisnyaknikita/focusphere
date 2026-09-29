@@ -4,6 +4,7 @@ import { QuickIdeasDrawerWrapper } from '@/app/(main)/dashboard/components/quick
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useEffect, useState } from 'react'
 import { BeatLoader } from 'react-spinners'
+import { BillingProvider } from '../context/billing-context'
 import { DailyTasksModalWrapper } from '../ui/daily-tasks-modal-wrapper/daily-tasks-modal-wrapper'
 import { EveningIdeasPopup } from '../ui/evening-ideas-popup/evening-ideas-popup'
 import { EventModalWrapper } from '../ui/event-modal-wrapper/event-modal-wrapper'
@@ -37,28 +38,30 @@ export const ClientLayout = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			{/* <DailyTasksCleanupWorker /> */}
-			<Suspense fallback={null}>
-				<GlobalHotkeys />
-			</Suspense>
-			<EventTracker />
-			<MiniFocusPlayer />
-			<div className={classes.wrapper}>
-				{children}
-				{isLoading && (
-					<div className='main-loader'>
-						<BeatLoader color='#aaa' size={14} />
-					</div>
-				)}
-			</div>
-			<Suspense fallback={null}>
-				<QuickIdeasDrawerWrapper />
-				<DailyTasksModalWrapper />
-				<EventModalWrapper />
-				<QuickIdeaModalWrapper />
-				<ShortcutsModalWrapper />
-				<EveningIdeasPopup />
-			</Suspense>
+			<BillingProvider>
+				{/* <DailyTasksCleanupWorker /> */}
+				<Suspense fallback={null}>
+					<GlobalHotkeys />
+				</Suspense>
+				<EventTracker />
+				<MiniFocusPlayer />
+				<div className={classes.wrapper}>
+					{children}
+					{isLoading && (
+						<div className='main-loader'>
+							<BeatLoader color='#aaa' size={14} />
+						</div>
+					)}
+				</div>
+				<Suspense fallback={null}>
+					<QuickIdeasDrawerWrapper />
+					<DailyTasksModalWrapper />
+					<EventModalWrapper />
+					<QuickIdeaModalWrapper />
+					<ShortcutsModalWrapper />
+					<EveningIdeasPopup />
+				</Suspense>
+			</BillingProvider>
 		</QueryClientProvider>
 	)
 }
