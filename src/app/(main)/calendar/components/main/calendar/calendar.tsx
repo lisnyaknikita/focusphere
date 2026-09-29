@@ -1,35 +1,25 @@
-import { WeekDayHeader } from '@/app/(main)/planner/components/main/planner-inner/components/week-day-header/week-day-header'
 import { DailyTasksCountByDateContext } from '@/app/(main)/planner/daily-tasks-count-context'
 import { CalendarCopyModeContext } from '@/features/calendar/calendar-copy-mode-context'
-import { EventPasteBanner } from '@/features/calendar/event-paste-banner'
 import { mapEventToScheduleX } from '@/lib/events/event-mapper'
 import { useBilling } from '@/shared/context/billing-context'
 import { useCalendarApp } from '@/shared/hooks/calendar/use-calendar-app'
+import { useCalendarCopyPaste } from '@/shared/hooks/calendar/use-calendar-copypaste'
+import { useCalendarModals } from '@/shared/hooks/calendar/use-calendar-modals'
 import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
-import { useEventDeletion } from '@/shared/hooks/calendar/use-event-deletion'
 import { InitialEventValues } from '@/shared/hooks/calendar/use-event-form'
 import { useMonthMorePopover } from '@/shared/hooks/calendar/use-month-more-popover'
+import { useScheduleXBridge } from '@/shared/hooks/calendar/use-schedulex-bridge'
 import { useCalendarEvents } from '@/shared/hooks/events/use-calendar-events'
 import { useCalendarScroll } from '@/shared/hooks/planner/use-calendar-scroll'
 import { useDailyTasksCounters } from '@/shared/hooks/planner/use-daily-tasks-counters'
 import { useGridDragCreate } from '@/shared/hooks/planner/use-grid-drag-create'
 import { useUser } from '@/shared/hooks/use-user/use-user'
-import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
-import { EventInfoModal } from '@/shared/ui/event-info-modal/event-info-modal'
-import { Modal } from '@/shared/ui/modal/modal'
-import { RecurrenceActionModal } from '@/shared/ui/recurrence-action-modal/recurrence-action-modal'
-import { isRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
-import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { CalendarView } from '../../../constants/calendar.constants'
-import { DayEventsPopover } from './components/day-events-popover/day-events-popover'
-import { MonthDayHeader } from './components/month-day-header/month-day-header'
-
-import { useCalendarCopyPaste } from '@/shared/hooks/calendar/use-calendar-copypaste'
 import '@schedule-x/theme-default/dist/index.css'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { CalendarView } from '../../../constants/calendar.constants'
 import classes from './calendar.module.scss'
+import { CalendarOverlays } from './components/calendar-overlays/calendar-overlays'
 
 interface CalendarInnerProps {
 	view: CalendarView
@@ -51,10 +41,9 @@ export const CalendarInner = memo(
 	({ view, onRequestCreate, onDayClick, onGoogleLoadingChange }: CalendarInnerProps) => {
 		const { user } = useUser()
 		const { isPro, openPaywall } = useBilling()
+
 		const [range, setRange] = useState(defaultRange)
 
-		const [selectedEventForModal, setSelectedEventForModal] = useState<SXEvent | null>(null)
-		const [eventToDelete, setEventToDelete] = useState<SXEvent | null>(null)
 		const calendarWrapperRef = useRef<HTMLDivElement>(null)
 		const isFirstRender = useRef(true)
 
@@ -65,7 +54,7 @@ export const CalendarInner = memo(
 			view,
 		})
 		const { dailyTasksCountByDate } = useDailyTasksCounters({ userId: user?.$id, start: range.start, end: range.end })
-		const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
+		const { handleCreateEvent } = useCalendarMutations()
 
 		const quickCreate = useCallback(
 			(dateTime: Temporal.ZonedDateTime) => {
@@ -106,7 +95,28 @@ export const CalendarInner = memo(
 			onRangeUpdate,
 		})
 
-		const { handleDelete } = useEventDeletion({ eventsService, eventModal })
+		const {
+			selectedEventForModal,
+			setSelectedEventForModal,
+			eventToDelete,
+			setEventToDelete,
+			handleConfirmDelete,
+			handleRecurrenceDelete,
+			renderEventInfoModal,
+		} = useCalendarModals({
+			eventsService,
+			eventModal,
+			setCopiedEvent,
+		})
+
+		const { customComponents } = useScheduleXBridge({
+			isCopyMode,
+			handleDateClick,
+			onDayClick,
+			renderEventInfoModal,
+			eventModal,
+		})
+
 		const { selectionInfo } = useGridDragCreate({
 			isPro,
 			timeBlocksCount: events.filter(e => e.source !== 'google').length,
@@ -132,136 +142,30 @@ export const CalendarInner = memo(
 			setView(view)
 		}, [view, setView])
 
-		const handleConfirmDelete = async () => {
-			if (eventToDelete) {
-				await handleDelete(String(eventToDelete.id), eventToDelete.googleEventId as string | undefined)
-				setEventToDelete(null)
-			}
-		}
-
-		const renderEventInfoModal = useCallback(
-			(event: SXEvent, onCloseModal?: () => void) => (
-				<EventInfoModal
-					event={event}
-					onConfirmDelete={() => {
-						setEventToDelete(event)
-						onCloseModal?.()
-					}}
-					onUpdated={() => onCloseModal?.()}
-					onCopy={() => {
-						setCopiedEvent(event)
-						onCloseModal?.()
-					}}
-					actions={{ create: handleCreateEvent, update: handleUpdateEvent }}
-				/>
-			),
-			[handleCreateEvent, handleUpdateEvent, setCopiedEvent]
-		)
-
-		const isCopyModeRef = useRef(isCopyMode)
-		isCopyModeRef.current = isCopyMode
-
-		const handleDateClickRef = useRef(handleDateClick)
-		handleDateClickRef.current = handleDateClick
-
-		const onDayClickRef = useRef(onDayClick)
-		onDayClickRef.current = onDayClick
-
-		const renderEventInfoModalRef = useRef(renderEventInfoModal)
-		renderEventInfoModalRef.current = renderEventInfoModal
-
-		const eventModalRef = useRef(eventModal)
-		eventModalRef.current = eventModal
-
-		const handleHeaderDayClick = useCallback((selectedDate: string) => {
-			if (isCopyModeRef.current) {
-				handleDateClickRef.current(Temporal.PlainDate.from(selectedDate))
-			} else {
-				onDayClickRef.current(selectedDate)
-			}
-		}, [])
-
-		const customComponents = useMemo(
-			() => ({
-				eventModal: ({ calendarEvent }: { calendarEvent: SXEvent }) =>
-					renderEventInfoModalRef.current(calendarEvent, () => eventModalRef.current.close()),
-				weekGridDate: ({ date }: { date: string }) => <WeekDayHeader date={date} onDayClick={handleHeaderDayClick} />,
-				monthGridDate: ({ date, jsDate }: { date: number; jsDate: Date }) => (
-					<MonthDayHeader date={date} jsDate={jsDate} onDayClick={handleHeaderDayClick} />
-				),
-			}),
-			[handleHeaderDayClick]
-		)
-
 		return (
-			<>
-				{copiedEvent && <EventPasteBanner copiedEvent={copiedEvent} onCancel={() => setCopiedEvent(null)} />}
+			<DailyTasksCountByDateContext.Provider value={dailyTasksCountByDate}>
+				<CalendarCopyModeContext.Provider value={isCopyMode}>
+					<div className={classes.calendarWrapper} ref={calendarWrapperRef}>
+						<ScheduleXCalendar key={view} customComponents={customComponents} calendarApp={calendar} />
+					</div>
 
-				<DailyTasksCountByDateContext.Provider value={dailyTasksCountByDate}>
-					<CalendarCopyModeContext.Provider value={isCopyMode}>
-						<div className={classes.calendarWrapper} ref={calendarWrapperRef}>
-							<ScheduleXCalendar key={view} customComponents={customComponents} calendarApp={calendar} />
-						</div>
-					</CalendarCopyModeContext.Provider>
-				</DailyTasksCountByDateContext.Provider>
-
-				{selectionInfo?.columnEl &&
-					createPortal(
-						<div
-							className={classes.dragSelection}
-							style={{ top: `${selectionInfo.topPx}px`, height: `${selectionInfo.heightPx}px` }}
-						>
-							<span className={classes.dragTitle}>New Event</span>
-							<span className={classes.dragTime}>
-								{selectionInfo.startTimeStr} – {selectionInfo.endTimeStr}
-							</span>
-						</div>,
-						selectionInfo.columnEl
-					)}
-
-				<DayEventsPopover
-					dateStr={popoverState?.dateStr || null}
-					anchorEl={popoverState?.anchorEl || null}
-					events={mappedEvents}
-					onClose={closePopover}
-					onEventClick={setSelectedEventForModal}
-				/>
-
-				<Modal
-					isVisible={Boolean(selectedEventForModal)}
-					onClose={() => setSelectedEventForModal(null)}
-					style={{ padding: 0, width: 400 }}
-				>
-					{selectedEventForModal && renderEventInfoModal(selectedEventForModal, () => setSelectedEventForModal(null))}
-				</Modal>
-
-				{eventToDelete &&
-				(isRecurrenceInstanceId(eventToDelete.id) ||
-					Boolean((eventToDelete as unknown as { recurrenceRule?: string }).recurrenceRule)) ? (
-					<RecurrenceActionModal
-						isVisible={Boolean(eventToDelete)}
-						actionType='delete'
-						eventTitle={eventToDelete.title}
-						onClose={() => setEventToDelete(null)}
-						onConfirm={async scope => {
-							await handleDelete(String(eventToDelete.id), eventToDelete.googleEventId as string | undefined, scope)
-							setEventToDelete(null)
-						}}
+					<CalendarOverlays
+						copiedEvent={copiedEvent}
+						setCopiedEvent={setCopiedEvent}
+						selectionInfo={selectionInfo}
+						popoverState={popoverState}
+						closePopover={closePopover}
+						mappedEvents={mappedEvents}
+						selectedEventForModal={selectedEventForModal}
+						setSelectedEventForModal={setSelectedEventForModal}
+						eventToDelete={eventToDelete}
+						setEventToDelete={setEventToDelete}
+						renderEventInfoModal={renderEventInfoModal}
+						handleConfirmDelete={handleConfirmDelete}
+						handleRecurrenceDelete={handleRecurrenceDelete}
 					/>
-				) : (
-					<ConfirmModal
-						isVisible={Boolean(eventToDelete)}
-						onClose={() => setEventToDelete(null)}
-						onConfirm={handleConfirmDelete}
-						title='Delete Event'
-						message={
-							<>
-								Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
-							</>
-						}
-					/>
-				)}
-			</>
+				</CalendarCopyModeContext.Provider>
+			</DailyTasksCountByDateContext.Provider>
 		)
 	}
 )
