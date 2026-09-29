@@ -10,7 +10,7 @@ export const DAILY_TASKS_COUNTERS_KEY = 'daily-tasks-counters-month'
 export const dailyTasksCountersMonthQueryKey = (userId: string, monthKey: string) =>
 	[DAILY_TASKS_COUNTERS_KEY, userId, monthKey] as const
 
-export const fetchDailyTasksCounters = async (
+const fetchDailyTasksCounters = async (
 	userId: string,
 	startDate: string,
 	endDate: string

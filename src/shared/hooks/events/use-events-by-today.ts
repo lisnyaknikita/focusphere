@@ -38,7 +38,7 @@ const fetchAppwriteEventsToday = async (userId: string): Promise<CalendarEvent[]
 const fetchGoogleEventsToday = async (userId: string): Promise<CalendarEvent[]> => {
 	const { startOfDay, endOfDay } = getTodayRange()
 
-	const googleEventsRaw = await googleCalendarService.fetchEvents(new Date(startOfDay), new Date(endOfDay))
+	const googleEventsRaw = await googleCalendarService.fetchEvents(startOfDay, endOfDay)
 
 	return googleEventsRaw.map((gEvent: GoogleCalendarEvent) => mapGoogleEvent(gEvent, userId)) as CalendarEvent[]
 }

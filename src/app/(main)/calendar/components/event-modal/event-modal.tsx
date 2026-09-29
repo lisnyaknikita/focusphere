@@ -1,4 +1,4 @@
-import { useCalendarMutations } from '@/shared/hooks/calendar/use-calnedar-mutations'
+import { useCalendarMutations } from '@/shared/hooks/calendar/use-calendar-mutations'
 import { InitialEventValues, useEventForm } from '@/shared/hooks/calendar/use-event-form'
 import { RecurrencePicker } from '@/shared/ui/recurrence-picker/recurrence-picker'
 import { ColorPicker } from './components/color-picker/color-picker'

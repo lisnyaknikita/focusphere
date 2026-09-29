@@ -1,4 +1,5 @@
 import { account } from '@/lib/appwrite'
+import { addDaysToDateString, getUserTimeZone } from '@/shared/utils/event-date-time/event-date-time'
 import { OAuthProvider } from 'appwrite'
 import { toast } from 'sonner'
 import 'temporal-polyfill/global'
@@ -117,13 +118,16 @@ class GoogleCalendarService {
 		return colorMap[hexColor.toUpperCase()]
 	}
 
-	async fetchEvents(timeMin: Date, timeMax: Date): Promise<GoogleCalendarEvent[]> {
+	async fetchEvents(timeMinIso: string, timeMaxIso: string): Promise<GoogleCalendarEvent[]> {
 		const token = await this.getProviderToken()
 		if (!token) return []
 
+		const formattedMin = new Date(timeMinIso).toISOString()
+		const formattedMax = new Date(timeMaxIso).toISOString()
+
 		const url = new URL(`${GOOGLE_CALENDAR_API}/calendars/primary/events`)
-		url.searchParams.append('timeMin', timeMin.toISOString())
-		url.searchParams.append('timeMax', timeMax.toISOString())
+		url.searchParams.append('timeMin', formattedMin)
+		url.searchParams.append('timeMax', formattedMax)
 		url.searchParams.append('singleEvents', 'true')
 		url.searchParams.append('maxResults', '500')
 		url.searchParams.append('fields', 'items(id,summary,description,colorId,start,end)')
@@ -175,16 +179,9 @@ class GoogleCalendarService {
 
 			if (isAllDay) {
 				startBody = { date: payload.start }
-				try {
-					const endPlainDate = Temporal.PlainDate.from(payload.end).add({ days: 1 })
-					endBody = { date: endPlainDate.toString() }
-				} catch {
-					const endObj = new Date(payload.end)
-					endObj.setDate(endObj.getDate() + 1)
-					endBody = { date: endObj.toISOString().split('T')[0] }
-				}
+				endBody = { date: addDaysToDateString(payload.end, 1) }
 			} else {
-				const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+				const timeZone = getUserTimeZone()
 				const startIso = this.formatIso(payload.start)
 				const endIso = this.formatIso(payload.end)
 
@@ -259,16 +256,9 @@ class GoogleCalendarService {
 
 		if (isAllDay) {
 			startBody = { date: payload.start }
-			try {
-				const endPlainDate = Temporal.PlainDate.from(payload.end).add({ days: 1 })
-				endBody = { date: endPlainDate.toString() }
-			} catch {
-				const endObj = new Date(payload.end)
-				endObj.setDate(endObj.getDate() + 1)
-				endBody = { date: endObj.toISOString().split('T')[0] }
-			}
+			endBody = { date: addDaysToDateString(payload.end, 1) }
 		} else {
-			const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+			const timeZone = getUserTimeZone()
 			const startIso = this.formatIso(payload.start)
 			const endIso = this.formatIso(payload.end)
 
