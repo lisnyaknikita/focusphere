@@ -1,4 +1,5 @@
 import { CalendarView } from '@/app/(main)/calendar/constants/calendar.constants'
+import { CALENDAR_COLORS, getCalendarIdByColor } from '@/lib/events/calendar-config'
 import { getEventsByRange, getRecurringEvents } from '@/lib/events/events'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
@@ -9,13 +10,18 @@ import { useQueries, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import 'temporal-polyfill/global'
 
-const googleColor: Record<string, string> = {
-	'5': '#D79716',
-	'11': '#D71616',
-	'10': '#17720F',
-	'9': '#1351AE',
-	'3': '#97107A',
-	'7': '#16ADD7',
+const googleColorMap: Record<string, string> = {
+	'1': CALENDAR_COLORS.PURPLE,
+	'2': CALENDAR_COLORS.GREEN,
+	'3': CALENDAR_COLORS.PURPLE,
+	'4': CALENDAR_COLORS.RED,
+	'5': CALENDAR_COLORS.GOLD,
+	'6': CALENDAR_COLORS.RED,
+	'7': CALENDAR_COLORS.CYAN,
+	'8': CALENDAR_COLORS.BLUE,
+	'9': CALENDAR_COLORS.BLUE,
+	'10': CALENDAR_COLORS.GREEN,
+	'11': CALENDAR_COLORS.RED,
 }
 
 export const mapGoogleEvent = (event: GoogleCalendarEvent, userId: string): CalendarEvent => {
@@ -31,6 +37,10 @@ export const mapGoogleEvent = (event: GoogleCalendarEvent, userId: string): Cale
 		endDate = isEndAfterOrEqualStart ? endPlainDateStr : startDate
 	}
 
+	const color = event.colorId ? googleColorMap[event.colorId] || CALENDAR_COLORS.BLUE : CALENDAR_COLORS.BLUE
+
+	const calendarId = getCalendarIdByColor(color)
+
 	return {
 		$id: `g_${event.id}`,
 		$createdAt: '',
@@ -43,8 +53,8 @@ export const mapGoogleEvent = (event: GoogleCalendarEvent, userId: string): Cale
 		description: event.description || '',
 		startDate,
 		endDate,
-		color: event.colorId ? googleColor[event.colorId] || '#4285F4' : '#4285F4',
-		calendarId: 'google-calendar',
+		color,
+		calendarId,
 		userId,
 		source: 'google',
 		googleEventId: event.id,
