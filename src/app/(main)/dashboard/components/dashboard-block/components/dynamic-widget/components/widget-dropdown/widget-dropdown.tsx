@@ -14,7 +14,7 @@ interface WidgetOption {
 const WIDGET_OPTIONS: WidgetOption[] = [
 	{ value: 'quotes', label: 'Quotes' },
 	{ value: 'schedule', label: 'Current schedule' },
-	{ value: 'pomodoro', label: 'Pomodoro' },
+	{ value: 'pomodoro', label: 'Stats' },
 ]
 
 interface WidgetDropdownProps {

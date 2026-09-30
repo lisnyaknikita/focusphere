@@ -7,7 +7,7 @@ import { getRecurrenceSummary, isRecurrenceInstanceId } from '@/shared/utils/cal
 import { formatDateRange } from '@/shared/utils/format-date-range/format-date-range'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { ActionTooltip } from '../action-tooltip/action-tooltip'
 import { DateTimeIcon } from '../icons/calendar/date-time-icon'
 import { DescriptionIcon } from '../icons/calendar/description-icon'
@@ -47,7 +47,27 @@ export const EventInfoModal = ({
 	const [isEditing, setIsEditing] = useState(initialEditing ?? false)
 	const [isRecurrenceEditModalOpen, setIsRecurrenceEditModalOpen] = useState(false)
 
+	const modalRef = useRef<HTMLDivElement>(null)
 	const { isPro, openPaywall } = useBilling()
+
+	useLayoutEffect(() => {
+		const el = modalRef.current
+		if (!el) return
+
+		const sxModalContainer = el.closest('.sx__event-modal') as HTMLElement | null
+		if (!sxModalContainer) return
+
+		sxModalContainer.style.transform = ''
+
+		const rect = sxModalContainer.getBoundingClientRect()
+		const viewportHeight = window.innerHeight
+		const padding = 20
+
+		if (rect.bottom > viewportHeight - padding) {
+			const overflow = rect.bottom - (viewportHeight - padding)
+			sxModalContainer.style.transform = `translateY(-${overflow}px)`
+		}
+	}, [isEditing])
 
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
@@ -86,27 +106,29 @@ export const EventInfoModal = ({
 	if (isEditing) {
 		return (
 			<>
-				<div className={classes.modalInner}>
-					<EventEditView
-						form={form}
-						setFormField={setFormField}
-						handleSubmit={handleEditSubmit}
-						onCancel={() => (initialEditing && onCancelCreate ? onCancelCreate() : setIsEditing(false))}
+				<div ref={modalRef}>
+					<div className={classes.modalInner}>
+						<EventEditView
+							form={form}
+							setFormField={setFormField}
+							handleSubmit={handleEditSubmit}
+							onCancel={() => (initialEditing && onCancelCreate ? onCancelCreate() : setIsEditing(false))}
+						/>
+					</div>
+					<RecurrenceActionModal
+						isVisible={isRecurrenceEditModalOpen}
+						actionType='edit'
+						eventTitle={event.title}
+						onClose={() => setIsRecurrenceEditModalOpen(false)}
+						onConfirm={handleRecurrenceEditConfirm}
 					/>
 				</div>
-				<RecurrenceActionModal
-					isVisible={isRecurrenceEditModalOpen}
-					actionType='edit'
-					eventTitle={event.title}
-					onClose={() => setIsRecurrenceEditModalOpen(false)}
-					onConfirm={handleRecurrenceEditConfirm}
-				/>
 			</>
 		)
 	}
 
 	return (
-		<div className={classes.modalInner}>
+		<div ref={modalRef} className={classes.modalInner}>
 			<div className={classes.modalButtons}>
 				{!isReadOnly && (
 					<>
