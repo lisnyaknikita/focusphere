@@ -366,6 +366,20 @@ ul {
 	}
 }
 
+.bn-toolbar,
+.mantine-Menu-dropdown {
+	-webkit-backface-visibility: visible !important;
+	backface-visibility: visible !important;
+	will-change: auto !important;
+}
+
+.bn-select,
+.mantine-Menu-dropdown.bn-select {
+	max-height: 320px !important;
+	overflow-y: auto !important;
+	-webkit-overflow-scrolling: touch;
+}
+
 .bn-drag-handle-menu {
 	left: 0px !important;
 }
