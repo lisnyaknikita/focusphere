@@ -1,28 +1,89 @@
 .userButton {
-	width: 60px;
-	height: 60px;
+	width: 100%;
+	height: 54px;
 	background-color: transparent;
 	color: var(--text);
-	border-radius: 5px;
+	border: 1px solid transparent;
+	border-radius: 8px;
 	font-family: inherit;
-	transition: all 0.2s ease;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 10px;
+	cursor: pointer;
+	text-align: left;
+	box-sizing: border-box;
 	overflow: hidden;
+	white-space: nowrap;
 
+	&:hover {
+		background-color: var(--hover);
+		border-color: var(--btn-border);
+	}
+
+	&.collapsed,
+	&:global(.collapsed) {
+		padding: 0;
+		height: 40px;
+	}
+}
+
+.avatarBox {
+	width: 38px;
+	height: 38px;
+	flex-shrink: 0;
+	border-radius: 6px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
 
 	img {
 		width: 100% !important;
 		height: 100% !important;
 		object-fit: cover !important;
-		border-radius: 5px;
+		border-radius: 6px;
 	}
+}
 
-	&:global(.collapsed) {
-		width: 40px;
-		height: 40px;
+.profileDetails {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	flex: 1;
+	gap: 2px;
+	overflow: hidden;
+	white-space: nowrap;
+	opacity: 1;
+	transform: translateX(0);
+	transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
+
+	&.hidden {
+		opacity: 0;
+		pointer-events: none;
+		transform: translateX(-8px);
+		transition: opacity 0.1s ease, transform 0.1s ease;
 	}
+}
+
+.profileName {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.2;
+}
+
+.profileEmail {
+	font-size: 12px;
+	color: color-mix(in srgb, var(--text) 60%, transparent);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.2;
 }
 
 .tooltip {

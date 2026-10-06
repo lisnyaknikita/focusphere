@@ -3,6 +3,8 @@ import { ClientLayout } from '@/shared/client-layout/client-layout'
 import { Sidebar } from '@/shared/ui/sidebar/sidebar'
 import '../globals.scss'
 
+import classes from './layout.module.scss'
+
 export default async function MainLayout({
 	children,
 }: Readonly<{
@@ -12,7 +14,7 @@ export default async function MainLayout({
 		<ClientLayout>
 			<AuthGuard>
 				<Sidebar />
-				{children}
+				<main className={classes.mainContent}>{children}</main>
 			</AuthGuard>
 		</ClientLayout>
 	)

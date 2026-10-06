@@ -5,6 +5,8 @@ import { Logo } from './components/logo/logo'
 
 import { useFocusModeStore } from '@/shared/stores/focus-mode.store'
 import { useSidebarStore } from '@/shared/stores/sidebar.store'
+import { ActionTooltip } from '@/shared/ui/action-tooltip/action-tooltip'
+import { ChevronLeftIcon } from '@/shared/ui/icons/focus/chevron-left-icon'
 import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { MenuIcon } from '../icons/menu-icon'
@@ -82,7 +84,7 @@ export const Sidebar = () => {
 				className={clsx(classes.mobileOverlay, isMobileOpen && classes.mobileOpen)}
 				onClick={() => setIsMobileOpen(false)}
 			/>
-			<div
+			<aside
 				className={clsx(
 					classes.sidebar,
 					isCollapsed && 'collapsed',
@@ -90,22 +92,45 @@ export const Sidebar = () => {
 					isFocusModeActiveOnCurrentPage && classes.focusModeActive
 				)}
 			>
-				<Logo isCollapsed={isCollapsed} />
-				<nav className={classes.navigation}>
-					<ul className={classes.navigationList}>
-						{navItems.map(item => (
-							<NavigationItem
-								key={item.label}
-								item={item}
-								isCollapsed={isCollapsed}
-								isActive={(!item.isButton && item.href === pathname) || pathname.startsWith(`${item.href}/`)}
-								onHideClick={toggleSidebar}
+				<div className={classes.topSection}>
+					<div className={classes.header}>
+						<Logo isCollapsed={isCollapsed} />
+					</div>
+					<nav className={classes.navigation}>
+						<ul className={classes.navigationList}>
+							{navItems.map(item => (
+								<NavigationItem
+									key={item.label}
+									item={item}
+									isCollapsed={isCollapsed}
+									isActive={item.href === pathname || pathname.startsWith(`${item.href}/`)}
+								/>
+							))}
+						</ul>
+					</nav>
+				</div>
+				<div className={classes.bottomSection}>
+					<UserButton isCollapsed={isCollapsed} />
+				</div>
+				<ActionTooltip text={isCollapsed ? 'Expand sidebar (⌘B)' : 'Collapse sidebar (⌘B)'} placement='right'>
+					{(setRef, refProps) => (
+						<button
+							ref={setRef}
+							type='button'
+							className={classes.toggleButton}
+							onClick={toggleSidebar}
+							aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+							{...refProps}
+						>
+							<ChevronLeftIcon
+								width={14}
+								height={14}
+								className={clsx(classes.toggleIcon, isCollapsed && classes.toggleIconRotated)}
 							/>
-						))}
-					</ul>
-				</nav>
-				<UserButton isCollapsed={isCollapsed} />
-			</div>
+						</button>
+					)}
+				</ActionTooltip>
+			</aside>
 		</>
 	)
 }

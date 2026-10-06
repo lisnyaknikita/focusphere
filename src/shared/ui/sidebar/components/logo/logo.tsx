@@ -23,9 +23,9 @@ export const Logo = ({ isCollapsed }: LogoProps) => {
 	const href = isAuthPage ? '/' : '/dashboard'
 
 	return (
-		<Link href={href} className={classes.logoLink}>
-			<LogoIcon />
-			<span className={clsx(audioWide.className, isCollapsed && 'collapsed')}>{isCollapsed ? '' : 'focusphere'}</span>
+		<Link href={href} className={clsx(classes.logoLink, isCollapsed && classes.collapsed)}>
+			<LogoIcon className={classes.logoIcon} />
+			<span className={clsx(audioWide.className, classes.logoText, isCollapsed && classes.hidden)}>focusphere</span>
 		</Link>
 	)
 }

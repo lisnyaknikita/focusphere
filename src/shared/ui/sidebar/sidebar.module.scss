@@ -1,33 +1,60 @@
 .sidebar {
 	position: relative;
-	padding: 30px 11px 30px 11px;
+	height: 100dvh;
+	box-sizing: border-box;
+	width: 260px;
+	min-width: 260px;
+	max-width: 260px;
+	padding: 20px 14px 16px 14px;
 	background-color: var(--secondary);
-	border-radius: 5px;
+	border-right: 1px solid var(--btn-border);
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	justify-content: space-between;
-	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.2s ease;
+	align-items: stretch;
+	transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	overflow: visible;
 	z-index: 30;
+	will-change: width;
 
 	&.focusModeActive {
 		z-index: 0;
 	}
 
 	&:global(.collapsed) {
-		& .navigation {
-			width: 40px;
+		width: 68px;
+		min-width: 68px;
+		max-width: 68px;
+		padding: 20px 14px 16px 14px;
+	}
+
+	@media screen and (max-width: 1120px) {
+		width: 210px;
+		min-width: 210px;
+		max-width: 210px;
+
+		&:global(.collapsed) {
+			width: 68px;
+			min-width: 68px;
+			max-width: 68px;
 		}
 	}
 
 	@media screen and (max-width: 768px) {
 		position: fixed;
-		top: 9px;
-		bottom: 9px;
-		left: 10px;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 260px;
+		min-width: 260px;
+		max-width: 260px;
+		height: 100dvh;
 		transform: translateX(-150%);
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		background-color: var(--secondaryFull);
+		border-radius: 0 8px 8px 0;
+		transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 		z-index: 100;
 
 		&.focusModeActive {
@@ -42,6 +69,72 @@
 	@media screen and (max-width: 430px) {
 		padding: 15px 10px;
 	}
+}
+
+.topSection {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+	overflow: hidden;
+}
+
+.header {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	height: 32px;
+	min-height: 32px;
+	margin-bottom: 24px;
+	position: relative;
+	overflow: hidden;
+}
+
+.toggleButton {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	border: 1px solid var(--btn-border);
+	background-color: var(--secondaryFull);
+	color: var(--textSecondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	padding: 0;
+	position: absolute;
+	right: -12px;
+	top: 24px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+	transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+	z-index: 40;
+
+	&:hover {
+		background-color: var(--hover);
+		color: var(--text);
+		border-color: var(--textSecondary);
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+	}
+
+	@media screen and (max-width: 768px) {
+		display: none;
+	}
+}
+
+.toggleIcon {
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	color: currentColor;
+}
+
+.toggleIconRotated {
+	transform: rotate(180deg);
+}
+
+.bottomSection {
+	margin-top: auto;
+	width: 100%;
+	padding-top: 16px;
+	overflow: hidden;
 }
 
 .mobileToggle {
@@ -94,17 +187,13 @@
 }
 
 .navigation {
-	width: 257px;
-	transition: width 0.2s ease;
-
-	@media screen and (max-width: 1120px) {
-		width: 200px;
-	}
+	width: 100%;
+	overflow: hidden;
 }
 
 .navigationList {
 	display: flex;
 	flex-direction: column;
-	gap: 15px;
+	gap: 5px;
 	width: 100%;
 }
