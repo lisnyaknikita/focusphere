@@ -105,24 +105,31 @@ export const UserButton = ({ isCollapsed }: UserButtonProps) => {
 	return (
 		<>
 			<button
-				className={clsx(classes.userButton, isCollapsed && 'collapsed')}
+				type='button'
+				className={clsx(classes.userButton, isCollapsed && classes.collapsed)}
 				onClick={() => setIsVisible(true)}
 				ref={settingsRefs.setReference}
 				onMouseEnter={() => isCollapsed && setIsSettingsTooltipOpen(true)}
 				onMouseLeave={() => setIsSettingsTooltipOpen(false)}
+				aria-label='User settings'
 			>
-				{avatarUrl ? (
-					<Image
-						src={avatarUrl}
-						alt='Avatar'
-						width={60}
-						height={60}
-						objectFit='cover'
-						style={{ borderRadius: 5, objectFit: 'cover' }}
-					/>
-				) : (
-					<UserAvatar src={null} name={getDisplayName()} size={60} style={{ borderRadius: 5 }} />
-				)}
+				<div className={classes.avatarBox}>
+					{avatarUrl ? (
+						<Image
+							src={avatarUrl}
+							alt='Avatar'
+							width={38}
+							height={38}
+							style={{ borderRadius: 6, objectFit: 'cover', width: 38, height: 38 }}
+						/>
+					) : (
+						<UserAvatar src={null} name={getDisplayName()} size={38} style={{ borderRadius: 6 }} />
+					)}
+				</div>
+				<div className={clsx(classes.profileDetails, isCollapsed && classes.hidden)}>
+					<span className={classes.profileName}>{getDisplayName()}</span>
+					{user?.email && <span className={classes.profileEmail}>{user.email}</span>}
+				</div>
 				{isSettingsTooltipOpen && isCollapsed && (
 					<div
 						ref={settingsRefs.setFloating}

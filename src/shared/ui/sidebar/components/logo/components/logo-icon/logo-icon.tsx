@@ -1,10 +1,17 @@
+import clsx from 'clsx'
 import classes from './logo-icon.module.scss'
 
-const LogoIcon = () => (
+interface LogoIconProps {
+	width?: number | string
+	height?: number | string
+	className?: string
+}
+
+const LogoIcon = ({ width = 20, height = 22, className }: LogoIconProps) => (
 	<svg
-		className={classes.logoIcon}
-		width='31'
-		height='34'
+		className={clsx(classes.logoIcon, className)}
+		width={width}
+		height={height}
 		viewBox='0 0 31 34'
 		fill='none'
 		xmlns='http://www.w3.org/2000/svg'
