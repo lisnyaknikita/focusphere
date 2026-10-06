@@ -1,0 +1,13 @@
+.mainContent {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+	height: 100%;
+	padding: 9px 20px 9px 0;
+	overflow: hidden;
+
+	@media screen and (max-width: 768px) {
+		padding: 9px 10px;
+	}
+}
