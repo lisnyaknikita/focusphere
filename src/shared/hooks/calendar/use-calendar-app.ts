@@ -1,8 +1,7 @@
 import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/constants/calendar.constants'
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
-import { updateEvent } from '@/lib/events/events'
+import { useCalendarMutations } from '@/shared/hooks/calendar/use-calendar-mutations'
 import { useSettingsStore } from '@/shared/stores/settings.store'
-import { isRecurrenceInstanceId, parseRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { scheduleXDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { CalendarEvent, createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
 import { createCalendarControlsPlugin } from '@schedule-x/calendar-controls'
@@ -12,7 +11,6 @@ import { createEventModalPlugin } from '@schedule-x/event-modal'
 import { createEventsServicePlugin } from '@schedule-x/events-service'
 import { useNextCalendarApp } from '@schedule-x/react'
 import { createResizePlugin } from '@schedule-x/resize'
-import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 
 interface UseCalendarAppProps {
@@ -24,7 +22,7 @@ interface UseCalendarAppProps {
 
 export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRangeUpdate }: UseCalendarAppProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
-	const queryClient = useQueryClient()
+	const { handleUpdateEvent } = useCalendarMutations()
 
 	const onQuickCreateRef = useRef(onQuickCreate)
 	onQuickCreateRef.current = onQuickCreate
@@ -67,83 +65,22 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 				const { id, start, end, title, description, color } = updatedEvent
 				const eventId = String(id)
 				const googleEventId = (updatedEvent as unknown as { googleEventId?: string }).googleEventId
-				const isGoogleLinked = eventId.startsWith('g_') || Boolean(googleEventId)
 
 				const startDate = scheduleXDateTimeToInstant(start)
 				const endDate = scheduleXDateTimeToInstant(end)
 
-				const updateQueryData = (oldData: unknown) => {
-					if (!Array.isArray(oldData)) return oldData
-					return oldData.map((item: { $id?: string; id?: string; [key: string]: unknown }) => {
-						if (String(item.$id || item.id) === eventId) {
-							return {
-								...item,
-								startDate,
-								endDate,
-							}
-						}
-						return item
-					})
-				}
-
-				queryClient.setQueriesData({ queryKey: ['calendar-events-month'] }, updateQueryData)
-				queryClient.setQueriesData({ queryKey: ['calendar-google-events-month'] }, updateQueryData)
-				queryClient.setQueriesData({ queryKey: ['calendar-events'] }, updateQueryData)
-
-				try {
-					if (isRecurrenceInstanceId(eventId)) {
-						const parsed = parseRecurrenceInstanceId(eventId)
-						if (parsed) {
-							const { addRecurrenceException, createEvent } = await import('@/lib/events/events')
-							const { getCurrentUserId } = await import('@/shared/utils/get-current-userid/get-current-userid')
-							const { getCalendarIdByColor } = await import('@/lib/events/color-to-calendar')
-
-							await addRecurrenceException(parsed.masterEventId, parsed.instanceDate)
-							const userId = await getCurrentUserId()
-							await createEvent({
-								title: title || 'Untitled event',
-								description: description as string | undefined,
-								color: (color as string) || '#D79716',
-								startDate,
-								endDate,
-								calendarId: getCalendarIdByColor((color as string) || '#D79716'),
-								userId,
-								source: 'local',
-								syncStatus: 'not_synced',
-							})
-							await Promise.all([
-								queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] }),
-								queryClient.invalidateQueries({ queryKey: ['calendar-recurring-events'] }),
-							])
-							return
-						}
-					}
-
-					if (isGoogleLinked) {
-						const { googleCalendarService } = await import('@/shared/services/google-calendar.service')
-
-						await googleCalendarService.updateEvent(googleEventId || eventId, {
-							summary: title,
-							description: description as string | undefined,
-							color: color as string | undefined,
-							start: startDate,
-							end: endDate,
-						})
-					}
-					if (!eventId.startsWith('g_')) {
-						await updateEvent(eventId, {
-							startDate,
-							endDate,
-						})
-					}
-				} catch (error) {
-					console.error('Event update failed:', error)
-					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-recurring-events'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-events'] })
-					queryClient.invalidateQueries({ queryKey: ['calendar-google-events'] })
-				}
+				await handleUpdateEvent(
+					eventId,
+					{
+						title: title || 'Untitled event',
+						description: description as string | undefined,
+						color: color as string | undefined,
+						startDate,
+						endDate,
+					},
+					googleEventId,
+					'this'
+				)
 			},
 		},
 		calendars: CALENDARS_CONFIG,
