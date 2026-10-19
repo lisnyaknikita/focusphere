@@ -223,3 +223,38 @@ export const getRecurrenceSummary = (rruleStr?: string): string => {
 		return 'Repeats'
 	}
 }
+
+export const getDayOfWeekIndex = (dateStr?: string): number => {
+	if (!dateStr) return 0
+	try {
+		const plainDate = Temporal.PlainDate.from(dateStr)
+		return (plainDate.dayOfWeek - 1 + 7) % 7
+	} catch {
+		return 0
+	}
+}
+
+export const getDayOfWeekName = (dateStr?: string): string => {
+	const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+	const idx = getDayOfWeekIndex(dateStr)
+	return dayNames[idx] || 'day'
+}
+
+export const getDefaultRecurrenceConfig = (frequency: RecurrenceFrequency, dateStr?: string): RecurrenceConfig => {
+	const currentDayIndex = getDayOfWeekIndex(dateStr)
+
+	switch (frequency) {
+		case 'none':
+			return { frequency: 'none', interval: 1, endType: 'never' }
+		case 'daily':
+			return { frequency: 'daily', interval: 1, endType: 'never' }
+		case 'weekdays':
+			return { frequency: 'weekdays', interval: 1, weekDays: [0, 1, 2, 3, 4], endType: 'never' }
+		case 'weekly':
+			return { frequency: 'weekly', interval: 1, weekDays: [currentDayIndex], endType: 'never' }
+		case 'monthly':
+			return { frequency: 'monthly', interval: 1, endType: 'never' }
+		default:
+			return { frequency: 'none', interval: 1, endType: 'never' }
+	}
+}
