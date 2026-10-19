@@ -2,6 +2,7 @@ import { getEventsByRange, getRecurringEvents } from '@/lib/events/events'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
 import { expandRecurrence } from '@/shared/utils/calendar/recurrence'
+import { parseIsoToZonedDateTime } from '@/shared/utils/event-date-time/event-date-time'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import 'temporal-polyfill/global'
@@ -23,9 +24,20 @@ const getCurrentMonthKey = () => {
 }
 
 const isTodayEvent = (event: CalendarEvent, todayStr: string): boolean => {
-	const start = event.startDate.slice(0, 10)
-	const end = (event.endDate || event.startDate).slice(0, 10)
-	return start <= todayStr && todayStr <= end
+	if (event._instanceDate) {
+		return event._instanceDate === todayStr
+	}
+	try {
+		const zdt = parseIsoToZonedDateTime(event.startDate)
+		const start = 'toPlainDate' in zdt ? zdt.toPlainDate().toString() : zdt.toString()
+		const endZdt = event.endDate ? parseIsoToZonedDateTime(event.endDate) : zdt
+		const end = 'toPlainDate' in endZdt ? endZdt.toPlainDate().toString() : endZdt.toString()
+		return start <= todayStr && todayStr <= end
+	} catch {
+		const start = event.startDate.slice(0, 10)
+		const end = (event.endDate || event.startDate).slice(0, 10)
+		return start <= todayStr && todayStr <= end
+	}
 }
 
 const fetchAppwriteEventsToday = async (userId: string): Promise<CalendarEvent[]> => {

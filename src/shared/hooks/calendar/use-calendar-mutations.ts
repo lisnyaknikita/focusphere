@@ -1,26 +1,21 @@
 import { addRecurrenceException, createEvent, updateEvent } from '@/lib/events/events'
+import { calendarKeys } from '@/shared/constants/query-keys'
 import { CalendarEvent, CreateEventPayload } from '@/shared/types/event'
 import { isRecurrenceInstanceId, parseRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { getCurrentUserId } from '@/shared/utils/get-current-userid/get-current-userid'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
+const DEFAULT_EVENT_COLOR = '#D79716'
+
 export const useCalendarMutations = () => {
 	const queryClient = useQueryClient()
 
 	const invalidateActiveMonths = useCallback(async () => {
 		await Promise.all([
-			queryClient.invalidateQueries({
-				queryKey: ['calendar-events-month'],
-				type: 'active',
-			}),
-			queryClient.invalidateQueries({
-				queryKey: ['calendar-google-events-month'],
-				type: 'active',
-			}),
-			queryClient.invalidateQueries({
-				queryKey: ['calendar-recurring-events'],
-			}),
+			queryClient.invalidateQueries({ queryKey: calendarKeys.localMonths(), type: 'active' }),
+			queryClient.invalidateQueries({ queryKey: calendarKeys.googleMonths(), type: 'active' }),
+			queryClient.invalidateQueries({ queryKey: calendarKeys.all }),
 		])
 	}, [queryClient])
 
@@ -43,21 +38,21 @@ export const useCalendarMutations = () => {
 				...(recurrenceRule !== undefined && { recurrenceRule }),
 			}
 
+			const previousLocalData = queryClient.getQueriesData({ queryKey: calendarKeys.localMonths() })
+			const previousGoogleData = queryClient.getQueriesData({ queryKey: calendarKeys.googleMonths() })
+
 			const updateCache = (oldData: unknown) => {
 				if (!Array.isArray(oldData)) return oldData
 				return oldData.map((event: CalendarEvent) => {
 					if (event.$id === eventId || (googleEventId && event.googleEventId === googleEventId)) {
-						return {
-							...event,
-							...payload,
-						}
+						return { ...event, ...payload }
 					}
 					return event
 				})
 			}
 
-			queryClient.setQueriesData({ queryKey: ['calendar-events-month'] }, updateCache)
-			queryClient.setQueriesData({ queryKey: ['calendar-google-events-month'] }, updateCache)
+			queryClient.setQueriesData({ queryKey: calendarKeys.localMonths() }, updateCache)
+			queryClient.setQueriesData({ queryKey: calendarKeys.googleMonths() }, updateCache)
 
 			try {
 				if (isRecurrenceInstanceId(eventId)) {
@@ -73,7 +68,7 @@ export const useCalendarMutations = () => {
 								description,
 								startDate: startDate || '',
 								endDate: endDate || '',
-								color: color || '#D79716',
+								color: color || DEFAULT_EVENT_COLOR,
 								calendarId: calendarId || 'default',
 								userId,
 								source: 'local',
@@ -98,7 +93,9 @@ export const useCalendarMutations = () => {
 					}
 				}
 			} catch (error) {
-				console.error('Failed to update event:', error)
+				console.error('Failed to update event, rolling back:', error)
+				previousLocalData.forEach(([key, data]) => queryClient.setQueryData(key, data))
+				previousGoogleData.forEach(([key, data]) => queryClient.setQueryData(key, data))
 			} finally {
 				await invalidateActiveMonths()
 			}

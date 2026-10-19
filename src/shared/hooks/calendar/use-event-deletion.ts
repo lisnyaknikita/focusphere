@@ -1,4 +1,5 @@
 import { addRecurrenceException, deleteEvent } from '@/lib/events/events'
+import { calendarKeys } from '@/shared/constants/query-keys'
 import { CalendarEvent } from '@/shared/types/event'
 import { isRecurrenceInstanceId, parseRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { useQueryClient } from '@tanstack/react-query'
@@ -53,14 +54,15 @@ export const useEventDeletion = ({ eventsService, eventModal }: DeletionDependen
 						}
 					})
 				}
-				queryClient.setQueriesData({ queryKey: ['calendar-recurring-events'] }, patchMaster)
-				queryClient.setQueriesData({ queryKey: ['calendar-events-month'] }, patchMaster)
+				queryClient.setQueriesData({ queryKey: [...calendarKeys.all, 'recurring'] }, patchMaster)
+				queryClient.setQueriesData({ queryKey: calendarKeys.localMonths() }, patchMaster)
 			} else {
-				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['calendar-events-month'] }, filterOutEvent)
-				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['calendar-google-events-month'] }, filterOutEvent)
-				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['calendar-recurring-events'] }, filterOutEvent)
-				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['calendar-events'] }, filterOutEvent)
-				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['calendar-google-events'] }, filterOutEvent)
+				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: calendarKeys.localMonths() }, filterOutEvent)
+				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: calendarKeys.googleMonths() }, filterOutEvent)
+				queryClient.setQueriesData<IdentifiableEvent[]>(
+					{ queryKey: [...calendarKeys.all, 'recurring'] },
+					filterOutEvent
+				)
 				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['events-today-appwrite'] }, filterOutEvent)
 				queryClient.setQueriesData<IdentifiableEvent[]>({ queryKey: ['events-today-google'] }, filterOutEvent)
 			}
@@ -92,24 +94,23 @@ export const useEventDeletion = ({ eventsService, eventModal }: DeletionDependen
 				error: 'Failed to delete event',
 			})
 
+			const invalidateAll = async () => {
+				await Promise.all([
+					queryClient.invalidateQueries({ queryKey: calendarKeys.localMonths() }),
+					queryClient.invalidateQueries({ queryKey: calendarKeys.googleMonths() }),
+					queryClient.invalidateQueries({ queryKey: calendarKeys.all }),
+					queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] }),
+					queryClient.invalidateQueries({ queryKey: ['events-today-google'] }),
+				])
+			}
+
 			try {
 				await deletePromise
 			} catch (error) {
 				console.error('Error deleting event:', error)
-				await Promise.all([
-					queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] }),
-					queryClient.invalidateQueries({ queryKey: ['calendar-google-events-month'] }),
-					queryClient.invalidateQueries({ queryKey: ['calendar-recurring-events'] }),
-					queryClient.invalidateQueries({ queryKey: ['events-today-appwrite'] }),
-					queryClient.invalidateQueries({ queryKey: ['events-today-google'] }),
-				])
+				await invalidateAll()
 			} finally {
-				if (isRecur && scope === 'all') {
-					await Promise.all([
-						queryClient.invalidateQueries({ queryKey: ['calendar-events-month'] }),
-						queryClient.invalidateQueries({ queryKey: ['calendar-recurring-events'] }),
-					])
-				}
+				await invalidateAll()
 			}
 		},
 		[eventsService, eventModal, queryClient]
