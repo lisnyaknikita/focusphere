@@ -1,4 +1,5 @@
-import { CalendarEvent, RecurrenceConfig, RecurrenceFrequency } from '@/shared/types/event'
+import { RecurrenceConfig, RecurrenceFrequency } from '@/shared/types/event'
+import { parseIsoToZonedDateTime } from '@/shared/utils/event-date-time/event-date-time'
 import { RRule, Weekday, rrulestr } from 'rrule'
 import 'temporal-polyfill/global'
 
@@ -14,29 +15,50 @@ const WEEKDAY_MAP: Record<number, Weekday> = {
 
 const DAY_SHORT_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-export const isRecurringEvent = (event: { recurrenceRule?: string; _isRecurrenceInstance?: boolean }): boolean => {
-	return Boolean(event.recurrenceRule || event._isRecurrenceInstance)
-}
-
-export const isRecurrenceInstanceId = (id: string | number): boolean => {
-	return String(id).includes('__recur__')
-}
-
-export const parseRecurrenceInstanceId = (
-	id: string | number
-): { masterEventId: string; instanceDate: string } | null => {
-	const str = String(id)
-	const parts = str.split('__recur__')
-	if (parts.length === 2) {
-		return { masterEventId: parts[0], instanceDate: parts[1] }
-	}
-	return null
-}
-
 export const configToRRule = (config: RecurrenceConfig, startDateIso: string): string => {
 	if (config.frequency === 'none') return ''
 
-	const dtstart = new Date(startDateIso)
+	const isAllDay = !startDateIso.includes('T') && startDateIso.length <= 10
+
+	let localYear: number
+	let localMonth: number
+	let localDay: number
+	let localHour: number
+	let localMinute: number
+	let localSecond: number
+	let localDayOfWeekIndex = 0
+
+	if (isAllDay) {
+		const pDate = Temporal.PlainDate.from(startDateIso)
+		localYear = pDate.year
+		localMonth = pDate.month
+		localDay = pDate.day
+		localHour = 0
+		localMinute = 0
+		localSecond = 0
+		localDayOfWeekIndex = (pDate.dayOfWeek - 1 + 7) % 7
+	} else {
+		const zdt = parseIsoToZonedDateTime(startDateIso)
+		if ('hour' in zdt) {
+			localYear = zdt.year
+			localMonth = zdt.month
+			localDay = zdt.day
+			localHour = zdt.hour
+			localMinute = zdt.minute
+			localSecond = zdt.second
+			localDayOfWeekIndex = (zdt.dayOfWeek - 1 + 7) % 7
+		} else {
+			localYear = zdt.year
+			localMonth = zdt.month
+			localDay = zdt.day
+			localHour = 0
+			localMinute = 0
+			localSecond = 0
+			localDayOfWeekIndex = (zdt.dayOfWeek - 1 + 7) % 7
+		}
+	}
+
+	const dtstart = new Date(Date.UTC(localYear, localMonth - 1, localDay, localHour, localMinute, localSecond))
 	const interval = Math.max(1, config.interval || 1)
 
 	let freq: number = RRule.DAILY
@@ -52,9 +74,7 @@ export const configToRRule = (config: RecurrenceConfig, startDateIso: string): s
 			break
 		case 'weekly': {
 			freq = RRule.WEEKLY
-			const jsDay = dtstart.getDay()
-			const rruleDayIndex = (jsDay + 6) % 7
-			const targetWeekday = WEEKDAY_MAP[rruleDayIndex] || RRule.MO
+			const targetWeekday = WEEKDAY_MAP[localDayOfWeekIndex] || RRule.MO
 			byweekday = [targetWeekday]
 			break
 		}
@@ -63,7 +83,11 @@ export const configToRRule = (config: RecurrenceConfig, startDateIso: string): s
 			break
 	}
 
-	const until = config.endType === 'until' && config.endDate ? new Date(config.endDate) : undefined
+	let until: Date | undefined
+	if (config.endType === 'until' && config.endDate) {
+		const endStr = config.endDate.length <= 10 ? `${config.endDate}T23:59:59.999Z` : config.endDate
+		until = new Date(endStr)
+	}
 	const count = config.endType === 'count' && config.count ? config.count : undefined
 
 	const rule = new RRule({
@@ -148,55 +172,6 @@ export const rruleToConfig = (rruleStr?: string): RecurrenceConfig => {
 	}
 }
 
-export const expandRecurrence = (event: CalendarEvent, rangeStart: Date, rangeEnd: Date): CalendarEvent[] => {
-	if (!event.recurrenceRule || !event.recurrenceRule.trim()) {
-		return [event]
-	}
-
-	try {
-		const startDt = new Date(event.startDate)
-		const endDt = new Date(event.endDate)
-		const durationMs = endDt.getTime() - startDt.getTime()
-
-		const rruleInput = event.recurrenceRule.startsWith('RRULE:')
-			? event.recurrenceRule
-			: `RRULE:${event.recurrenceRule}`
-		const rule = rrulestr(rruleInput, { dtstart: startDt })
-
-		const occurrences = rule.between(rangeStart, rangeEnd, true)
-
-		const exDateSet = new Set((event.recurrenceExDates || []).map(d => (d.length > 10 ? d.slice(0, 10) : d)))
-
-		const instances: CalendarEvent[] = []
-
-		for (const occ of occurrences) {
-			const occDateStr = occ.toISOString().slice(0, 10)
-
-			if (exDateSet.has(occDateStr)) {
-				continue
-			}
-
-			const occStart = new Date(occ.getTime())
-			const occEnd = new Date(occStart.getTime() + durationMs)
-
-			instances.push({
-				...event,
-				$id: `${event.$id}__recur__${occDateStr}`,
-				startDate: occStart.toISOString(),
-				endDate: occEnd.toISOString(),
-				_masterEventId: event.$id,
-				_isRecurrenceInstance: true,
-				_instanceDate: occDateStr,
-			})
-		}
-
-		return instances
-	} catch (error) {
-		console.error('Failed to expand recurrence for event:', event.$id, error)
-		return [event]
-	}
-}
-
 export const getRecurrenceSummary = (rruleStr?: string): string => {
 	if (!rruleStr) return 'Does not repeat'
 
@@ -221,40 +196,5 @@ export const getRecurrenceSummary = (rruleStr?: string): string => {
 		}
 	} catch {
 		return 'Repeats'
-	}
-}
-
-export const getDayOfWeekIndex = (dateStr?: string): number => {
-	if (!dateStr) return 0
-	try {
-		const plainDate = Temporal.PlainDate.from(dateStr)
-		return (plainDate.dayOfWeek - 1 + 7) % 7
-	} catch {
-		return 0
-	}
-}
-
-export const getDayOfWeekName = (dateStr?: string): string => {
-	const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-	const idx = getDayOfWeekIndex(dateStr)
-	return dayNames[idx] || 'day'
-}
-
-export const getDefaultRecurrenceConfig = (frequency: RecurrenceFrequency, dateStr?: string): RecurrenceConfig => {
-	const currentDayIndex = getDayOfWeekIndex(dateStr)
-
-	switch (frequency) {
-		case 'none':
-			return { frequency: 'none', interval: 1, endType: 'never' }
-		case 'daily':
-			return { frequency: 'daily', interval: 1, endType: 'never' }
-		case 'weekdays':
-			return { frequency: 'weekdays', interval: 1, weekDays: [0, 1, 2, 3, 4], endType: 'never' }
-		case 'weekly':
-			return { frequency: 'weekly', interval: 1, weekDays: [currentDayIndex], endType: 'never' }
-		case 'monthly':
-			return { frequency: 'monthly', interval: 1, endType: 'never' }
-		default:
-			return { frequency: 'none', interval: 1, endType: 'never' }
 	}
 }
