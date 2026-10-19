@@ -1,6 +1,7 @@
 import { CalendarView } from '@/app/(main)/calendar/constants/calendar.constants'
 import { CALENDAR_COLORS, getCalendarIdByColor } from '@/lib/events/calendar-config'
 import { getEventsByRange, getRecurringEvents } from '@/lib/events/events'
+import { calendarKeys } from '@/shared/constants/query-keys'
 import { GoogleCalendarEvent, googleCalendarService } from '@/shared/services/google-calendar.service'
 import { CalendarEvent } from '@/shared/types/event'
 import { getMonthsInRange } from '@/shared/utils/calendar/calendar-month-range'
@@ -63,12 +64,12 @@ export const mapGoogleEvent = (event: GoogleCalendarEvent, userId: string): Cale
 }
 
 export const calendarEventsMonthQueryKey = (userId: string, monthKey: string) =>
-	['calendar-events-month', userId, monthKey] as const
+	calendarKeys.localMonth(userId, monthKey)
 
 export const calendarGoogleEventsMonthQueryKey = (userId: string, monthKey: string) =>
-	['calendar-google-events-month', userId, monthKey] as const
+	calendarKeys.googleMonth(userId, monthKey)
 
-export const calendarRecurringEventsQueryKey = (userId: string) => ['calendar-recurring-events', userId] as const
+export const calendarRecurringEventsQueryKey = (userId: string) => calendarKeys.recurring(userId)
 
 interface UseCalendarEventsProps {
 	userId?: string
@@ -82,7 +83,7 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 
 	const localQueries = useQueries({
 		queries: monthChunks.map(chunk => ({
-			queryKey: calendarEventsMonthQueryKey(userId || '', chunk.monthKey),
+			queryKey: calendarKeys.localMonth(userId || '', chunk.monthKey),
 			queryFn: () => getEventsByRange(userId!, chunk.startIso, chunk.endIso),
 			enabled: Boolean(userId),
 			staleTime: 10 * 60 * 1000,
@@ -91,7 +92,7 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 	})
 
 	const recurringQuery = useQuery({
-		queryKey: calendarRecurringEventsQueryKey(userId || ''),
+		queryKey: calendarKeys.recurring(userId || ''),
 		queryFn: () => getRecurringEvents(userId!),
 		enabled: Boolean(userId),
 		staleTime: 10 * 60 * 1000,
@@ -100,7 +101,7 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 
 	const googleQueries = useQueries({
 		queries: monthChunks.map(chunk => ({
-			queryKey: calendarGoogleEventsMonthQueryKey(userId || '', chunk.monthKey),
+			queryKey: calendarKeys.googleMonth(userId || '', chunk.monthKey),
 			queryFn: async () =>
 				(await googleCalendarService.fetchEvents(chunk.startIso, chunk.endIso)).map(event =>
 					mapGoogleEvent(event, userId!)
