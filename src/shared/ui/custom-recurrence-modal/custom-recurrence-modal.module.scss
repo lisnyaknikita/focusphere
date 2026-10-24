@@ -1,0 +1,333 @@
+.customModal {
+	width: 380px;
+	padding: 20px;
+}
+
+.content {
+	margin-bottom: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.title {
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--text);
+	margin: 0;
+}
+
+.section {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.sectionLabel {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text-secondary, #888);
+}
+
+.repeatEveryRow {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.numberInput {
+	width: 68px;
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 6px 10px;
+	color: var(--text);
+	font-size: 14px;
+	font-family: inherit;
+	outline: none;
+	transition: border-color 0.2s;
+
+	&:focus {
+		border-color: var(--text-secondary);
+	}
+}
+
+.dropdownWrapper {
+	position: relative;
+	flex: 1;
+
+	&.opened {
+		.unitTrigger svg {
+			transform: rotate(180deg);
+		}
+	}
+}
+
+.unitTrigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	width: 100%;
+	color: var(--text);
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 6px 12px;
+	font-size: 14px;
+	font-family: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.2s, border-color 0.2s;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	> svg {
+		width: 10px;
+		height: 10px;
+		transition: transform 0.2s;
+		flex-shrink: 0;
+	}
+}
+
+.dropdown {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	min-width: 130px;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	background-color: var(--secondaryFull, #1c1c1c);
+	padding: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	z-index: 20;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+.optionItem {
+	font-family: inherit;
+	text-align: left;
+	width: 100%;
+	border: none;
+	background: transparent;
+	border-radius: 5px;
+	padding: 7px 10px;
+	font-size: 13px;
+	font-weight: 400;
+	cursor: pointer;
+	color: var(--text);
+	white-space: nowrap;
+	transition: background-color 0.18s ease;
+
+	&:hover {
+		background-color: var(--hover);
+	}
+
+	&.activeOption {
+		background-color: var(--hover);
+		font-weight: 600;
+	}
+}
+
+.weekDaysRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
+}
+
+.dayButton {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	font-weight: 500;
+	font-family: inherit;
+	background-color: var(--secondary);
+	color: var(--text-secondary, #aaa);
+	border: 1px solid var(--btn-border);
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&:hover:not(.dayButtonActive) {
+		background-color: var(--hover);
+		color: var(--text);
+		border-color: var(--text-secondary);
+	}
+}
+
+.dayButtonActive {
+	background-color: var(--save-button-bg);
+	color: var(--save-button-text);
+	border-color: transparent;
+	font-weight: 600;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.endsOptions {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.radioOption {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	user-select: none;
+	position: relative;
+	transition: color 0.2s;
+
+	&:hover .radioCircle {
+		border-color: var(--text-secondary);
+		background-color: var(--hover);
+	}
+}
+
+.hiddenRadio {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+}
+
+.radioCircle {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	border: 1.5px solid var(--btn-border);
+	background-color: var(--secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: border-color 0.2s, background-color 0.2s;
+}
+
+.radioDot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: var(--save-button-bg);
+	transform: scale(0);
+	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.radioOptionActive {
+	.radioCircle {
+		border-color: var(--save-button-bg);
+		background-color: transparent;
+	}
+
+	.radioDot {
+		transform: scale(1);
+	}
+}
+
+.radioText {
+	font-size: 14px;
+	color: var(--text);
+	font-weight: 400;
+}
+
+.radioOptionRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.datePickerBtn {
+	padding: 5px 12px;
+	font-size: 13px;
+	border-radius: 5px;
+}
+
+.countInputWrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.countInput {
+	width: 60px;
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 5px 10px;
+	color: var(--text);
+	font-size: 13px;
+	font-family: inherit;
+	outline: none;
+	transition: opacity 0.2s, border-color 0.2s;
+
+	&:focus {
+		border-color: var(--text-secondary);
+	}
+}
+
+.occurrencesText {
+	font-size: 14px;
+	color: var(--text);
+	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.inputDisabled {
+	opacity: 0.35;
+	pointer-events: none;
+}
+
+.textDisabled {
+	opacity: 0.35;
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 10px;
+}
+
+.cancelButton {
+	color: var(--text);
+	background-color: transparent;
+	border: 1px solid var(--btn-border);
+	border-radius: 5px;
+	padding: 4px 12px;
+	font-size: 15px;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
+
+.confirmButton {
+	font-size: 15px;
+	font-weight: 500;
+	color: var(--save-button-text);
+	padding: 4px 14px;
+	background-color: var(--save-button-bg);
+	border: none;
+	border-radius: 5px;
+	display: inline-block;
+	font-family: inherit;
+	cursor: pointer;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 0.85;
+	}
+}

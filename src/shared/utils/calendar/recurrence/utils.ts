@@ -32,6 +32,8 @@ export const getDefaultRecurrenceConfig = (frequency: RecurrenceFrequency, dateS
 			return { frequency: 'weekly', interval: 1, weekDays: [currentDayIndex], endType: 'never' }
 		case 'monthly':
 			return { frequency: 'monthly', interval: 1, endType: 'never' }
+		case 'yearly':
+			return { frequency: 'yearly', interval: 1, endType: 'never' }
 		default:
 			return { frequency: 'none', interval: 1, endType: 'never' }
 	}

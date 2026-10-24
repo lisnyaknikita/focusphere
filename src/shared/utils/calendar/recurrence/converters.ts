@@ -74,12 +74,19 @@ export const configToRRule = (config: RecurrenceConfig, startDateIso: string): s
 			break
 		case 'weekly': {
 			freq = RRule.WEEKLY
-			const targetWeekday = WEEKDAY_MAP[localDayOfWeekIndex] || RRule.MO
-			byweekday = [targetWeekday]
+			if (config.weekDays && config.weekDays.length > 0) {
+				byweekday = config.weekDays.map(d => WEEKDAY_MAP[d]).filter(Boolean)
+			} else {
+				const targetWeekday = WEEKDAY_MAP[localDayOfWeekIndex] || RRule.MO
+				byweekday = [targetWeekday]
+			}
 			break
 		}
 		case 'monthly':
 			freq = RRule.MONTHLY
+			break
+		case 'yearly':
+			freq = RRule.YEARLY
 			break
 	}
 
@@ -125,22 +132,39 @@ export const rruleToConfig = (rruleStr?: string): RecurrenceConfig => {
 			weekDays = opts.byweekday.map((w: unknown) => (typeof w === 'number' ? w : (w as { weekday: number }).weekday))
 		}
 
-		if (opts.freq === RRule.DAILY && interval === 1 && !opts.until && !opts.count) {
+		let isCustom = false
+
+		if (opts.freq === RRule.YEARLY && interval === 1 && !opts.until && !opts.count) {
+			frequency = 'yearly'
+		} else if (opts.freq === RRule.DAILY && interval === 1 && !opts.until && !opts.count) {
 			frequency = 'daily'
 		} else if (
 			opts.freq === RRule.WEEKLY &&
 			interval === 1 &&
 			weekDays &&
 			weekDays.length === 5 &&
-			[0, 1, 2, 3, 4].every(d => weekDays?.includes(d))
+			[0, 1, 2, 3, 4].every(d => weekDays?.includes(d)) &&
+			!opts.until &&
+			!opts.count
 		) {
 			frequency = 'weekdays'
-		} else if (opts.freq === RRule.WEEKLY && interval === 1 && weekDays && weekDays.length === 1) {
+		} else if (
+			opts.freq === RRule.WEEKLY &&
+			interval === 1 &&
+			weekDays &&
+			weekDays.length === 1 &&
+			!opts.until &&
+			!opts.count
+		) {
 			frequency = 'weekly'
 		} else if (opts.freq === RRule.MONTHLY && interval === 1 && !opts.until && !opts.count) {
 			frequency = 'monthly'
 		} else {
-			frequency = 'daily'
+			if (opts.freq === RRule.DAILY) frequency = 'daily'
+			else if (opts.freq === RRule.WEEKLY) frequency = 'weekly'
+			else if (opts.freq === RRule.MONTHLY) frequency = 'monthly'
+			else if (opts.freq === RRule.YEARLY) frequency = 'yearly'
+			isCustom = true
 		}
 
 		let endType: 'never' | 'until' | 'count' = 'never'
@@ -150,9 +174,15 @@ export const rruleToConfig = (rruleStr?: string): RecurrenceConfig => {
 		if (opts.until) {
 			endType = 'until'
 			endDate = opts.until.toISOString().slice(0, 10)
+			isCustom = true
 		} else if (opts.count) {
 			endType = 'count'
 			count = opts.count
+			isCustom = true
+		}
+
+		if (interval > 1) {
+			isCustom = true
 		}
 
 		return {
@@ -162,6 +192,7 @@ export const rruleToConfig = (rruleStr?: string): RecurrenceConfig => {
 			endType,
 			endDate,
 			count,
+			isCustom,
 		}
 	} catch {
 		return {
@@ -172,28 +203,53 @@ export const rruleToConfig = (rruleStr?: string): RecurrenceConfig => {
 	}
 }
 
+export const getRecurrenceConfigSummary = (config: RecurrenceConfig): string => {
+	if (config.frequency === 'none') return 'Does not repeat'
+
+	let base = ''
+
+	switch (config.frequency) {
+		case 'daily':
+			base = config.interval > 1 ? `Every ${config.interval} days` : 'Daily'
+			break
+		case 'weekdays':
+			base = 'Every weekday (Mon–Fri)'
+			break
+		case 'weekly': {
+			if (config.weekDays && config.weekDays.length > 0) {
+				const dayNames = config.weekDays.map(d => DAY_SHORT_NAMES[d]).join(', ')
+				base = config.interval > 1 ? `Every ${config.interval} weeks on ${dayNames}` : `Weekly on ${dayNames}`
+			} else {
+				base = config.interval > 1 ? `Every ${config.interval} weeks` : 'Weekly'
+			}
+			break
+		}
+		case 'monthly':
+			base = config.interval > 1 ? `Every ${config.interval} months` : 'Monthly'
+			break
+		case 'yearly':
+			base = config.interval > 1 ? `Every ${config.interval} years` : 'Annually'
+			break
+		default:
+			base = 'Repeats'
+			break
+	}
+
+	if (config.endType === 'until' && config.endDate) {
+		base += `, until ${config.endDate}`
+	} else if (config.endType === 'count' && config.count) {
+		base += `, ${config.count} times`
+	}
+
+	return base
+}
+
 export const getRecurrenceSummary = (rruleStr?: string): string => {
 	if (!rruleStr) return 'Does not repeat'
 
 	try {
 		const config = rruleToConfig(rruleStr)
-		switch (config.frequency) {
-			case 'daily':
-				return config.interval > 1 ? `Every ${config.interval} days` : 'Daily'
-			case 'weekdays':
-				return 'Every weekday (Mon–Fri)'
-			case 'weekly': {
-				if (config.weekDays && config.weekDays.length > 0) {
-					const dayNames = config.weekDays.map(d => DAY_SHORT_NAMES[d]).join(', ')
-					return config.interval > 1 ? `Every ${config.interval} weeks on ${dayNames}` : `Weekly on ${dayNames}`
-				}
-				return config.interval > 1 ? `Every ${config.interval} weeks` : 'Weekly'
-			}
-			case 'monthly':
-				return config.interval > 1 ? `Every ${config.interval} months` : 'Monthly'
-			default:
-				return 'Repeats'
-		}
+		return getRecurrenceConfigSummary(config)
 	} catch {
 		return 'Repeats'
 	}
