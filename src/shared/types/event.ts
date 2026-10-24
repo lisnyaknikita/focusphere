@@ -36,7 +36,7 @@ export interface CreateEventPayload {
 	recurrenceExDates?: string[]
 }
 
-export type RecurrenceFrequency = 'none' | 'daily' | 'weekly' | 'weekdays' | 'monthly'
+export type RecurrenceFrequency = 'none' | 'daily' | 'weekly' | 'weekdays' | 'monthly' | 'yearly'
 
 export interface RecurrenceConfig {
 	frequency: RecurrenceFrequency
@@ -45,6 +45,7 @@ export interface RecurrenceConfig {
 	endType: 'never' | 'until' | 'count'
 	endDate?: string
 	count?: number
+	isCustom?: boolean
 }
 
 export interface EventForm {

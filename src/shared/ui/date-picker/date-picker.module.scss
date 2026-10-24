@@ -1,0 +1,36 @@
+.datePickerContainer {
+	display: inline-flex;
+	align-items: center;
+}
+
+.dateButton {
+	background-color: var(--secondary);
+	border: 1px solid var(--btn-border);
+	border-radius: 6px;
+	padding: 5px 10px;
+	color: var(--text);
+	font-size: 13px;
+	font-family: inherit;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.2s, border-color 0.2s;
+
+	&:hover:not(:disabled) {
+		background-color: var(--hover);
+		border-color: var(--text-secondary);
+	}
+
+	&.disabled,
+	&:disabled {
+		opacity: 0.35;
+		cursor: default;
+		pointer-events: none;
+	}
+}
+
+.pickerWrapper {
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
