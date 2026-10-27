@@ -143,13 +143,28 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 			expandRecurrence(master, rangeStart, rangeEnd)
 		)
 
-		const linkedGoogleIds = new Set(localEvents.map(event => event.googleEventId).filter(Boolean))
+		const linkedGoogleIds = new Set<string>()
+		for (const event of localEvents) {
+			if (event.googleEventId) linkedGoogleIds.add(event.googleEventId)
+		}
+		for (const event of recurringMastersMap.values()) {
+			if (event.googleEventId) linkedGoogleIds.add(event.googleEventId)
+		}
+
+		const isGoogleEventDuplicate = (googleEventId?: string): boolean => {
+			if (!googleEventId) return false
+			if (linkedGoogleIds.has(googleEventId)) return true
+			for (const linkedId of linkedGoogleIds) {
+				if (googleEventId.startsWith(linkedId + '_')) return true
+			}
+			return false
+		}
 
 		const googleEventsMap = new Map<string, CalendarEvent>()
 		for (const q of googleQueries) {
 			if (q.data) {
 				for (const event of q.data) {
-					if (!linkedGoogleIds.has(event.googleEventId)) {
+					if (!isGoogleEventDuplicate(event.googleEventId)) {
 						googleEventsMap.set(event.$id, event)
 					}
 				}

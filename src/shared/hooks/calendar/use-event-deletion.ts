@@ -1,7 +1,11 @@
 import { addRecurrenceException, deleteEvent } from '@/lib/events/events'
 import { calendarKeys } from '@/shared/constants/query-keys'
 import { CalendarEvent } from '@/shared/types/event'
-import { isRecurrenceInstanceId, parseRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
+import {
+	getMasterGoogleEventId,
+	isRecurrenceInstanceId,
+	parseRecurrenceInstanceId,
+} from '@/shared/utils/calendar/recurrence'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
@@ -69,9 +73,21 @@ export const useEventDeletion = ({ eventsService, eventModal }: DeletionDependen
 
 			const deletePromise = (async () => {
 				if (isRecur && parsed) {
+					const masterGoogleEventId = googleEventId || getMasterGoogleEventId(queryClient, parsed.masterEventId)
+
 					if (scope === 'all') {
+						if (masterGoogleEventId) {
+							await import('@/shared/services/google-calendar.service').then(m =>
+								m.googleCalendarService.deleteEvent(masterGoogleEventId)
+							)
+						}
 						await deleteEvent(parsed.masterEventId)
 					} else {
+						if (masterGoogleEventId) {
+							await import('@/shared/services/google-calendar.service').then(m =>
+								m.googleCalendarService.deleteEventInstance(masterGoogleEventId, parsed.instanceDate)
+							)
+						}
 						await addRecurrenceException(parsed.masterEventId, parsed.instanceDate)
 					}
 					return
