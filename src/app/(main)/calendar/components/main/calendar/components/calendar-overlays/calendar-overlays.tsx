@@ -1,4 +1,5 @@
 import { EventPasteBanner } from '@/features/calendar/event-paste-banner'
+import { EventUpdatePending } from '@/shared/hooks/calendar/use-calendar-modals'
 import { DragSelectionInfo } from '@/shared/hooks/calendar/use-grid-drag-create'
 import { ConfirmModal } from '@/shared/ui/confirm-modal/confirm-modal'
 import { Modal } from '@/shared/ui/modal/modal'
@@ -21,6 +22,9 @@ interface CalendarOverlaysProps {
 	setSelectedEventForModal: (event: SXEvent | null) => void
 	eventToDelete: SXEvent | null
 	setEventToDelete: (event: SXEvent | null) => void
+	eventToUpdate?: EventUpdatePending | null
+	handleRecurrenceUpdateConfirm?: (scope: 'this' | 'all') => Promise<void>
+	handleRecurrenceUpdateCancel?: () => void
 	renderEventInfoModal: (event: SXEvent, onCloseModal?: () => void) => ReactNode
 	handleConfirmDelete: () => Promise<void>
 	handleRecurrenceDelete: (scope: 'this' | 'all') => Promise<void>
@@ -37,6 +41,9 @@ export const CalendarOverlays = ({
 	setSelectedEventForModal,
 	eventToDelete,
 	setEventToDelete,
+	eventToUpdate,
+	handleRecurrenceUpdateConfirm,
+	handleRecurrenceUpdateCancel,
 	renderEventInfoModal,
 	handleConfirmDelete,
 	handleRecurrenceDelete,
@@ -96,6 +103,16 @@ export const CalendarOverlays = ({
 							Are you sure you want to delete &quot;<span className='highlight'>{eventToDelete?.title}</span>&quot;?
 						</>
 					}
+				/>
+			)}
+
+			{eventToUpdate && handleRecurrenceUpdateConfirm && handleRecurrenceUpdateCancel && (
+				<RecurrenceActionModal
+					isVisible={Boolean(eventToUpdate)}
+					actionType='edit'
+					eventTitle={eventToUpdate.event.title}
+					onClose={handleRecurrenceUpdateCancel}
+					onConfirm={handleRecurrenceUpdateConfirm}
 				/>
 			)}
 		</>

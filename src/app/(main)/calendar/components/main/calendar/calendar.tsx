@@ -14,6 +14,7 @@ import { useMonthMorePopover } from '@/shared/hooks/calendar/use-month-more-popo
 import { useScheduleXBridge } from '@/shared/hooks/calendar/use-schedulex-bridge'
 import { useCalendarEvents } from '@/shared/hooks/events/use-calendar-events'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import type { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -88,26 +89,43 @@ export const CalendarInner = memo(
 			})
 		}, [])
 
+		const onEventUpdateRef = useRef<(event: SXEvent) => Promise<void> | void>(undefined)
+		const onEventUpdate = useCallback(async (event: SXEvent) => {
+			if (onEventUpdateRef.current) {
+				await onEventUpdateRef.current(event)
+			}
+		}, [])
+
 		const { calendar, eventsService, setView, eventModal } = useCalendarApp({
 			defaultView: view,
 			onQuickCreate: quickCreate,
 			onDateClick: handleDateClick,
 			onRangeUpdate,
+			onEventUpdate,
 		})
+
+		const mappedEvents = useMemo(() => events.map(mapEventToScheduleX), [events])
 
 		const {
 			selectedEventForModal,
 			setSelectedEventForModal,
 			eventToDelete,
 			setEventToDelete,
+			eventToUpdate,
 			handleConfirmDelete,
 			handleRecurrenceDelete,
+			handleEventDragOrResize,
+			handleRecurrenceUpdateConfirm,
+			handleRecurrenceUpdateCancel,
 			renderEventInfoModal,
 		} = useCalendarModals({
 			eventsService,
 			eventModal,
 			setCopiedEvent,
+			mappedEvents,
 		})
+
+		onEventUpdateRef.current = handleEventDragOrResize
 
 		const { customComponents } = useScheduleXBridge({
 			isCopyMode,
@@ -125,8 +143,6 @@ export const CalendarInner = memo(
 		})
 
 		useCalendarScroll({ dependencies: [view] })
-
-		const mappedEvents = useMemo(() => events.map(mapEventToScheduleX), [events])
 
 		useEffect(() => {
 			eventsService.set(mappedEvents)
@@ -160,6 +176,9 @@ export const CalendarInner = memo(
 						setSelectedEventForModal={setSelectedEventForModal}
 						eventToDelete={eventToDelete}
 						setEventToDelete={setEventToDelete}
+						eventToUpdate={eventToUpdate}
+						handleRecurrenceUpdateConfirm={handleRecurrenceUpdateConfirm}
+						handleRecurrenceUpdateCancel={handleRecurrenceUpdateCancel}
 						renderEventInfoModal={renderEventInfoModal}
 						handleConfirmDelete={handleConfirmDelete}
 						handleRecurrenceDelete={handleRecurrenceDelete}

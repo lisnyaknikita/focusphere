@@ -110,8 +110,24 @@ export const useEventsByToday = () => {
 		const recurringInstancesToday = recurringEvents.flatMap(rev => expandRecurrence(rev, todayStart, todayEnd))
 
 		const allLocal = [...nonRecurringAppwrite, ...recurringInstancesToday]
-		const linkedGoogleIds = new Set(allLocal.map(event => event.googleEventId).filter(Boolean))
-		const uniqueGoogleEvents = googleEvents.filter(event => !linkedGoogleIds.has(event.googleEventId))
+		const linkedGoogleIds = new Set<string>()
+		for (const event of allLocal) {
+			if (event.googleEventId) linkedGoogleIds.add(event.googleEventId)
+		}
+		for (const event of recurringEvents) {
+			if (event.googleEventId) linkedGoogleIds.add(event.googleEventId)
+		}
+
+		const isGoogleEventDuplicate = (googleEventId?: string): boolean => {
+			if (!googleEventId) return false
+			if (linkedGoogleIds.has(googleEventId)) return true
+			for (const linkedId of linkedGoogleIds) {
+				if (googleEventId.startsWith(linkedId + '_')) return true
+			}
+			return false
+		}
+
+		const uniqueGoogleEvents = googleEvents.filter(event => !isGoogleEventDuplicate(event.googleEventId))
 
 		return [...allLocal, ...uniqueGoogleEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))
 	}, [appwriteSource, recurringEvents, googleEvents, startOfDay, endOfDay])

@@ -18,9 +18,16 @@ interface UseCalendarAppProps {
 	onQuickCreate?: (dateTime: Temporal.ZonedDateTime) => void
 	onDateClick?: (date: Temporal.PlainDate) => void
 	onRangeUpdate?: (range: { start: { toString(): string }; end: { toString(): string } }) => void
+	onEventUpdate?: (updatedEvent: CalendarEvent) => Promise<void> | void
 }
 
-export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRangeUpdate }: UseCalendarAppProps) => {
+export const useCalendarApp = ({
+	defaultView,
+	onQuickCreate,
+	onDateClick,
+	onRangeUpdate,
+	onEventUpdate,
+}: UseCalendarAppProps) => {
 	const timeFormat = useSettingsStore(state => state.timeFormat)
 	const { handleUpdateEvent } = useCalendarMutations()
 
@@ -30,6 +37,8 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 	onDateClickRef.current = onDateClick
 	const onRangeUpdateRef = useRef(onRangeUpdate)
 	onRangeUpdateRef.current = onRangeUpdate
+	const onEventUpdateRef = useRef(onEventUpdate)
+	onEventUpdateRef.current = onEventUpdate
 
 	const [eventsService] = useState(() => createEventsServicePlugin())
 	const [calendarControls] = useState(() => createCalendarControlsPlugin())
@@ -62,6 +71,11 @@ export const useCalendarApp = ({ defaultView, onQuickCreate, onDateClick, onRang
 				onDateClickRef.current?.(date)
 			},
 			async onEventUpdate(updatedEvent: CalendarEvent) {
+				if (onEventUpdateRef.current) {
+					await onEventUpdateRef.current(updatedEvent)
+					return
+				}
+
 				const { id, start, end, title, description, color } = updatedEvent
 				const eventId = String(id)
 				const googleEventId = (updatedEvent as unknown as { googleEventId?: string }).googleEventId

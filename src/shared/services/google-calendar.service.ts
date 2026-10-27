@@ -297,6 +297,209 @@ class GoogleCalendarService {
 			return null
 		}
 	}
+
+	async createRecurringEvent(payload: {
+		summary: string
+		description?: string
+		color?: string
+		start: string
+		end: string
+		recurrenceRule: string
+	}) {
+		const token = await this.getProviderToken()
+		if (!token) return null
+
+		const url = `${GOOGLE_CALENDAR_API}/calendars/primary/events`
+
+		const isAllDay = payload.start.length <= 10
+		let startBody: GoogleDate, endBody: GoogleDate
+
+		if (isAllDay) {
+			startBody = { date: payload.start }
+			endBody = { date: addDaysToDateString(payload.end, 1) }
+		} else {
+			const timeZone = getUserTimeZone()
+			const startIso = this.formatIso(payload.start)
+			const endIso = this.formatIso(payload.end)
+
+			startBody = { dateTime: startIso, timeZone }
+			endBody = { dateTime: endIso, timeZone }
+		}
+
+		const rrule = payload.recurrenceRule.startsWith('RRULE:')
+			? payload.recurrenceRule
+			: `RRULE:${payload.recurrenceRule}`
+
+		try {
+			const res = await fetch(url, {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					summary: payload.summary,
+					description: payload.description,
+					colorId: this.mapColorToId(payload.color),
+					start: startBody,
+					end: endBody,
+					recurrence: [rrule],
+				}),
+			})
+
+			if (!res.ok) {
+				if (res.status === 401) {
+					this.showAuthError()
+				}
+				console.error('Google Calendar create recurring error:', await res.text())
+				return null
+			}
+			return await res.json()
+		} catch (error) {
+			console.error('Error creating google calendar recurring event:', error)
+			return null
+		}
+	}
+
+	async updateRecurringEvent(
+		googleEventId: string,
+		payload: {
+			summary?: string
+			description?: string
+			color?: string
+			start?: string
+			end?: string
+			recurrenceRule?: string
+		}
+	) {
+		const token = await this.getProviderToken()
+		if (!token) return
+
+		const realId = googleEventId.replace('g_', '')
+		const url = `${GOOGLE_CALENDAR_API}/calendars/primary/events/${realId}`
+
+		const requestBody: Record<string, unknown> = {}
+		if (payload.summary !== undefined) requestBody.summary = payload.summary
+		if (payload.description !== undefined) requestBody.description = payload.description
+		if (payload.color !== undefined) requestBody.colorId = this.mapColorToId(payload.color)
+
+		if (payload.start && payload.end) {
+			const isAllDay = payload.start.length <= 10
+			let startBody: GoogleDate, endBody: GoogleDate
+
+			if (isAllDay) {
+				startBody = { date: payload.start }
+				endBody = { date: addDaysToDateString(payload.end, 1) }
+			} else {
+				const timeZone = getUserTimeZone()
+				const startIso = this.formatIso(payload.start)
+				const endIso = this.formatIso(payload.end)
+
+				startBody = { dateTime: startIso, timeZone }
+				endBody = { dateTime: endIso, timeZone }
+			}
+			requestBody.start = startBody
+			requestBody.end = endBody
+		}
+
+		if (payload.recurrenceRule !== undefined) {
+			const rrule = payload.recurrenceRule.startsWith('RRULE:')
+				? payload.recurrenceRule
+				: `RRULE:${payload.recurrenceRule}`
+			requestBody.recurrence = [rrule]
+		}
+
+		try {
+			const res = await fetch(url, {
+				method: 'PATCH',
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(requestBody),
+			})
+
+			if (!res.ok) {
+				if (res.status === 401) {
+					this.showAuthError()
+				}
+				console.error('Google Calendar update recurring error:', await res.text())
+			}
+		} catch (error) {
+			console.error('Error updating google calendar recurring event:', error)
+		}
+	}
+
+	async deleteEventInstance(googleEventId: string, instanceDate: string) {
+		const token = await this.getProviderToken()
+		if (!token) return
+
+		const realMasterId = googleEventId.replace('g_', '')
+
+		const timeZone = getUserTimeZone()
+		const plainDate = Temporal.PlainDate.from(instanceDate)
+		const timeMin = plainDate.subtract({ days: 1 }).toZonedDateTime({ timeZone }).startOfDay().toInstant().toString()
+		const timeMax = plainDate.add({ days: 2 }).toZonedDateTime({ timeZone }).startOfDay().toInstant().toString()
+
+		const instancesUrl = new URL(`${GOOGLE_CALENDAR_API}/calendars/primary/events/${realMasterId}/instances`)
+		instancesUrl.searchParams.append('timeMin', timeMin)
+		instancesUrl.searchParams.append('timeMax', timeMax)
+
+		try {
+			const listRes = await fetch(instancesUrl.toString(), {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
+
+			if (!listRes.ok) {
+				if (listRes.status === 401) {
+					this.showAuthError()
+				}
+				console.error('Google Calendar list instances error:', await listRes.text())
+				return
+			}
+
+			const listData = await listRes.json()
+			const instances: Array<{ id: string; start?: { date?: string; dateTime?: string } }> = listData.items || []
+
+			const targetInstance =
+				instances.find(inst => {
+					const instDate = inst.start?.date || inst.start?.dateTime?.slice(0, 10)
+					if (instDate === instanceDate) return true
+					if (inst.start?.dateTime) {
+						try {
+							const zdt = Temporal.Instant.from(inst.start.dateTime).toZonedDateTimeISO(timeZone)
+							return zdt.toPlainDate().toString() === instanceDate
+						} catch {
+							return false
+						}
+					}
+					return false
+				}) || instances[0]
+
+			if (!targetInstance?.id) {
+				console.warn(`No Google Calendar instance found for master ${realMasterId} on date ${instanceDate}`)
+				return
+			}
+
+			const deleteRes = await fetch(`${GOOGLE_CALENDAR_API}/calendars/primary/events/${targetInstance.id}`, {
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
+
+			if (!deleteRes.ok && deleteRes.status !== 404 && deleteRes.status !== 410) {
+				if (deleteRes.status === 401) {
+					this.showAuthError()
+				}
+				console.error('Google Calendar delete instance error:', await deleteRes.text())
+			}
+		} catch (error) {
+			console.error('Error deleting google calendar event instance:', error)
+		}
+	}
 }
 
 export const googleCalendarService = new GoogleCalendarService()
