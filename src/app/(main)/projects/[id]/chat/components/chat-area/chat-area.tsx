@@ -5,7 +5,7 @@ import { CloseIcon } from '@/shared/ui/icons/close-icon'
 import { formatDividerDate } from '@/shared/utils/format-divider-date/format-divider-date'
 import { stripHtml } from '@/shared/utils/strip-html/strip-html'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import classes from './chat-area.module.scss'
 import { Editor, EditorRef } from './components/editor/editor'
 import { Header } from './components/header/header'
@@ -25,6 +25,9 @@ interface ChatAreaProps {
 	currentUserId: string | undefined
 	currentUserName?: string
 	isLoading: boolean
+	isLoadingOlderMessages: boolean
+	hasMoreMessages: boolean
+	onLoadOlderMessages: () => Promise<void>
 	isChatSidebarOpen?: boolean
 	onToggleChatSidebar: () => void
 	activeUnreadThresholdId?: string | null
@@ -43,6 +46,9 @@ export const ChatArea = ({
 	currentUserId,
 	currentUserName,
 	isLoading,
+	isLoadingOlderMessages,
+	hasMoreMessages,
+	onLoadOlderMessages,
 	isChatSidebarOpen,
 	onToggleChatSidebar,
 	activeUnreadThresholdId,
@@ -52,9 +58,16 @@ export const ChatArea = ({
 
 	const editorRef = useRef<EditorRef>(null)
 	const hasScrolledRef = useRef<string | null>(null)
-	const prevMessagesLengthRef = useRef<number>(messages.length)
 	const mainRef = useRef<HTMLElement>(null)
 	const unreadDividerRef = useRef<HTMLDivElement>(null)
+	const pendingOlderScrollPositionRef = useRef<{
+		anchorMessageId: string
+		anchorOffset: number
+		oldestMessageId: string
+	} | null>(null)
+	const isPositioningChannelRef = useRef(false)
+	const hasUserInitiatedScrollRef = useRef(false)
+	const canLoadOlderMessagesRef = useRef(false)
 
 	const { typers, notifyTyping, notifyStopTyping } = useTypingIndicator(
 		activeChannel?.$id,
@@ -62,6 +75,30 @@ export const ChatArea = ({
 		currentUserName,
 		activeChannel?.teamId
 	)
+
+	useLayoutEffect(() => {
+		const pending = pendingOlderScrollPositionRef.current
+		const mainEl = mainRef.current
+		if (!pending || !mainEl) return
+
+		if (messages[0]?.$id === pending.oldestMessageId) {
+			if (!isLoadingOlderMessages) pendingOlderScrollPositionRef.current = null
+			return
+		}
+
+		const anchorElement = document.getElementById(`message-${pending.anchorMessageId}`)
+		if (!anchorElement) {
+			if (!isLoadingOlderMessages) pendingOlderScrollPositionRef.current = null
+			return
+		}
+
+		const currentAnchorOffset = anchorElement.getBoundingClientRect().top - mainEl.getBoundingClientRect().top
+		mainEl.scrollTo({
+			top: mainEl.scrollTop + (currentAnchorOffset - pending.anchorOffset),
+			behavior: 'instant',
+		})
+		pendingOlderScrollPositionRef.current = null
+	}, [isLoadingOlderMessages, messages])
 
 	const replyImageSrc = useMemo(() => {
 		if (!replyingTo?.content) return null
@@ -93,14 +130,59 @@ export const ChatArea = ({
 		const mainEl = mainRef.current
 		if (!mainEl) return
 
+		const markUserScrollIntent = () => {
+			hasUserInitiatedScrollRef.current = true
+		}
+
 		const handleScroll = () => {
 			const distanceFromBottom = mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight
 			setShowScrollBottomButton(distanceFromBottom > 200)
+			const isAwayFromTop = mainEl.scrollTop > 80
+
+			if (hasUserInitiatedScrollRef.current && isAwayFromTop) {
+				canLoadOlderMessagesRef.current = true
+			}
+
+			if (
+				!hasUserInitiatedScrollRef.current ||
+				!canLoadOlderMessagesRef.current ||
+				pendingOlderScrollPositionRef.current ||
+				isPositioningChannelRef.current ||
+				hasScrolledRef.current !== activeChannel?.$id ||
+				isAwayFromTop ||
+				!hasMoreMessages ||
+				isLoading ||
+				isLoadingOlderMessages
+			)
+				return
+
+			canLoadOlderMessagesRef.current = false
+
+			const anchorMessageId = messages[0].$id
+			const anchorElement = document.getElementById(`message-${anchorMessageId}`)
+			const anchorOffset = anchorElement
+				? anchorElement.getBoundingClientRect().top - mainEl.getBoundingClientRect().top
+				: 0
+
+			pendingOlderScrollPositionRef.current = {
+				anchorMessageId,
+				anchorOffset,
+				oldestMessageId: anchorMessageId,
+			}
+			onLoadOlderMessages()
 		}
 
 		mainEl.addEventListener('scroll', handleScroll)
-		return () => mainEl.removeEventListener('scroll', handleScroll)
-	}, [])
+		mainEl.addEventListener('wheel', markUserScrollIntent, { passive: true })
+		mainEl.addEventListener('touchstart', markUserScrollIntent, { passive: true })
+		mainEl.addEventListener('pointerdown', markUserScrollIntent)
+		return () => {
+			mainEl.removeEventListener('scroll', handleScroll)
+			mainEl.removeEventListener('wheel', markUserScrollIntent)
+			mainEl.removeEventListener('touchstart', markUserScrollIntent)
+			mainEl.removeEventListener('pointerdown', markUserScrollIntent)
+		}
+	}, [activeChannel?.$id, hasMoreMessages, isLoading, isLoadingOlderMessages, messages, onLoadOlderMessages])
 
 	const firstUnreadMessageId = useMemo(() => {
 		if (!activeUnreadThresholdId || !messages.length) return null
@@ -154,24 +236,25 @@ export const ChatArea = ({
 		if (isLoading || !activeChannel?.$id) return
 
 		const isNewChannel = hasScrolledRef.current !== activeChannel.$id
-		const isNewMessage = messages.length > prevMessagesLengthRef.current
 
 		if (isNewChannel) {
 			const timer = setTimeout(() => {
+				hasUserInitiatedScrollRef.current = false
+				canLoadOlderMessagesRef.current = false
+				hasScrolledRef.current = activeChannel.$id
+				isPositioningChannelRef.current = true
 				if (unreadDividerRef.current) {
 					unreadDividerRef.current.scrollIntoView({ behavior: 'instant', block: 'center' })
 				} else if (mainRef.current) {
 					mainRef.current.scrollTop = mainRef.current.scrollHeight
 				}
-				hasScrolledRef.current = activeChannel.$id
+				requestAnimationFrame(() => {
+					isPositioningChannelRef.current = false
+				})
 			}, 50)
 
 			return () => clearTimeout(timer)
-		} else if (isNewMessage) {
-			scrollToBottom('smooth')
 		}
-
-		prevMessagesLengthRef.current = messages.length
 	}, [messages, isLoading, activeChannel?.$id])
 
 	useEffect(() => {
@@ -230,6 +313,7 @@ export const ChatArea = ({
 								</p>
 							</div>
 							<div className={classes.messages}>
+								{isLoadingOlderMessages && <div className={classes.loading}>Loading older messages...</div>}
 								{isLoading ? (
 									<div className={classes.loading}>Loading messages...</div>
 								) : (

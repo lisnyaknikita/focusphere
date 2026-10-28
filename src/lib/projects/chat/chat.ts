@@ -80,12 +80,19 @@ export const deleteChannel = async (channelId: string) => {
 		throw error
 	}
 }
+export const MESSAGES_PAGE_SIZE = 50
 
-export const getMessages = async (channelId: string) => {
+export const getMessages = async (channelId: string, cursorAfter?: string) => {
+	const queries = [Query.equal('channelId', channelId), Query.orderDesc('$createdAt'), Query.limit(MESSAGES_PAGE_SIZE)]
+
+	if (cursorAfter) {
+		queries.push(Query.cursorAfter(cursorAfter))
+	}
+
 	return db.listRows({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: MESSAGES_TABLE,
-		queries: [Query.equal('channelId', channelId), Query.orderAsc('$createdAt'), Query.limit(100)],
+		queries,
 	})
 }
 
