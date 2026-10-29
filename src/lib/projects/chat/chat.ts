@@ -51,35 +51,17 @@ export const updateChannel = async (channelId: string, name: string) => {
 
 export const deleteChannel = async (channelId: string) => {
 	try {
-		const messages = await db.listRows({
-			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-			tableId: MESSAGES_TABLE,
-			queries: [Query.equal('channelId', channelId), Query.limit(1000)],
-		})
-
-		if (messages.total > 0) {
-			await Promise.all(
-				messages.rows.map(message =>
-					db.deleteRow({
-						databaseId: process.env.NEXT_PUBLIC_DB_ID!,
-						tableId: MESSAGES_TABLE,
-						rowId: message.$id,
-					})
-				)
-			)
-			console.log(`Deleted ${messages.total} messages from channel ${channelId}`)
-		}
-
-		return db.deleteRow({
+		return await db.deleteRow({
 			databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 			tableId: CHANNELS_TABLE,
 			rowId: channelId,
 		})
 	} catch (error) {
-		console.error('Error during channel cascading delete:', error)
+		console.error('Error during channel delete:', error)
 		throw error
 	}
 }
+
 export const MESSAGES_PAGE_SIZE = 50
 
 export const getMessages = async (channelId: string, cursorAfter?: string) => {
