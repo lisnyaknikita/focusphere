@@ -31,6 +31,8 @@ export const useTypingIndicator = (
 
 	const lastSentRef = useRef<number>(0)
 	const stopTimerRef = useRef<NodeJS.Timeout | null>(null)
+	const channelIdRef = useRef(channelId)
+	channelIdRef.current = channelId
 
 	useEffect(() => {
 		setTypersMap(new Map())
@@ -97,12 +99,12 @@ export const useTypingIndicator = (
 	}, [channelId, currentUserId, currentUserName, teamId])
 
 	useEffect(() => {
-		if (!channelId || !currentUserId || !DB_ID || !TYPING_TABLE) return
+		if (!currentUserId || !DB_ID || !TYPING_TABLE) return
 
-		const unsubscribe = client.subscribe(`databases.${DB_ID}.collections.${TYPING_TABLE}.documents`, response => {
+		const unsubscribe = client.subscribe(`tablesdb.${DB_ID}.tables.${TYPING_TABLE}.rows`, response => {
 			const payload = response.payload as unknown as TypingRealtimePayload
 
-			if (payload.channelId !== channelId) return
+			if (payload.channelId !== channelIdRef.current) return
 			if (payload.userId === currentUserId) return
 
 			setTypersMap(prev => {
@@ -123,7 +125,7 @@ export const useTypingIndicator = (
 		return () => {
 			unsubscribe()
 		}
-	}, [channelId, currentUserId])
+	}, [currentUserId])
 
 	useEffect(() => {
 		if (typersMap.size === 0) return

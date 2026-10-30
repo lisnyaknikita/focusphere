@@ -8,6 +8,7 @@ import {
 	deleteMessage,
 	getChannels,
 	getMessages,
+	MESSAGES_PAGE_SIZE,
 	sendMessage,
 	updateChannel,
 	updateMessage,
@@ -27,6 +28,8 @@ export const useChat = (project: Project, currentUserId?: string) => {
 	const [activeChannel, setActiveChannel] = useState<ChatChannel | null>(null)
 	const [messages, setMessages] = useState<ChatMessage[]>([])
 	const [isLoadingMessages, setIsLoadingMessages] = useState(false)
+	const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false)
+	const [hasMoreMessages, setHasMoreMessages] = useState(false)
 	const [unreadChannelIds, setUnreadChannelIds] = useState<Set<string>>(new Set())
 	const [isUnreadLoaded, setIsUnreadLoaded] = useState(false)
 	const [lastReadMap, setLastReadMap] = useState<Record<string, string>>({})
@@ -96,11 +99,17 @@ export const useChat = (project: Project, currentUserId?: string) => {
 
 	const activeChannelRef = useRef<ChatChannel | null>(null)
 	activeChannelRef.current = activeChannel
+	const messagesRequestRef = useRef(0)
+	const isLoadingOlderMessagesRef = useRef(false)
 
 	const currentUserIdRef = useRef<string | undefined>(currentUserId)
 	currentUserIdRef.current = currentUserId
 
 	const handleSetActiveChannel = useCallback((channel: ChatChannel | null) => {
+		if (activeChannelRef.current?.$id !== channel?.$id) {
+			messagesRequestRef.current += 1
+		}
+		activeChannelRef.current = channel
 		setActiveChannel(channel)
 		if (!channel) {
 			setActiveUnreadThresholdId(null)
@@ -155,6 +164,11 @@ export const useChat = (project: Project, currentUserId?: string) => {
 	const allChannelsRef = useRef<ChatChannel[]>([])
 	allChannelsRef.current = allChannels
 
+	const getFallbackChannel = useCallback((removedChannelId: string) => {
+		const remainingChannels = allChannelsRef.current.filter(channel => channel.$id !== removedChannelId)
+		return remainingChannels.find(channel => channel.type !== 'dm') ?? remainingChannels[0] ?? null
+	}, [])
+
 	const { data: rawTasks } = useQuery({
 		queryKey: ['kanban-tasks', projectId],
 		queryFn: async () => {
@@ -180,30 +194,82 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		}
 	}, [channels, activeChannel, handleSetActiveChannel])
 
+	const mergeMessages = useCallback((current: ChatMessage[], incoming: ChatMessage[]) => {
+		const byId = new Map(current.map(message => [message.$id, message]))
+		incoming.forEach(message => byId.set(message.$id, message))
+
+		return Array.from(byId.values()).sort((a, b) => {
+			const byDate = a.$createdAt.localeCompare(b.$createdAt)
+			return byDate || a.$id.localeCompare(b.$id)
+		})
+	}, [])
+
 	useEffect(() => {
-		if (!activeChannel?.$id) return
+		if (!activeChannel?.$id) {
+			messagesRequestRef.current += 1
+			isLoadingOlderMessagesRef.current = false
+			setMessages([])
+			setHasMoreMessages(false)
+			setIsLoadingMessages(false)
+			setIsLoadingOlderMessages(false)
+			return
+		}
+		const channelId = activeChannel.$id
+		const requestId = ++messagesRequestRef.current
 
 		const fetchMessages = async () => {
 			setIsLoadingMessages(true)
+			setHasMoreMessages(false)
 			try {
-				const res = await getMessages(activeChannel.$id)
+				const res = await getMessages(channelId)
+				if (requestId !== messagesRequestRef.current) return
+
 				const docs = res.rows as unknown as ChatMessage[]
-				const fetchedMessages = Array.isArray(docs) ? docs : []
-				setMessages(fetchedMessages)
+				const fetchedMessages = Array.isArray(docs) ? [...docs].reverse() : []
+				setMessages(prev => mergeMessages(prev, fetchedMessages))
+				setHasMoreMessages(fetchedMessages.length === MESSAGES_PAGE_SIZE)
 				if (fetchedMessages.length > 0) {
 					const latestMsg = fetchedMessages[fetchedMessages.length - 1]
-					markChannelAsRead(activeChannel.$id, latestMsg.$id)
+					markChannelAsRead(channelId, latestMsg.$id)
 				}
 			} catch (err: unknown) {
-				console.error('Failed to fetch messages:', err)
+				if (requestId === messagesRequestRef.current) {
+					console.error('Failed to fetch messages:', err)
+				}
 			} finally {
-				setIsLoadingMessages(false)
+				if (requestId === messagesRequestRef.current) {
+					setIsLoadingMessages(false)
+				}
 			}
 		}
 
 		setMessages([])
 		fetchMessages()
-	}, [activeChannel?.$id, markChannelAsRead])
+	}, [activeChannel?.$id, markChannelAsRead, mergeMessages])
+
+	const loadOlderMessages = useCallback(async () => {
+		const channelId = activeChannelRef.current?.$id
+		const oldestMessageId = messages[0]?.$id
+		if (!channelId || !oldestMessageId || !hasMoreMessages || isLoadingOlderMessagesRef.current) return
+
+		isLoadingOlderMessagesRef.current = true
+		setIsLoadingOlderMessages(true)
+		try {
+			const res = await getMessages(channelId, oldestMessageId)
+			if (activeChannelRef.current?.$id !== channelId) return
+
+			const docs = res.rows as unknown as ChatMessage[]
+			const olderMessages = Array.isArray(docs) ? [...docs].reverse() : []
+			setMessages(prev => mergeMessages(prev, olderMessages))
+			setHasMoreMessages(olderMessages.length === MESSAGES_PAGE_SIZE)
+		} catch (err: unknown) {
+			console.error('Failed to load older messages:', err)
+			toast.error('Failed to load older messages')
+		} finally {
+			isLoadingOlderMessagesRef.current = false
+			setIsLoadingOlderMessages(false)
+		}
+	}, [hasMoreMessages, mergeMessages, messages])
 
 	const handleCreateChannel = async (name: string, ownerId: string) => {
 		if (!project) return
@@ -248,10 +314,10 @@ export const useChat = (project: Project, currentUserId?: string) => {
 
 		try {
 			await deletePromise
-			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
-			if (activeChannel?.$id === id) {
-				handleSetActiveChannel(channels.length > 0 ? channels[0] : null)
+			if (activeChannelRef.current?.$id === id) {
+				handleSetActiveChannel(getFallbackChannel(id))
 			}
+			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
 		} catch (err: unknown) {
 			console.error(err)
 		}
@@ -368,12 +434,13 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		if (!projectId) return
 
 		const unsubscribe = client.subscribe(
-			`databases.${process.env.NEXT_PUBLIC_DB_ID}.collections.${process.env.NEXT_PUBLIC_TABLE_PROJECT_MESSAGES}.documents`,
+			`tablesdb.${process.env.NEXT_PUBLIC_DB_ID}.tables.${process.env.NEXT_PUBLIC_TABLE_PROJECT_MESSAGES}.rows`,
 			response => {
 				const events = response.events
 				const payload = response.payload as unknown as ChatMessage
 
 				const isChannelInProject = allChannelsRef.current.some(ch => ch.$id === payload.channelId)
+
 				if (!isChannelInProject) return
 
 				if (payload.channelId === activeChannelRef.current?.$id) {
@@ -391,7 +458,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 								return updated
 							}
 
-							return [...prev, payload]
+							return mergeMessages(prev, [payload])
 						})
 						markChannelAsRead(payload.channelId, payload.$id)
 					}
@@ -418,15 +485,20 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		)
 
 		return () => unsubscribe()
-	}, [projectId])
+	}, [projectId, markChannelAsRead, mergeMessages])
 
 	useEffect(() => {
 		if (!projectId) return
 
 		const unsubscribe = client.subscribe(
-			`databases.${process.env.NEXT_PUBLIC_DB_ID}.collections.${process.env.NEXT_PUBLIC_TABLE_PROJECT_CHANNELS}.documents`,
+			`tablesdb.${process.env.NEXT_PUBLIC_DB_ID}.tables.${process.env.NEXT_PUBLIC_TABLE_PROJECT_CHANNELS}.rows`,
 			response => {
 				const payload = response.payload as unknown as ChatChannel
+				const isDeleted = response.events.some(event => event.includes('.delete'))
+				if (isDeleted && activeChannelRef.current?.$id === payload.$id) {
+					handleSetActiveChannel(getFallbackChannel(payload.$id))
+				}
+
 				if (payload.projectId === projectId) {
 					queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
 				}
@@ -434,7 +506,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		)
 
 		return () => unsubscribe()
-	}, [projectId, queryClient])
+	}, [getFallbackChannel, handleSetActiveChannel, projectId, queryClient])
 
 	return {
 		teammates,
@@ -444,6 +516,9 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		setActiveChannel: handleSetActiveChannel,
 		messages,
 		isLoadingMessages,
+		isLoadingOlderMessages,
+		hasMoreMessages,
+		loadOlderMessages,
 		unreadChannelIds,
 		activeUnreadThresholdId,
 		createChannel: handleCreateChannel,
