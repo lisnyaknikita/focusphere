@@ -95,6 +95,8 @@ export const sendMessage = async (payload: CreateMessagePayload, teamId?: string
 		rowId: ID.unique(),
 		data: {
 			...payload,
+			channel: payload.channelId,
+			channelId: payload.channelId,
 			isEdited: false,
 		},
 		permissions,

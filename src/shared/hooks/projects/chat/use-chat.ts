@@ -106,6 +106,10 @@ export const useChat = (project: Project, currentUserId?: string) => {
 	currentUserIdRef.current = currentUserId
 
 	const handleSetActiveChannel = useCallback((channel: ChatChannel | null) => {
+		if (activeChannelRef.current?.$id !== channel?.$id) {
+			messagesRequestRef.current += 1
+		}
+		activeChannelRef.current = channel
 		setActiveChannel(channel)
 		if (!channel) {
 			setActiveUnreadThresholdId(null)
@@ -160,6 +164,11 @@ export const useChat = (project: Project, currentUserId?: string) => {
 	const allChannelsRef = useRef<ChatChannel[]>([])
 	allChannelsRef.current = allChannels
 
+	const getFallbackChannel = useCallback((removedChannelId: string) => {
+		const remainingChannels = allChannelsRef.current.filter(channel => channel.$id !== removedChannelId)
+		return remainingChannels.find(channel => channel.type !== 'dm') ?? remainingChannels[0] ?? null
+	}, [])
+
 	const { data: rawTasks } = useQuery({
 		queryKey: ['kanban-tasks', projectId],
 		queryFn: async () => {
@@ -196,7 +205,15 @@ export const useChat = (project: Project, currentUserId?: string) => {
 	}, [])
 
 	useEffect(() => {
-		if (!activeChannel?.$id) return
+		if (!activeChannel?.$id) {
+			messagesRequestRef.current += 1
+			isLoadingOlderMessagesRef.current = false
+			setMessages([])
+			setHasMoreMessages(false)
+			setIsLoadingMessages(false)
+			setIsLoadingOlderMessages(false)
+			return
+		}
 		const channelId = activeChannel.$id
 		const requestId = ++messagesRequestRef.current
 
@@ -297,10 +314,10 @@ export const useChat = (project: Project, currentUserId?: string) => {
 
 		try {
 			await deletePromise
-			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
-			if (activeChannel?.$id === id) {
-				handleSetActiveChannel(channels.length > 0 ? channels[0] : null)
+			if (activeChannelRef.current?.$id === id) {
+				handleSetActiveChannel(getFallbackChannel(id))
 			}
+			await queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
 		} catch (err: unknown) {
 			console.error(err)
 		}
@@ -423,6 +440,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 				const payload = response.payload as unknown as ChatMessage
 
 				const isChannelInProject = allChannelsRef.current.some(ch => ch.$id === payload.channelId)
+
 				if (!isChannelInProject) return
 
 				if (payload.channelId === activeChannelRef.current?.$id) {
@@ -476,6 +494,11 @@ export const useChat = (project: Project, currentUserId?: string) => {
 			`tablesdb.${process.env.NEXT_PUBLIC_DB_ID}.tables.${process.env.NEXT_PUBLIC_TABLE_PROJECT_CHANNELS}.rows`,
 			response => {
 				const payload = response.payload as unknown as ChatChannel
+				const isDeleted = response.events.some(event => event.includes('.delete'))
+				if (isDeleted && activeChannelRef.current?.$id === payload.$id) {
+					handleSetActiveChannel(getFallbackChannel(payload.$id))
+				}
+
 				if (payload.projectId === projectId) {
 					queryClient.invalidateQueries({ queryKey: ['chat-channels', projectId] })
 				}
@@ -483,7 +506,7 @@ export const useChat = (project: Project, currentUserId?: string) => {
 		)
 
 		return () => unsubscribe()
-	}, [projectId, queryClient])
+	}, [getFallbackChannel, handleSetActiveChannel, projectId, queryClient])
 
 	return {
 		teammates,

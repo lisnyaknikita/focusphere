@@ -68,6 +68,8 @@ export const ChatArea = ({
 	const isPositioningChannelRef = useRef(false)
 	const hasUserInitiatedScrollRef = useRef(false)
 	const canLoadOlderMessagesRef = useRef(false)
+	const prevLastMessageIdRef = useRef<string | undefined>(undefined)
+	const prevMessagesLengthRef = useRef<number>(messages.length)
 
 	const { typers, notifyTyping, notifyStopTyping } = useTypingIndicator(
 		activeChannel?.$id,
@@ -253,9 +255,28 @@ export const ChatArea = ({
 				})
 			}, 50)
 
+			prevLastMessageIdRef.current = messages[messages.length - 1]?.$id
+			prevMessagesLengthRef.current = messages.length
 			return () => clearTimeout(timer)
 		}
-	}, [messages, isLoading, activeChannel?.$id])
+
+		const lastMessage = messages[messages.length - 1]
+		const isNewLastMessage = lastMessage && lastMessage.$id !== prevLastMessageIdRef.current
+		const isLengthIncreased = messages.length > prevMessagesLengthRef.current
+
+		if (isNewLastMessage && isLengthIncreased) {
+			const mainEl = mainRef.current
+			const isNearBottom = mainEl ? mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight < 250 : true
+			const isSentByMe = lastMessage.senderId === currentUserId
+
+			if (isNearBottom || isSentByMe) {
+				scrollToBottom('smooth')
+			}
+		}
+
+		prevLastMessageIdRef.current = messages[messages.length - 1]?.$id
+		prevMessagesLengthRef.current = messages.length
+	}, [messages, isLoading, activeChannel?.$id, currentUserId])
 
 	useEffect(() => {
 		const mainEl = mainRef.current
