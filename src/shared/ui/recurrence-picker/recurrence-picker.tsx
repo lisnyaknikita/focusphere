@@ -12,7 +12,7 @@ import {
 } from '@/shared/utils/calendar/recurrence'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import classes from './recurrence-picker.module.scss'
 
 interface RecurrencePickerProps {
@@ -22,6 +22,7 @@ interface RecurrencePickerProps {
 
 export const RecurrencePicker = ({ form, setFormField }: RecurrencePickerProps) => {
 	const [open, setOpen] = useState(false)
+	const [openUpward, setOpenUpward] = useState(false)
 	const [isCustomModalOpen, setIsCustomModalOpen] = useState(false)
 	const { isPro, openPaywall } = useBilling()
 
@@ -30,6 +31,31 @@ export const RecurrencePicker = ({ form, setFormField }: RecurrencePickerProps) 
 
 	const currentDayName = getDayOfWeekName(form.date)
 	const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open)
+	const menuRef = useRef<HTMLDivElement>(null)
+
+	useLayoutEffect(() => {
+		if (!open) {
+			setOpenUpward(false)
+			return
+		}
+		const wrapperEl = dropdownRef.current
+		const menuEl = menuRef.current
+		if (!wrapperEl || !menuEl) return
+
+		const wrapperRect = wrapperEl.getBoundingClientRect()
+		const menuRect = menuEl.getBoundingClientRect()
+		const viewportHeight = window.innerHeight
+		const padding = 20
+
+		const spaceBelow = viewportHeight - wrapperRect.bottom - padding
+		const spaceAbove = wrapperRect.top - padding
+
+		if (spaceBelow < menuRect.height && spaceAbove > spaceBelow) {
+			setOpenUpward(true)
+		} else {
+			setOpenUpward(false)
+		}
+	}, [open, dropdownRef])
 
 	const isCustom = useMemo(() => {
 		if (recurrence.isCustom) return true
@@ -111,7 +137,8 @@ export const RecurrencePicker = ({ form, setFormField }: RecurrencePickerProps) 
 						<AnimatePresence>
 							{open && (
 								<motion.div
-									className={classes.dropdown}
+									ref={menuRef}
+									className={clsx(classes.dropdown, openUpward && classes.dropdownUp)}
 									initial={{ opacity: 0, scale: 0.95, y: -6 }}
 									animate={{ opacity: 1, scale: 1, y: 0 }}
 									exit={{ opacity: 0, scale: 0.97, y: -4 }}
