@@ -1,3 +1,4 @@
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { CreateEventPayload } from '@/shared/types/event'
 import { extractDateTimeComponents, localDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
@@ -16,6 +17,10 @@ export const useCalendarCopyPaste = ({ user, quickCreate, handleCreateEvent }: U
 
 	const handleDateClick = useCallback(
 		async (date: Temporal.PlainDate) => {
+			if (useCalendarOperationStore.getState().isMutating) {
+				return
+			}
+
 			if (!copiedEventRef.current || !user) {
 				quickCreate(date.toZonedDateTime({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }))
 				return

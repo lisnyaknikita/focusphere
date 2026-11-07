@@ -1,3 +1,4 @@
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { useCallback, useEffect } from 'react'
 import { Modal } from '../modal/modal'
 import classes from './confirm-modal.module.scss'
@@ -21,10 +22,13 @@ export const ConfirmModal = ({
 	onConfirm,
 	onClose,
 }: ConfirmModalProps) => {
+	const isMutating = useCalendarOperationStore(state => state.isMutating)
+
 	const handleConfirm = useCallback(() => {
+		if (isMutating) return
 		onConfirm()
 		onClose()
-	}, [onConfirm, onClose])
+	}, [onConfirm, onClose, isMutating])
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -50,11 +54,11 @@ export const ConfirmModal = ({
 				<p>{message}</p>
 			</div>
 			<div className={classes.actions}>
-				<button type='button' className={classes.cancelButton} onClick={onClose}>
+				<button type='button' className={classes.cancelButton} onClick={onClose} disabled={isMutating}>
 					{cancelText}
 				</button>
-				<button type='button' className={classes.confirmButton} onClick={handleConfirm} autoFocus>
-					{confirmText}
+				<button type='button' className={classes.confirmButton} onClick={handleConfirm} disabled={isMutating} autoFocus>
+					{isMutating ? 'Deleting…' : confirmText}
 				</button>
 			</div>
 		</Modal>

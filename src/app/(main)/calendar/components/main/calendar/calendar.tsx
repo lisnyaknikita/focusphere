@@ -9,11 +9,12 @@ import { useCalendarMutations } from '@/shared/hooks/calendar/use-calendar-mutat
 import { useCalendarScroll } from '@/shared/hooks/calendar/use-calendar-scroll'
 import { useDailyTasksCounters } from '@/shared/hooks/calendar/use-daily-tasks-counters'
 import { InitialEventValues } from '@/shared/hooks/calendar/use-event-form'
-import { useGridDragCreate } from '@/shared/hooks/calendar/use-grid-drag-create'
+import { checkAndResetDragJustCompleted, useGridDragCreate } from '@/shared/hooks/calendar/use-grid-drag-create'
 import { useMonthMorePopover } from '@/shared/hooks/calendar/use-month-more-popover'
 import { useScheduleXBridge } from '@/shared/hooks/calendar/use-schedulex-bridge'
 import { useCalendarEvents } from '@/shared/hooks/events/use-calendar-events'
 import { useUser } from '@/shared/hooks/use-user/use-user'
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import type { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import { ScheduleXCalendar } from '@schedule-x/react'
 import '@schedule-x/theme-default/dist/index.css'
@@ -42,6 +43,7 @@ export const CalendarInner = memo(
 	({ view, onRequestCreate, onDayClick, onGoogleLoadingChange }: CalendarInnerProps) => {
 		const { user } = useUser()
 		const { isPro, openPaywall } = useBilling()
+		const operation = useCalendarOperationStore(state => state.operation)
 
 		const [range, setRange] = useState(defaultRange)
 
@@ -59,6 +61,8 @@ export const CalendarInner = memo(
 
 		const quickCreate = useCallback(
 			(dateTime: Temporal.ZonedDateTime) => {
+				if (checkAndResetDragJustCompleted()) return
+
 				const roundedMinutes = Math.round(dateTime.minute / 15) * 15
 				const start = dateTime.add({ minutes: roundedMinutes - dateTime.minute })
 				const end = start.add({ minutes: 30 })
@@ -135,11 +139,16 @@ export const CalendarInner = memo(
 			eventModal,
 		})
 
-		const { selectionInfo } = useGridDragCreate({
+		useGridDragCreate({
 			isPro,
 			timeBlocksCount: events.filter(e => e.source !== 'google').length,
 			openPaywall,
 			onRequestCreateModal: onRequestCreate,
+			classNames: {
+				selection: classes.dragSelection,
+				title: classes.dragTitle,
+				time: classes.dragTime,
+			},
 		})
 
 		useCalendarScroll({ dependencies: [view] })
@@ -158,17 +167,31 @@ export const CalendarInner = memo(
 			setView(view)
 		}, [view, setView])
 
+		const isMutating = Boolean(operation)
+		const affectedId = operation?.affectedIds?.[0]
+
 		return (
 			<DailyTasksCountByDateContext.Provider value={dailyTasksCountByDate}>
 				<CalendarCopyModeContext.Provider value={isCopyMode}>
-					<div className={classes.calendarWrapper} ref={calendarWrapperRef}>
+					<div
+						className={classes.calendarWrapper}
+						ref={calendarWrapperRef}
+						aria-busy={isMutating}
+						data-has-mutation={isMutating}
+						data-affected-id={affectedId}
+					>
 						<ScheduleXCalendar key={view} customComponents={customComponents} calendarApp={calendar} />
+						{operation && (
+							<div className={classes.operationOverlay} role='status' aria-live='polite'>
+								<span className={classes.operationSpinner} />
+								<span>{operation.label}</span>
+							</div>
+						)}
 					</div>
 
 					<CalendarOverlays
 						copiedEvent={copiedEvent}
 						setCopiedEvent={setCopiedEvent}
-						selectionInfo={selectionInfo}
 						popoverState={popoverState}
 						closePopover={closePopover}
 						mappedEvents={mappedEvents}

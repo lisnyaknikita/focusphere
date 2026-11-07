@@ -1,6 +1,7 @@
 import { CALENDARS_CONFIG, getCalendarIdByColor } from '@/lib/events/calendar-config'
 import { useBilling } from '@/shared/context/billing-context'
 import { CalendarActions, useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { useSettingsStore } from '@/shared/stores/settings.store'
 import { RecurrenceActionModal, RecurrenceScope } from '@/shared/ui/recurrence-action-modal/recurrence-action-modal'
 import { getRecurrenceSummary, isRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
@@ -80,11 +81,13 @@ export const EventInfoModal = ({
 
 	const formattedDate = formatDateRange(event.start, event.end, timeFormat)
 	const isReadOnly = !onConfirmDelete
+	const isMutating = useCalendarOperationStore(state => state.isMutating)
 
 	const recurrenceRule = (event as unknown as { recurrenceRule?: string }).recurrenceRule
 	const recurrenceSummary = recurrenceRule ? getRecurrenceSummary(recurrenceRule) : null
 
 	const handleDelete = () => {
+		if (isMutating) return
 		if (onConfirmDelete) {
 			onConfirmDelete(String(event.id))
 		}
@@ -92,6 +95,7 @@ export const EventInfoModal = ({
 
 	const handleEditSubmit = (e: React.FormEvent) => {
 		e.preventDefault()
+		if (isMutating) return
 		if (isRecurrenceInstanceId(event.id)) {
 			setIsRecurrenceEditModalOpen(true)
 		} else {
@@ -100,6 +104,7 @@ export const EventInfoModal = ({
 	}
 
 	const handleRecurrenceEditConfirm = (scope: RecurrenceScope) => {
+		if (isMutating) return
 		handleSubmit(undefined, scope)
 	}
 
@@ -140,6 +145,7 @@ export const EventInfoModal = ({
 										type='button'
 										className={clsx(classes.copyBtn, !isPro && classes.proAction)}
 										onClick={() => (!isPro ? openPaywall('planner_copying') : onCopy())}
+										disabled={isMutating}
 										{...refProps}
 									>
 										<CopyEventIcon />
@@ -148,10 +154,10 @@ export const EventInfoModal = ({
 							</ActionTooltip>
 						)}
 
-						<button className={classes.editButton} onClick={() => setIsEditing(true)}>
+						<button className={classes.editButton} onClick={() => setIsEditing(true)} disabled={isMutating}>
 							<EditIcon />
 						</button>
-						<button className={classes.deleteButton} onClick={handleDelete}>
+						<button className={classes.deleteButton} onClick={handleDelete} disabled={isMutating}>
 							<DeleteIcon width={18} height={18} />
 						</button>
 					</>

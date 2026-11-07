@@ -1,6 +1,7 @@
 import { CalendarView, VIEW_TO_SX } from '@/app/(main)/calendar/constants/calendar.constants'
 import { CALENDARS_CONFIG } from '@/lib/events/calendar-config'
 import { useCalendarMutations } from '@/shared/hooks/calendar/use-calendar-mutations'
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { useSettingsStore } from '@/shared/stores/settings.store'
 import { scheduleXDateTimeToInstant } from '@/shared/utils/event-date-time/event-date-time'
 import { CalendarEvent, createViewDay, createViewMonthGrid, createViewWeek } from '@schedule-x/calendar'
@@ -65,12 +66,16 @@ export const useCalendarApp = ({
 				onRangeUpdateRef.current?.(range)
 			},
 			onClickDateTime(dateTime) {
+				if (useCalendarOperationStore.getState().isMutating) return
 				onQuickCreateRef.current?.(dateTime)
 			},
 			onClickDate(date) {
+				if (useCalendarOperationStore.getState().isMutating) return
 				onDateClickRef.current?.(date)
 			},
 			async onEventUpdate(updatedEvent: CalendarEvent) {
+				if (useCalendarOperationStore.getState().isMutating) return
+
 				if (onEventUpdateRef.current) {
 					await onEventUpdateRef.current(updatedEvent)
 					return
