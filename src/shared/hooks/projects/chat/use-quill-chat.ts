@@ -17,10 +17,19 @@ interface UseQuillChatProps {
 }
 
 export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping, onStopTyping }: UseQuillChatProps) => {
+	const [isUploading, setIsUploading] = useState(false)
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 	const [dropdownSearch, setDropdownSearch] = useState('')
 	const [dropdownIndex, setDropdownIndex] = useState(0)
 	const [hashIndex, setHashIndex] = useState(-1)
+
+	const isUploadingRef = useRef(false)
+	isUploadingRef.current = isUploading
+
+	const handleUploadingChange = (uploading: boolean) => {
+		setIsUploading(uploading)
+		isUploadingRef.current = uploading
+	}
 
 	const containerRef = useRef<HTMLDivElement>(null)
 	const quillRef = useRef<Quill | null>(null)
@@ -68,17 +77,22 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 	}, [isDropdownOpen, dropdownRefs])
 
 	const handleSend = () => {
-		if (!quillRef.current) return
+		if (!quillRef.current || isUploadingRef.current) return
 		const root = quillRef.current.root
-		const content = root.innerHTML.trim()
+
+		const rawHtml = root.innerHTML
+		const sanitizedHtml = rawHtml.replace(/📷\s*Uploading image(?:\.\.\.|…)?/g, '').trim()
 
 		const hasImage = root.querySelector('img') !== null
-		const hasText = quillRef.current.getText().trim().length > 0
+		const plainText = quillRef.current
+			.getText()
+			.replace(/📷\s*Uploading image(?:\.\.\.|…)?/g, '')
+			.trim()
 
-		if (!hasImage && !hasText) return
+		if (!hasImage && plainText.length === 0) return
 
 		onStopTypingRef.current?.()
-		onSendRef.current(content)
+		onSendRef.current(sanitizedHtml)
 		quillRef.current.setContents([])
 		quillRef.current.focus()
 	}
@@ -152,7 +166,7 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 				input.onchange = () => {
 					const file = input.files?.[0]
 					if (file) {
-						processImageUpload(file, quill)
+						processImageUpload(file, quill, handleUploadingChange)
 					}
 				}
 			})
@@ -170,7 +184,7 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 					e.stopImmediatePropagation()
 					const file = item.getAsFile()
 					if (file) {
-						processImageUpload(file, quill)
+						processImageUpload(file, quill, handleUploadingChange)
 					}
 					break
 				}
@@ -185,7 +199,7 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 					e.preventDefault()
 					e.stopPropagation()
 					e.stopImmediatePropagation()
-					processImageUpload(file, quill)
+					processImageUpload(file, quill, handleUploadingChange)
 				}
 			}
 		}
@@ -291,6 +305,7 @@ export const useQuillChat = ({ initialContent, tasks, variant, onSend, onTyping,
 	return {
 		containerRef,
 		quillRef,
+		isUploading,
 		isDropdownOpen,
 		dropdownRefs,
 		dropdownFloatingStyles,

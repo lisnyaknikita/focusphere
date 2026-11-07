@@ -70,6 +70,9 @@ export const ChatArea = ({
 	const canLoadOlderMessagesRef = useRef(false)
 	const prevLastMessageIdRef = useRef<string | undefined>(undefined)
 	const prevMessagesLengthRef = useRef<number>(messages.length)
+	const wasAtBottomRef = useRef(true)
+	const isUserScrollingRef = useRef(false)
+	const userScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
 	const { typers, notifyTyping, notifyStopTyping } = useTypingIndicator(
 		activeChannel?.$id,
@@ -134,11 +137,34 @@ export const ChatArea = ({
 
 		const markUserScrollIntent = () => {
 			hasUserInitiatedScrollRef.current = true
+			isUserScrollingRef.current = true
+			if (userScrollTimeoutRef.current) {
+				clearTimeout(userScrollTimeoutRef.current)
+			}
+			userScrollTimeoutRef.current = setTimeout(() => {
+				isUserScrollingRef.current = false
+			}, 300)
 		}
 
 		const handleScroll = () => {
 			const distanceFromBottom = mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight
 			setShowScrollBottomButton(distanceFromBottom > 200)
+
+			const isAtBottom = distanceFromBottom <= 40
+			wasAtBottomRef.current = isAtBottom
+			if (isAtBottom) {
+				hasUserInitiatedScrollRef.current = false
+			}
+
+			if (isUserScrollingRef.current) {
+				if (userScrollTimeoutRef.current) {
+					clearTimeout(userScrollTimeoutRef.current)
+				}
+				userScrollTimeoutRef.current = setTimeout(() => {
+					isUserScrollingRef.current = false
+				}, 300)
+			}
+
 			const isAwayFromTop = mainEl.scrollTop > 80
 
 			if (hasUserInitiatedScrollRef.current && isAwayFromTop) {
@@ -247,8 +273,10 @@ export const ChatArea = ({
 				isPositioningChannelRef.current = true
 				if (unreadDividerRef.current) {
 					unreadDividerRef.current.scrollIntoView({ behavior: 'instant', block: 'center' })
+					wasAtBottomRef.current = false
 				} else if (mainRef.current) {
 					mainRef.current.scrollTop = mainRef.current.scrollHeight
+					wasAtBottomRef.current = true
 				}
 				requestAnimationFrame(() => {
 					isPositioningChannelRef.current = false
@@ -266,7 +294,7 @@ export const ChatArea = ({
 
 		if (isNewLastMessage && isLengthIncreased) {
 			const mainEl = mainRef.current
-			const isNearBottom = mainEl ? mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight < 250 : true
+			const isNearBottom = mainEl ? mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight < 100 : true
 			const isSentByMe = lastMessage.senderId === currentUserId
 
 			if (isNearBottom || isSentByMe) {
@@ -282,15 +310,26 @@ export const ChatArea = ({
 		const mainEl = mainRef.current
 		if (!mainEl) return
 
-		const handleImageLoad = () => {
-			const isNearBottom = mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight < 350
-			if (isNearBottom) {
-				mainEl.scrollTop = mainEl.scrollHeight
-			}
+		const handleImageLoad = (e: Event) => {
+			const target = e.target as HTMLElement | null
+			if (!target || target.tagName !== 'IMG') return
+
+			if (isUserScrollingRef.current) return
+			if (!wasAtBottomRef.current) return
+
+			const distanceFromBottom = mainEl.scrollHeight - mainEl.scrollTop - mainEl.clientHeight
+			if (distanceFromBottom > 40) return
+
+			mainEl.scrollTop = mainEl.scrollHeight
 		}
 
 		mainEl.addEventListener('load', handleImageLoad, true)
-		return () => mainEl.removeEventListener('load', handleImageLoad, true)
+		return () => {
+			mainEl.removeEventListener('load', handleImageLoad, true)
+			if (userScrollTimeoutRef.current) {
+				clearTimeout(userScrollTimeoutRef.current)
+			}
+		}
 	}, [])
 
 	const handleReply = (message: ChatMessage) => {
