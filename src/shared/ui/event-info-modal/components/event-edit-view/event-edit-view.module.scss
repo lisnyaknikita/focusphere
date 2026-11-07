@@ -39,8 +39,13 @@
 	font-family: inherit;
 	transition: background-color 0.2s;
 
-	&:hover {
+	&:hover:not(:disabled) {
 		background-color: #aaa;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
 	}
 }
 
@@ -54,7 +59,12 @@
 	font-family: inherit;
 	transition: background-color 0.2s;
 
-	&:hover {
+	&:hover:not(:disabled) {
 		background-color: var(--secondary);
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
 	}
 }

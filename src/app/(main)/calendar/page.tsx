@@ -3,6 +3,7 @@
 import { useCalendarView } from '@/shared/hooks/calendar/use-calendar-view'
 import { InitialEventValues } from '@/shared/hooks/calendar/use-event-form'
 import { useSettingsStore } from '@/shared/stores/settings.store'
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { CreateButton } from '@/shared/ui/create-button/create-button'
 import { Modal } from '@/shared/ui/modal/modal'
 import { Tabs } from '@/shared/ui/tabs/tabs'
@@ -20,6 +21,7 @@ export default function Calendar() {
 	const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
 	const timeFormat = useSettingsStore(state => state.timeFormat)
+	const operation = useCalendarOperationStore(state => state.operation)
 	const { view, handleViewChange } = useCalendarView()
 
 	const handleEventCreated = () => {
@@ -33,14 +35,19 @@ export default function Calendar() {
 					<header className={classes.header}>
 						<div className={classes.headerLeft}>
 							<Tabs tabs={['month', 'week', 'day']} activeTab={view} onChange={handleViewChange} />
-							{isGoogleLoading && (
+							{operation ? (
+								<span className={classes.syncingIndicator} role='status'>
+									<span className={classes.syncingDot} />
+									{operation.label}
+								</span>
+							) : isGoogleLoading ? (
 								<span className={classes.syncingIndicator}>
 									<span className={classes.syncingDot} />
 									Syncing Google Calendar...
 								</span>
-							)}
+							) : null}
 						</div>
-						<CreateButton setIsModalVisible={() => setInitialValues({})} text='Add event' />
+						<CreateButton setIsModalVisible={() => setInitialValues({})} text='Add event' disabled={Boolean(operation)} />
 					</header>
 					<main className={classes.calendar}>
 						<CalendarInner

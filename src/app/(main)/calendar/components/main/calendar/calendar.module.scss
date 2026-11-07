@@ -4,6 +4,49 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	position: relative;
+
+	&[data-has-mutation='true'] {
+		:global(.sx__time-grid-event),
+		:global(.sx__month-grid-event),
+		:global(.sx__date-grid-event) {
+			pointer-events: none !important;
+			transition: opacity 0.2s ease, filter 0.2s ease;
+		}
+	}
+}
+
+.operationOverlay {
+	position: absolute;
+	inset: 0;
+	z-index: 200;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	background: color-mix(in srgb, var(--background) 42%, transparent);
+	backdrop-filter: blur(1px);
+	color: var(--text);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: progress;
+	user-select: none;
+	pointer-events: all;
+}
+
+.operationSpinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid color-mix(in srgb, var(--text) 25%, transparent);
+	border-top-color: var(--text);
+	border-radius: 50%;
+	animation: operation-spin 0.75s linear infinite;
+}
+
+@keyframes operation-spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .dragSelection {

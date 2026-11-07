@@ -7,14 +7,12 @@ import { RecurrenceActionModal } from '@/shared/ui/recurrence-action-modal/recur
 import { isRecurrenceInstanceId } from '@/shared/utils/calendar/recurrence'
 import { CalendarEvent as SXEvent } from '@schedule-x/calendar'
 import type { ReactNode } from 'react'
-import { createPortal } from 'react-dom'
-import classes from '../../calendar.module.scss'
 import { DayEventsPopover } from '../day-events-popover/day-events-popover'
 
 interface CalendarOverlaysProps {
 	copiedEvent: SXEvent | null
 	setCopiedEvent: (event: SXEvent | null) => void
-	selectionInfo: DragSelectionInfo | null
+	selectionInfo?: DragSelectionInfo | null
 	popoverState: { dateStr: string; anchorEl: HTMLElement } | null
 	closePopover: () => void
 	mappedEvents: SXEvent[]
@@ -33,7 +31,6 @@ interface CalendarOverlaysProps {
 export const CalendarOverlays = ({
 	copiedEvent,
 	setCopiedEvent,
-	selectionInfo,
 	popoverState,
 	closePopover,
 	mappedEvents,
@@ -51,20 +48,6 @@ export const CalendarOverlays = ({
 	return (
 		<>
 			{copiedEvent && <EventPasteBanner copiedEvent={copiedEvent} onCancel={() => setCopiedEvent(null)} />}
-
-			{selectionInfo?.columnEl &&
-				createPortal(
-					<div
-						className={classes.dragSelection}
-						style={{ top: `${selectionInfo.topPx}px`, height: `${selectionInfo.heightPx}px` }}
-					>
-						<span className={classes.dragTitle}>New Event</span>
-						<span className={classes.dragTime}>
-							{selectionInfo.startTimeStr} – {selectionInfo.endTimeStr}
-						</span>
-					</div>,
-					selectionInfo.columnEl
-				)}
 
 			<DayEventsPopover
 				dateStr={popoverState?.dateStr || null}

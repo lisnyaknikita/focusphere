@@ -1,7 +1,8 @@
 import { InitialEventValues } from '@/shared/hooks/calendar/use-event-form'
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { useSettingsStore } from '@/shared/stores/settings.store'
 import { formatTimeString } from '@/shared/utils/format-time/format-time'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export interface DragSelectionInfo {
 	topPx: number
@@ -11,11 +12,18 @@ export interface DragSelectionInfo {
 	columnEl: HTMLElement
 }
 
+export interface DragClassNames {
+	selection?: string
+	title?: string
+	time?: string
+}
+
 interface UseGridDragCreateProps {
 	isPro: boolean
 	timeBlocksCount: number
 	openPaywall: (id: string) => void
 	onRequestCreateModal: (initialValues: InitialEventValues) => void
+	classNames?: DragClassNames
 }
 
 let globalIsDragJustCompleted = false
@@ -40,32 +48,52 @@ export const useGridDragCreate = ({
 	timeBlocksCount,
 	openPaywall,
 	onRequestCreateModal,
+	classNames,
 }: UseGridDragCreateProps) => {
-	const [selectionInfo, setSelectionInfo] = useState<DragSelectionInfo | null>(null)
-
 	const isDraggingRef = useRef(false)
 	const dragStartInfoRef = useRef<{
 		columnEl: HTMLElement
 		date: string
 		startMin: number
 		startY: number
+		rectTop: number
+		gridHeight: number
 	} | null>(null)
+
+	const previewElRef = useRef<HTMLDivElement | null>(null)
+	const timeElRef = useRef<HTMLSpanElement | null>(null)
+	const rafIdRef = useRef<number | null>(null)
 
 	const isProRef = useRef(isPro)
 	const timeBlocksCountRef = useRef(timeBlocksCount)
 	const openPaywallRef = useRef(openPaywall)
 	const onRequestCreateModalRef = useRef(onRequestCreateModal)
+	const classNamesRef = useRef(classNames)
 
 	useEffect(() => {
 		isProRef.current = isPro
 		timeBlocksCountRef.current = timeBlocksCount
 		openPaywallRef.current = openPaywall
 		onRequestCreateModalRef.current = onRequestCreateModal
-	}, [isPro, timeBlocksCount, openPaywall, onRequestCreateModal])
+		classNamesRef.current = classNames
+	}, [isPro, timeBlocksCount, openPaywall, onRequestCreateModal, classNames])
 
 	useEffect(() => {
+		const cleanupPreview = () => {
+			if (rafIdRef.current !== null) {
+				cancelAnimationFrame(rafIdRef.current)
+				rafIdRef.current = null
+			}
+			if (previewElRef.current) {
+				previewElRef.current.remove()
+				previewElRef.current = null
+			}
+			timeElRef.current = null
+		}
+
 		const handlePointerDown = (e: PointerEvent) => {
 			if (e.button !== 0) return
+			if (useCalendarOperationStore.getState().isMutating) return
 
 			const target = e.target as HTMLElement | null
 			if (!target) return
@@ -91,8 +119,8 @@ export const useGridDragCreate = ({
 			if (!date) return
 
 			const rect = colEl.getBoundingClientRect()
-			const clickY = e.clientY - rect.top
 			const gridHeight = rect.height || 1032
+			const clickY = e.clientY - rect.top
 
 			const minutes = Math.floor(((clickY / gridHeight) * 1440) / 15) * 15
 			const clampedMin = Math.max(0, Math.min(1425, minutes))
@@ -102,6 +130,8 @@ export const useGridDragCreate = ({
 				date,
 				startMin: clampedMin,
 				startY: clickY,
+				rectTop: rect.top,
+				gridHeight,
 			}
 			isDraggingRef.current = false
 		}
@@ -109,15 +139,13 @@ export const useGridDragCreate = ({
 		const handlePointerMove = (e: PointerEvent) => {
 			if (!dragStartInfoRef.current) return
 
-			const { columnEl, startMin } = dragStartInfoRef.current
-			const rect = columnEl.getBoundingClientRect()
-			const currentY = e.clientY - rect.top
-			const gridHeight = rect.height || 1032
+			const { columnEl, startMin, rectTop, gridHeight, startY } = dragStartInfoRef.current
+			const currentY = e.clientY - rectTop
 
 			const currentMin = Math.floor(((currentY / gridHeight) * 1440) / 15) * 15
 			const clampedCurrentMin = Math.max(0, Math.min(1425, currentMin))
 
-			const diffY = Math.abs(currentY - dragStartInfoRef.current.startY)
+			const diffY = Math.abs(currentY - startY)
 			if (diffY > 8) {
 				isDraggingRef.current = true
 			}
@@ -137,16 +165,52 @@ export const useGridDragCreate = ({
 				return formatTimeString(raw, useSettingsStore.getState().timeFormat)
 			}
 
-			setSelectionInfo({
-				topPx,
-				heightPx,
-				startTimeStr: formatTime(minMin),
-				endTimeStr: formatTime(maxMin),
-				columnEl,
+			const timeStr = `${formatTime(minMin)} – ${formatTime(maxMin)}`
+
+			if (!previewElRef.current) {
+				const el = document.createElement('div')
+				const classes = classNamesRef.current
+				if (classes?.selection) {
+					el.className = classes.selection
+				}
+
+				const titleSpan = document.createElement('span')
+				if (classes?.title) {
+					titleSpan.className = classes.title
+				}
+				titleSpan.textContent = 'New Event'
+
+				const timeSpan = document.createElement('span')
+				if (classes?.time) {
+					timeSpan.className = classes.time
+				}
+				timeSpan.textContent = timeStr
+
+				el.appendChild(titleSpan)
+				el.appendChild(timeSpan)
+				columnEl.appendChild(el)
+
+				previewElRef.current = el
+				timeElRef.current = timeSpan
+			}
+
+			if (rafIdRef.current !== null) {
+				cancelAnimationFrame(rafIdRef.current)
+			}
+
+			rafIdRef.current = requestAnimationFrame(() => {
+				if (previewElRef.current) {
+					previewElRef.current.style.top = `${topPx}px`
+					previewElRef.current.style.height = `${heightPx}px`
+				}
+				if (timeElRef.current) {
+					timeElRef.current.textContent = timeStr
+				}
+				rafIdRef.current = null
 			})
 		}
 
-		const handlePointerUp = async (e: PointerEvent) => {
+		const handlePointerUp = (e: PointerEvent) => {
 			if (!dragStartInfoRef.current) return
 
 			const startInfo = dragStartInfoRef.current
@@ -154,15 +218,13 @@ export const useGridDragCreate = ({
 
 			dragStartInfoRef.current = null
 			isDraggingRef.current = false
-			setSelectionInfo(null)
+			cleanupPreview()
 
 			if (wasDragging) {
 				setDragJustCompleted()
 
-				const { columnEl, date, startMin } = startInfo
-				const rect = columnEl.getBoundingClientRect()
-				const currentY = e.clientY - rect.top
-				const gridHeight = rect.height || 1032
+				const { date, startMin, rectTop, gridHeight } = startInfo
+				const currentY = e.clientY - rectTop
 
 				const currentMin = Math.floor(((currentY / gridHeight) * 1440) / 15) * 15
 				const clampedCurrentMin = Math.max(0, Math.min(1425, currentMin))
@@ -192,13 +254,16 @@ export const useGridDragCreate = ({
 		window.addEventListener('pointerdown', handlePointerDown)
 		window.addEventListener('pointermove', handlePointerMove)
 		window.addEventListener('pointerup', handlePointerUp)
+		window.addEventListener('pointercancel', handlePointerUp)
 
 		return () => {
+			cleanupPreview()
 			window.removeEventListener('pointerdown', handlePointerDown)
 			window.removeEventListener('pointermove', handlePointerMove)
 			window.removeEventListener('pointerup', handlePointerUp)
+			window.removeEventListener('pointercancel', handlePointerUp)
 		}
 	}, [])
 
-	return { selectionInfo }
+	return { selectionInfo: null }
 }
