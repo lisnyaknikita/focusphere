@@ -4,28 +4,25 @@ import { toast } from 'sonner'
 
 const MAX_FILE_SIZE_MB = 5
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-const PLACEHOLDER_TEXT = '📷 Uploading image...'
+export const PLACEHOLDER_TEXT = '📷 Uploading image...'
 
-const getQuillTextIndex = (quill: Quill, searchText: string): number => {
-	let index = 0
-	const contents = quill.getContents()
-
-	for (const op of contents.ops) {
-		if (typeof op.insert === 'string') {
-			const matchIndex = op.insert.indexOf(searchText)
-			if (matchIndex !== -1) {
-				return index + matchIndex
-			}
-			index += op.insert.length
-		} else if (op.insert) {
-			index += 1
+const findPlaceholderRange = (quill: Quill): { index: number; length: number } | null => {
+	const text = quill.getText()
+	const match = text.match(/📷\s*Uploading image(?:\.\.\.|…)?/)
+	if (match && match.index !== undefined) {
+		return {
+			index: match.index,
+			length: match[0].length,
 		}
 	}
-
-	return -1
+	return null
 }
 
-export const processImageUpload = async (file: File, quill: Quill): Promise<void> => {
+export const processImageUpload = async (
+	file: File,
+	quill: Quill,
+	onUploadingChange?: (isUploading: boolean) => void
+): Promise<void> => {
 	if (!ALLOWED_TYPES.includes(file.type)) {
 		toast.error('Unsupported image format. Use PNG, JPEG, WEBP or GIF.')
 		return
@@ -36,8 +33,11 @@ export const processImageUpload = async (file: File, quill: Quill): Promise<void
 		return
 	}
 
-	const range = quill.getSelection(true)
-	const insertIndex = range ? range.index : quill.getLength()
+	onUploadingChange?.(true)
+
+	const range = quill.getSelection()
+	const docLength = quill.getLength()
+	const insertIndex = range ? range.index : Math.max(0, docLength - 1)
 
 	try {
 		quill.insertText(insertIndex, PLACEHOLDER_TEXT, { italic: true, color: '#8e8e93' })
@@ -45,10 +45,11 @@ export const processImageUpload = async (file: File, quill: Quill): Promise<void
 
 		const imageUrl = await uploadEditorImage(file)
 
-		const targetIndex = getQuillTextIndex(quill, PLACEHOLDER_TEXT)
-		const deleteAt = targetIndex !== -1 ? targetIndex : insertIndex
+		const placeholder = findPlaceholderRange(quill)
+		const deleteAt = placeholder ? placeholder.index : insertIndex
+		const deleteLength = placeholder ? placeholder.length : PLACEHOLDER_TEXT.length
 
-		quill.deleteText(deleteAt, PLACEHOLDER_TEXT.length)
+		quill.deleteText(deleteAt, deleteLength)
 		quill.format('italic', false)
 		quill.format('color', false)
 
@@ -57,13 +58,15 @@ export const processImageUpload = async (file: File, quill: Quill): Promise<void
 	} catch (error) {
 		console.error('Failed to process image upload:', error)
 
-		const targetIndex = getQuillTextIndex(quill, PLACEHOLDER_TEXT)
-		if (targetIndex !== -1) {
-			quill.deleteText(targetIndex, PLACEHOLDER_TEXT.length)
+		const placeholder = findPlaceholderRange(quill)
+		if (placeholder) {
+			quill.deleteText(placeholder.index, placeholder.length)
 			quill.format('italic', false)
 			quill.format('color', false)
 		}
 
 		toast.error('Failed to upload image. Please try again.')
+	} finally {
+		onUploadingChange?.(false)
 	}
 }

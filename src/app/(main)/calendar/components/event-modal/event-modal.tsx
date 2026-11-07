@@ -1,5 +1,6 @@
 import { useCalendarMutations } from '@/shared/hooks/calendar/use-calendar-mutations'
 import { InitialEventValues, useEventForm } from '@/shared/hooks/calendar/use-event-form'
+import { useCalendarOperationStore } from '@/shared/stores/calendar-operation.store'
 import { RecurrencePicker } from '@/shared/ui/recurrence-picker/recurrence-picker'
 import { ColorPicker } from './components/color-picker/color-picker'
 import { DateTime } from './components/date-time/date-time'
@@ -15,6 +16,7 @@ interface EventModalProps {
 
 export const EventModal = ({ onClose, initialTitle, onSuccess, initialValues }: EventModalProps) => {
 	const { handleCreateEvent, handleUpdateEvent } = useCalendarMutations()
+	const isMutating = useCalendarOperationStore(state => state.isMutating)
 
 	const { form, setFormField, handleSubmit } = useEventForm(
 		() => {
@@ -45,8 +47,8 @@ export const EventModal = ({ onClose, initialTitle, onSuccess, initialValues }: 
 				<Description form={form} setFormField={setFormField} />
 				<ColorPicker form={form} setFormField={setFormField} />
 				<RecurrencePicker form={form} setFormField={setFormField} />
-				<button type='submit' className={classes.saveButton}>
-					Save
+				<button type='submit' className={classes.saveButton} disabled={isMutating}>
+					{isMutating ? 'Saving…' : 'Save'}
 				</button>
 			</form>
 		</div>

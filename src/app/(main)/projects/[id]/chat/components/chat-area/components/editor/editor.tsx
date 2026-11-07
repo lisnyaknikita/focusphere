@@ -30,6 +30,7 @@ export const Editor = forwardRef<EditorRef, EditorProps>(
 		const {
 			containerRef,
 			quillRef,
+			isUploading,
 			isDropdownOpen,
 			dropdownRefs,
 			dropdownFloatingStyles,
@@ -62,19 +63,24 @@ export const Editor = forwardRef<EditorRef, EditorProps>(
 										Cancel
 									</button>
 								)}
-								<button type='button' className={classes.saveBtn} onClick={handleSend} disabled={disabled}>
-									Save
+								<button
+									type='button'
+									className={classes.saveBtn}
+									onClick={handleSend}
+									disabled={disabled || isUploading}
+								>
+									{isUploading ? 'Uploading...' : 'Save'}
 								</button>
 							</div>
 						) : (
-							<ActionTooltip text='Send message (Enter)'>
+							<ActionTooltip text={isUploading ? 'Uploading image...' : 'Send message (Enter)'}>
 								{(setRef, refProps) => (
 									<button
 										ref={setRef}
 										type='button'
 										className={classes.sendButton}
 										onClick={handleSend}
-										disabled={disabled}
+										disabled={disabled || isUploading}
 										{...refProps}
 									>
 										<SendIcon />
