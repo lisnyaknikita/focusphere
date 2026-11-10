@@ -54,6 +54,7 @@ export interface EventForm {
 	date: string
 	startTime: string
 	endTime: string
+	isAllDay?: boolean
 	color: string
 	repeatDays?: number[]
 	recurrence?: RecurrenceConfig

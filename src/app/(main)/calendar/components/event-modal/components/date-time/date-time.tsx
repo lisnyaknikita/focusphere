@@ -12,6 +12,8 @@ interface DateTimeProps<T extends FormType> {
 }
 
 export const DateTime = <T extends EventForm>({ form, setFormField }: DateTimeProps<T>) => {
+	const isAllDay = Boolean(form.isAllDay)
+
 	return (
 		<div className={classes.dateTime}>
 			<div className={classes.icon}>
@@ -24,30 +26,42 @@ export const DateTime = <T extends EventForm>({ form, setFormField }: DateTimePr
 					formatString='EEEE, MMMM d'
 					buttonClassName={classes.date}
 				/>
-				<div className={classes.timePickers}>
-					<TimeDropdown
-						value={form.startTime}
-						onChange={value => {
-							setFormField('startTime', value)
+				{!isAllDay && (
+					<div className={classes.timePickers}>
+						<TimeDropdown
+							value={form.startTime}
+							onChange={value => {
+								setFormField('startTime', value)
 
-							if (form.endTime && value >= form.endTime) {
-								const [h, m] = value.split(':').map(Number)
-								const totalMins = h * 60 + m + 30
+								if (form.endTime && value >= form.endTime) {
+									const [h, m] = value.split(':').map(Number)
+									const totalMins = h * 60 + m + 30
 
-								const nextH = String(Math.floor(totalMins / 60) % 24).padStart(2, '0')
-								const nextM = String(totalMins % 60).padStart(2, '0')
+									const nextH = String(Math.floor(totalMins / 60) % 24).padStart(2, '0')
+									const nextM = String(totalMins % 60).padStart(2, '0')
 
-								setFormField('endTime', `${nextH}:${nextM}`)
-							}
-						}}
+									setFormField('endTime', `${nextH}:${nextM}`)
+								}
+							}}
+						/>
+						<span className={classes.separator}>–</span>
+						<TimeDropdown
+							value={form.endTime}
+							onChange={value => setFormField('endTime', value)}
+							compareTime={form.startTime}
+						/>
+					</div>
+				)}
+				<label className={classes.allDayCheckbox}>
+					<input
+						type='checkbox'
+						checked={isAllDay}
+						onChange={e => setFormField('isAllDay', e.target.checked as T['isAllDay'])}
+						className={classes.checkboxInput}
 					/>
-					<span className={classes.separator}>–</span>
-					<TimeDropdown
-						value={form.endTime}
-						onChange={value => setFormField('endTime', value)}
-						compareTime={form.startTime}
-					/>
-				</div>
+					<span className={classes.customCheckbox} />
+					<span className={classes.allDayText}>All day</span>
+				</label>
 			</div>
 		</div>
 	)

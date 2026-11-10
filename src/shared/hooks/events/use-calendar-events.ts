@@ -151,6 +151,37 @@ export const useCalendarEvents = ({ userId, start, end }: UseCalendarEventsProps
 			if (event.googleEventId) linkedGoogleIds.add(event.googleEventId)
 		}
 
+		const googleEventsById = new Map<string, CalendarEvent>()
+		for (const q of googleQueries) {
+			if (q.data) {
+				for (const event of q.data) {
+					if (event.googleEventId) {
+						googleEventsById.set(event.googleEventId, event)
+					}
+				}
+			}
+		}
+
+		for (const event of localEvents) {
+			if (event.googleEventId) {
+				const gEvent = googleEventsById.get(event.googleEventId)
+				if (gEvent && gEvent.startDate.length <= 10) {
+					event.startDate = gEvent.startDate
+					event.endDate = gEvent.endDate
+				}
+			}
+		}
+
+		for (const event of recurringMastersMap.values()) {
+			if (event.googleEventId) {
+				const gEvent = googleEventsById.get(event.googleEventId)
+				if (gEvent && gEvent.startDate.length <= 10) {
+					event.startDate = gEvent.startDate
+					event.endDate = gEvent.endDate
+				}
+			}
+		}
+
 		const isGoogleEventDuplicate = (googleEventId?: string): boolean => {
 			if (!googleEventId) return false
 			if (linkedGoogleIds.has(googleEventId)) return true
