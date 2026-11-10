@@ -46,3 +46,64 @@
 	font-size: 16px;
 	user-select: none;
 }
+
+.allDayCheckbox {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 2px;
+	cursor: pointer;
+	user-select: none;
+	padding: 3px 4px;
+	border-radius: 5px;
+	transition: background-color 0.15s ease;
+
+	&:hover {
+		background-color: var(--secondary);
+	}
+}
+
+.checkboxInput {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	width: 0;
+	height: 0;
+}
+
+.customCheckbox {
+	width: 16px;
+	height: 16px;
+	border: 1.5px solid color-mix(in srgb, var(--text) 35%, transparent);
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: all 0.15s ease;
+	background-color: transparent;
+
+	.checkboxInput:checked + & {
+		background-color: var(--checkbox-bg);
+		border-color: var(--checkbox-bg);
+
+		&::after {
+			content: '';
+			width: 4px;
+			height: 8px;
+			border: solid var(--checkbox-icon);
+			border-width: 0 2px 2px 0;
+			transform: rotate(45deg) translate(-1px, -1px);
+		}
+	}
+}
+
+.allDayText {
+	font-size: 13px;
+	color: var(--textSecondary);
+	line-height: 1;
+
+	.allDayCheckbox:hover & {
+		color: var(--text);
+	}
+}
