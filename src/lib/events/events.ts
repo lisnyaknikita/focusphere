@@ -21,17 +21,33 @@ const deserializeExDates = (raw: unknown): string[] => {
 	return []
 }
 
-const hydrateEvent = (row: unknown): CalendarEvent => {
+const isAllDayTimestamp = (start?: string, end?: string): boolean => {
+	if (!start || !end) return false
+	if (!start.includes('T') && start.length <= 10) return true
+
+	const isMidnightUtc = (val: string) => /T00:00:00(?:\.000)?(?:Z|\+00:00)?$/.test(val)
+	return isMidnightUtc(start) && isMidnightUtc(end)
+}
+
+export const hydrateEvent = (row: unknown): CalendarEvent => {
 	const e = row as CalendarEvent & { recurrenceExDates?: unknown }
+	let { startDate, endDate } = e
+	if (isAllDayTimestamp(startDate, endDate)) {
+		startDate = startDate.slice(0, 10)
+		endDate = endDate.slice(0, 10)
+	}
+
 	return {
 		...e,
+		startDate,
+		endDate,
 		recurrenceExDates: deserializeExDates(e.recurrenceExDates),
 	} as CalendarEvent
 }
 
 export const createEvent = async (data: CreateEventPayload) => {
 	const { recurrenceExDates, ...rest } = data
-	return db.createRow({
+	const row = await db.createRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
 		rowId: ID.unique(),
@@ -42,11 +58,12 @@ export const createEvent = async (data: CreateEventPayload) => {
 			...(recurrenceExDates !== undefined && { recurrenceExDates: serializeExDates(recurrenceExDates) }),
 		},
 	})
+	return hydrateEvent(row)
 }
 
 export const updateEvent = async (eventId: string, data: Partial<Omit<CreateEventPayload, 'userId'>>) => {
 	const { recurrenceExDates, ...rest } = data
-	return db.updateRow({
+	const row = await db.updateRow({
 		databaseId: process.env.NEXT_PUBLIC_DB_ID!,
 		tableId: process.env.NEXT_PUBLIC_TABLE_EVENTS!,
 		rowId: eventId,
@@ -55,6 +72,7 @@ export const updateEvent = async (eventId: string, data: Partial<Omit<CreateEven
 			...(recurrenceExDates !== undefined && { recurrenceExDates: serializeExDates(recurrenceExDates) }),
 		},
 	})
+	return hydrateEvent(row)
 }
 
 export const deleteEvent = async (eventId: string): Promise<void> => {

@@ -4,8 +4,21 @@ import { TextEditorRef } from '@/shared/types/text-editor'
 import { PartialBlock } from '@blocknote/core'
 import { useCreateBlockNote } from '@blocknote/react'
 import { undo } from 'prosemirror-history'
+import type { EditorView } from 'prosemirror-view'
 import { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useThemeToggle } from '../use-theme-toggle/use-theme-toggle'
+
+const getEditorView = (editor: { prosemirrorView: EditorView }): EditorView | null => {
+	try {
+		const view = editor.prosemirrorView
+		if (view && view.dom) {
+			return view
+		}
+		return null
+	} catch {
+		return null
+	}
+}
 
 export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 	const { activeNote, handleContentChange, handleTitleChange, searchQuery } = useNotesContext()
@@ -111,7 +124,7 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 
 			editor.focus()
 
-			const view = editor.prosemirrorView
+			const view = getEditorView(editor)
 			if (view) {
 				undo(view.state, view.dispatch)
 			}
@@ -122,7 +135,7 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 		if (!editor) return
 
 		const triggerIndexing = () => {
-			const view = editor.prosemirrorView
+			const view = getEditorView(editor)
 			if (view && view.state && view.state.doc) {
 				let textPos = 0
 				view.state.doc.descendants((node, pos) => {
@@ -221,9 +234,10 @@ export const useTextEditor = (ref: React.Ref<TextEditorRef>) => {
 	}, [editor])
 
 	useEffect(() => {
-		if (!editor || !editor.prosemirrorView) return
+		if (!editor) return
 
-		const view = editor.prosemirrorView
+		const view = getEditorView(editor)
+		if (!view) return
 		const dom = view.dom
 
 		const handleCopy = (event: ClipboardEvent) => {

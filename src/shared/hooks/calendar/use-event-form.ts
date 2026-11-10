@@ -22,6 +22,7 @@ export interface InitialEventValues {
 	date?: string
 	startTime?: string
 	endTime?: string
+	isAllDay?: boolean
 }
 
 const getInitialTimeRange = () => {
@@ -64,6 +65,7 @@ export const useEventForm = (
 				date: startParsed.date,
 				startTime: startParsed.time,
 				endTime: endParsed.time,
+				isAllDay: startParsed.isAllDay,
 				color: (initialEvent.color as string) || '#D79716',
 				recurrence,
 			}
@@ -77,6 +79,7 @@ export const useEventForm = (
 			date: initialEvent?.date || Temporal.Now.plainDateISO().toString(),
 			startTime: initialEvent?.startTime || start,
 			endTime: initialEvent?.endTime || end,
+			isAllDay: initialEvent?.isAllDay ?? false,
 			color: '#D79716',
 			recurrence: { frequency: 'none', interval: 1, endType: 'never' },
 		}
@@ -96,8 +99,9 @@ export const useEventForm = (
 			return
 		}
 
-		const startDateISO = formatDateTimeForAppwrite(form.date, form.startTime)
-		const endDateISO = formatDateTimeForAppwrite(form.date, form.endTime)
+		const isAllDay = Boolean(form.isAllDay)
+		const startDateISO = isAllDay ? form.date : formatDateTimeForAppwrite(form.date, form.startTime)
+		const endDateISO = isAllDay ? form.date : formatDateTimeForAppwrite(form.date, form.endTime)
 		const userId = await getCurrentUserId()
 
 		let recurrenceRule: string | undefined
